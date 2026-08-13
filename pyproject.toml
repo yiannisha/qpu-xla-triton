@@ -62,6 +62,11 @@ dev = [
     "ruff>=0.9.2",
 ]
 
+[tool.pytest.ini_options]
+markers = [
+    "hardware: requires a Raspberry Pi VideoCore VII render node",
+]
+
 [tool.mypy]
 allow_redefinition = true
 allow_untyped_globals = false

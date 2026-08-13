@@ -1,0 +1,41 @@
+name: VC7 Hardware Validation
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/hardware.yml'
+      - 'src/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  qpu-differential:
+    runs-on: [self-hosted, linux, arm64, raspberry-pi-5]
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: pyproject.toml
+
+      - name: Install locked development environment
+        run: uv sync --group dev
+
+      - name: Verify VC7 render-node access
+        run: test -c /dev/dri/renderD128
+
+      - name: Run hardware differential suite
+        run: uv run pytest -q tests -m hardware

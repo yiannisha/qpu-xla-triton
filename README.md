@@ -1,97 +1,109 @@
-# qpu-xla: a QPU-based aXelerated Linear Algebra library
-This is an XLA meant to be used on Raspberry Pi's utilizing the QPU of the VideoCore chip.
+# py-videocore7 and QPU-XLA
 
-The scope of this library is both an XLA (basic math operators) AND an ML inference (basic ML operators + inference engine) library.
+This repository has two layers:
 
-### ROADMAP
-- [] Test basic kernels against numpy and torch
+- `py-videocore7`: a low-level Python assembler and driver for programming the
+  Raspberry Pi 5 VideoCore VII QPU;
+- `qpu_xla`: a newer ML-oriented heterogeneous runtime built on that driver.
 
-------
+The current development focus is `qpu_xla`. It provides host-mapped tensors,
+CPU/QPU queues and events, reusable tiled kernels, operator contracts,
+shape-aware placement, explicit CPU/QPU hybrid execution, persistent plans,
+video preprocessing, and TinyLlama-oriented runtime building blocks.
 
-# py-videocore7
+For the current architecture, supported operators, runtime semantics, and
+known limitations, read [QPU-XLA.md](QPU-XLA.md).
 
-A Python library for GPGPU programming on Raspberry Pi 5, which realizes
-assembling and running QPU programs.
+## Current status
 
-For Raspberry Pi Zero/1/2/3, use
-[Idein/py-videocore](https://github.com/Idein/py-videocore) instead.
+The repository is a systems prototype, not a finished XLA implementation.
 
-For Raspberry Pi 4, use
-[Idein/py-videocore6](https://github.com/Idein/py-videocore6) instead.
+Implemented runtime pieces include:
 
-## About VideoCore VII QPU
+- shared host/QPU-visible `Device`, `Buffer`, and `Tensor` storage;
+- in-order `Queue` workers with explicit `Event` dependencies;
+- packaged FP32/INT32 GEMM, pooling, min/max, and copy kernels;
+- CPU, QPU, and calibrated whole-operator placement;
+- explicit concurrent CPU/QPU row-split matmul;
+- GEMM-backed FP32/INT32 convolution, including a no-window-duplication 1x1
+  path;
+- unnormalized attention and mixed QPU-GEMM/CPU-softmax SDPA;
+- persistent INT32 convolution, MLP, and attention plans;
+- a constrained QPU-XLA DSL, differential candidate runner, video contracts,
+  and TinyLlama model/runtime scaffolding.
 
-Raspberry Pi 5 (BCM2712) has a GPU named VideoCore VII QPU in its SoC.
-The basic instruction set (add/mul ALU dual issue, three delay slots et al.)
-remains the same as VideoCore VI QPU of Raspberry Pi 4, and some units
-now perform differently.
+The runtime is not yet a general XLA compiler. Hybrid partitioning is explicit,
+not automatically selected by the scheduler, and native quantized projection
+kernels are still pending.
 
-- VideoCore IV QPU @ 250MHz: 250 [MHz] x 3 [slice] x 4 [qpu/slice] x 4 [physical core/qpu] x 2 [op/cycle] = 24 [Gflop/s]
-- VideoCore IV QPU @ 300MHz: 300 [MHz] x 3 [slice] x 4 [qpu/slice] x 4 [physical core/qpu] x 2 [op/cycle] = 28.8 [Gflop/s]
-- VideoCore VI QPU @ 500MHz: 500 [MHz] x 2 [slice] x 4 [qpu/slice] x 4 [physical core/qpu] x 2 [op/cycle] = 32 [Gflop/s]
-- VideoCore VII QPU @ 800MHz: 800 [MHz] x 3 [slice] x 4 [qpu/slice] x 4 [physical core/qpu] x 2 [op/cycle] = 76.8 [Gflop/s]
+## Installation and hardware access
 
-
-## Requirements
-
-`py-videocore7` communicates with the V3D hardware through `/dev/dri/card0`,
-which is exposed by the DRM V3D driver.
-To access the device, you need to belong to `video` group or be `root` user.
-If you choose the former, run `sudo usermod --append --groups video $USER`
-(re-login to take effect).
-
-
-## Installation
-
-[Install `uv`](https://docs.astral.sh/uv/getting-started/installation/) and
-clone `py-videocore7` and run with `uv`:
+The project targets Raspberry Pi 5 hardware with VideoCore VII and a usable V3D
+render node. Install `uv`, clone the repository, and run from its root:
 
 ```console
-$ sudo apt update
-$ sudo apt upgrade
-$ sudo apt install git
-$ git clone https://github.com/Idein/py-videocore7.git
-$ cd py-videocore7/
-$ uv run examples/sgemm.py
+sudo apt update
+sudo apt install git
+git clone https://github.com/Idein/py-videocore7.git
+cd py-videocore7
+uv sync
 ```
 
+Hardware execution requires access to `/dev/dri/renderD128` and membership in
+the appropriate `render`/`video` device group for the host image. Check the
+local device permissions before running QPU tests.
 
-## Running tests and examples
+## Running the QPU-XLA runtime benchmark
 
-In the `py-videocore7` directory cloned above:
+The runtime matrix compares CPU-only, QPU-only, automatic placement, explicit
+CPU/QPU row splits, and mixed attention execution:
 
 ```console
-$ uv run pytest -vs tests
+uv run examples/benchmark_qpu_xla_matrix.py
+uv run examples/benchmark_qpu_xla_matrix.py --size 512 --warmup 2 --repeat 7
 ```
+
+On the currently tested machine, the 512x512 FP32 split with 128 QPU output
+rows and 384 CPU output rows measured 4.207 ms versus 4.932 ms for the
+CPU-only qpu_xla path. This is a machine- and shape-specific heterogeneous
+execution result; it is not a claim that QPU-only FP32 GEMM beats CPU GEMM.
+
+The benchmark implementation and timing definitions are documented in
+[QPU-XLA.md](QPU-XLA.md) and [EXPERIMENTS_REGISTRY.md](EXPERIMENTS_REGISTRY.md).
+
+## Running tests
+
+Run the full test suite on a development host:
 
 ```console
-$ uv run examples/sgemm.py
-==== sgemm example (1024x1024 times 1024x1024) ====
-numpy: 0.0390 sec, 55.1937 Gflop/s
-QPU:   0.1006 sec, 21.3827 Gflop/s
-Minimum absolute error: 0.0
-Maximum absolute error: 0.0003814697265625
-Minimum relative error: 0.0
-Maximum relative error: 0.13134673237800598
+uv run pytest -vs tests
 ```
 
-```console
-$ uv run examples/scopy.py
-==== CPU scopy example (24.0 Mi elements) ====
-0.06235705600010988 sec, 1614.3048190059296 MB/s
-==== QPU 1 thread scopy example (24.0 Mi elements) ====
-Preparing for buffers...
-Executing on QPU...
-0.05958151100003306 sec, 1689.5055917588957 MB/s
-==== QPU 12 threads scopy example (24.0 Mi elements) ====
-Preparing for buffers...
-Executing on QPU...
-0.02430019499934133 sec, 4142.489227050586 MB/s
-```
+Tests marked `hardware` require the VideoCore VII render node. CPU/fake-backend
+tests cover runtime contracts, queue/event behavior, placement, DSL validation,
+model loading, and reference execution without QPU hardware.
 
-## References
+## Legacy examples
 
-- DRM V3D driver which controls QPU via hardware V3D registers: [linux/drivers/gpu/drm/v3d](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/v3d)
-- Mesa library which partially includes the QPU instruction set: [mesa/src/broadcom/qpu](https://gitlab.freedesktop.org/mesa/mesa/-/tree/main/src/broadcom/qpu)
-- py-videocore: [Idein/py-videocore](https://github.com/Idein/py-videocore)
-- py-videocore6: [Idein/py-videocore6](https://github.com/Idein/py-videocore6)
+The original low-level and hand-written operator examples remain available for
+assembly experiments and historical comparisons:
+
+- `examples/sgemm.py`, `examples/sgemm_fast.py`, and `examples/igemm.py`;
+- `examples/minmax.py`, `examples/pool2d.py`, and `examples/scopy.py`;
+- `examples/tiledconv2d.py`, `examples/tiledattention.py`,
+  `examples/tiledmlp.py`, and `examples/tiledlenet5.py`.
+
+They are benchmarkable legacy paths, but they are not the canonical API for the
+new runtime. Their commands and timing categories are listed in
+[EXPERIMENTS_REGISTRY.md](EXPERIMENTS_REGISTRY.md).
+
+## Low-level VideoCore VII background
+
+Raspberry Pi 5 (BCM2712) includes a VideoCore VII QPU in its SoC. This project
+communicates with the hardware through the DRM V3D driver.
+
+For the underlying assembler and driver, see the original
+[py-videocore7 documentation](https://github.com/Idein/py-videocore7). Related
+references include the
+[Linux V3D driver](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/v3d)
+and the [Mesa QPU sources](https://gitlab.freedesktop.org/mesa/mesa/-/tree/main/src/broadcom/qpu).

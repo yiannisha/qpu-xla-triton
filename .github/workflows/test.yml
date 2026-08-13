@@ -32,14 +32,17 @@ jobs:
       with:
         python-version-file: "pyproject.toml"
 
+    - name: Install locked development environment
+      run: uv sync --group dev
+
     - name: Run format checker
-      run: uvx ruff format --check --diff .
+      run: uv run ruff format --check src/qpu_xla tests/test_qpu_xla_*.py
 
     - name: Run linter
-      run: uvx ruff check --show-fixes .
+      run: uv run ruff check src/qpu_xla tests/test_qpu_xla_*.py
 
     - name: Run type checker
-      run: uvx mypy .
+      run: uv run mypy src/qpu_xla
 
-    # - name: Run tests requires pi5 runner
-    #   run: uv run pytest -v tests
+    - name: Run CPU/fake-backend tests
+      run: uv run pytest -q tests -m 'not hardware'

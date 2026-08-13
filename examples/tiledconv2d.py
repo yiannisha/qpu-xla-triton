@@ -1022,12 +1022,23 @@ def tiledconv2d_int16(
     padding: int | tuple[int, int] = 0,
     dilation: int | tuple[int, int] = 1,
 ) -> npt.NDArray[np.int32]:
+    """Run the supported exact int16-input convolution path.
+
+    The packed kernel remains available as an experimental assembly entry point
+    for debugging, but it has not passed hardware differential testing. This
+    public path widens input and weights to int32 and uses the proven int32
+    microkernel, preserving the advertised int32 accumulation contract.
+    """
     if x.dtype != np.int16 or weight.dtype != np.int16:
         raise ValueError("int16 conv expects int16 inputs")
 
-    prepared = _prepare_int16_conv_problem(x, weight, stride=stride, padding=padding, dilation=dilation)
-    c = _execute_tiled_matmul(qpu_tiledconv2d_int16_packed, prepared.a, prepared.b, out_dtype=np.dtype(np.int32))
-    return _reshape_gemm_output(c, prepared.output_shape, prepared.p, prepared.r)
+    return tiledconv2d_int32(
+        np.ascontiguousarray(x.astype(np.int32)),
+        np.ascontiguousarray(weight.astype(np.int32)),
+        stride=stride,
+        padding=padding,
+        dilation=dilation,
+    )
 
 
 def benchmark_tiledconv2d_fp32() -> dict[str, float]:
@@ -1202,11 +1213,13 @@ def benchmark_tiledconv2d_int16() -> dict[str, float]:
             out_dtype=np.int32,
         )
     )
+    x_int32 = np.ascontiguousarray(x.astype(np.int32))
+    weight_int32 = np.ascontiguousarray(weight.astype(np.int32))
     prepared, prep_sec = _benchmark_prepare_problem(
-        lambda: _prepare_int16_conv_problem(x, weight, stride=stride, padding=padding, dilation=dilation)
+        lambda: _prepare_int32_conv_problem(x_int32, weight_int32, stride=stride, padding=padding, dilation=dilation)
     )
     with TiledMatmulExecutor(
-        qpu_tiledconv2d_int16_packed,
+        qpu_tiledconv2d_int32,
         prepared.a.shape,
         prepared.a.dtype,
         prepared.b.shape,
@@ -1225,7 +1238,8 @@ def benchmark_tiledconv2d_int16() -> dict[str, float]:
     diff = actual.astype(np.int64) - expected.astype(np.int64)
     numpy_gops = _conv_gops_from_output(expected, in_channels, kernel_height, kernel_width, time_numpy)
     print("==== tiledconv2d int16 example ====")
-    print("Kernel contract: int16 inputs are packed as int32 pairs and accumulated into int32.")
+    print("Kernel contract: int16 inputs are widened to int32 and accumulated into int32.")
+    print("Packed int16 QPU assembly is quarantined pending a hardware differential fix.")
     print(f"numpy: {time_numpy:.4f} sec, {numpy_gops:.4f} Gop/s")
     if torch_sec is not None:
         torch_gops = _conv_gops_from_output(expected, in_channels, kernel_height, kernel_width, torch_sec)

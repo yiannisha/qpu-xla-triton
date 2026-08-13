@@ -1,0 +1,88 @@
+"""Public runtime primitives for QPU-XLA on VideoCore VII."""
+
+from qpu_xla.backend import FakeBackend, PyVideoCore7Backend
+from qpu_xla.compiler import (
+    arange,
+    barrier,
+    compile_source,
+    dot,
+    dsl_reference,
+    jit,
+    load,
+    maximum,
+    minimum,
+    program_id,
+    select,
+    store,
+)
+from qpu_xla.device import Device
+from qpu_xla.errors import (
+    AllocationError,
+    BufferClosedError,
+    DependencyError,
+    DeviceClosedError,
+    DslCompileError,
+    EventCancelledError,
+    EventTimeoutError,
+    KernelError,
+    QpuXlaError,
+)
+from qpu_xla.kernel import Kernel, LaunchConfig
+from qpu_xla.kernels import (
+    AVGPOOL2D_FP32_KERNEL,
+    AVGPOOL2D_INT32_KERNEL,
+    MAXIMUM_WORD_KERNEL,
+    MAXPOOL2D_FP32_KERNEL,
+    MAXPOOL2D_INT32_KERNEL,
+    MINIMUM_WORD_KERNEL,
+    TILED_FP32_GEMM_KERNEL,
+    TILED_INT32_GEMM_KERNEL,
+    WORD_COPY_KERNEL,
+)
+from qpu_xla.memory import AccessMode, Buffer, BufferAccess, Tensor
+from qpu_xla.queue import Event, EventStatus, Queue
+
+__all__ = [
+    "AccessMode",
+    "AllocationError",
+    "AVGPOOL2D_FP32_KERNEL",
+    "AVGPOOL2D_INT32_KERNEL",
+    "Buffer",
+    "BufferAccess",
+    "BufferClosedError",
+    "arange",
+    "barrier",
+    "compile_source",
+    "dot",
+    "dsl_reference",
+    "DependencyError",
+    "Device",
+    "DeviceClosedError",
+    "DslCompileError",
+    "Event",
+    "EventCancelledError",
+    "EventStatus",
+    "EventTimeoutError",
+    "FakeBackend",
+    "Kernel",
+    "KernelError",
+    "LaunchConfig",
+    "jit",
+    "load",
+    "MAXIMUM_WORD_KERNEL",
+    "maximum",
+    "MAXPOOL2D_FP32_KERNEL",
+    "MAXPOOL2D_INT32_KERNEL",
+    "MINIMUM_WORD_KERNEL",
+    "minimum",
+    "PyVideoCore7Backend",
+    "program_id",
+    "QpuXlaError",
+    "Queue",
+    "Tensor",
+    "TILED_INT32_GEMM_KERNEL",
+    "TILED_FP32_GEMM_KERNEL",
+    "select",
+    "store",
+    "WORD_COPY_KERNEL",
+]
