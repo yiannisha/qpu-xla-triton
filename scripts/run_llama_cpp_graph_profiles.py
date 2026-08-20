@@ -214,6 +214,10 @@ def main() -> None:
         summary: dict[str, Any] | None = None
         if completed.returncode == 0 and native_output.is_file():
             native = json.loads(native_output.read_text(encoding="utf-8"))
+            for fixture in native.get("fixtures", []):
+                for tensor in fixture.get("tensors", []):
+                    if tensor is not None and Path(tensor["path"]).is_file():
+                        tensor["sha256"] = sha256_file(Path(tensor["path"]))
             summary = summarize_profile(native)
         records.append(
             {

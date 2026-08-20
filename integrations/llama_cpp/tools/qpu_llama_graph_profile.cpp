@@ -265,7 +265,6 @@ static bool profile_callback(ggml_tensor * tensor, bool ask, void * user_data) {
             {"node", tensor_metadata(tensor)},
             {"tensors", json::array()},
         };
-        fixture["tensors"].push_back(dump_tensor(state, tensor->src[0], "src0", node_index));
         fixture["tensors"].push_back(dump_tensor(state, tensor->src[1], "src1", node_index));
         fixture["tensors"].push_back(dump_tensor(state, tensor, "output", node_index));
         state.fixtures.push_back(std::move(fixture));
@@ -521,6 +520,7 @@ int main(int argc, char ** argv) {
                  {"node_duration", "callback-bracketed graph view execution plus backend synchronization"},
                  {"serialization", "eval callback requests every node and therefore serializes node execution"},
                  {"fixture_timing_eligible", !state.capture_fixtures},
+                 {"fixture_weight_source", "native weights are regenerated from the GGUF manifest, not backend repack buffers"},
              }},
             {"model", std::filesystem::absolute(opts.model).string()},
             {"other_model",
