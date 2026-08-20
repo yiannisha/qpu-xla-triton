@@ -8,12 +8,23 @@ submission and synchronization.
 from __future__ import annotations
 
 import argparse
+import json
+from pathlib import Path
 from time import perf_counter
 
 import numpy as np
+import torch
 
 from qpu_xla import Device
-from qpu_xla.ops import attention_fp32, hybrid_matmul, matmul, plan_matmul, scaled_dot_product_attention_fp32
+from qpu_xla.benchmark import collect_metadata, numpy_backend_label
+from qpu_xla.ops import (
+    attention_fp32,
+    hybrid_matmul,
+    hybrid_row_partitions,
+    matmul,
+    plan_matmul,
+    scaled_dot_product_attention_fp32,
+)
 from qpu_xla.scheduler import Placement
 
 
@@ -33,11 +44,13 @@ def _gops(operations: int, seconds: float) -> float:
     return operations / seconds / 1e9
 
 
-def _matmul_benchmark(device: Device, *, size: int, warmup: int, repeat: int, seed: int) -> None:
+def _matmul_benchmark(device: Device, *, size: int, warmup: int, repeat: int, seed: int) -> list[dict[str, object]]:
     rng = np.random.default_rng(seed)
     left_value = rng.standard_normal((size, size), dtype=np.float32)
     right_value = rng.standard_normal((size, size), dtype=np.float32)
     expected = left_value @ right_value
+    torch_left = torch.from_numpy(left_value)
+    torch_right = torch.from_numpy(right_value)
     left = device.tensor(left_value.shape, np.float32)
     right = device.tensor(right_value.shape, np.float32)
     destination = device.tensor(expected.shape, np.float32)
@@ -46,6 +59,7 @@ def _matmul_benchmark(device: Device, *, size: int, warmup: int, repeat: int, se
     operations = 2 * size * size * size
 
     with device.queue() as cpu_queue, device.queue() as qpu_queue, device.queue() as auto_queue:
+
         def run_matmul(placement: Placement, queue) -> None:
             matmul(destination, left, right, queue=queue, placement=placement).wait()
 
@@ -63,30 +77,54 @@ def _matmul_benchmark(device: Device, *, size: int, warmup: int, repeat: int, se
         print("configuration                 median ms    GOP/s   max abs error")
 
         configurations: list[tuple[str, object]] = [
-            ("CPU only", lambda: run_matmul(Placement.CPU, cpu_queue)),
+            (f"{numpy_backend_label()} matmul", lambda: left_value @ right_value),
+            ("torch.matmul", lambda: torch.matmul(torch_left, torch_right)),
+            ("qpu_xla CPU", lambda: run_matmul(Placement.CPU, cpu_queue)),
             ("QPU only", lambda: run_matmul(Placement.QPU, qpu_queue)),
             ("AUTO", lambda: run_matmul(Placement.AUTO, auto_queue)),
         ]
-        # The useful hybrid region on this hardware is usually a small QPU
-        # prefix: enough QPU work to overlap CPU work, without letting the
-        # lower-throughput FP32 kernel become the critical path.
-        for fraction in (0.125, 0.1875, 0.25, 0.3125, 0.375, 0.50, 0.75):
-            rows = int(size * fraction) // 16 * 16
+        for rows in hybrid_row_partitions(size):
             configurations.append((f"CPU+QPU ({rows}/{size} QPU rows)", lambda rows=rows: run_hybrid(rows)))
 
         timings: dict[str, float] = {}
+        results: list[dict[str, object]] = []
         for name, fn in configurations:
-            elapsed, _ = _measure(fn, warmup=warmup, repeat=repeat)
-            error = float(np.max(np.abs(destination.numpy() - expected)))
+            elapsed, result = _measure(fn, warmup=warmup, repeat=repeat)
+            if isinstance(result, np.ndarray):
+                actual = result
+            elif isinstance(result, torch.Tensor):
+                actual = result.numpy()
+            else:
+                actual = destination.numpy()
+            error = float(np.max(np.abs(actual - expected)))
             timings[name] = elapsed
+            results.append(
+                {
+                    "operation": "matmul",
+                    "shape": [size, size, size],
+                    "configuration": name,
+                    "median_seconds": elapsed,
+                    "gops": _gops(operations, elapsed),
+                    "max_abs_error": error,
+                }
+            )
             print(f"{name:28s} {elapsed * 1e3:10.3f} {_gops(operations, elapsed):8.2f} {error:15.6g}")
 
         plan = plan_matmul(destination, left, right, placement=Placement.AUTO)
         print(f"AUTO selected implementation: {plan.candidate.name}")
-        cpu_time = timings["CPU only"]
+        cpu_name = min(
+            (f"{numpy_backend_label()} matmul", "torch.matmul"),
+            key=lambda name: timings[name],
+        )
+        cpu_time = timings[cpu_name]
+        print(f"Fastest raw CPU reference: {cpu_name}")
         for name, elapsed in timings.items():
-            if name != "CPU only":
+            if name != cpu_name:
                 print(f"  {name}: {cpu_time / elapsed:.2f}x vs CPU")
+        for result in results:
+            result["cpu_reference"] = cpu_name
+            result["speedup_over_cpu"] = cpu_time / float(result["median_seconds"])
+        return results
 
 
 def _cpu_sdpa(query: np.ndarray, key: np.ndarray, value: np.ndarray) -> np.ndarray:
@@ -97,7 +135,7 @@ def _cpu_sdpa(query: np.ndarray, key: np.ndarray, value: np.ndarray) -> np.ndarr
     return weights @ value
 
 
-def _attention_benchmark(device: Device, *, size: int, warmup: int, repeat: int, seed: int) -> None:
+def _attention_benchmark(device: Device, *, size: int, warmup: int, repeat: int, seed: int) -> list[dict[str, object]]:
     rng = np.random.default_rng(seed)
     query_value = rng.standard_normal((size, size), dtype=np.float32)
     key_value = rng.standard_normal((size, size), dtype=np.float32)
@@ -116,26 +154,94 @@ def _attention_benchmark(device: Device, *, size: int, warmup: int, repeat: int,
     def run_cpu() -> None:
         destination.numpy()[:] = _cpu_sdpa(query_value, key_value, value_value)
 
+    torch_query = torch.from_numpy(query_value)
+    torch_key = torch.from_numpy(key_value)
+    torch_value = torch.from_numpy(value_value)
+
+    def run_torch_cpu() -> None:
+        output = torch.nn.functional.scaled_dot_product_attention(
+            torch_query[None, None],
+            torch_key[None, None],
+            torch_value[None, None],
+        )
+        destination.numpy()[:] = output[0, 0].numpy()
+
     print(f"\n==== qpu_xla attention matrix ({size}x{size}) ====")
     print("configuration                 median ms    GOP/s   max abs error")
-    with device.queue() as qpu_queue:
+    with device.queue() as qpu_queue, device.queue() as cpu_queue:
+
         def run_core() -> None:
             attention_fp32(destination, query, key, value, queue=qpu_queue).wait()
 
-        def run_mixed() -> None:
-            scaled_dot_product_attention_fp32(destination, query, key, value, queue=qpu_queue).wait()
+        def run_qpu_sdpa() -> None:
+            scaled_dot_product_attention_fp32(
+                destination,
+                query,
+                key,
+                value,
+                queue=qpu_queue,
+                score_placement=Placement.QPU,
+                value_placement=Placement.QPU,
+                softmax_placement=Placement.QPU,
+            ).wait()
 
-        configurations = (("CPU-only SDPA", run_cpu, expected_mixed), ("QPU GEMM core", run_core, expected_core), ("Mixed QPU+CPU SDPA", run_mixed, expected_mixed))
+        def run_hybrid(rows: int) -> None:
+            scaled_dot_product_attention_fp32(
+                destination,
+                query,
+                key,
+                value,
+                queue=qpu_queue,
+                matmul_cpu_queue=cpu_queue,
+                softmax_cpu_queue=cpu_queue,
+                score_placement=Placement.HYBRID,
+                value_placement=Placement.HYBRID,
+                softmax_placement=Placement.HYBRID,
+                score_qpu_units=rows,
+                value_qpu_units=rows,
+                softmax_qpu_rows=rows,
+            ).wait()
+
+        configurations = [
+            (f"{numpy_backend_label()} SDPA", run_cpu, expected_mixed),
+            ("Torch native SDPA", run_torch_cpu, expected_mixed),
+            ("QPU GEMM core", run_core, expected_core),
+            ("QPU-only staged SDPA", run_qpu_sdpa, expected_mixed),
+        ]
+        for rows in hybrid_row_partitions(size):
+            configurations.append(
+                (f"CPU+QPU SDPA ({rows} QPU rows)", lambda rows=rows: run_hybrid(rows), expected_mixed)
+            )
         timings: dict[str, float] = {}
+        results: list[dict[str, object]] = []
         for name, fn, expected in configurations:
             elapsed, _ = _measure(fn, warmup=warmup, repeat=repeat)
             error = float(np.max(np.abs(destination.numpy() - expected)))
             timings[name] = elapsed
+            results.append(
+                {
+                    "operation": "scaled_dot_product_attention",
+                    "shape": [size, size],
+                    "configuration": name,
+                    "median_seconds": elapsed,
+                    "gops": _gops(operations, elapsed),
+                    "max_abs_error": error,
+                }
+            )
             print(f"{name:28s} {elapsed * 1e3:10.3f} {_gops(operations, elapsed):8.2f} {error:15.6g}")
-        cpu_time = timings["CPU-only SDPA"]
+        cpu_name = min(
+            (f"{numpy_backend_label()} SDPA", "Torch native SDPA"),
+            key=lambda name: timings[name],
+        )
+        cpu_time = timings[cpu_name]
+        print(f"Fastest CPU reference: {cpu_name}")
         for name, elapsed in timings.items():
-            if name != "CPU-only SDPA":
+            if name != cpu_name:
                 print(f"  {name}: {cpu_time / elapsed:.2f}x vs CPU")
+        for result in results:
+            result["cpu_reference"] = cpu_name
+            result["speedup_over_cpu"] = cpu_time / float(result["median_seconds"])
+        return results
 
 
 def main() -> None:
@@ -144,6 +250,7 @@ def main() -> None:
     parser.add_argument("--warmup", type=int, default=1)
     parser.add_argument("--repeat", type=int, default=5)
     parser.add_argument("--seed", type=int, default=23)
+    parser.add_argument("--output", type=Path, help="optional machine-readable JSON output")
     args = parser.parse_args()
     if args.size <= 0 or args.size % 16:
         parser.error("--size must be a positive multiple of 16")
@@ -151,9 +258,29 @@ def main() -> None:
     # enough device arena for the requested repeat count; the v0 allocator
     # reclaims allocations when the device closes rather than immediately.
     data_area_size = max(16 * 1024 * 1024, args.repeat * args.warmup * args.size * args.size * 64)
+    print(f"CPU backends: {numpy_backend_label()}, torch-{torch.__version__} ({torch.get_num_threads()} threads)")
     with Device.open(data_area_size=data_area_size) as device:
-        _matmul_benchmark(device, size=args.size, warmup=args.warmup, repeat=args.repeat, seed=args.seed)
-        _attention_benchmark(device, size=args.size, warmup=args.warmup, repeat=args.repeat, seed=args.seed + 1)
+        metadata = collect_metadata(
+            device,
+            extra={
+                "semantics": "steady-state-total",
+                "cpu_reference": "fastest-of-torch-and-numpy-blas",
+                "torch": torch.__version__,
+                "torch_threads": str(torch.get_num_threads()),
+                "torch_interop_threads": str(torch.get_num_interop_threads()),
+            },
+        )
+        results = _matmul_benchmark(device, size=args.size, warmup=args.warmup, repeat=args.repeat, seed=args.seed)
+        results.extend(
+            _attention_benchmark(device, size=args.size, warmup=args.warmup, repeat=args.repeat, seed=args.seed + 1)
+        )
+    if args.output is not None:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps({"metadata": metadata, "results": results}, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        print(f"saved {args.output}")
 
 
 if __name__ == "__main__":
