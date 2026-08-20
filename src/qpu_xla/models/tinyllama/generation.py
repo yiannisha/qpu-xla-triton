@@ -11,7 +11,26 @@ from typing import Protocol, Self
 import numpy as np
 import numpy.typing as npt
 
-from qpu_xla.models.tinyllama.reference import TinyLlamaReferenceRuntime
+from qpu_xla.models.tinyllama.checkpoint import TinyLlamaCheckpoint
+
+
+class TinyLlamaDecodeSession(Protocol):
+    """Incremental session contract shared by reference and W8A8 runtimes."""
+
+    def prefill(self: Self, token_ids: npt.NDArray[np.integer]) -> npt.NDArray[np.float32]:
+        """Append a prompt and return one logits row per token."""
+
+    def decode(self: Self, token_id: int) -> npt.NDArray[np.float32]:
+        """Append one token and return its logits row."""
+
+
+class TinyLlamaInferenceRuntime(Protocol):
+    """Runtime surface required by deterministic generation."""
+
+    checkpoint: TinyLlamaCheckpoint
+
+    def session(self: Self) -> TinyLlamaDecodeSession:
+        """Create one empty incremental session."""
 
 
 class TinyLlamaTokenizer(Protocol):
@@ -168,7 +187,7 @@ class SentencePieceTokenizer:
 class TinyLlamaGreedyGenerator:
     """End-to-end greedy prefill/decode reference over a portable vocabulary."""
 
-    def __init__(self: Self, runtime: TinyLlamaReferenceRuntime, tokenizer: TinyLlamaTokenizer) -> None:
+    def __init__(self: Self, runtime: TinyLlamaInferenceRuntime, tokenizer: TinyLlamaTokenizer) -> None:
         """Require the tokenizer vocabulary to match the checkpoint embedding table."""
         if tokenizer.vocab_size != runtime.checkpoint.config.vocab_size:
             raise ValueError("tokenizer vocabulary size must match the TinyLlama checkpoint")
@@ -196,15 +215,20 @@ class TinyLlamaGreedyGenerator:
         if eos_token_id is not None and not 0 <= eos_token_id < config.vocab_size:
             raise ValueError("eos_token_id is outside the vocabulary range")
         session = self.runtime.session()
-        logits = session.prefill(tokens)
-        for _ in range(max_new_tokens):
-            if tokens.size >= config.max_position_embeddings:
-                raise ValueError("generation would exceed max_position_embeddings")
-            next_token = np.asarray([np.argmax(logits[-1])], dtype=np.int32)
-            tokens = np.concatenate((tokens, next_token))
-            if eos_token_id is not None and int(next_token[0]) == eos_token_id:
-                break
-            logits = session.decode(int(next_token[0]))[None, :]
+        try:
+            logits = session.prefill(tokens)
+            for _ in range(max_new_tokens):
+                if tokens.size >= config.max_position_embeddings:
+                    raise ValueError("generation would exceed max_position_embeddings")
+                next_token = np.asarray([np.argmax(logits[-1])], dtype=np.int32)
+                tokens = np.concatenate((tokens, next_token))
+                if eos_token_id is not None and int(next_token[0]) == eos_token_id:
+                    break
+                logits = session.decode(int(next_token[0]))[None, :]
+        finally:
+            close = getattr(session, "close", None)
+            if close is not None:
+                close()
         return tokens
 
     def generate_text(self: Self, prompt: str, *, max_new_tokens: int, eos_token_id: int | None = None) -> str:

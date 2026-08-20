@@ -1,5 +1,6 @@
 """TinyLlama-oriented runtime building blocks with explicit experimental scope."""
 
+from qpu_xla.models.tinyllama.accelerated import TinyLlamaW8A8Runtime, TinyLlamaW8A8Session
 from qpu_xla.models.tinyllama.artifact import TinyLlamaArtifact
 from qpu_xla.models.tinyllama.checkpoint import TinyLlamaCheckpoint, TinyLlamaConfig
 from qpu_xla.models.tinyllama.functional import (
@@ -18,6 +19,8 @@ from qpu_xla.models.tinyllama.generation import (
 )
 from qpu_xla.models.tinyllama.kv_cache import KvCacheFp32
 from qpu_xla.models.tinyllama.quantization import (
+    CalibratedW8A8Linear,
+    PreparedW8A8Linear,
     QuantizedMatrixInt8,
     quantize_per_output_channel_int8,
     quantized_linear_fp32,
@@ -30,15 +33,19 @@ from qpu_xla.models.tinyllama.reference import (
 )
 
 __all__ = [
+    "CalibratedW8A8Linear",
     "KvCacheFp32",
     "GreedyVocabularyTokenizer",
     "QuantizedMatrixInt8",
+    "PreparedW8A8Linear",
     "TinyLlamaCheckpoint",
     "TinyLlamaArtifact",
     "TinyLlamaConfig",
     "TinyLlamaForwardResult",
     "TinyLlamaGreedyGenerator",
     "TinyLlamaTokenizer",
+    "TinyLlamaW8A8Runtime",
+    "TinyLlamaW8A8Session",
     "SentencePieceTokenizer",
     "TinyLlamaReferenceRuntime",
     "TinyLlamaReferenceSession",

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
+import pytest
 
 from qpu_xla import Device
 from qpu_xla.models.tinyllama import (
@@ -11,6 +14,7 @@ from qpu_xla.models.tinyllama import (
     rope_fp32,
     silu_gated_fp32,
 )
+from qpu_xla.scheduler import Placement
 
 
 def test_rms_norm_fp32_matches_explicit_reference() -> None:
@@ -25,6 +29,29 @@ def test_rms_norm_fp32_matches_explicit_reference() -> None:
         weight.numpy()[:] = weight_values
         rms_norm_fp32(destination, source, weight, queue=queue).wait()
         np.testing.assert_allclose(destination.numpy(), expected, atol=1e-6, rtol=1e-6)
+
+
+@pytest.mark.hardware
+@pytest.mark.skipif(not Path("/dev/dri/renderD128").exists(), reason="VideoCore VII render node is unavailable")
+@pytest.mark.parametrize("shape", ((2, 48), (1, 512), (16, 512), (17, 1024)))
+def test_rms_norm_fp32_qpu_matches_numpy(shape: tuple[int, int]) -> None:
+    rng = np.random.default_rng(1900 + shape[0])
+    values = rng.standard_normal(shape, dtype=np.float32)
+    weight_values = rng.standard_normal((shape[1],), dtype=np.float32)
+    expected = values / np.sqrt(np.mean(values * values, axis=1, keepdims=True) + np.float32(1e-5)) * weight_values
+    with Device.open(data_area_size=2 * 1024 * 1024) as device, device.queue() as queue:
+        source = device.tensor(shape, np.float32)
+        weight = device.tensor(weight_values.shape, np.float32)
+        destination = device.tensor(shape, np.float32)
+        source.numpy()[:] = values
+        weight.numpy()[:] = weight_values
+
+        event = rms_norm_fp32(destination, source, weight, queue=queue, placement=Placement.QPU)
+        event.wait()
+        actual = np.array(destination.numpy(), copy=True)
+        assert event.name == "vc7.rms_norm_fp32"
+
+    np.testing.assert_allclose(actual, expected, atol=2e-5, rtol=2e-5)
 
 
 def test_rope_fp32_matches_pairwise_rotation_and_allows_in_place_output() -> None:
