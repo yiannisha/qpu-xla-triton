@@ -1,0 +1,3140 @@
+{
+  "created_utc": "2026-08-20T01:29:48+00:00",
+  "kind": "llama-cpp-serialized-graph-profile-summary",
+  "profiles": [
+    {
+      "configuration": {
+        "all_target_logits": true,
+        "batch": 1,
+        "context_size": 8192,
+        "context_tokens": 0,
+        "context_type": "default",
+        "flash_attention": true,
+        "iterations": 1,
+        "threads": 2,
+        "warmups": 0
+      },
+      "decode_wall_ns": {
+        "mad_ns": 0.0,
+        "maximum_ns": 339397475.0,
+        "median_ns": 339397475.0,
+        "minimum_ns": 339397475.0,
+        "p05_ns": 339397475.0,
+        "p95_ns": 339397475.0,
+        "samples": 1
+      },
+      "families": [
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 2.0975954063855027,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 166715079.0,
+            "median_ns": 166715079.0,
+            "minimum_ns": 166715079.0,
+            "p05_ns": 166715079.0,
+            "p95_ns": 166715079.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "fraction_of_serialized_node_time": {
+            "median": 0.5232636394245531,
+            "p05": 0.5232636394245531,
+            "p95": 0.5232636394245531
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.192738227828805,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 51484565.0,
+            "median_ns": 51484565.0,
+            "minimum_ns": 51484565.0,
+            "p05_ns": 51484565.0,
+            "p95_ns": 51484565.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.16159306655212613,
+            "p05": 0.16159306655212613,
+            "p95": 0.16159306655212613
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.084376978253418,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 24791226.0,
+            "median_ns": 24791226.0,
+            "minimum_ns": 24791226.0,
+            "p05_ns": 24791226.0,
+            "p95_ns": 24791226.0,
+            "samples": 1
+          },
+          "family": "lm_head",
+          "fraction_of_serialized_node_time": {
+            "median": 0.07781148064331124,
+            "p05": 0.07781148064331124,
+            "p95": 0.07781148064331124
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.0827662708732053,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 24354151.0,
+            "median_ns": 24354151.0,
+            "minimum_ns": 24354151.0,
+            "p05_ns": 24354151.0,
+            "p95_ns": 24354151.0,
+            "samples": 1
+          },
+          "family": "ffn_down_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.07643964639428398,
+            "p05": 0.07643964639428398,
+            "p95": 0.07643964639428398
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.0753497005647152,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 22324726.0,
+            "median_ns": 22324726.0,
+            "minimum_ns": 22324726.0,
+            "p05_ns": 22324726.0,
+            "p95_ns": 22324726.0,
+            "samples": 1
+          },
+          "family": "embedding",
+          "fraction_of_serialized_node_time": {
+            "median": 0.07006995075661959,
+            "p05": 0.07006995075661959,
+            "p95": 0.07006995075661959
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0283122183077915,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 8772093.0,
+            "median_ns": 8772093.0,
+            "minimum_ns": 8772093.0,
+            "p05_ns": 8772093.0,
+            "p95_ns": 8772093.0,
+            "samples": 1
+          },
+          "family": "rope",
+          "fraction_of_serialized_node_time": {
+            "median": 0.027532706315969453,
+            "p05": 0.027532706315969453,
+            "p95": 0.027532706315969453
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0235161142161993,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 7320238.0,
+            "median_ns": 7320238.0,
+            "minimum_ns": 7320238.0,
+            "p05_ns": 7320238.0,
+            "p95_ns": 7320238.0,
+            "samples": 1
+          },
+          "family": "attention_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.022975812387875914,
+            "p05": 0.022975812387875914,
+            "p95": 0.022975812387875914
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0175526580155656,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 5495919.0,
+            "median_ns": 5495919.0,
+            "minimum_ns": 5495919.0,
+            "p05_ns": 5495919.0,
+            "p95_ns": 5495919.0,
+            "samples": 1
+          },
+          "family": "swiglu",
+          "fraction_of_serialized_node_time": {
+            "median": 0.01724987682681391,
+            "p05": 0.01724987682681391,
+            "p95": 0.01724987682681391
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.012492970168728,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3931226.0,
+            "median_ns": 3931226.0,
+            "minimum_ns": 3931226.0,
+            "p05_ns": 3931226.0,
+            "p95_ns": 3931226.0,
+            "samples": 1
+          },
+          "family": "elementwise",
+          "fraction_of_serialized_node_time": {
+            "median": 0.012338821638086066,
+            "p05": 0.012338821638086066,
+            "p95": 0.012338821638086066
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.005841544921222,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1850344.0,
+            "median_ns": 1850344.0,
+            "minimum_ns": 1850344.0,
+            "p05_ns": 1850344.0,
+            "p95_ns": 1850344.0,
+            "samples": 1
+          },
+          "family": "auxiliary_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.005807619451311811,
+            "p05": 0.005807619451311811,
+            "p95": 0.005807619451311811
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0019412339139395,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 617291.0,
+            "median_ns": 617291.0,
+            "minimum_ns": 617291.0,
+            "p05_ns": 617291.0,
+            "p95_ns": 617291.0,
+            "samples": 1
+          },
+          "family": "per_layer_projection",
+          "fraction_of_serialized_node_time": {
+            "median": 0.0019374728259824764,
+            "p05": 0.0019374728259824764,
+            "p95": 0.0019374728259824764
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0018527874119658,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 589218.0,
+            "median_ns": 589218.0,
+            "minimum_ns": 589218.0,
+            "p05_ns": 589218.0,
+            "p95_ns": 589218.0,
+            "samples": 1
+          },
+          "family": "attention_core",
+          "fraction_of_serialized_node_time": {
+            "median": 0.0018493609392972565,
+            "p05": 0.0018493609392972565,
+            "p95": 0.0018493609392972565
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.000880562779344,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 280306.0,
+            "median_ns": 280306.0,
+            "minimum_ns": 280306.0,
+            "p05_ns": 280306.0,
+            "p95_ns": 280306.0,
+            "samples": 1
+          },
+          "family": "layout",
+          "fraction_of_serialized_node_time": {
+            "median": 0.0008797880707151798,
+            "p05": 0.0008797880707151798,
+            "p95": 0.0008797880707151798
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.000250820668286,
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 79893.0,
+            "median_ns": 79893.0,
+            "minimum_ns": 79893.0,
+            "p05_ns": 79893.0,
+            "p95_ns": 79893.0,
+            "samples": 1
+          },
+          "family": "kv_or_state_update",
+          "fraction_of_serialized_node_time": {
+            "median": 0.00025075777305390485,
+            "p05": 0.00025075777305390485,
+            "p95": 0.00025075777305390485
+          }
+        }
+      ],
+      "fixture_records": 0,
+      "ineligibility_reason": "the public eval callback serializes graph nodes and changes production scheduling",
+      "measurement_contract": {
+        "fixture_timing_eligible": true,
+        "node_duration": "callback-bracketed graph view execution plus backend synchronization",
+        "serialization": "eval callback requests every node and therefore serializes node execution"
+      },
+      "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "node_records": 1496,
+      "serialized_node_total_ns": {
+        "mad_ns": 0.0,
+        "maximum_ns": 318606275.0,
+        "median_ns": 318606275.0,
+        "minimum_ns": 318606275.0,
+        "p05_ns": 318606275.0,
+        "p95_ns": 318606275.0,
+        "samples": 1
+      },
+      "timing_eligible_for_promotion": false,
+      "top_nodes": [
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 21081680.0,
+            "median_ns": 21081680.0,
+            "minimum_ns": 21081680.0,
+            "p05_ns": 21081680.0,
+            "p95_ns": 21081680.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-8",
+          "node_index": 407,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-8",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.8.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 19493211.0,
+            "median_ns": 19493211.0,
+            "minimum_ns": 19493211.0,
+            "p05_ns": 19493211.0,
+            "p95_ns": 19493211.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-26",
+          "node_index": 1157,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-26",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.26.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 18072705.0,
+            "median_ns": 18072705.0,
+            "minimum_ns": 18072705.0,
+            "p05_ns": 18072705.0,
+            "p95_ns": 18072705.0,
+            "samples": 1
+          },
+          "family": "lm_head",
+          "name": "node_1492",
+          "node_index": 1492,
+          "op": "MUL_MAT",
+          "shape": [
+            262144,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 226492416,
+              "name": "token_embd.weight",
+              "shape": [
+                1536,
+                262144,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                226492416,
+                226492416
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "result_norm",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 17257655.0,
+            "median_ns": 17257655.0,
+            "minimum_ns": 17257655.0,
+            "p05_ns": 17257655.0,
+            "p95_ns": 17257655.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-28",
+          "node_index": 1231,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-28",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.28.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 16671364.0,
+            "median_ns": 16671364.0,
+            "minimum_ns": 16671364.0,
+            "p05_ns": 16671364.0,
+            "p95_ns": 16671364.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-20",
+          "node_index": 951,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-20",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.20.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 15493800.0,
+            "median_ns": 15493800.0,
+            "minimum_ns": 15493800.0,
+            "p05_ns": 15493800.0,
+            "p95_ns": 15493800.0,
+            "samples": 1
+          },
+          "family": "embedding",
+          "name": "embd",
+          "node_index": 0,
+          "op": "GET_ROWS",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 226492416,
+              "name": "token_embd.weight",
+              "shape": [
+                1536,
+                262144,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                226492416,
+                226492416
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 4,
+              "name": "inp_tokens",
+              "shape": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                4,
+                4,
+                4
+              ],
+              "type": "i32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 12977265.0,
+            "median_ns": 12977265.0,
+            "minimum_ns": 12977265.0,
+            "p05_ns": 12977265.0,
+            "p95_ns": 12977265.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "norm-0",
+          "node_index": 5,
+          "op": "RMS_NORM",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "inp_scaled",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 10248972.0,
+            "median_ns": 10248972.0,
+            "minimum_ns": 10248972.0,
+            "p05_ns": 10248972.0,
+            "p95_ns": 10248972.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-16",
+          "node_index": 787,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-16",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.16.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 8434765.0,
+            "median_ns": 8434765.0,
+            "minimum_ns": 8434765.0,
+            "p05_ns": 8434765.0,
+            "p95_ns": 8434765.0,
+            "samples": 1
+          },
+          "family": "rope",
+          "name": "Qcur_pos-0",
+          "node_index": 11,
+          "op": "ROPE",
+          "shape": [
+            256,
+            8,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 8192,
+              "name": "Qcur_normed-0",
+              "shape": [
+                256,
+                8,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1024,
+                8192,
+                8192
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 4,
+              "name": "leaf_8",
+              "shape": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                4,
+                4,
+                4
+              ],
+              "type": "i32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 6829167.0,
+            "median_ns": 6829167.0,
+            "minimum_ns": 6829167.0,
+            "p05_ns": 6829167.0,
+            "p95_ns": 6829167.0,
+            "samples": 1
+          },
+          "family": "embedding",
+          "name": "node_1",
+          "node_index": 1,
+          "op": "GET_ROWS",
+          "shape": [
+            8960,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 1321205760,
+              "name": "per_layer_token_embd.weight",
+              "shape": [
+                8960,
+                262144,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                5040,
+                1321205760,
+                1321205760
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 4,
+              "name": "leaf_4",
+              "shape": [
+                1,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                4,
+                4,
+                4
+              ],
+              "type": "i32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 5071329.0,
+            "median_ns": 5071329.0,
+            "minimum_ns": 5071329.0,
+            "p05_ns": 5071329.0,
+            "p95_ns": 5071329.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "Qcur_normed-1",
+          "node_index": 68,
+          "op": "MUL",
+          "shape": [
+            256,
+            8,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 8192,
+              "name": "norm-1",
+              "shape": [
+                256,
+                8,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1024,
+                8192,
+                8192
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 1024,
+              "name": "blk.1.attn_q_norm.weight",
+              "shape": [
+                256,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1024,
+                1024,
+                1024
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 4488500.0,
+            "median_ns": 4488500.0,
+            "minimum_ns": 4488500.0,
+            "p05_ns": 4488500.0,
+            "p95_ns": 4488500.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "ffn_norm-3",
+          "node_index": 193,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-3",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.3.ffn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 4323021.0,
+            "median_ns": 4323021.0,
+            "minimum_ns": 4323021.0,
+            "p05_ns": 4323021.0,
+            "p95_ns": 4323021.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "Qcur_normed-29",
+          "node_index": 1272,
+          "op": "MUL",
+          "shape": [
+            512,
+            8,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 16384,
+              "name": "norm-29",
+              "shape": [
+                512,
+                8,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                2048,
+                16384,
+                16384
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 2048,
+              "name": "blk.29.attn_q_norm.weight",
+              "shape": [
+                512,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                2048,
+                2048,
+                2048
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 4237151.0,
+            "median_ns": 4237151.0,
+            "minimum_ns": 4237151.0,
+            "p05_ns": 4237151.0,
+            "p95_ns": 4237151.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "ffn_norm-32",
+          "node_index": 1398,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-32",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.32.ffn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 4086004.0,
+            "median_ns": 4086004.0,
+            "minimum_ns": 4086004.0,
+            "p05_ns": 4086004.0,
+            "p95_ns": 4086004.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "ffn_norm-30",
+          "node_index": 1324,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-30",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.30.ffn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 4048134.0,
+            "median_ns": 4048134.0,
+            "minimum_ns": 4048134.0,
+            "p05_ns": 4048134.0,
+            "p95_ns": 4048134.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "Qcur_normed-2",
+          "node_index": 117,
+          "op": "MUL",
+          "shape": [
+            256,
+            8,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 8192,
+              "name": "norm-2",
+              "shape": [
+                256,
+                8,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1024,
+                8192,
+                8192
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 1024,
+              "name": "blk.2.attn_q_norm.weight",
+              "shape": [
+                256,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1024,
+                1024,
+                1024
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3706673.0,
+            "median_ns": 3706673.0,
+            "minimum_ns": 3706673.0,
+            "p05_ns": 3706673.0,
+            "p95_ns": 3706673.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-29",
+          "node_index": 1268,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-29",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.29.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3638137.0,
+            "median_ns": 3638137.0,
+            "minimum_ns": 3638137.0,
+            "p05_ns": 3638137.0,
+            "p95_ns": 3638137.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-3",
+          "node_index": 190,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-3",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.3.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3197178.0,
+            "median_ns": 3197178.0,
+            "minimum_ns": 3197178.0,
+            "p05_ns": 3197178.0,
+            "p95_ns": 3197178.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-3",
+          "node_index": 162,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-3",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.3.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3123770.0,
+            "median_ns": 3123770.0,
+            "minimum_ns": 3123770.0,
+            "p05_ns": 3123770.0,
+            "p95_ns": 3123770.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "ffn_norm-2",
+          "node_index": 144,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-2",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.2.ffn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3114456.0,
+            "median_ns": 3114456.0,
+            "minimum_ns": 3114456.0,
+            "p05_ns": 3114456.0,
+            "p95_ns": 3114456.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-1",
+          "node_index": 92,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-1",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.1.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 3079420.0,
+            "median_ns": 3079420.0,
+            "minimum_ns": 3079420.0,
+            "p05_ns": 3079420.0,
+            "p95_ns": 3079420.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-32",
+          "node_index": 1379,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-32",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.32.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2724922.0,
+            "median_ns": 2724922.0,
+            "minimum_ns": 2724922.0,
+            "p05_ns": 2724922.0,
+            "p95_ns": 2724922.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-30",
+          "node_index": 1305,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-30",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.30.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2637664.0,
+            "median_ns": 2637664.0,
+            "minimum_ns": 2637664.0,
+            "p05_ns": 2637664.0,
+            "p95_ns": 2637664.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-32",
+          "node_index": 1395,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-32",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.32.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2607312.0,
+            "median_ns": 2607312.0,
+            "minimum_ns": 2607312.0,
+            "p05_ns": 2607312.0,
+            "p95_ns": 2607312.0,
+            "samples": 1
+          },
+          "family": "swiglu",
+          "name": "ffn_geglu-0",
+          "node_index": 40,
+          "op": "GLU",
+          "shape": [
+            6144,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 24576,
+              "name": "ffn_gate-0",
+              "shape": [
+                6144,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                24576,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_up-0",
+              "shape": [
+                6144,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                24576,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2582071.0,
+            "median_ns": 2582071.0,
+            "minimum_ns": 2582071.0,
+            "p05_ns": 2582071.0,
+            "p95_ns": 2582071.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-29",
+          "node_index": 1284,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-29",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.29.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2369814.0,
+            "median_ns": 2369814.0,
+            "minimum_ns": 2369814.0,
+            "p05_ns": 2369814.0,
+            "p95_ns": 2369814.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-5",
+          "node_index": 288,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-5",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.5.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2332629.0,
+            "median_ns": 2332629.0,
+            "minimum_ns": 2332629.0,
+            "p05_ns": 2332629.0,
+            "p95_ns": 2332629.0,
+            "samples": 1
+          },
+          "family": "elementwise",
+          "name": "node_1494",
+          "node_index": 1494,
+          "op": "UNARY",
+          "shape": [
+            262144,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 1048576,
+              "name": "node_1493",
+              "shape": [
+                262144,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 2233556.0,
+            "median_ns": 2233556.0,
+            "minimum_ns": 2233556.0,
+            "p05_ns": 2233556.0,
+            "p95_ns": 2233556.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-31",
+          "node_index": 1342,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-31",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.31.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1935781.0,
+            "median_ns": 1935781.0,
+            "minimum_ns": 1935781.0,
+            "p05_ns": 1935781.0,
+            "p95_ns": 1935781.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "ffn_norm-22",
+          "node_index": 1028,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-22",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.22.ffn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1871725.0,
+            "median_ns": 1871725.0,
+            "minimum_ns": 1871725.0,
+            "p05_ns": 1871725.0,
+            "p95_ns": 1871725.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "per_layer_embd_out-31",
+          "node_index": 1375,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-31",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.31.post_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1778392.0,
+            "median_ns": 1778392.0,
+            "minimum_ns": 1778392.0,
+            "p05_ns": 1778392.0,
+            "p95_ns": 1778392.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_post_norm-6",
+          "node_index": 337,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-6",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.6.post_attention_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1243675.0,
+            "median_ns": 1243675.0,
+            "minimum_ns": 1243675.0,
+            "p05_ns": 1243675.0,
+            "p95_ns": 1243675.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "ffn_norm-6",
+          "node_index": 340,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-6",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.6.ffn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1063195.0,
+            "median_ns": 1063195.0,
+            "minimum_ns": 1063195.0,
+            "p05_ns": 1063195.0,
+            "p95_ns": 1063195.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-30",
+          "node_index": 1325,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-30",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1052269.0,
+            "median_ns": 1052269.0,
+            "minimum_ns": 1052269.0,
+            "p05_ns": 1052269.0,
+            "p95_ns": 1052269.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-30",
+          "node_index": 1326,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-30",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1038455.0,
+            "median_ns": 1038455.0,
+            "minimum_ns": 1038455.0,
+            "p05_ns": 1038455.0,
+            "p95_ns": 1038455.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-29",
+          "node_index": 1289,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.29.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-29",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1029936.0,
+            "median_ns": 1029936.0,
+            "minimum_ns": 1029936.0,
+            "p05_ns": 1029936.0,
+            "p95_ns": 1029936.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-31",
+          "node_index": 1363,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.31.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-31",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1028139.0,
+            "median_ns": 1028139.0,
+            "minimum_ns": 1028139.0,
+            "p05_ns": 1028139.0,
+            "p95_ns": 1028139.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-24",
+          "node_index": 1103,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-24",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1015825.0,
+            "median_ns": 1015825.0,
+            "minimum_ns": 1015825.0,
+            "p05_ns": 1015825.0,
+            "p95_ns": 1015825.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-31",
+          "node_index": 1362,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.31.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-31",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1013362.0,
+            "median_ns": 1013362.0,
+            "minimum_ns": 1013362.0,
+            "p05_ns": 1013362.0,
+            "p95_ns": 1013362.0,
+            "samples": 1
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-32",
+          "node_index": 1402,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.32.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-32",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1012085.0,
+            "median_ns": 1012085.0,
+            "minimum_ns": 1012085.0,
+            "p05_ns": 1012085.0,
+            "p95_ns": 1012085.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-33",
+          "node_index": 1437,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-33",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1011917.0,
+            "median_ns": 1011917.0,
+            "minimum_ns": 1011917.0,
+            "p05_ns": 1011917.0,
+            "p95_ns": 1011917.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-21",
+          "node_index": 992,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.21.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-21",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1010714.0,
+            "median_ns": 1010714.0,
+            "minimum_ns": 1010714.0,
+            "p05_ns": 1010714.0,
+            "p95_ns": 1010714.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-34",
+          "node_index": 1474,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.34.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-34",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1006807.0,
+            "median_ns": 1006807.0,
+            "minimum_ns": 1006807.0,
+            "p05_ns": 1006807.0,
+            "p95_ns": 1006807.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-26",
+          "node_index": 1177,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.26.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-26",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 1000529.0,
+            "median_ns": 1000529.0,
+            "minimum_ns": 1000529.0,
+            "p05_ns": 1000529.0,
+            "p95_ns": 1000529.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-24",
+          "node_index": 1104,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-24",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 995511.0,
+            "median_ns": 995511.0,
+            "minimum_ns": 995511.0,
+            "p05_ns": 995511.0,
+            "p95_ns": 995511.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-32",
+          "node_index": 1399,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.32.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-32",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 993233.0,
+            "median_ns": 993233.0,
+            "minimum_ns": 993233.0,
+            "p05_ns": 993233.0,
+            "p95_ns": 993233.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-23",
+          "node_index": 1067,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.23.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-23",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 987529.0,
+            "median_ns": 987529.0,
+            "minimum_ns": 987529.0,
+            "p05_ns": 987529.0,
+            "p95_ns": 987529.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-33",
+          "node_index": 1436,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-33",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 985047.0,
+            "median_ns": 985047.0,
+            "minimum_ns": 985047.0,
+            "p05_ns": 985047.0,
+            "p95_ns": 985047.0,
+            "samples": 1
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-29",
+          "node_index": 1288,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.29.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-29",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 0.0,
+            "maximum_ns": 973196.0,
+            "median_ns": 973196.0,
+            "minimum_ns": 973196.0,
+            "p05_ns": 973196.0,
+            "p95_ns": 973196.0,
+            "samples": 1
+          },
+          "family": "normalization",
+          "name": "attn_norm-6",
+          "node_index": 309,
+          "op": "MUL",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 6144,
+              "name": "norm-6",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            },
+            {
+              "bytes": 6144,
+              "name": "blk.6.attn_norm.weight",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-graph-profile-m1-smoke.json",
+      "sha256": "9fbb0a6a07c23a787d654fed1507b24a2d9c15e7b89cf498d7567b9e76c7d1d4"
+    }
+  ]
+}

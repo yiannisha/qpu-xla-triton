@@ -1,0 +1,532 @@
+{
+  "case_file": {
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/full-evaluation-cases.json",
+    "sha256": "29d306ba435086f72530b4f71fdb58a14863a13cb8b5ea38da3a5d53dd36f5de"
+  },
+  "created_utc": "2026-08-20T01:17:55+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-20T01:17:55+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400017408\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  1843986432  2713698304    47104000  4035362816  6610616320\nSwap:     2147467264    17825792  2129641472\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE     USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 17825792  100      \n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "temp=60.9'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960009536\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:55+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T01:17:55+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 61150,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-20T01:17:48+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400033792\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  1615265792  2942468096    47054848  4035280896  6839336960\nSwap:     2147467264    17825792  2129641472\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE     USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 17825792  100      \n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "temp=56.0'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960012800\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:17:48+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T01:17:48+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 55650,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "greedy_semantic_comparisons": [],
+  "kind": "llama-cpp-qpu-end-to-end-session",
+  "llama_cli": {
+    "path": "/home/yiannis/side/llama.cpp/build/bin/llama-cli",
+    "sha256": "ed2fedeb740f33f072a47eb487854d98d3396b251ca0f5472b17661a07aa327a"
+  },
+  "llama_server": {
+    "path": "/home/yiannis/side/llama.cpp/build/bin/llama-server",
+    "sha256": "f9531554b5f311b60aafc0a511304642350ba6048d6dc0d71702337e113190b0"
+  },
+  "measurement_contract": {
+    "cli_process_wall": "cold-start fallback surface including model load and initialization",
+    "separation": "startup and request/inference timings are never collapsed",
+    "server_request": "one /completion request after health readiness",
+    "server_startup": "cold model load and initialization through health readiness"
+  },
+  "model_hashes": {
+    "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889"
+  },
+  "results": [
+    {
+      "base_model_sha256": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889",
+      "case": {
+        "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "context_size": 8192,
+        "context_tokens_target": 0,
+        "flash_attention": true,
+        "mode": "prompt",
+        "model": "gemma-4-e2b",
+        "name": "gemma-prompt-p10-t2",
+        "placement": "cpu-only",
+        "predict_tokens": 0,
+        "prompt": "Explain photosynthesis in 300 words.",
+        "prompt_tokens_target": 10,
+        "seed": 1234,
+        "surface": "server",
+        "temperature": 0.0,
+        "threads": 2,
+        "threads_batch": 2
+      },
+      "draft_model_sha256": null,
+      "prompt_sha256": "c76ca9d99a70e57f4b255ea0b991274a2f5cf6d857cf81cffda0875ca6b881e7",
+      "samples": [
+        {
+          "command": [
+            "/home/yiannis/side/llama.cpp/build/bin/llama-server",
+            "--model",
+            "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+            "--threads",
+            "2",
+            "--threads-batch",
+            "2",
+            "--ctx-size",
+            "8192",
+            "--parallel",
+            "1",
+            "--flash-attn",
+            "on",
+            "--n-gpu-layers",
+            "0",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "42913",
+            "--log-verbosity",
+            "4",
+            "--spec-type",
+            "none"
+          ],
+          "content_sha256": "75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070",
+          "context_population": {
+            "prefill_response": null,
+            "prefill_tokens_cached": 0,
+            "prefill_wall_ns": null,
+            "prefix_token_count": 0,
+            "request_cache_n": 0,
+            "request_tokens_evaluated": 10,
+            "target_tokens": 0,
+            "valid": true
+          },
+          "error": null,
+          "finished_utc": "2026-08-20T01:17:55+00:00",
+          "metrics": {
+            "speculative": {},
+            "timings": {
+              "cache_n": 0,
+              "predicted_ms": 0.001,
+              "predicted_n": 1,
+              "predicted_per_second": 1000000.0,
+              "predicted_per_token_ms": 0.001,
+              "prompt_ms": 371.063,
+              "prompt_n": 10,
+              "prompt_per_second": 26.949601550141082,
+              "prompt_per_token_ms": 37.1063
+            }
+          },
+          "prompt_population": {
+            "request_token_count": 10,
+            "request_tokens_evaluated": 10,
+            "target_tokens": 10,
+            "timed_prompt_tokens": 10,
+            "valid": true
+          },
+          "request": {
+            "cache_prompt": false,
+            "n_predict": 0,
+            "prompt": [
+              2,
+              155122,
+              93036,
+              528,
+              236743,
+              236800,
+              236771,
+              236771,
+              4171,
+              236761
+            ],
+            "seed": 1234,
+            "temperature": 0.0
+          },
+          "request_wall_ns": 372265856,
+          "response": {
+            "content": "\n\n",
+            "generation_settings": {
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 8192,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 0,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 0,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 1234,
+              "speculative.types": "none,none",
+              "stop": [],
+              "stream": false,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 64,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": true,
+            "id_slot": 0,
+            "index": 0,
+            "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+            "prompt": "<bos>Explain photosynthesis in 300 words.",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 0,
+              "predicted_ms": 0.001,
+              "predicted_n": 1,
+              "predicted_per_second": 1000000.0,
+              "predicted_per_token_ms": 0.001,
+              "prompt_ms": 371.063,
+              "prompt_n": 10,
+              "prompt_per_second": 26.949601550141082,
+              "prompt_per_token_ms": 37.1063
+            },
+            "tokens": [],
+            "tokens_cached": 10,
+            "tokens_evaluated": 10,
+            "tokens_predicted": 1,
+            "truncated": false
+          },
+          "response_raw": "{\"index\":0,\"content\":\"\\n\\n\",\"tokens\":[],\"id_slot\":0,\"stop\":true,\"model\":\"/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf\",\"tokens_predicted\":1,\"tokens_evaluated\":10,\"generation_settings\":{\"seed\":1234,\"temperature\":0.0,\"dynatemp_range\":0.0,\"dynatemp_exponent\":1.0,\"top_k\":64,\"top_p\":0.949999988079071,\"min_p\":0.05000000074505806,\"top_n_sigma\":-1.0,\"xtc_probability\":0.0,\"xtc_threshold\":0.10000000149011612,\"typical_p\":1.0,\"repeat_last_n\":64,\"repeat_penalty\":1.0,\"presence_penalty\":0.0,\"frequency_penalty\":0.0,\"dry_multiplier\":0.0,\"dry_base\":1.75,\"dry_allowed_length\":2,\"dry_penalty_last_n\":8192,\"dry_sequence_breakers\":[\"\\n\",\":\",\"\\\"\",\"*\"],\"mirostat\":0,\"mirostat_tau\":5.0,\"mirostat_eta\":0.10000000149011612,\"stop\":[],\"max_tokens\":0,\"n_predict\":0,\"n_keep\":0,\"n_discard\":0,\"ignore_eos\":false,\"stream\":false,\"logit_bias\":[],\"n_probs\":0,\"min_keep\":0,\"grammar\":\"\",\"grammar_lazy\":false,\"grammar_triggers\":[],\"preserved_tokens\":[],\"chat_format\":\"Content-only\",\"reasoning_format\":\"deepseek\",\"reasoning_in_content\":false,\"generation_prompt\":\"\",\"samplers\":[\"penalties\",\"dry\",\"top_n_sigma\",\"top_k\",\"typ_p\",\"top_p\",\"min_p\",\"xtc\",\"temperature\"],\"speculative.types\":\"none,none\",\"timings_per_token\":false,\"post_sampling_probs\":false,\"backend_sampling\":false,\"lora\":[]},\"prompt\":\"<bos>Explain photosynthesis in 300 words.\",\"has_new_line\":true,\"truncated\":false,\"stop_type\":\"limit\",\"stopping_word\":\"\",\"tokens_cached\":10,\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":371.063,\"prompt_per_token_ms\":37.1063,\"prompt_per_second\":26.949601550141082,\"predicted_n\":1,\"predicted_ms\":0.001,\"predicted_per_token_ms\":0.001,\"predicted_per_second\":1000000.0}}",
+          "returncode": 0,
+          "sample_index": 0,
+          "server_exit_after_termination": 0,
+          "server_log": "warning: no usable GPU found, --gpu-layers option will be ignored\nwarning: one possible reason is that llama.cpp was compiled without GPU support\nwarning: consult docs/build.md for compilation instructions\n0.00.002.873 I cmn  common_param: common_params_print_info: build 10073 (91d2fc387) with GNU 14.2.0 for Linux aarch64\n0.00.002.876 I cmn  common_param: common_params_print_info: verbosity = 4 (adjust with the `-lv N` CLI arg)\n0.00.002.877 I cmn  common_param: device_info:\n0.00.002.892 I cmn  common_param:   - CPU     : CPU (8062 MiB, 8062 MiB free)\n0.00.002.972 I cmn  common_param: system_info: n_threads = 2 (n_threads_batch = 2) / 4 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | \n0.00.003.029 I srv          init: running without SSL\n0.00.003.101 I srv          init: using 5 threads for HTTP server\n0.00.003.528 W srv  llama_server: -----------------\n0.00.003.530 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set\n0.00.003.530 W srv  llama_server: this can be a security risk (cross-origin attacks)\n0.00.003.531 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655\n0.00.003.531 W srv  llama_server: -----------------\n0.00.003.554 I srv         start: binding port with default address family\n0.00.004.759 I srv    load_model: loading model '/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf'\n0.00.004.761 I srv    load_model: local path '/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf'\n0.00.004.775 I cmn  common_init_: fitting params to device memory ...\n0.00.004.777 I cmn  common_init_: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)\n0.00.004.784 I common_params_fit_impl: getting device memory data for initial parameters:\n0.01.047.423 I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |\n0.01.047.456 I common_memory_breakdown_print: |   - Host               |                 1655 =  1477 +      60 +     118                |\n0.01.047.457 I common_memory_breakdown_print: |   - CPU_REPACK         |                 1222 =  1222 +       0 +       0                |\n0.01.236.693 I common_params_fit_impl: projected to use 1655 MiB of host memory vs. 8062 MiB of total host memory\n0.01.236.702 I common_params_fit_impl: will leave 6407 >= 1024 MiB of system memory, no changes needed\n0.01.236.703 I common_fit_params: successfully fit params to free device memory\n0.01.236.708 I common_fit_params: fitting params to free memory took 1.23 seconds\n0.01.364.468 I llama_model_loader: loaded meta data with 47 key-value pairs and 541 tensors from /home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf (version GGUF V3 (latest))\n0.01.364.493 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.\n0.01.364.498 I llama_model_loader: - kv   0:                       general.architecture str              = gemma4\n0.01.364.499 I llama_model_loader: - kv   1:                               general.type str              = model\n0.01.364.500 I llama_model_loader: - kv   2:                     general.sampling.top_k i32              = 64\n0.01.364.506 I llama_model_loader: - kv   3:                     general.sampling.top_p f32              = 0.950000\n0.01.364.508 I llama_model_loader: - kv   4:                      general.sampling.temp f32              = 1.000000\n0.01.364.509 I llama_model_loader: - kv   5:                         general.size_label str              = 4.6B\n0.01.364.510 I llama_model_loader: - kv   6:                         gemma4.block_count u32              = 35\n0.01.364.511 I llama_model_loader: - kv   7:                      gemma4.context_length u32              = 131072\n0.01.364.511 I llama_model_loader: - kv   8:                    gemma4.embedding_length u32              = 1536\n0.01.364.525 I llama_model_loader: - kv   9:                 gemma4.feed_forward_length arr[i32,35]      = [6144, 6144, 6144, 6144, 6144, 6144, ...\n0.01.364.526 I llama_model_loader: - kv  10:                gemma4.attention.head_count u32              = 8\n0.01.364.527 I llama_model_loader: - kv  11:             gemma4.attention.head_count_kv u32              = 1\n0.01.364.530 I llama_model_loader: - kv  12:                      gemma4.rope.freq_base f32              = 1000000.000000\n0.01.364.531 I llama_model_loader: - kv  13:                  gemma4.rope.freq_base_swa f32              = 10000.000000\n0.01.364.532 I llama_model_loader: - kv  14:    gemma4.attention.layer_norm_rms_epsilon f32              = 0.000001\n0.01.364.533 I llama_model_loader: - kv  15:                gemma4.attention.key_length u32              = 512\n0.01.364.533 I llama_model_loader: - kv  16:              gemma4.attention.value_length u32              = 512\n0.01.364.534 I llama_model_loader: - kv  17:             gemma4.final_logit_softcapping f32              = 30.000000\n0.01.364.535 I llama_model_loader: - kv  18:            gemma4.attention.sliding_window u32              = 512\n0.01.364.535 I llama_model_loader: - kv  19:          gemma4.attention.shared_kv_layers u32              = 20\n0.01.364.536 I llama_model_loader: - kv  20:    gemma4.embedding_length_per_layer_input u32              = 256\n0.01.364.540 I llama_model_loader: - kv  21:    gemma4.attention.sliding_window_pattern arr[bool,35]     = [true, true, true, true, false, true,...\n0.01.364.541 I llama_model_loader: - kv  22:            gemma4.attention.key_length_swa u32              = 256\n0.01.364.542 I llama_model_loader: - kv  23:          gemma4.attention.value_length_swa u32              = 256\n0.01.364.542 I llama_model_loader: - kv  24:                gemma4.rope.dimension_count u32              = 512\n0.01.364.543 I llama_model_loader: - kv  25:            gemma4.rope.dimension_count_swa u32              = 256\n0.01.364.544 I llama_model_loader: - kv  26:                       tokenizer.ggml.model str              = gemma4\n0.01.408.085 I llama_model_loader: - kv  27:                      tokenizer.ggml.tokens arr[str,262144]  = [\"<pad>\", \"<eos>\", \"<bos>\", \"<unk>\", ...\n0.01.505.653 I llama_model_loader: - kv  28:                      tokenizer.ggml.scores arr[f32,262144]  = [-1000.000000, -1000.000000, -1000.00...\n0.01.518.700 I llama_model_loader: - kv  29:                  tokenizer.ggml.token_type arr[i32,262144]  = [3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, ...\n0.01.604.837 I llama_model_loader: - kv  30:                      tokenizer.ggml.merges arr[str,514906]  = [\"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n \\n\", ...\n0.01.604.844 I llama_model_loader: - kv  31:                tokenizer.ggml.bos_token_id u32              = 2\n0.01.604.844 I llama_model_loader: - kv  32:                tokenizer.ggml.eos_token_id u32              = 1\n0.01.604.846 I llama_model_loader: - kv  33:            tokenizer.ggml.unknown_token_id u32              = 3\n0.01.604.846 I llama_model_loader: - kv  34:            tokenizer.ggml.padding_token_id u32              = 0\n0.01.604.847 I llama_model_loader: - kv  35:               tokenizer.ggml.mask_token_id u32              = 4\n0.01.604.848 I llama_model_loader: - kv  36:            tokenizer.ggml.add_space_prefix bool             = false\n0.01.604.849 I llama_model_loader: - kv  37:               tokenizer.ggml.add_bos_token bool             = true\n0.01.604.850 I llama_model_loader: - kv  38:                          general.file_type u32              = 2\n0.01.604.851 I llama_model_loader: - kv  39:                tokenizer.ggml.eot_token_id u32              = 106\n0.01.604.852 I llama_model_loader: - kv  40:                       general.quantized_by str              = unsloth\n0.01.604.854 I llama_model_loader: - kv  41:                           general.basename str              = gemma-4-E2B-it\n0.01.604.856 I llama_model_loader: - kv  42:                               general.name str              = Gemma-4 E2B IT (smart Q4_0, QAT-lossl...\n0.01.604.857 I llama_model_loader: - kv  43:                           general.finetune str              = qat-it\n0.01.604.858 I llama_model_loader: - kv  44:                            general.license str              = gemma\n0.01.604.859 I llama_model_loader: - kv  45:               general.quantization_version u32              = 2\n0.01.604.864 I llama_model_loader: - kv  46:                    tokenizer.chat_template str              = {%- macro format_parameters(propertie...\n0.01.604.866 I llama_model_loader: - type  f32:  263 tensors\n0.01.604.867 I llama_model_loader: - type q4_0:  278 tensors\n0.01.604.869 I print_info: file format = GGUF V3 (latest)\n0.01.604.870 I print_info: file type   = Q4_0\n0.01.604.873 I print_info: file size   = 2.43 GiB (4.50 BPW) \n0.02.139.921 I load: 0 unused tokens\n0.02.164.472 W load: control-looking token:    212 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden\n0.02.165.286 W load: control-looking token:     50 '<|tool_response>' was not control-type; this is probably a bug in the model. its type will be overridden\n0.02.217.896 I load: printing all EOG tokens:\n0.02.217.900 I load:   - 1 ('<eos>')\n0.02.217.901 I load:   - 50 ('<|tool_response>')\n0.02.217.902 I load:   - 106 ('<turn|>')\n0.02.217.902 I load:   - 212 ('</s>')\n0.02.217.905 W load: special_eog_ids contains '<|tool_response>', removing '</s>' token from EOG list\n0.02.218.655 I load: special tokens cache size = 24\n0.02.263.846 I load: token to piece cache size = 1.9445 MB\n0.02.263.871 I print_info: arch                  = gemma4\n0.02.263.872 I print_info: vocab_only            = 0\n0.02.263.872 I print_info: no_alloc              = 0\n0.02.263.873 I print_info: n_ctx_train           = 131072\n0.02.263.875 I print_info: n_embd_inp            = 1536\n0.02.263.875 I print_info: n_embd                = 1536\n0.02.263.876 I print_info: n_embd_out            = 1536\n0.02.263.876 I print_info: n_layer               = 35\n0.02.263.877 I print_info: n_layer_all           = 35\n0.02.263.886 I print_info: n_head                = 8\n0.02.263.888 I print_info: n_head_kv             = 1\n0.02.263.888 I print_info: n_rot                 = 512\n0.02.263.889 I print_info: n_swa                 = 512\n0.02.263.890 I print_info: is_swa_any            = 1\n0.02.263.890 I print_info: n_embd_head_k         = 512\n0.02.263.890 I print_info: n_embd_head_v         = 512\n0.02.263.891 I print_info: n_gqa                 = 8\n0.02.263.899 I print_info: n_embd_k_gqa          = [256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512]\n0.02.263.903 I print_info: n_embd_v_gqa          = [256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512]\n0.02.263.904 I print_info: f_norm_eps            = 0.0e+00\n0.02.263.906 I print_info: f_norm_rms_eps        = 1.0e-06\n0.02.263.906 I print_info: f_clamp_kqv           = 0.0e+00\n0.02.263.907 I print_info: f_max_alibi_bias      = 0.0e+00\n0.02.263.907 I print_info: f_logit_scale         = 0.0e+00\n0.02.263.907 I print_info: f_attn_scale          = 1.0e+00\n0.02.263.908 I print_info: f_attn_value_scale    = 0.0000\n0.02.263.918 I print_info: n_ff                  = [6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288]\n0.02.263.918 I print_info: n_expert              = 0\n0.02.263.918 I print_info: n_expert_used         = 0\n0.02.263.919 I print_info: n_expert_groups       = 0\n0.02.263.919 I print_info: n_group_used          = 0\n0.02.263.920 I print_info: causal attn           = 1\n0.02.263.920 I print_info: pooling type          = -1\n0.02.263.920 I print_info: rope type             = 2\n0.02.263.921 I print_info: rope scaling          = linear\n0.02.263.922 I print_info: freq_base_train       = 1000000.0\n0.02.263.923 I print_info: freq_scale_train      = 1\n0.02.263.924 I print_info: freq_base_swa         = 10000.0\n0.02.263.924 I print_info: freq_scale_swa        = 1\n0.02.263.924 I print_info: n_embd_head_k_swa     = 256\n0.02.263.925 I print_info: n_embd_head_v_swa     = 256\n0.02.263.925 I print_info: n_rot_swa             = 256\n0.02.263.926 I print_info: n_ctx_orig_yarn       = 131072\n0.02.263.926 I print_info: rope_yarn_log_mul     = 0.0000\n0.02.263.926 I print_info: rope_finetuned        = unknown\n0.02.263.928 I print_info: model type            = E2B\n0.02.263.928 I print_info: model params          = 4.63 B\n0.02.263.929 I print_info: general.name          = Gemma-4 E2B IT (smart Q4_0, QAT-lossless)\n0.02.263.930 I print_info: vocab type            = BPE\n0.02.263.931 I print_info: n_vocab               = 262144\n0.02.263.931 I print_info: n_merges              = 514906\n0.02.263.932 I print_info: BOS token             = 2 '<bos>'\n0.02.263.932 I print_info: EOS token             = 1 '<eos>'\n0.02.263.933 I print_info: EOT token             = 106 '<turn|>'\n0.02.263.933 I print_info: UNK token             = 3 '<unk>'\n0.02.263.934 I print_info: PAD token             = 0 '<pad>'\n0.02.263.934 I print_info: MASK token            = 4 '<mask>'\n0.02.263.935 I print_info: LF token              = 107 '\n'\n0.02.263.935 I print_info: EOG token             = 1 '<eos>'\n0.02.263.936 I print_info: EOG token             = 50 '<|tool_response>'\n0.02.263.937 I print_info: EOG token             = 106 '<turn|>'\n0.02.263.937 I print_info: max token length      = 93\n0.02.263.938 I load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)\n0.02.309.681 I load_tensors:   CPU_Mapped model buffer size =  2483.69 MiB\n0.02.309.687 I load_tensors:   CPU_REPACK model buffer size =  1222.80 MiB\n0.02.978.702 I cmn  common_init_: added <eos> logit bias = -inf\n0.02.978.711 I cmn  common_init_: added <|tool_response> logit bias = -inf\n0.02.978.713 I cmn  common_init_: added <turn|> logit bias = -inf\n0.02.982.019 I llama_context: constructing llama_context\n0.02.982.025 I llama_context: n_seq_max     = 1\n0.02.982.025 I llama_context: n_ctx         = 8192\n0.02.982.026 I llama_context: n_ctx_seq     = 8192\n0.02.982.027 I llama_context: n_batch       = 2048\n0.02.982.027 I llama_context: n_ubatch      = 512\n0.02.982.027 I llama_context: causal_attn   = 1\n0.02.982.028 I llama_context: flash_attn    = enabled\n0.02.982.028 I llama_context: kv_unified    = false\n0.02.982.033 I llama_context: freq_base     = 1000000.0\n0.02.982.034 I llama_context: freq_scale    = 1\n0.02.982.035 I llama_context: n_rs_seq      = 0\n0.02.982.036 I llama_context: n_outputs_max = 1\n0.02.982.037 I llama_context: n_ctx_seq (8192) < n_ctx_train (131072) -- the full capacity of the model will not be utilized\n0.02.982.124 I llama_context:        CPU  output buffer size =     1.00 MiB\n0.02.982.129 I llama_kv_cache_iswa: creating non-SWA KV cache, size = 8192 cells\n0.02.982.320 I llama_kv_cache:        CPU KV buffer size =    48.00 MiB\n0.02.991.337 I llama_kv_cache: size =   48.00 MiB (  8192 cells,   3 layers,  1/1 seqs), K (f16):   24.00 MiB, V (f16):   24.00 MiB\n0.02.991.345 I llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 512\n0.02.991.345 I llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 512\n0.02.991.348 I llama_kv_cache_iswa: creating     SWA KV cache, size = 1024 cells\n0.02.991.428 I llama_kv_cache:        CPU KV buffer size =    12.00 MiB\n0.02.992.742 I llama_kv_cache: size =   12.00 MiB (  1024 cells,  12 layers,  1/1 seqs), K (f16):    6.00 MiB, V (f16):    6.00 MiB\n0.02.992.743 I llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 256\n0.02.992.744 I llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 256\n0.02.992.748 I sched_reserve: reserving ...\n0.02.993.648 I resolve_fused_ops: resolving fused Gated Delta Net support:\n0.02.994.660 I resolve_fused_ops: fused Gated Delta Net (autoregressive) enabled\n0.02.995.303 I resolve_fused_ops: fused Gated Delta Net (chunked) enabled\n0.02.995.305 I resolve_fused_ops: resolving fused Lightning Indexer support:\n0.02.995.930 I resolve_fused_ops: Lightning Indexer enabled\n0.02.995.932 I resolve_fused_ops: resolving fused DeepSeek V4 HC support:\n0.02.996.569 I resolve_fused_ops: fused DeepSeek V4 HC pre enabled\n0.02.997.192 I resolve_fused_ops: fused DeepSeek V4 HC comb enabled\n0.02.997.813 I resolve_fused_ops: fused DeepSeek V4 HC post enabled\n0.03.001.077 I sched_reserve:        CPU compute buffer size =   118.52 MiB\n0.03.001.081 I sched_reserve: graph nodes  = 1496\n0.03.001.081 I sched_reserve: graph splits = 1\n0.03.001.082 I sched_reserve: reserve took 8.33 ms, sched copies = 1\n0.03.001.320 I cmn  common_init_: warming up the model with an empty run - please wait ... (--no-warmup to disable)\n0.03.357.068 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 8192, kv_unified = 'false'\n0.03.357.080 I spec common_specu: no implementations specified for speculative decoding\n0.03.357.081 I slot   load_model: id  0 | task -1 | new slot, n_ctx = 8192\n0.03.357.176 I srv    load_model: prompt cache is enabled, size limit: 8192 MiB\n0.03.357.178 I srv    load_model: use `--cache-ram 0` to disable the prompt cache\n0.03.357.178 I srv    load_model: for more info see https://github.com/ggml-org/llama.cpp/pull/16391\n0.03.357.179 I srv    load_model: context checkpoints enabled, max = 32, min spacing = 8192\n0.03.357.214 I srv          init: idle slots will be saved to prompt cache upon starting a new task\n0.03.371.654 I srv          init: init: chat template, example_format: '<|turn>system\n<|think|>\nYou are a helpful assistant<turn|>\n<|turn>user\nHello<turn|>\n<|turn>model\nHi there<turn|>\n<|turn>user\nHow are you?<turn|>\n<|turn>model\n'\n0.03.373.045 I srv          init: init: chat template, thinking = 1\n0.03.373.099 I srv  llama_server: model loaded\n0.03.373.104 I srv  llama_server: listening on http://127.0.0.1:42913\n0.03.373.109 I srv  update_slots: all slots are idle\n0.03.524.206 I srv  server_strea: conv_id= (empty=1)\n0.03.524.322 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1\n0.03.524.324 I srv  get_availabl: updating prompt cache\n0.03.524.329 I srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000\n0.03.524.335 I srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 8192 tokens, 8589934592 est)\n0.03.524.336 I srv  get_availabl: prompt cache update took 0.01 ms\n0.03.524.367 I slot launch_slot_: id  0 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist \n0.03.524.378 I slot launch_slot_: id  0 | task -1 | sampler params: \n\trepeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000\n\tdry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 8192\n\ttop_k = 64, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000\n\tmirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900\n0.03.524.380 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0\n0.03.524.392 I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 8192, n_keep = 0, task.n_tokens = 10\n0.03.524.396 I slot   operator(): id  0 | task 0 | cached n_tokens = 0, memory_seq_rm [0, end)\n0.03.745.776 I slot   operator(): id  0 | task 0 | cached n_tokens = 6, memory_seq_rm [6, end)\n0.03.745.822 I slot init_sampler: id  0 | task 0 | init sampler, took 0.01 ms, tokens: text = 10, total = 10\n0.03.745.894 I slot create_check: id  0 | task 0 | created context checkpoint 1 of 32 (pos_min = 0, pos_max = 5, n_tokens = 6, size = 0.071 MiB)\n0.03.895.486 I slot print_timing: id  0 | task 0 | prompt eval time =     371.06 ms /    10 tokens (   37.11 ms per token,    26.95 tokens per second)\n0.03.895.496 I slot print_timing: id  0 | task 0 |        eval time =       0.00 ms /     1 tokens (    0.00 ms per token, 1000000.00 tokens per second)\n0.03.895.497 I slot print_timing: id  0 | task 0 |       total time =     371.06 ms /    11 tokens\n0.03.895.502 I slot print_timing: id  0 | task 0 |    graphs reused =          1\n0.03.895.555 I slot      release: id  0 | task 0 | stop processing: n_tokens = 10, truncated = 0\n0.03.895.570 I srv  update_slots: all slots are idle\n0.03.896.261 I srv    operator(): operator(): cleaning up before exit...\n0.03.896.575 I common_memory_breakdown_print: | memory breakdown [MiB] | total   free    self   model   context   compute    unaccounted |\n0.03.896.577 I common_memory_breakdown_print: |   - Host               |                 2662 =  2483 +      60 +     118                |\n0.03.896.577 I common_memory_breakdown_print: |   - CPU_REPACK         |                 1222 =  1222 +       0 +       0                |\n",
+          "started_utc": "2026-08-20T01:17:51+00:00",
+          "startup_ns": 3529986454,
+          "surface": "llama-server-/completion"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "session_id": "exact-prompt-10-smoke",
+  "validation": {
+    "rejection_reasons": [
+      "CPU governors were ['ondemand']"
+    ],
+    "retained": false
+  }
+}

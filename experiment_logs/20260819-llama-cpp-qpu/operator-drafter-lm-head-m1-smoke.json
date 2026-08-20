@@ -1,0 +1,1630 @@
+{
+  "configuration": {
+    "bootstrap_resamples": 500,
+    "cpu_threads": [
+      2,
+      3,
+      4
+    ],
+    "quick": true,
+    "rows": [
+      1
+    ],
+    "samples": 3,
+    "seed": 4400,
+    "tensor_names": [
+      "token_embd.weight"
+    ],
+    "warmups": 1
+  },
+  "created_utc": "2026-08-20T01:41:03+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-20T01:41:03+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400020480\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  5408243712  1144766464    74678272  2067628032  3046359040\nSwap:     2147467264  2146926592      540672\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2146910208  100      \n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "temp=60.9'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960012800\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:03+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T01:41:03+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 60050,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-20T01:41:01+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400023808\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  5042601984  1547730944    36913152  1993015296  3412000768\nSwap:     2147467264  2146926592      540672\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2146926592  100      \n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "temp=59.8'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960006208\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:41:01+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T01:41:01+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 57850,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "fixtures": [
+    {
+      "activation_f32": {
+        "bytes": 1024,
+        "path": null,
+        "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+      },
+      "input_columns": 256,
+      "output_columns": 262144,
+      "rows": 1,
+      "seed": 4401,
+      "tensor_name": "token_embd.weight",
+      "weight": {
+        "bytes": 37748736,
+        "model_file_offset": 15787200,
+        "path": null,
+        "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+      }
+    }
+  ],
+  "kind": "llama-cpp-qpu-native-operator-session",
+  "manifest": {
+    "model_sha256": "586f2460b909008640981ec34060aa864e03c144fbabfb3173c4335087e4aae0",
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-mtp-gguf-manifest.json",
+    "sha256": "014e9c8e0112cb807eeb5b97e6319b7513a4bcc6d6180481c8e86da8271b396b"
+  },
+  "native_benchmark": {
+    "path": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+    "sha256": "dd337b4c856465f509e9cbc499227da2009657b8ef88d46d7c9912eff14431ab"
+  },
+  "raw_commands": [
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "cpu",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "262144",
+        "--qpu-column-count",
+        "0",
+        "--cpu-threads",
+        "2",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"cpu\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":2,\"qpu_column_start\":262144,\"qpu_column_count\":0,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":0,\"resident_bytes\":0,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[4882697,4344574,4354204],\"quantize_ns\":[1111,1463,1482],\"qpu_input_copy_ns\":[0,0,0],\"qpu_submit_wait_ns\":[0,0,0],\"qpu_output_copy_ns\":[0,0,0],\"correctness\":{\"max_absolute\":0,\"max_relative\":0,\"mean_absolute\":0,\"p99_absolute\":0,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":0,\"worst_reference\":0,\"worst_actual\":0}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "cpu",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "262144",
+        "--qpu-column-count",
+        "0",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"cpu\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":262144,\"qpu_column_count\":0,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":0,\"resident_bytes\":0,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[5966942,5956684,5951777],\"quantize_ns\":[1111,1685,2334],\"qpu_input_copy_ns\":[0,0,0],\"qpu_submit_wait_ns\":[0,0,0],\"qpu_output_copy_ns\":[0,0,0],\"correctness\":{\"max_absolute\":0,\"max_relative\":0,\"mean_absolute\":0,\"p99_absolute\":0,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":0,\"worst_reference\":0,\"worst_actual\":0}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "cpu",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "262144",
+        "--qpu-column-count",
+        "0",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"cpu\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":4,\"qpu_column_start\":262144,\"qpu_column_count\":0,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":0,\"resident_bytes\":0,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[6377030,6419177,5020696],\"quantize_ns\":[1352,1592,1649],\"qpu_input_copy_ns\":[0,0,0],\"qpu_submit_wait_ns\":[0,0,0],\"qpu_output_copy_ns\":[0,0,0],\"correctness\":{\"max_absolute\":0,\"max_relative\":0,\"mean_absolute\":0,\"p99_absolute\":0,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":0,\"worst_reference\":0,\"worst_actual\":0}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "qpu",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "0",
+        "--qpu-column-count",
+        "262144",
+        "--cpu-threads",
+        "2",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"qpu\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":2,\"qpu_column_start\":0,\"qpu_column_count\":262144,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":17288263,\"resident_bytes\":41944128,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[38033555,37972741,37824354],\"quantize_ns\":[1241,1166,889],\"qpu_input_copy_ns\":[574,185,185],\"qpu_submit_wait_ns\":[37353619,37326489,37175103],\"qpu_output_copy_ns\":[677213,644214,647677],\"correctness\":{\"max_absolute\":4.76837158203125e-07,\"max_relative\":0.020408163265306121,\"mean_absolute\":3.878840626470037e-08,\"p99_absolute\":1.3411045074462891e-07,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":8851,\"worst_reference\":-2.23166037,\"worst_actual\":-2.23165989}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "131072",
+        "--qpu-column-count",
+        "131072",
+        "--cpu-threads",
+        "2",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":2,\"qpu_column_start\":131072,\"qpu_column_count\":131072,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":8593835,\"resident_bytes\":20972608,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[20192688,21243768,21208491],\"quantize_ns\":[1444,1426,1223],\"qpu_input_copy_ns\":[408,426,426],\"qpu_submit_wait_ns\":[19767416,20893865,20860587],\"qpu_output_copy_ns\":[418865,338384,341255],\"correctness\":{\"max_absolute\":3.5762786865234375e-07,\"max_relative\":0.020408163265306121,\"mean_absolute\":1.9127537775887049e-08,\"p99_absolute\":1.1920928955078125e-07,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":176814,\"worst_reference\":-1.33011246,\"worst_actual\":-1.33011281}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "131072",
+        "--qpu-column-count",
+        "131072",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":131072,\"qpu_column_count\":131072,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":8577558,\"resident_bytes\":20972608,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[20884476,20729441,20775866],\"quantize_ns\":[1445,1296,1259],\"qpu_input_copy_ns\":[333,277,389],\"qpu_submit_wait_ns\":[20444259,20289446,20350890],\"qpu_output_copy_ns\":[431717,433198,417457],\"correctness\":{\"max_absolute\":3.5762786865234375e-07,\"max_relative\":0.020408163265306121,\"mean_absolute\":1.9127537775887049e-08,\"p99_absolute\":1.1920928955078125e-07,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":176814,\"worst_reference\":-1.33011246,\"worst_actual\":-1.33011281}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-fixtures-lfewe4vf/token_embd-weight.m1.f32.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "131072",
+        "--qpu-column-count",
+        "131072",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":4,\"qpu_column_start\":131072,\"qpu_column_count\":131072,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":8790388,\"resident_bytes\":20972608,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[20022265,20614924,20487981],\"quantize_ns\":[1333,1574,1277],\"qpu_input_copy_ns\":[445,278,463],\"qpu_submit_wait_ns\":[19655881,20251447,20143412],\"qpu_output_copy_ns\":[357865,355903,337885],\"correctness\":{\"max_absolute\":3.5762786865234375e-07,\"max_relative\":0.020408163265306121,\"mean_absolute\":1.9127537775887049e-08,\"p99_absolute\":1.1920928955078125e-07,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":176814,\"worst_reference\":-1.33011246,\"worst_actual\":-1.33011281}}\n"
+    }
+  ],
+  "records": [
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          4882697,
+          4344574,
+          4354204
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 0,
+          "max_relative": 0,
+          "mean_absolute": 0,
+          "nan_count": 0,
+          "p99_absolute": 0,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": 0,
+          "worst_column": 0,
+          "worst_reference": 0,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 2,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "cpu",
+        "output_columns": 262144,
+        "prepare_ns": 0,
+        "qpu_column_count": 0,
+        "qpu_column_start": 262144,
+        "qpu_input_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_output_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_submit_wait_ns": [
+          0,
+          0,
+          0
+        ],
+        "quantize_ns": [
+          1111,
+          1463,
+          1482
+        ],
+        "resident_bytes": 0,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 9630.0,
+            "median_ns": 4354204.0,
+            "p05_ns": 4345537.0,
+            "p95_ns": 4829847.7,
+            "throughput_per_second": 229.66310260153176
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 19.0,
+            "median_ns": 1463.0,
+            "p05_ns": 1146.2,
+            "p95_ns": 1480.1,
+            "throughput_per_second": 683526.999316473
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          5966942,
+          5956684,
+          5951777
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 0,
+          "max_relative": 0,
+          "mean_absolute": 0,
+          "nan_count": 0,
+          "p99_absolute": 0,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": 0,
+          "worst_column": 0,
+          "worst_reference": 0,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "cpu",
+        "output_columns": 262144,
+        "prepare_ns": 0,
+        "qpu_column_count": 0,
+        "qpu_column_start": 262144,
+        "qpu_input_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_output_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_submit_wait_ns": [
+          0,
+          0,
+          0
+        ],
+        "quantize_ns": [
+          1111,
+          1685,
+          2334
+        ],
+        "resident_bytes": 0,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 4907.0,
+            "median_ns": 5956684.0,
+            "p05_ns": 5952267.7,
+            "p95_ns": 5965916.2,
+            "throughput_per_second": 167.8786385176719
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 574.0,
+            "median_ns": 1685.0,
+            "p05_ns": 1168.4,
+            "p95_ns": 2269.1,
+            "throughput_per_second": 593471.8100890208
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          6377030,
+          6419177,
+          5020696
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 0,
+          "max_relative": 0,
+          "mean_absolute": 0,
+          "nan_count": 0,
+          "p99_absolute": 0,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": 0,
+          "worst_column": 0,
+          "worst_reference": 0,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 4,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "cpu",
+        "output_columns": 262144,
+        "prepare_ns": 0,
+        "qpu_column_count": 0,
+        "qpu_column_start": 262144,
+        "qpu_input_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_output_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_submit_wait_ns": [
+          0,
+          0,
+          0
+        ],
+        "quantize_ns": [
+          1352,
+          1592,
+          1649
+        ],
+        "resident_bytes": 0,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 42147.0,
+            "median_ns": 6377030.0,
+            "p05_ns": 5156329.4,
+            "p95_ns": 6414962.3,
+            "throughput_per_second": 156.81281097940578
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 57.0,
+            "median_ns": 1592.0,
+            "p05_ns": 1376.0,
+            "p95_ns": 1643.3,
+            "throughput_per_second": 628140.703517588
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          38033555,
+          37972741,
+          37824354
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 4.76837158203125e-07,
+          "max_relative": 0.02040816326530612,
+          "mean_absolute": 3.878840626470037e-08,
+          "nan_count": 0,
+          "p99_absolute": 1.341104507446289e-07,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -2.23165989,
+          "worst_column": 8851,
+          "worst_reference": -2.23166037,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 2,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "qpu",
+        "output_columns": 262144,
+        "prepare_ns": 17288263,
+        "qpu_column_count": 262144,
+        "qpu_column_start": 0,
+        "qpu_input_copy_ns": [
+          574,
+          185,
+          185
+        ],
+        "qpu_output_copy_ns": [
+          677213,
+          644214,
+          647677
+        ],
+        "qpu_submit_wait_ns": [
+          37353619,
+          37326489,
+          37175103
+        ],
+        "quantize_ns": [
+          1241,
+          1166,
+          889
+        ],
+        "resident_bytes": 41944128,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "speedup_vs_fastest_cpu": {
+          "bootstrap_95_high": 0.12908870829624744,
+          "bootstrap_95_low": 0.11423002661728571,
+          "median_speedup": 0.11466657094888147,
+          "resamples": 500,
+          "seed": 14401
+        },
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 60814.0,
+            "median_ns": 37972741.0,
+            "p05_ns": 37839192.7,
+            "p95_ns": 38027473.6,
+            "throughput_per_second": 26.334680448798785
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 185.0,
+            "p05_ns": 185.0,
+            "p95_ns": 535.0999999999999,
+            "throughput_per_second": 5405405.405405405
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 3463.0,
+            "median_ns": 647677.0,
+            "p05_ns": 644560.3,
+            "p95_ns": 674259.4,
+            "throughput_per_second": 1543.979483600622
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 27130.0,
+            "median_ns": 37326489.0,
+            "p05_ns": 37190241.6,
+            "p95_ns": 37350906.0,
+            "throughput_per_second": 26.790625820714077
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 75.0,
+            "median_ns": 1166.0,
+            "p05_ns": 916.7,
+            "p95_ns": 1233.5,
+            "throughput_per_second": 857632.9331046313
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          20192688,
+          21243768,
+          21208491
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 3.5762786865234375e-07,
+          "max_relative": 0.02040816326530612,
+          "mean_absolute": 1.912753777588705e-08,
+          "nan_count": 0,
+          "p99_absolute": 1.1920928955078125e-07,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -1.33011281,
+          "worst_column": 176814,
+          "worst_reference": -1.33011246,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 2,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_columns": 262144,
+        "partition": {
+          "actual_qpu_fraction": 0.5,
+          "qpu_column_count": 131072,
+          "qpu_column_start": 131072,
+          "requested_denominator": 12,
+          "requested_numerator": 6
+        },
+        "prepare_ns": 8593835,
+        "qpu_column_count": 131072,
+        "qpu_column_start": 131072,
+        "qpu_input_copy_ns": [
+          408,
+          426,
+          426
+        ],
+        "qpu_output_copy_ns": [
+          418865,
+          338384,
+          341255
+        ],
+        "qpu_submit_wait_ns": [
+          19767416,
+          20893865,
+          20860587
+        ],
+        "quantize_ns": [
+          1444,
+          1426,
+          1223
+        ],
+        "resident_bytes": 20972608,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "speedup_vs_fastest_cpu": {
+          "bootstrap_95_high": 0.24180520196221522,
+          "bootstrap_95_low": 0.20451051809641302,
+          "median_speedup": 0.20530475270494256,
+          "resamples": 500,
+          "seed": 24524
+        },
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 35277.0,
+            "median_ns": 21208491.0,
+            "p05_ns": 20294268.3,
+            "p95_ns": 21240240.3,
+            "throughput_per_second": 47.150926485057326
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 426.0,
+            "p05_ns": 409.8,
+            "p95_ns": 426.0,
+            "throughput_per_second": 2347417.840375587
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 2871.0,
+            "median_ns": 341255.0,
+            "p05_ns": 338671.1,
+            "p95_ns": 411104.0,
+            "throughput_per_second": 2930.359994725352
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 33278.0,
+            "median_ns": 20860587.0,
+            "p05_ns": 19876733.1,
+            "p95_ns": 20890537.2,
+            "throughput_per_second": 47.937289588255595
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 18.0,
+            "median_ns": 1426.0,
+            "p05_ns": 1243.3,
+            "p95_ns": 1442.2,
+            "throughput_per_second": 701262.2720897616
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          20884476,
+          20729441,
+          20775866
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 3.5762786865234375e-07,
+          "max_relative": 0.02040816326530612,
+          "mean_absolute": 1.912753777588705e-08,
+          "nan_count": 0,
+          "p99_absolute": 1.1920928955078125e-07,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -1.33011281,
+          "worst_column": 176814,
+          "worst_reference": -1.33011246,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_columns": 262144,
+        "partition": {
+          "actual_qpu_fraction": 0.5,
+          "qpu_column_count": 131072,
+          "qpu_column_start": 131072,
+          "requested_denominator": 12,
+          "requested_numerator": 6
+        },
+        "prepare_ns": 8577558,
+        "qpu_column_count": 131072,
+        "qpu_column_start": 131072,
+        "qpu_input_copy_ns": [
+          333,
+          277,
+          389
+        ],
+        "qpu_output_copy_ns": [
+          431717,
+          433198,
+          417457
+        ],
+        "qpu_submit_wait_ns": [
+          20444259,
+          20289446,
+          20350890
+        ],
+        "quantize_ns": [
+          1445,
+          1296,
+          1259
+        ],
+        "resident_bytes": 20972608,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "speedup_vs_fastest_cpu": {
+          "bootstrap_95_high": 0.2355440747292703,
+          "bootstrap_95_low": 0.2080288727378173,
+          "median_speedup": 0.20957990391351194,
+          "resamples": 500,
+          "seed": 24536
+        },
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 46425.0,
+            "median_ns": 20775866.0,
+            "p05_ns": 20734083.5,
+            "p95_ns": 20873615.0,
+            "throughput_per_second": 48.13277097570806
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 56.0,
+            "median_ns": 333.0,
+            "p05_ns": 282.6,
+            "p95_ns": 383.4,
+            "throughput_per_second": 3003003.003003003
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 1481.0,
+            "median_ns": 431717.0,
+            "p05_ns": 418883.0,
+            "p95_ns": 433049.9,
+            "throughput_per_second": 2316.3322268986394
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 61444.0,
+            "median_ns": 20350890.0,
+            "p05_ns": 20295590.4,
+            "p95_ns": 20434922.1,
+            "throughput_per_second": 49.1379001114939
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 37.0,
+            "median_ns": 1296.0,
+            "p05_ns": 1262.7,
+            "p95_ns": 1430.1,
+            "throughput_per_second": 771604.938271605
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 1024,
+          "path": null,
+          "sha256": "f1db087c61d09779a076942b7fe8f330bfd6183c9c0338c90bee13c368f1f8ce"
+        },
+        "input_columns": 256,
+        "output_columns": 262144,
+        "rows": 1,
+        "seed": 4401,
+        "tensor_name": "token_embd.weight",
+        "weight": {
+          "bytes": 37748736,
+          "model_file_offset": 15787200,
+          "path": null,
+          "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd"
+        }
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          20022265,
+          20614924,
+          20487981
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 3.5762786865234375e-07,
+          "max_relative": 0.02040816326530612,
+          "mean_absolute": 1.912753777588705e-08,
+          "nan_count": 0,
+          "p99_absolute": 1.1920928955078125e-07,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -1.33011281,
+          "worst_column": 176814,
+          "worst_reference": -1.33011246,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 4,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_columns": 262144,
+        "partition": {
+          "actual_qpu_fraction": 0.5,
+          "qpu_column_count": 131072,
+          "qpu_column_start": 131072,
+          "requested_denominator": 12,
+          "requested_numerator": 6
+        },
+        "prepare_ns": 8790388,
+        "qpu_column_count": 131072,
+        "qpu_column_start": 131072,
+        "qpu_input_copy_ns": [
+          445,
+          278,
+          463
+        ],
+        "qpu_output_copy_ns": [
+          357865,
+          355903,
+          337885
+        ],
+        "qpu_submit_wait_ns": [
+          19655881,
+          20251447,
+          20143412
+        ],
+        "quantize_ns": [
+          1333,
+          1574,
+          1277
+        ],
+        "resident_bytes": 20972608,
+        "retained_samples": 3,
+        "rows": 1,
+        "schema_version": 1,
+        "speedup_vs_fastest_cpu": {
+          "bootstrap_95_high": 0.24386336910434459,
+          "bootstrap_95_low": 0.21074897001803158,
+          "median_speedup": 0.212524796855288,
+          "resamples": 500,
+          "seed": 24548
+        },
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 126943.0,
+            "median_ns": 20487981.0,
+            "p05_ns": 20068836.6,
+            "p95_ns": 20602229.7,
+            "throughput_per_second": 48.8091042255457
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 18.0,
+            "median_ns": 445.0,
+            "p05_ns": 294.7,
+            "p95_ns": 461.2,
+            "throughput_per_second": 2247191.011235955
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 1962.0,
+            "median_ns": 355903.0,
+            "p05_ns": 339686.8,
+            "p95_ns": 357668.8,
+            "throughput_per_second": 2809.754343177776
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 108035.0,
+            "median_ns": 20143412.0,
+            "p05_ns": 19704634.1,
+            "p95_ns": 20240643.5,
+            "throughput_per_second": 49.64402257174703
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 56.0,
+            "median_ns": 1333.0,
+            "p05_ns": 1282.6,
+            "p95_ns": 1549.9,
+            "throughput_per_second": 750187.5468867216
+          }
+        },
+        "warmups": 1
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 37748736,
+        "data_relative_offset": 1024,
+        "elements": 67108864,
+        "file_offset": 15787200,
+        "ggml_nb_bytes": [
+          18,
+          144
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 67108864,
+        "name": "token_embd.weight",
+        "owner": {
+          "component": "mtp_head",
+          "layer": null,
+          "operator": "embedding"
+        },
+        "required_alignment": 32,
+        "shape": [
+          256,
+          262144
+        ]
+      }
+    }
+  ],
+  "schema_version": 1,
+  "session_id": "drafter-lm-head-m1-smoke",
+  "validation": {
+    "rejection_reasons": [
+      "swapon state changed during the session",
+      "CPU governors were ['ondemand']"
+    ],
+    "retained": false
+  }
+}

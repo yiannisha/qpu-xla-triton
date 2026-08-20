@@ -1,0 +1,6305 @@
+{
+  "created_utc": "2026-08-20T01:32:36+00:00",
+  "kind": "llama-cpp-serialized-graph-profile-summary",
+  "profiles": [
+    {
+      "configuration": {
+        "all_target_logits": true,
+        "batch": 1,
+        "context_size": 8192,
+        "context_tokens": 0,
+        "context_type": "default",
+        "flash_attention": true,
+        "iterations": 3,
+        "threads": 2,
+        "warmups": 1
+      },
+      "decode_wall_ns": {
+        "mad_ns": 126240.0,
+        "maximum_ns": 135587047.0,
+        "median_ns": 135460807.0,
+        "minimum_ns": 133358620.0,
+        "p05_ns": 133568838.7,
+        "p95_ns": 135574423.0,
+        "samples": 3
+      },
+      "families": [
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.7583477321305934,
+          "duration_ns": {
+            "mad_ns": 42404.0,
+            "maximum_ns": 50587950.0,
+            "median_ns": 50472060.0,
+            "minimum_ns": 50429656.0,
+            "p05_ns": 50433896.4,
+            "p95_ns": 50576361.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.43128427800324903,
+            "p05": 0.42519230269324365,
+            "p95": 0.43159746317395553
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.2565864162597637,
+          "duration_ns": {
+            "mad_ns": 180036.0,
+            "maximum_ns": 24277215.0,
+            "median_ns": 23916496.0,
+            "minimum_ns": 23736460.0,
+            "p05_ns": 23754463.6,
+            "p95_ns": 24241143.099999998,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.20419321181546318,
+            "p05": 0.20254660272008862,
+            "p95": 0.20465254558897228
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.2493233954425842,
+          "duration_ns": {
+            "mad_ns": 24016.0,
+            "maximum_ns": 23818996.0,
+            "median_ns": 23340350.0,
+            "minimum_ns": 23316334.0,
+            "p05_ns": 23318735.6,
+            "p95_ns": 23771131.4,
+            "samples": 3
+          },
+          "family": "lm_head",
+          "fraction_of_serialized_node_time": {
+            "median": 0.1995667385659252,
+            "p05": 0.19904464635367572,
+            "p95": 0.20026193399099027
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.062672115280071,
+          "duration_ns": {
+            "mad_ns": 40981.0,
+            "maximum_ns": 7440867.0,
+            "median_ns": 6917649.0,
+            "minimum_ns": 6876668.0,
+            "p05_ns": 6880766.100000001,
+            "p95_ns": 7388545.199999999,
+            "samples": 3
+          },
+          "family": "attention_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.05897596669651364,
+            "p05": 0.05886985141881551,
+            "p95": 0.06222354172881573
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0324535584403658,
+          "duration_ns": {
+            "mad_ns": 33594.0,
+            "maximum_ns": 3770820.0,
+            "median_ns": 3737226.0,
+            "minimum_ns": 3577609.0,
+            "p05_ns": 3593570.7,
+            "p95_ns": 3767460.5999999996,
+            "samples": 3
+          },
+          "family": "elementwise",
+          "fraction_of_serialized_node_time": {
+            "median": 0.03143343172683754,
+            "p05": 0.030702331819642187,
+            "p95": 0.032076435797749416
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0247006357094408,
+          "duration_ns": {
+            "mad_ns": 10189.0,
+            "maximum_ns": 2876940.0,
+            "median_ns": 2826517.0,
+            "minimum_ns": 2816328.0,
+            "p05_ns": 2817346.9000000004,
+            "p95_ns": 2871897.6999999997,
+            "samples": 3
+          },
+          "family": "swiglu",
+          "fraction_of_serialized_node_time": {
+            "median": 0.024105221416535507,
+            "p05": 0.023806717134897497,
+            "p95": 0.024484970536632993
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0216654163669814,
+          "duration_ns": {
+            "mad_ns": 54727.0,
+            "maximum_ns": 2584627.0,
+            "median_ns": 2521250.0,
+            "minimum_ns": 2466523.0,
+            "p05_ns": 2471995.7,
+            "p95_ns": 2578289.3,
+            "samples": 3
+          },
+          "family": "normalization",
+          "fraction_of_serialized_node_time": {
+            "median": 0.02120597998121846,
+            "p05": 0.021120684188217484,
+            "p95": 0.02195216046788852
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0143240764410217,
+          "duration_ns": {
+            "mad_ns": 24665.0,
+            "maximum_ns": 1801729.0,
+            "median_ns": 1656431.0,
+            "minimum_ns": 1631766.0,
+            "p05_ns": 1634232.5000000002,
+            "p95_ns": 1787199.2,
+            "samples": 3
+          },
+          "family": "auxiliary_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.014121794773205867,
+            "p05": 0.013981976978526779,
+            "p95": 0.015050924621603255
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0055287883067223,
+          "duration_ns": {
+            "mad_ns": 186.0,
+            "maximum_ns": 786197.0,
+            "median_ns": 642403.0,
+            "minimum_ns": 642217.0,
+            "p05_ns": 642235.6000000001,
+            "p95_ns": 771817.6,
+            "samples": 3
+          },
+          "family": "per_layer_projection",
+          "fraction_of_serialized_node_time": {
+            "median": 0.005498388878584688,
+            "p05": 0.005477500231118501,
+            "p95": 0.006501200339108686
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.004310408453464,
+          "duration_ns": {
+            "mad_ns": 6060.0,
+            "maximum_ns": 527369.0,
+            "median_ns": 503424.0,
+            "minimum_ns": 497364.0,
+            "p05_ns": 497970.00000000006,
+            "p95_ns": 524974.5,
+            "samples": 3
+          },
+          "family": "attention_core",
+          "fraction_of_serialized_node_time": {
+            "median": 0.004291908574463042,
+            "p05": 0.0042604784099445885,
+            "p95": 0.0044212736778900035
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0026891366605701,
+          "duration_ns": {
+            "mad_ns": 1394.0,
+            "maximum_ns": 320257.0,
+            "median_ns": 318863.0,
+            "minimum_ns": 309313.0,
+            "p05_ns": 310268.0,
+            "p95_ns": 320117.60000000003,
+            "samples": 3
+          },
+          "family": "rope",
+          "fraction_of_serialized_node_time": {
+            "median": 0.002681924598810615,
+            "p05": 0.0026415175401386538,
+            "p95": 0.002735191795780811
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0022248685377388,
+          "duration_ns": {
+            "mad_ns": 4597.0,
+            "maximum_ns": 264986.0,
+            "median_ns": 260389.0,
+            "minimum_ns": 249349.0,
+            "p05_ns": 250453.0,
+            "p95_ns": 264526.3,
+            "samples": 3
+          },
+          "family": "layout",
+          "fraction_of_serialized_node_time": {
+            "median": 0.0022199294864683784,
+            "p05": 0.0021427747501602057,
+            "p95": 0.002227886465820002
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0006564031253433,
+          "duration_ns": {
+            "mad_ns": 183.0,
+            "maximum_ns": 77832.0,
+            "median_ns": 77649.0,
+            "minimum_ns": 76943.0,
+            "p05_ns": 77013.59999999999,
+            "p95_ns": 77813.7,
+            "samples": 3
+          },
+          "family": "kv_or_state_update",
+          "fraction_of_serialized_node_time": {
+            "median": 0.0006559725429159313,
+            "p05": 0.0006533853854191962,
+            "p95": 0.0006651516506412415
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0001886584140627,
+          "duration_ns": {
+            "mad_ns": 6241.0,
+            "maximum_ns": 32555.0,
+            "median_ns": 22426.0,
+            "minimum_ns": 16185.0,
+            "p05_ns": 16809.1,
+            "p95_ns": 31542.1,
+            "samples": 3
+          },
+          "family": "embedding",
+          "fraction_of_serialized_node_time": {
+            "median": 0.00018862282877890143,
+            "p05": 0.00014353835319497128,
+            "p95": 0.0002686532647887245
+          }
+        }
+      ],
+      "fixture_records": 0,
+      "ineligibility_reason": "the public eval callback serializes graph nodes and changes production scheduling",
+      "measurement_contract": {
+        "fixture_timing_eligible": true,
+        "node_duration": "callback-bracketed graph view execution plus backend synchronization",
+        "serialization": "eval callback requests every node and therefore serializes node execution"
+      },
+      "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "node_records": 4488,
+      "serialized_node_total_ns": {
+        "mad_ns": 461298.0,
+        "maximum_ns": 118893350.0,
+        "median_ns": 117296068.0,
+        "minimum_ns": 116834770.0,
+        "p05_ns": 116880899.8,
+        "p95_ns": 118733621.8,
+        "samples": 3
+      },
+      "timing_eligible_for_promotion": false,
+      "top_nodes": [
+        {
+          "duration_ns": {
+            "mad_ns": 49869.0,
+            "maximum_ns": 17401953.0,
+            "median_ns": 17352084.0,
+            "minimum_ns": 17290233.0,
+            "p05_ns": 17296418.1,
+            "p95_ns": 17396966.1,
+            "samples": 3
+          },
+          "family": "lm_head",
+          "name": "node_1492",
+          "node_index": 1492,
+          "op": "MUL_MAT",
+          "shape": [
+            262144,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 226492416,
+              "name": "token_embd.weight",
+              "shape": [
+                1536,
+                262144,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                226492416,
+                226492416
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "result_norm",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 2314.0,
+            "maximum_ns": 2363388.0,
+            "median_ns": 2302315.0,
+            "minimum_ns": 2300001.0,
+            "p05_ns": 2300232.4000000004,
+            "p95_ns": 2357280.6999999997,
+            "samples": 3
+          },
+          "family": "elementwise",
+          "name": "node_1494",
+          "node_index": 1494,
+          "op": "UNARY",
+          "shape": [
+            262144,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 1048576,
+              "name": "node_1493",
+              "shape": [
+                262144,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1048576,
+                1048576,
+                1048576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 89350.0,
+            "maximum_ns": 1147879.0,
+            "median_ns": 1058529.0,
+            "minimum_ns": 892604.0,
+            "p05_ns": 909196.5,
+            "p95_ns": 1138944.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-28",
+          "node_index": 1252,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.28.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-28",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 15945.0,
+            "maximum_ns": 1039844.0,
+            "median_ns": 1023899.0,
+            "minimum_ns": 982011.0,
+            "p05_ns": 986199.8,
+            "p95_ns": 1038249.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-27",
+          "node_index": 1214,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.27.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-27",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 964.0,
+            "maximum_ns": 1031844.0,
+            "median_ns": 1016622.0,
+            "minimum_ns": 1015658.0,
+            "p05_ns": 1015754.4000000001,
+            "p95_ns": 1030321.7999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-27",
+          "node_index": 1215,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.27.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-27",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 5185.0,
+            "maximum_ns": 978455.0,
+            "median_ns": 973270.0,
+            "minimum_ns": 956196.0,
+            "p05_ns": 957903.4,
+            "p95_ns": 977936.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-30",
+          "node_index": 1326,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-30",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 12519.0,
+            "maximum_ns": 964715.0,
+            "median_ns": 952196.0,
+            "minimum_ns": 816678.0,
+            "p05_ns": 830229.8,
+            "p95_ns": 963463.1,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-19",
+          "node_index": 918,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.19.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-19",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 13389.0,
+            "maximum_ns": 958808.0,
+            "median_ns": 945419.0,
+            "minimum_ns": 918178.0,
+            "p05_ns": 920902.1000000001,
+            "p95_ns": 957469.1000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-25",
+          "node_index": 1140,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.25.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-25",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 72129.0,
+            "maximum_ns": 1012733.0,
+            "median_ns": 934474.0,
+            "minimum_ns": 862345.0,
+            "p05_ns": 869557.9,
+            "p95_ns": 1004907.1000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-19",
+          "node_index": 919,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.19.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-19",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 1204.0,
+            "maximum_ns": 946993.0,
+            "median_ns": 931363.0,
+            "minimum_ns": 930159.0,
+            "p05_ns": 930279.4,
+            "p95_ns": 945430.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-20",
+          "node_index": 955,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.20.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-20",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 10426.0,
+            "maximum_ns": 936141.0,
+            "median_ns": 925715.0,
+            "minimum_ns": 899622.0,
+            "p05_ns": 902231.3,
+            "p95_ns": 935098.4,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-21",
+          "node_index": 992,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.21.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-21",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 38796.0,
+            "maximum_ns": 962974.0,
+            "median_ns": 924178.0,
+            "minimum_ns": 861753.0,
+            "p05_ns": 867995.5000000001,
+            "p95_ns": 959094.3999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-22",
+          "node_index": 1029,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.22.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-22",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 8871.0,
+            "maximum_ns": 932567.0,
+            "median_ns": 923696.0,
+            "minimum_ns": 911011.0,
+            "p05_ns": 912279.5,
+            "p95_ns": 931679.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-23",
+          "node_index": 1066,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.23.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-23",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 32296.0,
+            "maximum_ns": 955659.0,
+            "median_ns": 923363.0,
+            "minimum_ns": 870863.0,
+            "p05_ns": 876113.0000000001,
+            "p95_ns": 952429.3999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-16",
+          "node_index": 807,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.16.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-16",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 20592.0,
+            "maximum_ns": 940363.0,
+            "median_ns": 919771.0,
+            "minimum_ns": 887938.0,
+            "p05_ns": 891121.3,
+            "p95_ns": 938303.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-20",
+          "node_index": 956,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.20.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-20",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 16500.0,
+            "maximum_ns": 937974.0,
+            "median_ns": 919252.0,
+            "minimum_ns": 902752.0,
+            "p05_ns": 904402.0,
+            "p95_ns": 936101.7999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-29",
+          "node_index": 1289,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.29.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-29",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 16684.0,
+            "maximum_ns": 934918.0,
+            "median_ns": 918234.0,
+            "minimum_ns": 900159.0,
+            "p05_ns": 901966.5,
+            "p95_ns": 933249.6000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-34",
+          "node_index": 1476,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.34.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-34",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 6352.0,
+            "maximum_ns": 921752.0,
+            "median_ns": 915400.0,
+            "minimum_ns": 908715.0,
+            "p05_ns": 909383.5,
+            "p95_ns": 921116.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-21",
+          "node_index": 993,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.21.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-21",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 3389.0,
+            "maximum_ns": 929715.0,
+            "median_ns": 914437.0,
+            "minimum_ns": 911048.0,
+            "p05_ns": 911386.9000000001,
+            "p95_ns": 928187.2,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-30",
+          "node_index": 1325,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-30",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 17685.0,
+            "maximum_ns": 929326.0,
+            "median_ns": 911641.0,
+            "minimum_ns": 820068.0,
+            "p05_ns": 829225.3,
+            "p95_ns": 927557.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-17",
+          "node_index": 844,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.17.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-17",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 18667.0,
+            "maximum_ns": 957326.0,
+            "median_ns": 911030.0,
+            "minimum_ns": 892363.0,
+            "p05_ns": 894229.7000000001,
+            "p95_ns": 952696.4,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-23",
+          "node_index": 1067,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.23.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-23",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 39370.0,
+            "maximum_ns": 970621.0,
+            "median_ns": 905641.0,
+            "minimum_ns": 866271.0,
+            "p05_ns": 870208.0,
+            "p95_ns": 964123.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-15",
+          "node_index": 770,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.15.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-15",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 12832.0,
+            "maximum_ns": 918214.0,
+            "median_ns": 905382.0,
+            "minimum_ns": 864567.0,
+            "p05_ns": 868648.5,
+            "p95_ns": 916930.7999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-18",
+          "node_index": 881,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.18.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-18",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 5018.0,
+            "maximum_ns": 908418.0,
+            "median_ns": 903400.0,
+            "minimum_ns": 859123.0,
+            "p05_ns": 863550.7000000001,
+            "p95_ns": 907916.2000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-16",
+          "node_index": 808,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.16.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-16",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 3369.0,
+            "maximum_ns": 905307.0,
+            "median_ns": 901938.0,
+            "minimum_ns": 863901.0,
+            "p05_ns": 867704.7000000001,
+            "p95_ns": 904970.1,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-25",
+          "node_index": 1141,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.25.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-25",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 8000.0,
+            "maximum_ns": 911474.0,
+            "median_ns": 895030.0,
+            "minimum_ns": 887030.0,
+            "p05_ns": 887830.0,
+            "p95_ns": 909829.6000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-24",
+          "node_index": 1103,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-24",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 37500.0,
+            "maximum_ns": 931493.0,
+            "median_ns": 893993.0,
+            "minimum_ns": 852846.0,
+            "p05_ns": 856960.7000000001,
+            "p95_ns": 927743.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-18",
+          "node_index": 882,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.18.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-18",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 31333.0,
+            "maximum_ns": 925159.0,
+            "median_ns": 893826.0,
+            "minimum_ns": 847845.0,
+            "p05_ns": 852443.1,
+            "p95_ns": 922025.7,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-24",
+          "node_index": 1104,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-24",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 10555.0,
+            "maximum_ns": 901270.0,
+            "median_ns": 890715.0,
+            "minimum_ns": 866438.0,
+            "p05_ns": 868865.7000000001,
+            "p95_ns": 900214.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-15",
+          "node_index": 771,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.15.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-15",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 19871.0,
+            "maximum_ns": 908364.0,
+            "median_ns": 888493.0,
+            "minimum_ns": 834216.0,
+            "p05_ns": 839643.7000000001,
+            "p95_ns": 906376.9,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-22",
+          "node_index": 1032,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.22.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-22",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 9686.0,
+            "maximum_ns": 919622.0,
+            "median_ns": 887345.0,
+            "minimum_ns": 877659.0,
+            "p05_ns": 878627.6,
+            "p95_ns": 916394.3,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-27",
+          "node_index": 1217,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.27.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-27",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 14074.0,
+            "maximum_ns": 903400.0,
+            "median_ns": 884678.0,
+            "minimum_ns": 870604.0,
+            "p05_ns": 872011.4,
+            "p95_ns": 901527.7999999999,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-24",
+          "node_index": 1106,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-24",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 19055.0,
+            "maximum_ns": 1028270.0,
+            "median_ns": 884030.0,
+            "minimum_ns": 864975.0,
+            "p05_ns": 866880.5,
+            "p95_ns": 1013846.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-28",
+          "node_index": 1251,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.28.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-28",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 19481.0,
+            "maximum_ns": 1110436.0,
+            "median_ns": 883085.0,
+            "minimum_ns": 863604.0,
+            "p05_ns": 865552.1,
+            "p95_ns": 1087700.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-22",
+          "node_index": 1030,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.22.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-22",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 43370.0,
+            "maximum_ns": 980492.0,
+            "median_ns": 879382.0,
+            "minimum_ns": 836012.0,
+            "p05_ns": 840349.0,
+            "p95_ns": 970381.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-31",
+          "node_index": 1362,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.31.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-31",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 61851.0,
+            "maximum_ns": 966640.0,
+            "median_ns": 879141.0,
+            "minimum_ns": 817290.0,
+            "p05_ns": 823475.1,
+            "p95_ns": 957890.1,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-33",
+          "node_index": 1439,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-33",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 21592.0,
+            "maximum_ns": 912456.0,
+            "median_ns": 876493.0,
+            "minimum_ns": 854901.0,
+            "p05_ns": 857060.2000000001,
+            "p95_ns": 908859.7,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-20",
+          "node_index": 958,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.20.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-20",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 4944.0,
+            "maximum_ns": 1073603.0,
+            "median_ns": 876141.0,
+            "minimum_ns": 871197.0,
+            "p05_ns": 871691.4,
+            "p95_ns": 1053856.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-17",
+          "node_index": 845,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.17.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-17",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 2500.0,
+            "maximum_ns": 875290.0,
+            "median_ns": 872790.0,
+            "minimum_ns": 851753.0,
+            "p05_ns": 853856.7000000001,
+            "p95_ns": 875040.0,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-21",
+          "node_index": 995,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.21.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-21",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 4647.0,
+            "maximum_ns": 874048.0,
+            "median_ns": 869401.0,
+            "minimum_ns": 855845.0,
+            "p05_ns": 857200.6,
+            "p95_ns": 873583.3,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-23",
+          "node_index": 1069,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.23.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-23",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 2981.0,
+            "maximum_ns": 872345.0,
+            "median_ns": 869178.0,
+            "minimum_ns": 866197.0,
+            "p05_ns": 866495.1000000001,
+            "p95_ns": 872028.2999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-33",
+          "node_index": 1436,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-33",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 47814.0,
+            "maximum_ns": 1001807.0,
+            "median_ns": 866863.0,
+            "minimum_ns": 819049.0,
+            "p05_ns": 823830.4,
+            "p95_ns": 988312.6,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-26",
+          "node_index": 1178,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.26.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-26",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 27722.0,
+            "maximum_ns": 1133028.0,
+            "median_ns": 866827.0,
+            "minimum_ns": 839105.0,
+            "p05_ns": 841877.2,
+            "p95_ns": 1106407.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-33",
+          "node_index": 1437,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-33",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 10963.0,
+            "maximum_ns": 1057066.0,
+            "median_ns": 866604.0,
+            "minimum_ns": 855641.0,
+            "p05_ns": 856737.3,
+            "p95_ns": 1038019.8,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-28",
+          "node_index": 1254,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.28.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-28",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 4203.0,
+            "maximum_ns": 870104.0,
+            "median_ns": 865901.0,
+            "minimum_ns": 837734.0,
+            "p05_ns": 840550.7,
+            "p95_ns": 869683.7000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-17",
+          "node_index": 847,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.17.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-17",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 5222.0,
+            "maximum_ns": 871104.0,
+            "median_ns": 865882.0,
+            "minimum_ns": 858308.0,
+            "p05_ns": 859065.4000000001,
+            "p95_ns": 870581.8,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-30",
+          "node_index": 1328,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-30",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 17758.0,
+            "maximum_ns": 881233.0,
+            "median_ns": 863475.0,
+            "minimum_ns": 829623.0,
+            "p05_ns": 833008.2000000001,
+            "p95_ns": 879457.2000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-15",
+          "node_index": 773,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.15.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 49152,
+              "name": "ffn_geglu-15",
+              "shape": [
+                12288,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                49152,
+                49152
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 20833.0,
+            "maximum_ns": 880659.0,
+            "median_ns": 859826.0,
+            "minimum_ns": 817956.0,
+            "p05_ns": 822143.0,
+            "p95_ns": 878575.7000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-32",
+          "node_index": 1399,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.32.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-32",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 30444.0,
+            "maximum_ns": 935289.0,
+            "median_ns": 858419.0,
+            "minimum_ns": 827975.0,
+            "p05_ns": 831019.4,
+            "p95_ns": 927602.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-31",
+          "node_index": 1363,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.31.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-31",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 43055.0,
+            "maximum_ns": 968992.0,
+            "median_ns": 857734.0,
+            "minimum_ns": 814679.0,
+            "p05_ns": 818984.5,
+            "p95_ns": 957866.2,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-34",
+          "node_index": 1473,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            1,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.34.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 6144,
+              "name": "ffn_norm-34",
+              "shape": [
+                1536,
+                1,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                6144,
+                6144
+              ],
+              "type": "f32"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "configuration": {
+        "all_target_logits": true,
+        "batch": 4,
+        "context_size": 8192,
+        "context_tokens": 0,
+        "context_type": "default",
+        "flash_attention": true,
+        "iterations": 3,
+        "threads": 3,
+        "warmups": 1
+      },
+      "decode_wall_ns": {
+        "mad_ns": 3554379.0,
+        "maximum_ns": 174677389.0,
+        "median_ns": 171123010.0,
+        "minimum_ns": 165827996.0,
+        "p05_ns": 166357497.4,
+        "p95_ns": 174321951.10000002,
+        "samples": 3
+      },
+      "families": [
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.6243165414503358,
+          "duration_ns": {
+            "mad_ns": 584696.0,
+            "maximum_ns": 59390171.0,
+            "median_ns": 57571080.0,
+            "minimum_ns": 56986384.0,
+            "p05_ns": 57044853.6,
+            "p95_ns": 59208261.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.3843564511710814,
+            "p05": 0.38039174036999546,
+            "p95": 0.386669308548414
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.2361832247476614,
+          "duration_ns": {
+            "mad_ns": 5055.0,
+            "maximum_ns": 29472011.0,
+            "median_ns": 28327166.0,
+            "minimum_ns": 28322111.0,
+            "p05_ns": 28322616.500000004,
+            "p95_ns": 29357526.5,
+            "samples": 3
+          },
+          "family": "lm_head",
+          "fraction_of_serialized_node_time": {
+            "median": 0.19105842889582392,
+            "p05": 0.187331252016506,
+            "p95": 0.19191467954401376
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.230079055821219,
+          "duration_ns": {
+            "mad_ns": 515603.0,
+            "maximum_ns": 28958270.0,
+            "median_ns": 28247590.0,
+            "minimum_ns": 27731987.0,
+            "p05_ns": 27783547.3,
+            "p95_ns": 28887202.0,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.18704412105254062,
+            "p05": 0.18648718735811554,
+            "p95": 0.18850093363291365
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.0918828502315028,
+          "duration_ns": {
+            "mad_ns": 59947.0,
+            "maximum_ns": 12916497.0,
+            "median_ns": 12594445.0,
+            "minimum_ns": 12534498.0,
+            "p05_ns": 12540492.700000001,
+            "p95_ns": 12884291.8,
+            "samples": 3
+          },
+          "family": "elementwise",
+          "fraction_of_serialized_node_time": {
+            "median": 0.08415083194320848,
+            "p05": 0.0828664916451459,
+            "p95": 0.08486633804499595
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": true,
+          "diagnostic_elimination_upper_bound": 1.0646432652035898,
+          "duration_ns": {
+            "mad_ns": 24708.0,
+            "maximum_ns": 9257793.0,
+            "median_ns": 9224875.0,
+            "minimum_ns": 9200167.0,
+            "p05_ns": 9202637.8,
+            "p95_ns": 9254501.2,
+            "samples": 3
+          },
+          "family": "attention_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.06071823991788298,
+            "p05": 0.06016178470171567,
+            "p95": 0.06226881337860097
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0308993341314892,
+          "duration_ns": {
+            "mad_ns": 37236.0,
+            "maximum_ns": 4600650.0,
+            "median_ns": 4563414.0,
+            "minimum_ns": 4439485.0,
+            "p05_ns": 4451877.9,
+            "p95_ns": 4596926.4,
+            "samples": 3
+          },
+          "family": "swiglu",
+          "fraction_of_serialized_node_time": {
+            "median": 0.02997318274293116,
+            "p05": 0.029946040440355162,
+            "p95": 0.030102719674828936
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0257794941395806,
+          "duration_ns": {
+            "mad_ns": 74041.0,
+            "maximum_ns": 4512270.0,
+            "median_ns": 3800165.0,
+            "minimum_ns": 3726124.0,
+            "p05_ns": 3733528.1,
+            "p95_ns": 4441059.5,
+            "samples": 3
+          },
+          "family": "normalization",
+          "fraction_of_serialized_node_time": {
+            "median": 0.02513161384767622,
+            "p05": 0.024795390199926763,
+            "p95": 0.02931478174566316
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0154051353551679,
+          "duration_ns": {
+            "mad_ns": 5279.0,
+            "maximum_ns": 2298808.0,
+            "median_ns": 2268094.0,
+            "minimum_ns": 2262815.0,
+            "p05_ns": 2263342.9,
+            "p95_ns": 2295736.6,
+            "samples": 3
+          },
+          "family": "auxiliary_linear",
+          "fraction_of_serialized_node_time": {
+            "median": 0.015171417613305142,
+            "p05": 0.014816087855063168,
+            "p95": 0.015252963089299342
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0075757989012928,
+          "duration_ns": {
+            "mad_ns": 2853.0,
+            "maximum_ns": 1156936.0,
+            "median_ns": 1154083.0,
+            "minimum_ns": 1093064.0,
+            "p05_ns": 1099165.9,
+            "p95_ns": 1156650.7,
+            "samples": 3
+          },
+          "family": "attention_core",
+          "fraction_of_serialized_node_time": {
+            "median": 0.007518837698914332,
+            "p05": 0.007244377871122504,
+            "p95": 0.007774758456463222
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0046121954626428,
+          "duration_ns": {
+            "mad_ns": 11314.0,
+            "maximum_ns": 800845.0,
+            "median_ns": 695642.0,
+            "minimum_ns": 684328.0,
+            "p05_ns": 685459.4,
+            "p95_ns": 790324.7,
+            "samples": 3
+          },
+          "family": "per_layer_projection",
+          "fraction_of_serialized_node_time": {
+            "median": 0.004591020777444143,
+            "p05": 0.0044716523434881975,
+            "p95": 0.005320420316927553
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.003398680587304,
+          "duration_ns": {
+            "mad_ns": 38942.0,
+            "maximum_ns": 599570.0,
+            "median_ns": 519904.0,
+            "minimum_ns": 480962.0,
+            "p05_ns": 484856.2,
+            "p95_ns": 591603.4,
+            "samples": 3
+          },
+          "family": "rope",
+          "fraction_of_serialized_node_time": {
+            "median": 0.003387168682855875,
+            "p05": 0.00325826976922647,
+            "p95": 0.0038999947882199307
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0018416495818843,
+          "duration_ns": {
+            "mad_ns": 935.0,
+            "maximum_ns": 280904.0,
+            "median_ns": 278538.0,
+            "minimum_ns": 277603.0,
+            "p05_ns": 277696.5,
+            "p95_ns": 280667.4,
+            "samples": 3
+          },
+          "family": "layout",
+          "fraction_of_serialized_node_time": {
+            "median": 0.0018382641434929702,
+            "p05": 0.0018309041604717582,
+            "p95": 0.0018689421697725772
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.001171155766626,
+          "duration_ns": {
+            "mad_ns": 813.0,
+            "maximum_ns": 179553.0,
+            "median_ns": 178740.0,
+            "minimum_ns": 175905.0,
+            "p05_ns": 176188.5,
+            "p95_ns": 179471.7,
+            "samples": 3
+          },
+          "family": "kv_or_state_update",
+          "fraction_of_serialized_node_time": {
+            "median": 0.001169785765281323,
+            "p05": 0.0011618050229915153,
+            "p95": 0.0012019725792023006
+          }
+        },
+        {
+          "clears_diagnostic_5_percent_gate": false,
+          "diagnostic_elimination_upper_bound": 1.0002909771022428,
+          "duration_ns": {
+            "mad_ns": 426.0,
+            "maximum_ns": 1429637.0,
+            "median_ns": 43129.0,
+            "minimum_ns": 42703.0,
+            "p05_ns": 42745.600000000006,
+            "p95_ns": 1290986.1999999997,
+            "samples": 3
+          },
+          "family": "embedding",
+          "fraction_of_serialized_node_time": {
+            "median": 0.00029089245919793,
+            "p05": 0.0002794778519655149,
+            "p95": 0.008520732726449463
+          }
+        }
+      ],
+      "fixture_records": 0,
+      "ineligibility_reason": "the public eval callback serializes graph nodes and changes production scheduling",
+      "measurement_contract": {
+        "fixture_timing_eligible": true,
+        "node_duration": "callback-bracketed graph view execution plus backend synchronization",
+        "serialization": "eval callback requests every node and therefore serializes node execution"
+      },
+      "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "node_records": 4488,
+      "serialized_node_total_ns": {
+        "mad_ns": 1969914.0,
+        "maximum_ns": 153492208.0,
+        "median_ns": 151522294.0,
+        "minimum_ns": 148264414.0,
+        "p05_ns": 148590202.0,
+        "p95_ns": 153295216.6,
+        "samples": 3
+      },
+      "timing_eligible_for_promotion": false,
+      "top_nodes": [
+        {
+          "duration_ns": {
+            "mad_ns": 167795.0,
+            "maximum_ns": 20446356.0,
+            "median_ns": 20278561.0,
+            "minimum_ns": 19739528.0,
+            "p05_ns": 19793431.3,
+            "p95_ns": 20429576.5,
+            "samples": 3
+          },
+          "family": "lm_head",
+          "name": "node_1492",
+          "node_index": 1492,
+          "op": "MUL_MAT",
+          "shape": [
+            262144,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 226492416,
+              "name": "token_embd.weight",
+              "shape": [
+                1536,
+                262144,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                226492416,
+                226492416
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "result_norm",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 10018.0,
+            "maximum_ns": 9581054.0,
+            "median_ns": 9223427.0,
+            "minimum_ns": 9213409.0,
+            "p05_ns": 9214410.8,
+            "p95_ns": 9545291.3,
+            "samples": 3
+          },
+          "family": "elementwise",
+          "name": "node_1494",
+          "node_index": 1494,
+          "op": "UNARY",
+          "shape": [
+            262144,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 4194304,
+              "name": "node_1493",
+              "shape": [
+                262144,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                1048576,
+                4194304,
+                4194304
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 69388.0,
+            "maximum_ns": 1239712.0,
+            "median_ns": 1170324.0,
+            "minimum_ns": 1063806.0,
+            "p05_ns": 1074457.8,
+            "p95_ns": 1232773.2,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-29",
+          "node_index": 1289,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.29.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-29",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 12649.0,
+            "maximum_ns": 1165084.0,
+            "median_ns": 1139343.0,
+            "minimum_ns": 1126694.0,
+            "p05_ns": 1127958.9,
+            "p95_ns": 1162509.9,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-27",
+          "node_index": 1217,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.27.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-27",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 41648.0,
+            "maximum_ns": 1189046.0,
+            "median_ns": 1104084.0,
+            "minimum_ns": 1062436.0,
+            "p05_ns": 1066600.8,
+            "p95_ns": 1180549.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-23",
+          "node_index": 1066,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.23.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-23",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 17464.0,
+            "maximum_ns": 1121103.0,
+            "median_ns": 1103639.0,
+            "minimum_ns": 1084658.0,
+            "p05_ns": 1086556.1,
+            "p95_ns": 1119356.6,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-30",
+          "node_index": 1326,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-30",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 96907.0,
+            "maximum_ns": 1236731.0,
+            "median_ns": 1103176.0,
+            "minimum_ns": 1006269.0,
+            "p05_ns": 1015959.7,
+            "p95_ns": 1223375.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-32",
+          "node_index": 1400,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.32.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-32",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 35018.0,
+            "maximum_ns": 1169564.0,
+            "median_ns": 1091139.0,
+            "minimum_ns": 1056121.0,
+            "p05_ns": 1059622.8,
+            "p95_ns": 1161721.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-16",
+          "node_index": 808,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.16.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-16",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 95185.0,
+            "maximum_ns": 1219991.0,
+            "median_ns": 1079158.0,
+            "minimum_ns": 983973.0,
+            "p05_ns": 993491.5000000001,
+            "p95_ns": 1205907.7,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-24",
+          "node_index": 1106,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-24",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 32815.0,
+            "maximum_ns": 1111899.0,
+            "median_ns": 1079084.0,
+            "minimum_ns": 1032344.0,
+            "p05_ns": 1037018.0,
+            "p95_ns": 1108617.5,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-25",
+          "node_index": 1141,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.25.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-25",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 6518.0,
+            "maximum_ns": 1084695.0,
+            "median_ns": 1078177.0,
+            "minimum_ns": 1041640.0,
+            "p05_ns": 1045293.7,
+            "p95_ns": 1084043.2,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-25",
+          "node_index": 1143,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.25.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-25",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 741.0,
+            "maximum_ns": 1077103.0,
+            "median_ns": 1076362.0,
+            "minimum_ns": 1036973.0,
+            "p05_ns": 1040911.9000000001,
+            "p95_ns": 1077028.9000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-26",
+          "node_index": 1180,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.26.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-26",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 14408.0,
+            "maximum_ns": 1089751.0,
+            "median_ns": 1075343.0,
+            "minimum_ns": 1032548.0,
+            "p05_ns": 1036827.5000000001,
+            "p95_ns": 1088310.2,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-26",
+          "node_index": 1177,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.26.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-26",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 36464.0,
+            "maximum_ns": 1127677.0,
+            "median_ns": 1073955.0,
+            "minimum_ns": 1037491.0,
+            "p05_ns": 1041137.4,
+            "p95_ns": 1122304.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-24",
+          "node_index": 1103,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-24",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 630.0,
+            "maximum_ns": 1107936.0,
+            "median_ns": 1073084.0,
+            "minimum_ns": 1072454.0,
+            "p05_ns": 1072517.0,
+            "p95_ns": 1104450.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-27",
+          "node_index": 1214,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.27.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-27",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 67815.0,
+            "maximum_ns": 1142750.0,
+            "median_ns": 1073010.0,
+            "minimum_ns": 1005195.0,
+            "p05_ns": 1011976.5,
+            "p95_ns": 1135776.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-22",
+          "node_index": 1029,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.22.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-22",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 72184.0,
+            "maximum_ns": 1169084.0,
+            "median_ns": 1072380.0,
+            "minimum_ns": 1000196.0,
+            "p05_ns": 1007414.4,
+            "p95_ns": 1159413.5999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-20",
+          "node_index": 956,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.20.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-20",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 22184.0,
+            "maximum_ns": 1184046.0,
+            "median_ns": 1070417.0,
+            "minimum_ns": 1048233.0,
+            "p05_ns": 1050451.4000000001,
+            "p95_ns": 1172683.1,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-24",
+          "node_index": 1104,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.24.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-24",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 2092.0,
+            "maximum_ns": 1118380.0,
+            "median_ns": 1069714.0,
+            "minimum_ns": 1067622.0,
+            "p05_ns": 1067831.2,
+            "p95_ns": 1113513.4,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-31",
+          "node_index": 1363,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.31.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-31",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 28223.0,
+            "maximum_ns": 1264601.0,
+            "median_ns": 1069344.0,
+            "minimum_ns": 1041121.0,
+            "p05_ns": 1043943.3,
+            "p95_ns": 1245075.3,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-29",
+          "node_index": 1291,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.29.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-29",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 20926.0,
+            "maximum_ns": 1089140.0,
+            "median_ns": 1068214.0,
+            "minimum_ns": 1036528.0,
+            "p05_ns": 1039696.6000000001,
+            "p95_ns": 1087047.4,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-27",
+          "node_index": 1215,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.27.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-27",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 15314.0,
+            "maximum_ns": 1097324.0,
+            "median_ns": 1055732.0,
+            "minimum_ns": 1040418.0,
+            "p05_ns": 1041949.4000000001,
+            "p95_ns": 1093164.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-30",
+          "node_index": 1325,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.30.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-30",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 52407.0,
+            "maximum_ns": 1267675.0,
+            "median_ns": 1055084.0,
+            "minimum_ns": 1002677.0,
+            "p05_ns": 1007917.7000000001,
+            "p95_ns": 1246415.9000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-17",
+          "node_index": 845,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.17.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-17",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 16148.0,
+            "maximum_ns": 1391322.0,
+            "median_ns": 1055029.0,
+            "minimum_ns": 1038881.0,
+            "p05_ns": 1040495.8,
+            "p95_ns": 1357692.7,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-15",
+          "node_index": 771,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.15.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-15",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 37628.0,
+            "maximum_ns": 1097695.0,
+            "median_ns": 1054306.0,
+            "minimum_ns": 1016678.0,
+            "p05_ns": 1020440.8,
+            "p95_ns": 1093356.1,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-26",
+          "node_index": 1178,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.26.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-26",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 1797.0,
+            "maximum_ns": 1102232.0,
+            "median_ns": 1052622.0,
+            "minimum_ns": 1050825.0,
+            "p05_ns": 1051004.7,
+            "p95_ns": 1097271.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-25",
+          "node_index": 1140,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.25.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-25",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 6871.0,
+            "maximum_ns": 1059492.0,
+            "median_ns": 1052621.0,
+            "minimum_ns": 1000307.0,
+            "p05_ns": 1005538.4,
+            "p95_ns": 1058804.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-18",
+          "node_index": 881,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.18.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-18",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 1018.0,
+            "maximum_ns": 1067510.0,
+            "median_ns": 1051917.0,
+            "minimum_ns": 1050899.0,
+            "p05_ns": 1051000.8,
+            "p95_ns": 1065950.7,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-23",
+          "node_index": 1067,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.23.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-23",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 8981.0,
+            "maximum_ns": 1054473.0,
+            "median_ns": 1045492.0,
+            "minimum_ns": 1030955.0,
+            "p05_ns": 1032408.7,
+            "p95_ns": 1053574.9000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-34",
+          "node_index": 1476,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.34.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-34",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 6833.0,
+            "maximum_ns": 1039769.0,
+            "median_ns": 1032936.0,
+            "minimum_ns": 983511.0,
+            "p05_ns": 988453.5,
+            "p95_ns": 1039085.7,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-34",
+          "node_index": 1473,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.34.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-34",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 10962.0,
+            "maximum_ns": 1045177.0,
+            "median_ns": 1031399.0,
+            "minimum_ns": 1020437.0,
+            "p05_ns": 1021533.2000000001,
+            "p95_ns": 1043799.2000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-22",
+          "node_index": 1030,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.22.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-22",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 7963.0,
+            "maximum_ns": 1038455.0,
+            "median_ns": 1030492.0,
+            "minimum_ns": 975696.0,
+            "p05_ns": 981175.6000000001,
+            "p95_ns": 1037658.7,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-19",
+          "node_index": 919,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.19.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-19",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 18426.0,
+            "maximum_ns": 1047344.0,
+            "median_ns": 1028918.0,
+            "minimum_ns": 977325.0,
+            "p05_ns": 982484.3,
+            "p95_ns": 1045501.3999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-16",
+          "node_index": 807,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.16.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-16",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 4074.0,
+            "maximum_ns": 1032603.0,
+            "median_ns": 1028529.0,
+            "minimum_ns": 1013918.0,
+            "p05_ns": 1015379.1000000001,
+            "p95_ns": 1032195.6000000001,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-21",
+          "node_index": 992,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.21.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-21",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 35834.0,
+            "maximum_ns": 1118899.0,
+            "median_ns": 1028418.0,
+            "minimum_ns": 992584.0,
+            "p05_ns": 996167.4,
+            "p95_ns": 1109850.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-17",
+          "node_index": 844,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.17.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-17",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 13795.0,
+            "maximum_ns": 1043158.0,
+            "median_ns": 1023806.0,
+            "minimum_ns": 1010011.0,
+            "p05_ns": 1011390.5,
+            "p95_ns": 1041222.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-20",
+          "node_index": 955,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.20.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-20",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 22908.0,
+            "maximum_ns": 1124176.0,
+            "median_ns": 1023270.0,
+            "minimum_ns": 1000362.0,
+            "p05_ns": 1002652.8,
+            "p95_ns": 1114085.4,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-33",
+          "node_index": 1437,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-33",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 7482.0,
+            "maximum_ns": 1065992.0,
+            "median_ns": 1022992.0,
+            "minimum_ns": 1015510.0,
+            "p05_ns": 1016258.2,
+            "p95_ns": 1061692.0,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-33",
+          "node_index": 1436,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-33",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 33370.0,
+            "maximum_ns": 1139713.0,
+            "median_ns": 1021140.0,
+            "minimum_ns": 987770.0,
+            "p05_ns": 991107.0,
+            "p95_ns": 1127855.7,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-20",
+          "node_index": 958,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.20.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-20",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 41574.0,
+            "maximum_ns": 1188675.0,
+            "median_ns": 1019214.0,
+            "minimum_ns": 977640.0,
+            "p05_ns": 981797.4,
+            "p95_ns": 1171728.9000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-15",
+          "node_index": 773,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.15.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-15",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 30147.0,
+            "maximum_ns": 1327563.0,
+            "median_ns": 1018677.0,
+            "minimum_ns": 988530.0,
+            "p05_ns": 991544.7,
+            "p95_ns": 1296674.4000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-17",
+          "node_index": 847,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.17.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-17",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 17315.0,
+            "maximum_ns": 1035362.0,
+            "median_ns": 1018047.0,
+            "minimum_ns": 1000011.0,
+            "p05_ns": 1001814.6000000001,
+            "p95_ns": 1033630.5,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-22",
+          "node_index": 1032,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.22.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-22",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 22981.0,
+            "maximum_ns": 1040936.0,
+            "median_ns": 1017955.0,
+            "minimum_ns": 978752.0,
+            "p05_ns": 982672.3,
+            "p95_ns": 1038637.9,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-15",
+          "node_index": 770,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.15.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-15",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 26833.0,
+            "maximum_ns": 1084862.0,
+            "median_ns": 1014251.0,
+            "minimum_ns": 987418.0,
+            "p05_ns": 990101.3,
+            "p95_ns": 1077800.9,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-32",
+          "node_index": 1402,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.32.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-32",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 13185.0,
+            "maximum_ns": 1115639.0,
+            "median_ns": 1013973.0,
+            "minimum_ns": 1000788.0,
+            "p05_ns": 1002106.5000000001,
+            "p95_ns": 1105472.4,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-21",
+          "node_index": 993,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.21.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-21",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 30703.0,
+            "maximum_ns": 1035973.0,
+            "median_ns": 1005270.0,
+            "minimum_ns": 973770.0,
+            "p05_ns": 976920.0,
+            "p95_ns": 1032902.7000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-33",
+          "node_index": 1439,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.33.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-33",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 2852.0,
+            "maximum_ns": 1195731.0,
+            "median_ns": 1004733.0,
+            "minimum_ns": 1001881.0,
+            "p05_ns": 1002166.2000000001,
+            "p95_ns": 1176631.2,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-32",
+          "node_index": 1399,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.32.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-32",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 2851.0,
+            "maximum_ns": 1016399.0,
+            "median_ns": 1000177.0,
+            "minimum_ns": 997326.0,
+            "p05_ns": 997611.1000000001,
+            "p95_ns": 1014776.7999999999,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_gate-19",
+          "node_index": 918,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.19.ffn_gate.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-19",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 1722.0,
+            "maximum_ns": 1010603.0,
+            "median_ns": 994955.0,
+            "minimum_ns": 993233.0,
+            "p05_ns": 993405.2000000001,
+            "p95_ns": 1009038.2000000001,
+            "samples": 3
+          },
+          "family": "ffn_down_linear",
+          "name": "ffn_out-31",
+          "node_index": 1365,
+          "op": "MUL_MAT",
+          "shape": [
+            1536,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.31.ffn_down.weight",
+              "shape": [
+                12288,
+                1536,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                6912,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 196608,
+              "name": "ffn_geglu-31",
+              "shape": [
+                12288,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                49152,
+                196608,
+                196608
+              ],
+              "type": "f32"
+            }
+          ]
+        },
+        {
+          "duration_ns": {
+            "mad_ns": 8611.0,
+            "maximum_ns": 1004122.0,
+            "median_ns": 993770.0,
+            "minimum_ns": 985159.0,
+            "p05_ns": 986020.1,
+            "p95_ns": 1003086.8,
+            "samples": 3
+          },
+          "family": "ffn_gate_up_linear",
+          "name": "ffn_up-34",
+          "node_index": 1474,
+          "op": "MUL_MAT",
+          "shape": [
+            12288,
+            4,
+            1,
+            1
+          ],
+          "sources": [
+            {
+              "bytes": 10616832,
+              "name": "blk.34.ffn_up.weight",
+              "shape": [
+                1536,
+                12288,
+                1,
+                1
+              ],
+              "strides": [
+                18,
+                864,
+                10616832,
+                10616832
+              ],
+              "type": "q4_0"
+            },
+            {
+              "bytes": 24576,
+              "name": "ffn_norm-34",
+              "shape": [
+                1536,
+                4,
+                1,
+                1
+              ],
+              "strides": [
+                4,
+                6144,
+                24576,
+                24576
+              ],
+              "type": "f32"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-graph-profile-m1-diagnostic.json",
+      "sha256": "7264437bbfb19b325bd5fe7acb62243ff66bbe9614416a97c1d407fabb2c5c58"
+    },
+    {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-graph-profile-m4-diagnostic.json",
+      "sha256": "4a1161639a94191aa0d4c14b318cdd09b16349638d0d4d6050c61ab9476c6160"
+    }
+  ]
+}

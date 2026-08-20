@@ -1,0 +1,6580 @@
+{
+  "schema_version": 1,
+  "kind": "llama-cpp-serialized-node-profile",
+  "measurement_contract": {
+    "node_duration": "callback-bracketed graph view execution plus backend synchronization",
+    "serialization": "eval callback requests every node and therefore serializes node execution",
+    "fixture_timing_eligible": true
+  },
+  "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+  "other_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+  "configuration": {
+    "batch": 1,
+    "context_tokens": 0,
+    "context_size": 8192,
+    "threads": 3,
+    "warmups": 0,
+    "iterations": 1,
+    "context_type": "mtp",
+    "all_target_logits": true,
+    "flash_attention": true
+  },
+  "model_properties": {
+    "embedding": 256,
+    "layers": 0,
+    "nextn_layers": 4,
+    "size_bytes": 43449360
+  },
+  "decode_calls": [
+    {
+      "run_index": 0,
+      "wall_ns": 123499812
+    }
+  ],
+  "nodes": [
+    {
+      "name": "node_0",
+      "type": "f32",
+      "shape": [
+        1536,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        6144,
+        6144,
+        6144
+      ],
+      "bytes": 6144,
+      "run_index": 0,
+      "node_index": 0,
+      "op": "GET_ROWS",
+      "op_description": "GET_ROWS",
+      "duration_ns": 8852,
+      "sources": [
+        {
+          "name": "token_embd.weight",
+          "type": "q4_0",
+          "shape": [
+            1536,
+            262144,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            864,
+            226492416,
+            226492416
+          ],
+          "bytes": 226492416
+        },
+        {
+          "name": "inp_tokens",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "inp_embd_target",
+      "type": "f32",
+      "shape": [
+        1536,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        6144,
+        6144,
+        6144
+      ],
+      "bytes": 6144,
+      "run_index": 0,
+      "node_index": 1,
+      "op": "SCALE",
+      "op_description": "SCALE",
+      "duration_ns": 1889,
+      "sources": [
+        {
+          "name": "node_0",
+          "type": "f32",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            6144,
+            6144,
+            6144
+          ],
+          "bytes": 6144
+        }
+      ]
+    },
+    {
+      "name": "inp_xh",
+      "type": "f32",
+      "shape": [
+        3072,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        12288,
+        12288,
+        12288
+      ],
+      "bytes": 12288,
+      "run_index": 0,
+      "node_index": 2,
+      "op": "CONCAT",
+      "op_description": "CONCAT",
+      "duration_ns": 35629,
+      "sources": [
+        {
+          "name": "inp_embd_target",
+          "type": "f32",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            6144,
+            6144,
+            6144
+          ],
+          "bytes": 6144
+        },
+        {
+          "name": "inp_h",
+          "type": "f32",
+          "shape": [
+            1536,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            6144,
+            6144,
+            6144
+          ],
+          "bytes": 6144
+        }
+      ]
+    },
+    {
+      "name": "pre_proj",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 3,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 76888,
+      "sources": [
+        {
+          "name": "nextn.pre_projection.weight",
+          "type": "q4_0",
+          "shape": [
+            3072,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            1728,
+            442368,
+            442368
+          ],
+          "bytes": 442368
+        },
+        {
+          "name": "inp_xh",
+          "type": "f32",
+          "shape": [
+            3072,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            12288,
+            12288,
+            12288
+          ],
+          "bytes": 12288
+        }
+      ]
+    },
+    {
+      "name": "norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 4,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4926,
+      "sources": [
+        {
+          "name": "pre_proj",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 5,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3527599,
+      "sources": [
+        {
+          "name": "norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.0.attn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_6",
+      "type": "f32",
+      "shape": [
+        1024,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 6,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 39777,
+      "sources": [
+        {
+          "name": "blk.0.attn_q.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            1024,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            147456,
+            147456
+          ],
+          "bytes": 147456
+        },
+        {
+          "name": "attn_norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": " (reshaped)",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 7,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 1204,
+      "sources": [
+        {
+          "name": "node_6",
+          "type": "f32",
+          "shape": [
+            1024,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 8,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 7537,
+      "sources": [
+        {
+          "name": " (reshaped)",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "Qcur_normed-0",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 9,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 4388,
+      "sources": [
+        {
+          "name": "norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "blk.0.attn_q_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-0",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 10,
+      "op": "ROPE",
+      "op_description": "ROPE",
+      "duration_ns": 7463,
+      "sources": [
+        {
+          "name": "Qcur_normed-0",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "leaf_7",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-0 (view)",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 11,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 537,
+      "sources": [
+        {
+          "name": "Qcur_pos-0",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-0 (view) (permuted)",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        4,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        1024,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 12,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 389,
+      "sources": [
+        {
+          "name": "Qcur_pos-0 (view)",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l13 (view)",
+      "type": "f16",
+      "shape": [
+        256,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 13,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 389,
+      "sources": [
+        {
+          "name": "cache_k_l13",
+          "type": "f16",
+          "shape": [
+            256,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            4194304,
+            4194304
+          ],
+          "bytes": 4194304
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l13 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        256,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 14,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 334,
+      "sources": [
+        {
+          "name": "cache_k_l13 (view)",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l13 (view)",
+      "type": "f16",
+      "shape": [
+        256,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 15,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 352,
+      "sources": [
+        {
+          "name": "cache_v_l13",
+          "type": "f16",
+          "shape": [
+            256,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            4194304,
+            4194304
+          ],
+          "bytes": 4194304
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l13 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        256,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 16,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 352,
+      "sources": [
+        {
+          "name": "cache_v_l13 (view)",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        }
+      ]
+    },
+    {
+      "name": "node_17",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 17,
+      "op": "FLASH_ATTN_EXT",
+      "op_description": "FLASH_ATTN_EXT",
+      "duration_ns": 13555,
+      "sources": [
+        {
+          "name": "Qcur_pos-0 (view) (permuted)",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            4,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            1024,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "cache_k_l13 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            256,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        },
+        {
+          "name": "cache_v_l13 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            256,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        },
+        {
+          "name": "attn_inp_kq_mask",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            512
+          ],
+          "bytes": 512
+        }
+      ]
+    },
+    {
+      "name": "kqv_out-0",
+      "type": "f32",
+      "shape": [
+        1024,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 18,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 537,
+      "sources": [
+        {
+          "name": "node_17",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "node_19",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 19,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 31110,
+      "sources": [
+        {
+          "name": "blk.0.attn_output.weight",
+          "type": "q4_0",
+          "shape": [
+            1024,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            576,
+            147456,
+            147456
+          ],
+          "bytes": 147456
+        },
+        {
+          "name": "kqv_out-0",
+          "type": "f32",
+          "shape": [
+            1024,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 20,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4315,
+      "sources": [
+        {
+          "name": "node_19",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_post_norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 21,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 1986639,
+      "sources": [
+        {
+          "name": "norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.0.post_attention_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_out-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 22,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 5315,
+      "sources": [
+        {
+          "name": "attn_post_norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "pre_proj",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 23,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 12055,
+      "sources": [
+        {
+          "name": "attn_out-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 24,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3500,
+      "sources": [
+        {
+          "name": "norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.0.ffn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_gate-0",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 25,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 44981,
+      "sources": [
+        {
+          "name": "blk.0.ffn_gate.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_up-0",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 26,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 48295,
+      "sources": [
+        {
+          "name": "blk.0.ffn_up.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_geglu-0",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 27,
+      "op": "GLU",
+      "op_description": "GEGLU",
+      "duration_ns": 56018,
+      "sources": [
+        {
+          "name": "ffn_gate-0",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "ffn_up-0",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "ffn_out-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 28,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 47814,
+      "sources": [
+        {
+          "name": "blk.0.ffn_down.weight",
+          "type": "q4_0",
+          "shape": [
+            2048,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            1152,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_geglu-0",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "norm",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 29,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4500,
+      "sources": [
+        {
+          "name": "ffn_out-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_post_norm-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 30,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3871,
+      "sources": [
+        {
+          "name": "norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.0.post_ffw_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_31",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 31,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 3518,
+      "sources": [
+        {
+          "name": "ffn_post_norm-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "attn_out-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "out_scaled-0",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 32,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3574,
+      "sources": [
+        {
+          "name": "node_31",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.0.layer_output_scale.weight",
+          "type": "f32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 33,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3722,
+      "sources": [
+        {
+          "name": "out_scaled-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 34,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 26394232,
+      "sources": [
+        {
+          "name": "norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.1.attn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_35",
+      "type": "f32",
+      "shape": [
+        1024,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 35,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 26241,
+      "sources": [
+        {
+          "name": "blk.1.attn_q.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            1024,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            147456,
+            147456
+          ],
+          "bytes": 147456
+        },
+        {
+          "name": "attn_norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": " (reshaped)",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 36,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 741,
+      "sources": [
+        {
+          "name": "node_35",
+          "type": "f32",
+          "shape": [
+            1024,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 37,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4482,
+      "sources": [
+        {
+          "name": " (reshaped)",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "Qcur_normed-1",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 38,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3665746,
+      "sources": [
+        {
+          "name": "norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "blk.1.attn_q_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-1",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 39,
+      "op": "ROPE",
+      "op_description": "ROPE",
+      "duration_ns": 8408,
+      "sources": [
+        {
+          "name": "Qcur_normed-1",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "leaf_7",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-1 (view)",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 40,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 593,
+      "sources": [
+        {
+          "name": "Qcur_pos-1",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-1 (view) (permuted)",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        4,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        1024,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 41,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 463,
+      "sources": [
+        {
+          "name": "Qcur_pos-1 (view)",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l13 (view)",
+      "type": "f16",
+      "shape": [
+        256,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 42,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 352,
+      "sources": [
+        {
+          "name": "cache_k_l13",
+          "type": "f16",
+          "shape": [
+            256,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            4194304,
+            4194304
+          ],
+          "bytes": 4194304
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l13 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        256,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 43,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 445,
+      "sources": [
+        {
+          "name": "cache_k_l13 (view)",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l13 (view)",
+      "type": "f16",
+      "shape": [
+        256,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 44,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 445,
+      "sources": [
+        {
+          "name": "cache_v_l13",
+          "type": "f16",
+          "shape": [
+            256,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            4194304,
+            4194304
+          ],
+          "bytes": 4194304
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l13 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        256,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 45,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 537,
+      "sources": [
+        {
+          "name": "cache_v_l13 (view)",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        }
+      ]
+    },
+    {
+      "name": "node_46",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 46,
+      "op": "FLASH_ATTN_EXT",
+      "op_description": "FLASH_ATTN_EXT",
+      "duration_ns": 8741,
+      "sources": [
+        {
+          "name": "Qcur_pos-1 (view) (permuted)",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            4,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            1024,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "cache_k_l13 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            256,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        },
+        {
+          "name": "cache_v_l13 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            256,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        },
+        {
+          "name": "attn_inp_kq_mask",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            512
+          ],
+          "bytes": 512
+        }
+      ]
+    },
+    {
+      "name": "kqv_out-1",
+      "type": "f32",
+      "shape": [
+        1024,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 47,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 593,
+      "sources": [
+        {
+          "name": "node_46",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "node_48",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 48,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 20981,
+      "sources": [
+        {
+          "name": "blk.1.attn_output.weight",
+          "type": "q4_0",
+          "shape": [
+            1024,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            576,
+            147456,
+            147456
+          ],
+          "bytes": 147456
+        },
+        {
+          "name": "kqv_out-1",
+          "type": "f32",
+          "shape": [
+            1024,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 49,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3778,
+      "sources": [
+        {
+          "name": "node_48",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_post_norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 50,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 1984455,
+      "sources": [
+        {
+          "name": "norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.1.post_attention_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_out-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 51,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 4611,
+      "sources": [
+        {
+          "name": "attn_post_norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "out_scaled-0",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 52,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3444,
+      "sources": [
+        {
+          "name": "attn_out-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 53,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3574,
+      "sources": [
+        {
+          "name": "norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.1.ffn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_gate-1",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 54,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 33833,
+      "sources": [
+        {
+          "name": "blk.1.ffn_gate.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_up-1",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 55,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 35962,
+      "sources": [
+        {
+          "name": "blk.1.ffn_up.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_geglu-1",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 56,
+      "op": "GLU",
+      "op_description": "GEGLU",
+      "duration_ns": 28685,
+      "sources": [
+        {
+          "name": "ffn_gate-1",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "ffn_up-1",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "ffn_out-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 57,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 40018,
+      "sources": [
+        {
+          "name": "blk.1.ffn_down.weight",
+          "type": "q4_0",
+          "shape": [
+            2048,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            1152,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_geglu-1",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "norm",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 58,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3686,
+      "sources": [
+        {
+          "name": "ffn_out-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_post_norm-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 59,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3314,
+      "sources": [
+        {
+          "name": "norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.1.post_ffw_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_60",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 60,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 3908,
+      "sources": [
+        {
+          "name": "ffn_post_norm-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "attn_out-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "out_scaled-1",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 61,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3593,
+      "sources": [
+        {
+          "name": "node_60",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.1.layer_output_scale.weight",
+          "type": "f32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 62,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3500,
+      "sources": [
+        {
+          "name": "out_scaled-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 63,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 1691681,
+      "sources": [
+        {
+          "name": "norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.2.attn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_64",
+      "type": "f32",
+      "shape": [
+        1024,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 64,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 22500,
+      "sources": [
+        {
+          "name": "blk.2.attn_q.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            1024,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            147456,
+            147456
+          ],
+          "bytes": 147456
+        },
+        {
+          "name": "attn_norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": " (reshaped)",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 65,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 760,
+      "sources": [
+        {
+          "name": "node_64",
+          "type": "f32",
+          "shape": [
+            1024,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 66,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4389,
+      "sources": [
+        {
+          "name": " (reshaped)",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "Qcur_normed-2",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 67,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 24585775,
+      "sources": [
+        {
+          "name": "norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "blk.2.attn_q_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-2",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 68,
+      "op": "ROPE",
+      "op_description": "ROPE",
+      "duration_ns": 7888,
+      "sources": [
+        {
+          "name": "Qcur_normed-2",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "leaf_7",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-2 (view)",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 69,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 759,
+      "sources": [
+        {
+          "name": "Qcur_pos-2",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-2 (view) (permuted)",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        4,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        1024,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 70,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 445,
+      "sources": [
+        {
+          "name": "Qcur_pos-2 (view)",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l13 (view)",
+      "type": "f16",
+      "shape": [
+        256,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 71,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 445,
+      "sources": [
+        {
+          "name": "cache_k_l13",
+          "type": "f16",
+          "shape": [
+            256,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            4194304,
+            4194304
+          ],
+          "bytes": 4194304
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l13 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        256,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 72,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 426,
+      "sources": [
+        {
+          "name": "cache_k_l13 (view)",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l13 (view)",
+      "type": "f16",
+      "shape": [
+        256,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 73,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 445,
+      "sources": [
+        {
+          "name": "cache_v_l13",
+          "type": "f16",
+          "shape": [
+            256,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            4194304,
+            4194304
+          ],
+          "bytes": 4194304
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l13 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        256,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        512,
+        512,
+        4194304
+      ],
+      "bytes": 131072,
+      "run_index": 0,
+      "node_index": 74,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 445,
+      "sources": [
+        {
+          "name": "cache_v_l13 (view)",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        }
+      ]
+    },
+    {
+      "name": "node_75",
+      "type": "f32",
+      "shape": [
+        256,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 75,
+      "op": "FLASH_ATTN_EXT",
+      "op_description": "FLASH_ATTN_EXT",
+      "duration_ns": 8370,
+      "sources": [
+        {
+          "name": "Qcur_pos-2 (view) (permuted)",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            4,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            1024,
+            4096
+          ],
+          "bytes": 4096
+        },
+        {
+          "name": "cache_k_l13 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            256,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        },
+        {
+          "name": "cache_v_l13 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            256,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            4194304
+          ],
+          "bytes": 131072
+        },
+        {
+          "name": "attn_inp_kq_mask",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            512
+          ],
+          "bytes": 512
+        }
+      ]
+    },
+    {
+      "name": "kqv_out-2",
+      "type": "f32",
+      "shape": [
+        1024,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        4096,
+        4096,
+        4096
+      ],
+      "bytes": 4096,
+      "run_index": 0,
+      "node_index": 76,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 518,
+      "sources": [
+        {
+          "name": "node_75",
+          "type": "f32",
+          "shape": [
+            256,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "node_77",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 77,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 21222,
+      "sources": [
+        {
+          "name": "blk.2.attn_output.weight",
+          "type": "q4_0",
+          "shape": [
+            1024,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            576,
+            147456,
+            147456
+          ],
+          "bytes": 147456
+        },
+        {
+          "name": "kqv_out-2",
+          "type": "f32",
+          "shape": [
+            1024,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4096,
+            4096,
+            4096
+          ],
+          "bytes": 4096
+        }
+      ]
+    },
+    {
+      "name": "norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 78,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3777,
+      "sources": [
+        {
+          "name": "node_77",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_post_norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 79,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3648,
+      "sources": [
+        {
+          "name": "norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.2.post_attention_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_out-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 80,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 3315,
+      "sources": [
+        {
+          "name": "attn_post_norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "out_scaled-1",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 81,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3111,
+      "sources": [
+        {
+          "name": "attn_out-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 82,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3351,
+      "sources": [
+        {
+          "name": "norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.2.ffn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_gate-2",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 83,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 36185,
+      "sources": [
+        {
+          "name": "blk.2.ffn_gate.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_up-2",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 84,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 41388,
+      "sources": [
+        {
+          "name": "blk.2.ffn_up.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_geglu-2",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 85,
+      "op": "GLU",
+      "op_description": "GEGLU",
+      "duration_ns": 27481,
+      "sources": [
+        {
+          "name": "ffn_gate-2",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "ffn_up-2",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "ffn_out-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 86,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 36962,
+      "sources": [
+        {
+          "name": "blk.2.ffn_down.weight",
+          "type": "q4_0",
+          "shape": [
+            2048,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            1152,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_geglu-2",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "norm",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 87,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3870,
+      "sources": [
+        {
+          "name": "ffn_out-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_post_norm-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 88,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3518,
+      "sources": [
+        {
+          "name": "norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.2.post_ffw_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_89",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 89,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 3444,
+      "sources": [
+        {
+          "name": "ffn_post_norm-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "attn_out-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "out_scaled-2",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 90,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3981,
+      "sources": [
+        {
+          "name": "node_89",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.2.layer_output_scale.weight",
+          "type": "f32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 91,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3351,
+      "sources": [
+        {
+          "name": "out_scaled-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 92,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 2000825,
+      "sources": [
+        {
+          "name": "norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.3.attn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_93",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 93,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 38611,
+      "sources": [
+        {
+          "name": "blk.3.attn_q.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "attn_norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": " (reshaped)",
+      "type": "f32",
+      "shape": [
+        512,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        2048,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 94,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 1037,
+      "sources": [
+        {
+          "name": "node_93",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "norm-3",
+      "type": "f32",
+      "shape": [
+        512,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        2048,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 95,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4611,
+      "sources": [
+        {
+          "name": " (reshaped)",
+          "type": "f32",
+          "shape": [
+            512,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "Qcur_normed-3",
+      "type": "f32",
+      "shape": [
+        512,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        2048,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 96,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3149198,
+      "sources": [
+        {
+          "name": "norm-3",
+          "type": "f32",
+          "shape": [
+            512,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "blk.3.attn_q_norm.weight",
+          "type": "f32",
+          "shape": [
+            512,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            2048,
+            2048
+          ],
+          "bytes": 2048
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-3",
+      "type": "f32",
+      "shape": [
+        512,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        2048,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 97,
+      "op": "ROPE",
+      "op_description": "ROPE",
+      "duration_ns": 23909617,
+      "sources": [
+        {
+          "name": "Qcur_normed-3",
+          "type": "f32",
+          "shape": [
+            512,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "leaf_7",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        },
+        {
+          "name": "rope_freqs.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-3 (view)",
+      "type": "f32",
+      "shape": [
+        512,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        2048,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 98,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 1148,
+      "sources": [
+        {
+          "name": "Qcur_pos-3",
+          "type": "f32",
+          "shape": [
+            512,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "Qcur_pos-3 (view) (permuted)",
+      "type": "f32",
+      "shape": [
+        512,
+        1,
+        4,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        2048,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 99,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 463,
+      "sources": [
+        {
+          "name": "Qcur_pos-3 (view)",
+          "type": "f32",
+          "shape": [
+            512,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l14 (view)",
+      "type": "f16",
+      "shape": [
+        512,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        1024,
+        1024,
+        8388608
+      ],
+      "bytes": 262144,
+      "run_index": 0,
+      "node_index": 100,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 352,
+      "sources": [
+        {
+          "name": "cache_k_l14",
+          "type": "f16",
+          "shape": [
+            512,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            1024,
+            8388608,
+            8388608
+          ],
+          "bytes": 8388608
+        }
+      ]
+    },
+    {
+      "name": "cache_k_l14 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        1024,
+        1024,
+        8388608
+      ],
+      "bytes": 262144,
+      "run_index": 0,
+      "node_index": 101,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 444,
+      "sources": [
+        {
+          "name": "cache_k_l14 (view)",
+          "type": "f16",
+          "shape": [
+            512,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            1024,
+            1024,
+            8388608
+          ],
+          "bytes": 262144
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l14 (view)",
+      "type": "f16",
+      "shape": [
+        512,
+        1,
+        256,
+        1
+      ],
+      "strides": [
+        2,
+        1024,
+        1024,
+        8388608
+      ],
+      "bytes": 262144,
+      "run_index": 0,
+      "node_index": 102,
+      "op": "VIEW",
+      "op_description": "VIEW",
+      "duration_ns": 352,
+      "sources": [
+        {
+          "name": "cache_v_l14",
+          "type": "f16",
+          "shape": [
+            512,
+            8192,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            1024,
+            8388608,
+            8388608
+          ],
+          "bytes": 8388608
+        }
+      ]
+    },
+    {
+      "name": "cache_v_l14 (view) (permuted)",
+      "type": "f16",
+      "shape": [
+        512,
+        256,
+        1,
+        1
+      ],
+      "strides": [
+        2,
+        1024,
+        1024,
+        8388608
+      ],
+      "bytes": 262144,
+      "run_index": 0,
+      "node_index": 103,
+      "op": "PERMUTE",
+      "op_description": "PERMUTE",
+      "duration_ns": 444,
+      "sources": [
+        {
+          "name": "cache_v_l14 (view)",
+          "type": "f16",
+          "shape": [
+            512,
+            1,
+            256,
+            1
+          ],
+          "strides": [
+            2,
+            1024,
+            1024,
+            8388608
+          ],
+          "bytes": 262144
+        }
+      ]
+    },
+    {
+      "name": "node_104",
+      "type": "f32",
+      "shape": [
+        512,
+        4,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        2048,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 104,
+      "op": "FLASH_ATTN_EXT",
+      "op_description": "FLASH_ATTN_EXT",
+      "duration_ns": 13444,
+      "sources": [
+        {
+          "name": "Qcur_pos-3 (view) (permuted)",
+          "type": "f32",
+          "shape": [
+            512,
+            1,
+            4,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            2048,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "cache_k_l14 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            512,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            1024,
+            1024,
+            8388608
+          ],
+          "bytes": 262144
+        },
+        {
+          "name": "cache_v_l14 (view) (permuted)",
+          "type": "f16",
+          "shape": [
+            512,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            1024,
+            1024,
+            8388608
+          ],
+          "bytes": 262144
+        },
+        {
+          "name": "attn_inp_kq_mask",
+          "type": "f16",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            2,
+            512,
+            512,
+            512
+          ],
+          "bytes": 512
+        }
+      ]
+    },
+    {
+      "name": "kqv_out-3",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 105,
+      "op": "RESHAPE",
+      "op_description": "RESHAPE",
+      "duration_ns": 926,
+      "sources": [
+        {
+          "name": "node_104",
+          "type": "f32",
+          "shape": [
+            512,
+            4,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            2048,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "node_106",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 106,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 37185,
+      "sources": [
+        {
+          "name": "blk.3.attn_output.weight",
+          "type": "q4_0",
+          "shape": [
+            2048,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            1152,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "kqv_out-3",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "node_107",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 107,
+      "op": "GET_ROWS",
+      "op_description": "GET_ROWS",
+      "duration_ns": 1667,
+      "sources": [
+        {
+          "name": "node_106",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "leaf_52",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 108,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 4149,
+      "sources": [
+        {
+          "name": "node_107",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "attn_post_norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 109,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3649,
+      "sources": [
+        {
+          "name": "norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.3.post_attention_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_110",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 110,
+      "op": "GET_ROWS",
+      "op_description": "GET_ROWS",
+      "duration_ns": 981,
+      "sources": [
+        {
+          "name": "out_scaled-2",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "leaf_52",
+          "type": "i32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "attn_out-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 111,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 3518,
+      "sources": [
+        {
+          "name": "attn_post_norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "node_110",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 112,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3352,
+      "sources": [
+        {
+          "name": "attn_out-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 113,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3333,
+      "sources": [
+        {
+          "name": "norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.3.ffn_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_gate-3",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 114,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 36332,
+      "sources": [
+        {
+          "name": "blk.3.ffn_gate.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_up-3",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 115,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 41666,
+      "sources": [
+        {
+          "name": "blk.3.ffn_up.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            2048,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_geglu-3",
+      "type": "f32",
+      "shape": [
+        2048,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        8192,
+        8192,
+        8192
+      ],
+      "bytes": 8192,
+      "run_index": 0,
+      "node_index": 116,
+      "op": "GLU",
+      "op_description": "GEGLU",
+      "duration_ns": 29000,
+      "sources": [
+        {
+          "name": "ffn_gate-3",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        },
+        {
+          "name": "ffn_up-3",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "ffn_out-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 117,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 37536,
+      "sources": [
+        {
+          "name": "blk.3.ffn_down.weight",
+          "type": "q4_0",
+          "shape": [
+            2048,
+            256,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            1152,
+            294912,
+            294912
+          ],
+          "bytes": 294912
+        },
+        {
+          "name": "ffn_geglu-3",
+          "type": "f32",
+          "shape": [
+            2048,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            8192,
+            8192,
+            8192
+          ],
+          "bytes": 8192
+        }
+      ]
+    },
+    {
+      "name": "norm",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 118,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3815,
+      "sources": [
+        {
+          "name": "ffn_out-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "ffn_post_norm-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 119,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3574,
+      "sources": [
+        {
+          "name": "norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.3.post_ffw_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "node_120",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 120,
+      "op": "ADD",
+      "op_description": "ADD",
+      "duration_ns": 3426,
+      "sources": [
+        {
+          "name": "ffn_post_norm-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "attn_out-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "out_scaled-3",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 121,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 3963,
+      "sources": [
+        {
+          "name": "node_120",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "blk.3.layer_output_scale.weight",
+          "type": "f32",
+          "shape": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            4,
+            4,
+            4
+          ],
+          "bytes": 4
+        }
+      ]
+    },
+    {
+      "name": "norm",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 122,
+      "op": "RMS_NORM",
+      "op_description": "RMS_NORM",
+      "duration_ns": 3278,
+      "sources": [
+        {
+          "name": "out_scaled-3",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "result_norm",
+      "type": "f32",
+      "shape": [
+        256,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1024,
+        1024,
+        1024
+      ],
+      "bytes": 1024,
+      "run_index": 0,
+      "node_index": 123,
+      "op": "MUL",
+      "op_description": "MUL",
+      "duration_ns": 23820655,
+      "sources": [
+        {
+          "name": "norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        },
+        {
+          "name": "output_norm.weight",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "result_output",
+      "type": "f32",
+      "shape": [
+        262144,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        1048576,
+        1048576,
+        1048576
+      ],
+      "bytes": 1048576,
+      "run_index": 0,
+      "node_index": 124,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 3734949,
+      "sources": [
+        {
+          "name": "token_embd.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            262144,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            37748736,
+            37748736
+          ],
+          "bytes": 37748736
+        },
+        {
+          "name": "result_norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    },
+    {
+      "name": "h_nextn",
+      "type": "f32",
+      "shape": [
+        1536,
+        1,
+        1,
+        1
+      ],
+      "strides": [
+        4,
+        6144,
+        6144,
+        6144
+      ],
+      "bytes": 6144,
+      "run_index": 0,
+      "node_index": 125,
+      "op": "MUL_MAT",
+      "op_description": "MUL_MAT",
+      "duration_ns": 32463,
+      "sources": [
+        {
+          "name": "nextn.post_projection.weight",
+          "type": "q4_0",
+          "shape": [
+            256,
+            1536,
+            1,
+            1
+          ],
+          "strides": [
+            18,
+            144,
+            221184,
+            221184
+          ],
+          "bytes": 221184
+        },
+        {
+          "name": "result_norm",
+          "type": "f32",
+          "shape": [
+            256,
+            1,
+            1,
+            1
+          ],
+          "strides": [
+            4,
+            1024,
+            1024,
+            1024
+          ],
+          "bytes": 1024
+        }
+      ]
+    }
+  ],
+  "fixtures": []
+}

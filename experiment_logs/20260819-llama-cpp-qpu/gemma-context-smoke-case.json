@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "name": "gemma-plain-context-32-smoke",
+      "model": "gemma-4-e2b",
+      "mode": "plain",
+      "placement": "cpu-only",
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "prompt": "Continue with one word.",
+      "predict_tokens": 1,
+      "context_size": 8192,
+      "context_tokens_target": 32,
+      "threads": 2,
+      "threads_batch": 2,
+      "flash_attention": true,
+      "seed": 1234,
+      "temperature": 0.0
+    }
+  ]
+}
