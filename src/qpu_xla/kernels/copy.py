@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from threading import Lock
-from typing import Any
+from typing import Any, Literal
 from weakref import WeakKeyDictionary
 
 import numpy as np
@@ -18,40 +18,80 @@ from videocore7.assembler import Assembly, qpu
 
 
 @qpu
-def qpu_copy_words(asm: Assembly) -> None:
-    """Copy one 16-lane word vector per loop iteration on a single QPU core."""
+def qpu_copy_words(asm: Assembly, *, num_qpus: int, vector_width: Literal[1, 4]) -> None:
+    """Copy one or four words per lane using exact QPU stripes."""
+    if not 1 <= num_qpus <= 12:
+        raise ValueError("word-copy QPU count must be between 1 and 12")
+    if vector_width not in {1, 4}:
+        raise ValueError("word-copy vector width must be 1 or 4")
+
     reg_iterations = rf0
     reg_source = rf1
     reg_destination = rf2
     reg_value = rf3
     reg_offset = rf4
     reg_stride = rf5
+    reg_qpu = rf6
+    reg_tmu_config = rf7
 
     nop(sig=ldunifrf(reg_iterations))
     nop(sig=ldunifrf(reg_source))
     nop(sig=ldunifrf(reg_destination))
 
-    eidx(reg_offset)
-    shl(reg_offset, reg_offset, 2)
+    if num_qpus == 1:
+        mov(reg_qpu, 0)
+    else:
+        tidx(reg_qpu)
+        shr(reg_qpu, reg_qpu, 2)
+        band(reg_qpu, reg_qpu, 0b1111)
+    shl(reg_offset, reg_qpu, 4)
+    eidx(rf31)
+    add(reg_offset, reg_offset, rf31)
+    shl(reg_offset, reg_offset, 4 if vector_width == 4 else 2)
     add(reg_source, reg_source, reg_offset)
     add(reg_destination, reg_destination, reg_offset)
-    mov(reg_stride, 1)
-    shl(reg_stride, reg_stride, 6)
+    mov(reg_stride, num_qpus)
+    shl(reg_stride, reg_stride, 8 if vector_width == 4 else 6)
 
-    with loop as l:  # noqa: E741
-        mov(tmua, reg_source, sig=thrsw).add(reg_source, reg_source, reg_stride)
-        nop()
-        nop()
-        nop(sig=ldtmu(reg_value))
-        mov(tmud, reg_value)
-        sub(reg_iterations, reg_iterations, 1, cond="pushz")
-        mov(tmua, reg_destination).add(reg_destination, reg_destination, reg_stride)
-        tmuwt()
+    if vector_width == 4:
+        values = [rf10, rf11, rf12, rf13]
+        bnot(reg_tmu_config, 3)
+        with loop as vector_loop:
+            mov(tmuc, reg_tmu_config)
+            mov(tmua, reg_source, sig=thrsw)
+            add(reg_source, reg_source, reg_stride)
+            nop()
+            nop()
+            for value in values:
+                nop(sig=ldtmu(value))
 
-        l.b(cond="na0")
-        nop()
-        nop()
-        nop()
+            mov(tmuc, reg_tmu_config)
+            for value in values:
+                mov(tmud, value)
+            mov(tmua, reg_destination)
+            add(reg_destination, reg_destination, reg_stride)
+            tmuwt()
+            sub(reg_iterations, reg_iterations, 1, cond="pushz")
+
+            vector_loop.b(cond="na0")
+            nop()
+            nop()
+            nop()
+    else:
+        with loop as scalar_loop:
+            mov(tmua, reg_source, sig=thrsw).add(reg_source, reg_source, reg_stride)
+            nop()
+            nop()
+            nop(sig=ldtmu(reg_value))
+            mov(tmud, reg_value)
+            sub(reg_iterations, reg_iterations, 1, cond="pushz")
+            mov(tmua, reg_destination).add(reg_destination, reg_destination, reg_stride)
+            tmuwt()
+
+            scalar_loop.b(cond="na0")
+            nop()
+            nop()
+            nop()
 
     nop(sig=thrsw)
     nop(sig=thrsw)
@@ -72,7 +112,9 @@ class _CopyProgramState:
 
 
 _STATE_LOCK = Lock()
-_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, _CopyProgramState] = WeakKeyDictionary()
+_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[tuple[int, int], _CopyProgramState]] = (
+    WeakKeyDictionary()
+)
 
 
 def supports_word_copy(source: Tensor, destination: Tensor, backend: Backend) -> bool:
@@ -86,18 +128,23 @@ def supports_word_copy(source: Tensor, destination: Tensor, backend: Backend) ->
     return source.numpy().flags.c_contiguous and destination.numpy().flags.c_contiguous
 
 
-def _program_state(backend: PyVideoCore7Backend) -> _CopyProgramState:
+def _program_state(
+    backend: PyVideoCore7Backend,
+    num_qpus: int,
+    vector_width: Literal[1, 4],
+) -> _CopyProgramState:
     """Build the assembly and uniform block exactly once per live backend."""
     with _STATE_LOCK:
-        state = _PROGRAMS.get(backend)
-        if state is not None:
-            return state
-        with backend.driver_session() as driver:
-            state = _CopyProgramState(
-                code=driver.program(qpu_copy_words),
-                uniforms=driver.alloc(3, dtype=np.uint32),
-            )
-        _PROGRAMS[backend] = state
+        states = _PROGRAMS.setdefault(backend, {})
+        key = (num_qpus, vector_width)
+        state = states.get(key)
+        if state is None:
+            with backend.driver_session() as driver:
+                state = _CopyProgramState(
+                    code=driver.program(qpu_copy_words, num_qpus=num_qpus, vector_width=vector_width),
+                    uniforms=driver.alloc(3, dtype=np.uint32),
+                )
+            states[key] = state
         return state
 
 
@@ -113,14 +160,29 @@ def _execute_word_copy(backend: Backend, args: tuple[Any, ...], grid: tuple[int,
     if not isinstance(backend, PyVideoCore7Backend):
         raise KernelError("word-copy requires PyVideoCore7Backend")
 
-    state = _program_state(backend)
+    vectors = source.nbytes // (16 * 4)
+    vector_width: Literal[1, 4] = 1
+    work_items = vectors
+    num_qpus = next(candidate for candidate in range(min(work_items, 12), 0, -1) if work_items % candidate == 0)
+    if vectors % 4 == 0:
+        vector_work_items = vectors // 4
+        vector_qpus = next(
+            candidate
+            for candidate in range(min(vector_work_items, 12), 0, -1)
+            if vector_work_items % candidate == 0
+        )
+        if vector_qpus >= 6:
+            vector_width = 4
+            work_items = vector_work_items
+            num_qpus = vector_qpus
+    state = _program_state(backend, num_qpus, vector_width)
     with backend.driver_session() as driver:
-        state.uniforms[:] = (source.nbytes // (16 * 4), source.address, destination.address)
+        state.uniforms[:] = (work_items // num_qpus, source.address, destination.address)
         driver.execute(
             state.code,
             local_invocation=(16, 1, 1),
             uniforms=state.uniforms.addresses()[0],
-            thread=1,
+            thread=num_qpus,
         )
 
 

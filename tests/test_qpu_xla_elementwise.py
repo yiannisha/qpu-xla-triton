@@ -57,6 +57,15 @@ def test_copy_uses_the_qpu_word_kernel_when_its_contract_is_met() -> None:
 
         np.testing.assert_array_equal(destination.numpy(), source.numpy())
 
+        vectorized_length = 12 * 64
+        vectorized_source = device.tensor((vectorized_length,), np.float32)
+        vectorized_destination = device.tensor((vectorized_length,), np.float32)
+        vectorized_source.numpy()[:] = np.linspace(-5.0, 7.0, vectorized_length, dtype=np.float32)
+
+        copy(vectorized_destination, vectorized_source, queue=queue).wait()
+
+        np.testing.assert_array_equal(vectorized_destination.numpy(), vectorized_source.numpy())
+
 
 @pytest.mark.hardware
 @pytest.mark.skipif(not Path("/dev/dri/renderD128").exists(), reason="VideoCore VII render node is unavailable")
@@ -74,11 +83,12 @@ def test_minimum_and_maximum_use_qpu_word_kernels() -> None:
         maximum(destination, left, right, queue=queue).wait()
         np.testing.assert_array_equal(destination.numpy(), np.maximum(left.numpy(), right.numpy()))
 
-        float_left = device.tensor((32,), np.float32)
-        float_right = device.tensor((32,), np.float32)
-        float_destination = device.tensor((32,), np.float32)
-        float_left.numpy()[:] = np.linspace(-2.0, 2.0, num=32, dtype=np.float32)
-        float_right.numpy()[:] = np.linspace(2.0, -2.0, num=32, dtype=np.float32)
+        vectorized_length = 12 * 64
+        float_left = device.tensor((vectorized_length,), np.float32)
+        float_right = device.tensor((vectorized_length,), np.float32)
+        float_destination = device.tensor((vectorized_length,), np.float32)
+        float_left.numpy()[:] = np.linspace(-2.0, 2.0, num=vectorized_length, dtype=np.float32)
+        float_right.numpy()[:] = np.linspace(2.0, -2.0, num=vectorized_length, dtype=np.float32)
 
         minimum(float_destination, float_left, float_right, queue=queue).wait()
         np.testing.assert_allclose(float_destination.numpy(), np.minimum(float_left.numpy(), float_right.numpy()))

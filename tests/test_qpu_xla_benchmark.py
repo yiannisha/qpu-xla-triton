@@ -5,7 +5,13 @@ import json
 import pytest
 
 from qpu_xla import Device
-from qpu_xla.benchmark import BenchmarkCategory, BenchmarkReport, collect_metadata
+from qpu_xla.benchmark import (
+    BenchmarkCategory,
+    BenchmarkReport,
+    collect_metadata,
+    numpy_backend_label,
+    numpy_blas_metadata,
+)
 
 
 def test_benchmark_report_preserves_raw_categories_and_json(tmp_path) -> None:
@@ -31,3 +37,10 @@ def test_metadata_records_backend_and_caller_provenance() -> None:
 
     assert metadata["backend"] == "FakeBackend"
     assert metadata["commit"] == "abc"
+
+
+def test_numpy_blas_identity_is_available_to_benchmarks() -> None:
+    metadata = numpy_blas_metadata()
+
+    assert metadata["numpy_blas"]
+    assert numpy_backend_label().startswith("numpy-")

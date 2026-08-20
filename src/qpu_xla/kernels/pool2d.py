@@ -98,24 +98,36 @@ def qpu_pool2d_int32(asm: Assembly, *, mode: PoolMode) -> None:
 
 
 @qpu
-def qpu_pool2d_fp32(asm: Assembly, *, mode: PoolMode) -> None:
+def qpu_pool2d_fp32(asm: Assembly, *, mode: PoolMode, num_qpus: int) -> None:
     """Pool 16 independent FP32 output pixels per QPU work item."""
     if mode not in ("max", "avg"):
         raise ValueError("pool mode must be 'max' or 'avg'")
+    if not 1 <= num_qpus <= 12:
+        raise ValueError("FP32 pool QPU count must be between 1 and 12")
     reg_iters, reg_meta, reg_dst, reg_row_stride = rf0, rf1, rf2, rf3
-    reg_word_stride = rf6
+    reg_qpu_num, reg_offset, reg_word_stride = rf4, rf5, rf6
     reg_base, reg_v0, reg_v1, reg_v2, reg_v3 = rf10, rf11, rf12, rf13, rf14
     reg_tmp, reg_out = rf15, rf16
     nop(sig=ldunifrf(reg_iters))
     nop(sig=ldunifrf(reg_meta))
     nop(sig=ldunifrf(reg_dst))
     nop(sig=ldunifrf(reg_row_stride))
-    mov(reg_word_stride, 1)
-    shl(reg_word_stride, reg_word_stride, 6)
+    if num_qpus == 1:
+        mov(reg_qpu_num, 0)
+        mov(reg_word_stride, 1)
+        shl(reg_word_stride, reg_word_stride, 6)
+    else:
+        tidx(reg_offset)
+        shr(reg_offset, reg_offset, 2)
+        band(reg_qpu_num, reg_offset, 0b1111)
+        mov(reg_word_stride, num_qpus)
+        shl(reg_word_stride, reg_word_stride, 6)
+    shl(reg_offset, reg_qpu_num, 4)
     eidx(rf31)
-    shl(rf31, rf31, 2)
-    add(reg_meta, reg_meta, rf31)
-    add(reg_dst, reg_dst, rf31)
+    add(reg_offset, reg_offset, rf31)
+    shl(reg_offset, reg_offset, 2)
+    add(reg_meta, reg_meta, reg_offset)
+    add(reg_dst, reg_dst, reg_offset)
     with loop as lk:
         mov(tmua, reg_meta, sig=thrsw).add(reg_meta, reg_meta, reg_word_stride)
         nop()
@@ -172,7 +184,9 @@ class _ProgramState:
 
 _STATE_LOCK = Lock()
 _PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[PoolMode, _ProgramState]] = WeakKeyDictionary()
-_FP32_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[PoolMode, _ProgramState]] = WeakKeyDictionary()
+_FP32_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[tuple[PoolMode, int], _ProgramState]] = (
+    WeakKeyDictionary()
+)
 
 
 def supports_pool2d_int32(source: Tensor, destination: Tensor, metadata: Tensor, backend: Backend) -> bool:
@@ -215,18 +229,19 @@ def _program_state(backend: PyVideoCore7Backend, mode: PoolMode) -> _ProgramStat
         return state
 
 
-def _fp32_program_state(backend: PyVideoCore7Backend, mode: PoolMode) -> _ProgramState:
+def _fp32_program_state(backend: PyVideoCore7Backend, mode: PoolMode, num_qpus: int) -> _ProgramState:
     """Assemble each FP32 pooling mode once for a hardware backend."""
     with _STATE_LOCK:
         programs = _FP32_PROGRAMS.setdefault(backend, {})
-        state = programs.get(mode)
+        key = (mode, num_qpus)
+        state = programs.get(key)
         if state is None:
             with backend.driver_session() as driver:
                 state = _ProgramState(
-                    code=driver.program(qpu_pool2d_fp32, mode=mode),
+                    code=driver.program(qpu_pool2d_fp32, mode=mode, num_qpus=num_qpus),
                     uniforms=driver.alloc(4, dtype=np.uint32),
                 )
-            programs[mode] = state
+            programs[key] = state
         return state
 
 
@@ -269,10 +284,22 @@ def _execute_pool2d_fp32(mode: PoolMode, backend: Backend, args: tuple[Any, ...]
         raise KernelError("FP32 pool2d uses one workgroup")
     if not isinstance(backend, PyVideoCore7Backend):
         raise KernelError("FP32 pool2d requires PyVideoCore7Backend")
-    state = _fp32_program_state(backend, mode)
+    vectors = metadata.shape[0] // 16
+    num_qpus = next(candidate for candidate in range(min(vectors, 12), 0, -1) if vectors % candidate == 0)
+    state = _fp32_program_state(backend, mode, num_qpus)
     with backend.driver_session() as driver:
-        state.uniforms[:] = (metadata.shape[0] // 16, metadata.address, destination.address, source.numpy().strides[2])
-        driver.execute(state.code, local_invocation=(16, 1, 1), uniforms=state.uniforms.addresses()[0], thread=1)
+        state.uniforms[:] = (
+            metadata.shape[0] // (16 * num_qpus),
+            metadata.address,
+            destination.address,
+            source.numpy().strides[2],
+        )
+        driver.execute(
+            state.code,
+            local_invocation=(16, 1, 1),
+            uniforms=state.uniforms.addresses()[0],
+            thread=num_qpus,
+        )
 
 
 MAXPOOL2D_FP32_KERNEL = Kernel(

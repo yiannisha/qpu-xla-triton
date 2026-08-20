@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import cast
+from typing import Self, cast
 
 import numpy as np
 import numpy.typing as npt
@@ -25,6 +25,104 @@ from qpu_xla.queue import Event, Queue
 def _trunc_div4(values: npt.NDArray[np.int64]) -> npt.NDArray[np.int64]:
     """Divide signed values by four with truncation toward zero."""
     return np.where(values < 0, -((-values) // 4), values // 4)
+
+
+def _fill_pool2d_metadata(metadata: Tensor, source: Tensor, destination: Tensor) -> None:
+    """Populate source addresses for one fixed 2x2/stride-2 tensor pair."""
+    batch, channels, height, width = source.shape
+    output_height, output_width = destination.shape[2:]
+    indexes = np.arange(metadata.shape[0], dtype=np.uint64).reshape(destination.shape)
+    plane, channel_plane = output_height * output_width, height * width
+    batch_index = indexes // (channels * plane)
+    channel_index = (indexes // plane) % channels
+    spatial_index = indexes % plane
+    input_index = (
+        batch_index * channels * channel_plane
+        + channel_index * channel_plane
+        + (spatial_index // output_width * 2) * width
+        + (spatial_index % output_width * 2)
+    )
+    metadata.numpy()[:] = np.uint32(source.address) + (input_index * source.dtype.itemsize).astype(np.uint32).ravel()
+
+
+class PreparedPool2DFP32:
+    """Cache FP32 pooling metadata for repeated execution on fixed tensors."""
+
+    def __init__(self: Self, source: Tensor, destination: Tensor) -> None:
+        """Create a plan for one fixed source/destination tensor pair."""
+        if source.buffer.device is not destination.buffer.device:
+            raise DependencyError("prepared pooling tensors must belong to the same device")
+        if source.dtype != np.dtype(np.float32) or destination.dtype != np.dtype(np.float32):
+            raise ValueError("prepared FP32 pooling requires float32 tensors")
+        if len(source.shape) != 4 or len(destination.shape) != 4:
+            raise ValueError("prepared FP32 pooling requires NCHW rank-4 tensors")
+        batch, channels, height, width = source.shape
+        if height % 2 or width % 2 or destination.shape != (batch, channels, height // 2, width // 2):
+            raise ValueError("prepared FP32 pooling requires aligned 2x2/stride-2 geometry")
+        self.device = source.buffer.device
+        self.source = source
+        self.destination = destination
+        self.metadata = self.device.tensor((int(np.prod(destination.shape)),), np.uint32)
+        _fill_pool2d_metadata(self.metadata, source, destination)
+        if not supports_pool2d_fp32(source, destination, self.metadata, self.device.backend):
+            self.metadata.buffer.close()
+            raise ValueError("prepared FP32 pooling requires a 16-aligned hardware-supported output")
+        self._queue: Queue | None = None
+        self._last_event: Event | None = None
+        self._closed = False
+
+    def __enter__(self: Self) -> Self:
+        """Return this open plan as a context manager."""
+        if self._closed:
+            raise RuntimeError("prepared FP32 pooling plan is closed")
+        return self
+
+    def __exit__(self: Self, exc_type: object, exc_value: object, traceback: object) -> None:
+        """Wait for pending work and release cached metadata."""
+        self.close()
+
+    def close(self: Self) -> None:
+        """Release cached metadata after the last submitted invocation."""
+        if self._closed:
+            return
+        if self._last_event is not None:
+            self._last_event.wait()
+        self.metadata.buffer.close()
+        self._closed = True
+
+    def execute(
+        self: Self,
+        *,
+        mode: PoolMode,
+        queue: Queue,
+        wait_for: Iterable[Event] = (),
+    ) -> Event:
+        """Submit one max/average pool using cached source-address metadata."""
+        if mode not in ("max", "avg"):
+            raise ValueError("pool mode must be 'max' or 'avg'")
+        if self._closed:
+            raise RuntimeError("prepared FP32 pooling plan is closed")
+        if self._last_event is not None and not self._last_event.done:
+            raise RuntimeError("prepared FP32 pooling plan already has an in-flight invocation")
+        if self._queue is None:
+            self._queue = queue
+        elif self._queue is not queue:
+            raise DependencyError("prepared FP32 pooling plan is bound to its first queue")
+        if queue.device is not self.device:
+            raise DependencyError("prepared FP32 pooling queue belongs to a different device")
+        kernel = MAXPOOL2D_FP32_KERNEL if mode == "max" else AVGPOOL2D_FP32_KERNEL
+        event = queue.submit(
+            kernel,
+            (self.source, self.destination, self.metadata),
+            wait_for=wait_for,
+            buffers=(
+                self.source.access(AccessMode.READ),
+                self.metadata.access(AccessMode.READ),
+                self.destination.access(AccessMode.WRITE),
+            ),
+        )
+        self._last_event = event
+        return event
 
 
 def pool2d_int32(
@@ -73,21 +171,7 @@ def pool2d_int32(
             output[:] = _trunc_div4(summed).astype(np.int32)
 
     def prepare_metadata() -> None:
-        indexes = np.arange(metadata.shape[0], dtype=np.uint64).reshape(destination.shape)
-        output_width, output_height = destination.shape[3], destination.shape[2]
-        plane, channel_plane = output_height * output_width, height * width
-        batch_index = indexes // (channels * plane)
-        channel_index = (indexes // plane) % channels
-        spatial_index = indexes % plane
-        input_index = (
-            batch_index * channels * channel_plane
-            + channel_index * channel_plane
-            + (spatial_index // output_width * 2) * width
-            + (spatial_index % output_width * 2)
-        )
-        metadata.numpy()[:] = (
-            np.uint32(source.address) + (input_index * source.dtype.itemsize).astype(np.uint32).ravel()
-        )
+        _fill_pool2d_metadata(metadata, source, destination)
 
     if not supports_pool2d_int32(source, destination, metadata, device.backend):
         event = selected_queue.host_task(
@@ -161,21 +245,7 @@ def pool2d_fp32(
             output[:] = ((x00 + x01) + (x10 + x11)) * np.float32(0.25)
 
     def prepare_metadata() -> None:
-        indexes = np.arange(metadata.shape[0], dtype=np.uint64).reshape(destination.shape)
-        output_width, output_height = destination.shape[3], destination.shape[2]
-        plane, channel_plane = output_height * output_width, height * width
-        batch_index = indexes // (channels * plane)
-        channel_index = (indexes // plane) % channels
-        spatial_index = indexes % plane
-        input_index = (
-            batch_index * channels * channel_plane
-            + channel_index * channel_plane
-            + (spatial_index // output_width * 2) * width
-            + (spatial_index % output_width * 2)
-        )
-        metadata.numpy()[:] = (
-            np.uint32(source.address) + (input_index * source.dtype.itemsize).astype(np.uint32).ravel()
-        )
+        _fill_pool2d_metadata(metadata, source, destination)
 
     if not supports_pool2d_fp32(source, destination, metadata, device.backend):
         event = selected_queue.host_task(

@@ -7,6 +7,7 @@ import pytest
 
 from qpu_xla import Device
 from qpu_xla.ops import scaled_dot_product_attention_fp32
+from qpu_xla.scheduler import Placement
 
 
 def _reference(query: np.ndarray, key: np.ndarray, value: np.ndarray, *, causal: bool) -> np.ndarray:
@@ -57,6 +58,14 @@ def test_sdpa_fp32_qpu_gemm_stages_match_reference() -> None:
         key.numpy()[:] = key_value
         value.numpy()[:] = value_value
 
-        scaled_dot_product_attention_fp32(destination, query, key, value, causal=True, queue=queue).wait()
+        scaled_dot_product_attention_fp32(
+            destination,
+            query,
+            key,
+            value,
+            causal=True,
+            queue=queue,
+            softmax_placement=Placement.QPU,
+        ).wait()
 
         np.testing.assert_allclose(destination.numpy(), expected, atol=1e-5, rtol=1e-5)

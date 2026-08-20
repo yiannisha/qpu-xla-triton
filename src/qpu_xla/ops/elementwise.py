@@ -12,6 +12,7 @@ from qpu_xla.kernels.copy import WORD_COPY_KERNEL, supports_word_copy
 from qpu_xla.kernels.minmax import MAXIMUM_WORD_KERNEL, MINIMUM_WORD_KERNEL, supports_word_minmax
 from qpu_xla.memory import AccessMode, Tensor
 from qpu_xla.queue import Event, Queue
+from qpu_xla.scheduler import Placement
 
 
 def _select_queue(destination: Tensor, queue: Queue | None) -> tuple[Queue, bool]:
@@ -39,6 +40,7 @@ def copy(
     source: Tensor,
     *,
     queue: Queue | None = None,
+    placement: Placement = Placement.AUTO,
     wait_for: Iterable[Event] = (),
 ) -> Event:
     """Copy one equal-shaped tensor into another through a runtime queue.
@@ -50,7 +52,12 @@ def copy(
     _validate_binary(destination, source, source)
     selected_queue, close_queue = _select_queue(destination, queue)
     accesses = (destination.access(AccessMode.WRITE), source.access(AccessMode.READ))
-    if supports_word_copy(source, destination, selected_queue.device.backend):
+    supported = supports_word_copy(source, destination, selected_queue.device.backend)
+    if placement is Placement.HYBRID:
+        raise ValueError("generic copy does not define a safe hybrid partition; partition at the caller")
+    if placement is Placement.QPU and not supported:
+        raise ValueError("QPU copy requires equal contiguous four-byte tensors with a multiple of 16 elements")
+    if supported and placement is not Placement.CPU:
         event = selected_queue.submit(WORD_COPY_KERNEL, (source, destination), wait_for=wait_for, buffers=accesses)
     else:
         event = selected_queue.host_task(

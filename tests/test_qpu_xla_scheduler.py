@@ -8,7 +8,14 @@ import pytest
 
 from qpu_xla import Device
 from qpu_xla.ops import calibrate_matmul, matmul, plan_matmul
-from qpu_xla.scheduler import CapabilityRegistry, CostModel, ExecutionCandidate, OperationSpec, Placement
+from qpu_xla.scheduler import (
+    CapabilityRegistry,
+    CostModel,
+    ExecutionCandidate,
+    OperationSpec,
+    PartitionSpec,
+    Placement,
+)
 
 
 def test_registry_prefers_calibrated_median_and_persists_json(tmp_path) -> None:
@@ -46,6 +53,31 @@ def test_matmul_planner_has_cpu_fallback_and_rejects_forced_unsupported_qpu() ->
         assert plan_matmul(destination, left, right).candidate.placement is Placement.CPU
         with pytest.raises(ValueError, match="no qpu implementation"):
             plan_matmul(destination, left, right, placement=Placement.QPU)
+
+
+def test_hybrid_candidates_require_calibration_before_auto_selection() -> None:
+    specification = OperationSpec("matmul", "float32", (512, 512, 512), "row-major")
+    partition = PartitionSpec("rows", 128, 512, 16)
+    registry = CapabilityRegistry(
+        (
+            ExecutionCandidate("cpu", Placement.CPU, lambda _: True, lambda _: 1.0),
+            ExecutionCandidate(
+                "hybrid.rows.128",
+                Placement.HYBRID,
+                lambda _: True,
+                lambda _: 0.5,
+                partition,
+                requires_calibration=True,
+            ),
+        )
+    )
+
+    assert registry.choose(specification).candidate.name == "cpu"
+    assert registry.choose(specification, preference=Placement.HYBRID).candidate.partition == partition
+    model = CostModel()
+    model.record(specification, "cpu", 1.0)
+    model.record(specification, "hybrid.rows.128", 0.5)
+    assert registry.choose(specification, cost_model=model).candidate.name == "hybrid.rows.128"
 
 
 def test_matmul_can_be_forced_to_the_cpu_path() -> None:

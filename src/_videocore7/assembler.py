@@ -902,6 +902,10 @@ _add_ops: Final[dict[str, Operation]] = {
     "flnafirst": Operation("flnafirst", 187, True, False, False, raddr_mask=18),
     "fxcd": Operation("fxcd", 187, True, False, False, raddr_mask=(32, 34)),
     "fycd": Operation("fycd", 187, True, False, False, raddr_mask=(36, 38)),
+    "setnnmode_uu": Operation("setnnmode_uu", 187, False, False, False, raddr_mask=48),
+    "setnnmode_su": Operation("setnnmode_su", 187, False, False, False, raddr_mask=49),
+    "setnnmode_us": Operation("setnnmode_us", 187, False, False, False, raddr_mask=50),
+    "setnnmode_ss": Operation("setnnmode_ss", 187, False, False, False, raddr_mask=51),
     "ldvpmv_in": Operation("ldvpmv_in", 188, True, True, False, raddr_mask=0),
     "ldvpmd_in": Operation("ldvpmd_in", 188, True, True, False, raddr_mask=1),
     "ldvpmp": Operation("ldvpmp", 188, True, True, False, raddr_mask=2),
@@ -951,6 +955,7 @@ _mul_ops: Final[dict[str, Operation]] = {
     "vfmul": Operation("vfmul", 4, True, True, True),
     "smul24": Operation("smul24", 9, True, True, True),
     "multop": Operation("multop", 10, True, True, True),
+    "v8dot": Operation("v8dot", 11, True, True, True),
     "fmov": Operation("fmov", 14, True, True, False, raddr_mask=(0, 2)),
     "mov": Operation("mov", 14, True, True, False, raddr_mask=3),
     "ftounorm16": Operation("ftounorm16", 14, True, True, False, raddr_mask=32),
@@ -1393,8 +1398,12 @@ class AddALUOp(ALUOp):
                     raise AssembleError(f'"{self.name}" rejects src2 with "{self.raddr_b.modifier.name}" modifier')
 
         inst = ALUInstruction()
-        inst.ma = self.dst.magic
-        inst.waddr_add = self.dst.waddr
+        if self.name.startswith("setnnmode_"):
+            inst.ma = 0
+            inst.waddr_add = 0
+        else:
+            inst.ma = self.dst.magic
+            inst.waddr_add = self.dst.waddr
         inst.op_add = op
         inst.raddr_a = raddr_a
         inst.raddr_b = raddr_b
@@ -1817,6 +1826,43 @@ class ALUWithoutSMIMM(ALU):
         return self.dual_issue("multop", dst=dst, src1=src1, src2=src2, cond=cond, sig=sig)
 
     @overload
+    def v8dot(
+        self: Self,
+        dst: Register,
+        src1: int,
+        src2: Register,
+        cond: ALUConditionArg = None,
+        sig: SignalArg = None,
+    ) -> None: ...
+    @overload
+    def v8dot(
+        self: Self,
+        dst: Register,
+        src1: Register,
+        src2: int,
+        cond: ALUConditionArg = None,
+        sig: SignalArg = None,
+    ) -> None: ...
+    @overload
+    def v8dot(
+        self: Self,
+        dst: Register,
+        src1: Register,
+        src2: Register,
+        cond: ALUConditionArg = None,
+        sig: SignalArg = None,
+    ) -> None: ...
+    def v8dot(
+        self: Self,
+        dst: Register,
+        src1: int | Register,
+        src2: int | Register,
+        cond: ALUConditionArg = None,
+        sig: SignalArg = None,
+    ) -> None:
+        return self.dual_issue("v8dot", dst=dst, src1=src1, src2=src2, cond=cond, sig=sig)
+
+    @overload
     def fmov(
         self: Self,
         dst: Register,
@@ -1985,6 +2031,16 @@ class ALUWithSMIMM(ALU):
         sig: SignalArg = None,
     ) -> None:
         return self.dual_issue("multop", dst=dst, src1=src1, src2=src2, cond=cond, sig=sig)
+
+    def v8dot(
+        self: Self,
+        dst: Register,
+        src1: Register,
+        src2: Register,
+        cond: ALUConditionArg = None,
+        sig: SignalArg = None,
+    ) -> None:
+        return self.dual_issue("v8dot", dst=dst, src1=src1, src2=src2, cond=cond, sig=sig)
 
     def fmov(
         self: Self,

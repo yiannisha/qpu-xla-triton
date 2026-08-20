@@ -54,31 +54,29 @@ def _im2col_nchw(
     dilation: tuple[int, int],
 ) -> npt.NDArray[np.generic]:
     """Lower an NCHW tensor to the row-major matrix consumed by tiled GEMM."""
-    batch, channels, height, width = source.shape
+    _, _, height, width = source.shape
     output_height, output_width = _output_hw(height, width, kernel_height, kernel_width, stride, padding, dilation)
     padded = np.pad(source, ((0, 0), (0, 0), (padding[0], padding[0]), (padding[1], padding[1])))
-    columns = np.empty(
-        (batch * output_height * output_width, channels * kernel_height * kernel_width), dtype=source.dtype
+    effective_height = dilation[0] * (kernel_height - 1) + 1
+    effective_width = dilation[1] * (kernel_width - 1) + 1
+    windows = np.lib.stride_tricks.sliding_window_view(  # type: ignore[call-overload]
+        padded,
+        (effective_height, effective_width),
+        axis=(2, 3),
     )
-    row = 0
-    for batch_index in range(batch):
-        for output_y in range(output_height):
-            input_y = output_y * stride[0]
-            for output_x in range(output_width):
-                input_x = output_x * stride[1]
-                column = 0
-                for channel in range(channels):
-                    for kernel_y in range(kernel_height):
-                        for kernel_x in range(kernel_width):
-                            columns[row, column] = padded[
-                                batch_index,
-                                channel,
-                                input_y + kernel_y * dilation[0],
-                                input_x + kernel_x * dilation[1],
-                            ]
-                            column += 1
-                row += 1
-    return columns
+    windows = windows[
+        :,
+        :,
+        : output_height * stride[0] : stride[0],
+        : output_width * stride[1] : stride[1],
+        :: dilation[0],
+        :: dilation[1],
+    ]
+    columns = windows.transpose(0, 2, 3, 1, 4, 5).reshape(
+        -1,
+        source.shape[1] * kernel_height * kernel_width,
+    )
+    return np.ascontiguousarray(columns)
 
 
 def _is_pointwise_1x1(

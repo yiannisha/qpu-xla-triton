@@ -1,4 +1,4 @@
-"""Scaled dot-product FP32 attention with QPU GEMM stages and CPU softmax."""
+"""Scaled dot-product FP32 attention with independently placed stages."""
 
 from __future__ import annotations
 
@@ -10,7 +10,9 @@ from qpu_xla.errors import DependencyError
 from qpu_xla.memory import AccessMode, Tensor
 from qpu_xla.ops.attention import _round_up
 from qpu_xla.ops.matmul import matmul
+from qpu_xla.ops.softmax import softmax_fp32
 from qpu_xla.queue import Event, Queue
+from qpu_xla.scheduler import Placement
 
 
 def scaled_dot_product_attention_fp32(
@@ -23,15 +25,23 @@ def scaled_dot_product_attention_fp32(
     causal: bool = False,
     causal_offset: int = 0,
     queue: Queue | None = None,
+    matmul_cpu_queue: Queue | None = None,
+    score_placement: Placement = Placement.CPU,
+    value_placement: Placement = Placement.CPU,
+    score_qpu_units: int | None = None,
+    value_qpu_units: int | None = None,
+    softmax_cpu_queue: Queue | None = None,
+    softmax_placement: Placement = Placement.CPU,
+    softmax_qpu_rows: int | None = None,
     wait_for: Iterable[Event] = (),
 ) -> Event:
     """Compute FP32 softmax attention with optional causal masking.
 
     Inputs are rank-2 ``(query_len, depth)``, ``(key_len, depth)``, and
     ``(key_len, value_dim)`` matrices. Scores and value aggregation use the
-    packaged tiled FP32 GEMM path when padded dimensions permit it; numerically
-    sensitive row-wise softmax stays as an explicit CPU queue task. The default
-    scale is ``1 / sqrt(depth)`` and causal masking permits keys
+    packaged tiled FP32 GEMM path when padded dimensions permit it. Scaling and
+    masking remain explicit host preparation; softmax can be placed on CPU,
+    QPU, or a calibrated row split. The default scale is ``1 / sqrt(depth)`` and causal masking permits keys
     ``j <= i + causal_offset``. The offset supports queries against a prefix
     held in a KV cache.
     """
@@ -55,7 +65,8 @@ def scaled_dot_product_attention_fp32(
     if not np.isfinite(scale_value) or scale_value <= 0:
         raise ValueError("attention scale must be finite and positive")
 
-    padded_query_len = _round_up(query_len, 16)
+    # Preserve the single-row decode case so it can use the dedicated GEMV.
+    padded_query_len = 1 if query_len == 1 else _round_up(query_len, 16)
     padded_key_len = _round_up(key_len, 16)
     padded_depth = _round_up(depth, 4)
     padded_value_dim = _round_up(value_dim, 16)
@@ -91,33 +102,59 @@ def scaled_dot_product_attention_fp32(
         ),
         name="sdpa_fp32.prepare",
     )
-    score_event = matmul(scores, padded_query, padded_key_t, queue=selected_queue, wait_for=(prepare_event,))
+    score_event = matmul(
+        scores,
+        padded_query,
+        padded_key_t,
+        queue=selected_queue,
+        cpu_queue=matmul_cpu_queue if score_placement is Placement.HYBRID else None,
+        placement=score_placement,
+        qpu_columns=score_qpu_units if padded_query_len == 1 else None,
+        qpu_rows=score_qpu_units if padded_query_len != 1 else None,
+        wait_for=(prepare_event,),
+    )
 
-    def softmax() -> None:
+    def prepare_softmax() -> None:
         active = scores.numpy()[:query_len, :key_len]
         np.multiply(active, np.float32(scale_value), out=active)
         if causal:
             columns = np.arange(key_len)[None, :]
             rows = np.arange(query_len)[:, None]
             active[columns > rows + causal_offset] = -np.inf
-        row_max = np.max(active, axis=1, keepdims=True)
-        np.subtract(active, row_max, out=active)
-        np.exp(active, out=active)
-        row_sum = np.sum(active, axis=1, keepdims=True, dtype=np.float32)
-        np.divide(active, row_sum, out=active)
+        scores.numpy()[:query_len, key_len:].fill(-np.inf)
         scores.numpy()[query_len:, :].fill(0.0)
-        scores.numpy()[:, key_len:].fill(0.0)
 
-    softmax_event = selected_queue.host_task(
-        softmax,
+    softmax_prepare_event = selected_queue.host_task(
+        prepare_softmax,
         wait_for=(score_event,),
         buffers=(scores.access(AccessMode.READ_WRITE),),
-        name="sdpa_fp32.softmax",
+        name="sdpa_fp32.softmax_prepare",
     )
-    value_event = matmul(padded_result, scores, padded_value, queue=selected_queue, wait_for=(softmax_event,))
+    softmax_event = softmax_fp32(
+        scores,
+        scores,
+        queue=selected_queue,
+        cpu_queue=softmax_cpu_queue,
+        placement=softmax_placement,
+        qpu_rows=softmax_qpu_rows,
+        wait_for=(softmax_prepare_event,),
+    )
+    value_event = matmul(
+        padded_result,
+        scores,
+        padded_value,
+        queue=selected_queue,
+        cpu_queue=matmul_cpu_queue if value_placement is Placement.HYBRID else None,
+        placement=value_placement,
+        qpu_columns=value_qpu_units if padded_query_len == 1 else None,
+        qpu_rows=value_qpu_units if padded_query_len != 1 else None,
+        wait_for=(softmax_event,),
+    )
 
     def finish() -> None:
         destination.numpy()[:] = padded_result.numpy()[:query_len, :value_dim]
+        for scratch in (padded_query, padded_key_t, padded_value, scores, padded_result):
+            scratch.buffer.close()
 
     result_event = selected_queue.host_task(
         finish,

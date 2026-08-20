@@ -575,6 +575,18 @@ def fxcd(dst: Register, cond: ALUConditionArg = None, sig: SignalArg = None) -> 
 def fycd(dst: Register, cond: ALUConditionArg = None, sig: SignalArg = None) -> ALUWithoutSMIMM: ...
 
 #
+def setnnmode_uu(dst: Register = null, cond: ALUConditionArg = None, sig: SignalArg = None) -> ALUWithoutSMIMM: ...
+
+#
+def setnnmode_su(dst: Register = null, cond: ALUConditionArg = None, sig: SignalArg = None) -> ALUWithoutSMIMM: ...
+
+#
+def setnnmode_us(dst: Register = null, cond: ALUConditionArg = None, sig: SignalArg = None) -> ALUWithoutSMIMM: ...
+
+#
+def setnnmode_ss(dst: Register = null, cond: ALUConditionArg = None, sig: SignalArg = None) -> ALUWithoutSMIMM: ...
+
+#
 @overload
 def ldvpmv_in(
     dst: Register, src: int | float, cond: ALUConditionArg = None, sig: SignalArg = None
@@ -947,6 +959,20 @@ def multop(
 ) -> None: ...
 @overload
 def multop(
+    dst: Register, src1: Register, src2: Register, cond: ALUConditionArg = None, sig: SignalArg = None
+) -> None: ...
+
+#
+@overload
+def v8dot(
+    dst: Register, src1: int, src2: Register, cond: ALUConditionArg = None, sig: SignalArg = None
+) -> None: ...
+@overload
+def v8dot(
+    dst: Register, src1: Register, src2: int, cond: ALUConditionArg = None, sig: SignalArg = None
+) -> None: ...
+@overload
+def v8dot(
     dst: Register, src1: Register, src2: Register, cond: ALUConditionArg = None, sig: SignalArg = None
 ) -> None: ...
 

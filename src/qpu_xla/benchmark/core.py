@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import platform
 import socket
 from collections.abc import Callable, Mapping
@@ -20,6 +21,34 @@ import numpy as np
 from qpu_xla.device import Device
 
 
+def numpy_blas_metadata() -> dict[str, str]:
+    """Return the BLAS implementation linked into the active NumPy build."""
+    try:
+        configuration = np.show_config(mode="dicts")
+    except (AttributeError, TypeError):
+        return {"numpy_blas": "unknown"}
+    dependencies = configuration.get("Build Dependencies", {})
+    blas = dependencies.get("blas", {}) if isinstance(dependencies, dict) else {}
+    if not isinstance(blas, dict):
+        return {"numpy_blas": "unknown"}
+    name = str(blas.get("name", "unknown"))
+    version = str(blas.get("version", "unknown"))
+    details = str(blas.get("openblas configuration", ""))
+    return {
+        "numpy_blas": name,
+        "numpy_blas_version": version,
+        "numpy_blas_configuration": details,
+    }
+
+
+def numpy_backend_label() -> str:
+    """Return a concise benchmark label for NumPy's detected BLAS backend."""
+    metadata = numpy_blas_metadata()
+    name = metadata["numpy_blas"].lower()
+    version = metadata.get("numpy_blas_version", "unknown")
+    return f"numpy-openblas-{version}" if "openblas" in name else f"numpy-{name}-{version}"
+
+
 class BenchmarkCategory(Enum):
     """Timing categories that must remain distinct in QPU-XLA reports."""
 
@@ -30,6 +59,11 @@ class BenchmarkCategory(Enum):
     QPU_EXECUTE_ONLY = "qpu_execute_only"
     QPU_PREP_CACHED_TOTAL = "qpu_prep_cached_total"
     COLD_START = "cold_start"
+    CPU_TOTAL = "cpu_total"
+    QPU_TOTAL = "qpu_total"
+    HYBRID_TOTAL = "hybrid_total"
+    KERNEL_ONLY = "kernel_only"
+    HOST_PREP = "host_prep"
 
 
 @dataclass(frozen=True, slots=True)
@@ -80,7 +114,12 @@ def collect_metadata(device: Device | None = None, *, extra: Mapping[str, str] =
         "platform": platform.platform(),
         "python": platform.python_version(),
         "numpy": np.__version__,
+        **numpy_blas_metadata(),
     }
+    for variable in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+        value = os.environ.get(variable)
+        if value is not None:
+            metadata[variable.lower()] = value
     governor = _read_text(Path("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"))
     temperature = _read_text(Path("/sys/class/thermal/thermal_zone0/temp"))
     if governor is not None:

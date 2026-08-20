@@ -10,6 +10,7 @@ import numpy.typing as npt
 
 from qpu_xla.errors import DependencyError
 from qpu_xla.memory import AccessMode, Tensor
+from qpu_xla.ops.bias_activation import bias_activation
 from qpu_xla.ops.matmul import matmul
 from qpu_xla.queue import Event, Queue
 
@@ -65,8 +66,10 @@ def mlp_int32(
     padded_source = device.tensor((padded_batch, padded_input), np.int32)
     padded_weight1 = device.tensor((padded_input, padded_hidden), np.int32)
     hidden = device.tensor((padded_batch, padded_hidden), np.int32)
+    padded_bias1 = device.tensor((padded_hidden,), np.int32)
     padded_weight2 = device.tensor((padded_hidden, padded_output), np.int32)
     padded_result = device.tensor((padded_batch, padded_output), np.int32)
+    padded_bias2 = device.tensor((padded_output,), np.int32)
     selected_queue = device.queue() if queue is None else queue
     close_queue = queue is None
     if selected_queue.device is not device:
@@ -76,9 +79,13 @@ def mlp_int32(
         padded_source.numpy().fill(0)
         padded_weight1.numpy().fill(0)
         padded_weight2.numpy().fill(0)
+        padded_bias1.numpy().fill(0)
+        padded_bias2.numpy().fill(0)
         padded_source.numpy()[:batch, :in_features] = source.numpy()
         padded_weight1.numpy()[:in_features, :hidden_features] = weight1.numpy()
+        padded_bias1.numpy()[:hidden_features] = bias1.numpy()
         padded_weight2.numpy()[:hidden_features, :out_features] = weight2.numpy()
+        padded_bias2.numpy()[:out_features] = bias2.numpy()
 
     prepare_event = selected_queue.host_task(
         prepare,
@@ -87,40 +94,44 @@ def mlp_int32(
             source.access(AccessMode.READ),
             weight1.access(AccessMode.READ),
             weight2.access(AccessMode.READ),
+            bias1.access(AccessMode.READ),
+            bias2.access(AccessMode.READ),
             padded_source.access(AccessMode.WRITE),
             padded_weight1.access(AccessMode.WRITE),
             padded_weight2.access(AccessMode.WRITE),
+            padded_bias1.access(AccessMode.WRITE),
+            padded_bias2.access(AccessMode.WRITE),
         ),
     )
     hidden_gemm = matmul(hidden, padded_source, padded_weight1, queue=selected_queue, wait_for=(prepare_event,))
-
-    def bias_relu() -> None:
-        active = cast(npt.NDArray[np.int32], hidden.numpy()[:batch, :hidden_features])
-        first_bias = cast(npt.NDArray[np.int32], bias1.numpy())
-        np.add(active, first_bias, out=active)
-        np.maximum(active, 0, out=active)
-        hidden.numpy()[batch:, :].fill(0)
-        hidden.numpy()[:, hidden_features:].fill(0)
-
-    activation_event = selected_queue.host_task(
-        bias_relu,
+    activation_event = bias_activation(
+        hidden,
+        hidden,
+        padded_bias1,
+        relu=True,
+        queue=selected_queue,
         wait_for=(hidden_gemm,),
-        buffers=(hidden.access(AccessMode.READ_WRITE), bias1.access(AccessMode.READ)),
     )
     output_gemm = matmul(padded_result, hidden, padded_weight2, queue=selected_queue, wait_for=(activation_event,))
 
+    output_bias_event = bias_activation(
+        padded_result,
+        padded_result,
+        padded_bias2,
+        queue=selected_queue,
+        wait_for=(output_gemm,),
+    )
+
     def finish() -> None:
         result = cast(npt.NDArray[np.int32], padded_result.numpy()[:batch, :out_features])
-        second_bias = cast(npt.NDArray[np.int32], bias2.numpy())
         output = cast(npt.NDArray[np.int32], destination.numpy())
-        np.add(result, second_bias, out=output)
+        np.copyto(output, result, casting="no")
 
     result_event = selected_queue.host_task(
         finish,
-        wait_for=(output_gemm,),
+        wait_for=(output_bias_event,),
         buffers=(
             padded_result.access(AccessMode.READ),
-            bias2.access(AccessMode.READ),
             destination.access(AccessMode.WRITE),
         ),
     )

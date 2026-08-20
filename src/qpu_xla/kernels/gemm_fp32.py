@@ -153,6 +153,8 @@ class _ProgramState:
 
 _STATE_LOCK = Lock()
 _PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, _ProgramState] = WeakKeyDictionary()
+_SMALL_WGS_PER_SG = 12
+_LARGE_WGS_PER_SG = 24
 
 
 def supports_tiled_fp32_gemm(left: Tensor, right: Tensor, destination: Tensor, backend: Backend) -> bool:
@@ -176,7 +178,10 @@ def _program_state(backend: PyVideoCore7Backend) -> _ProgramState:
         state = _PROGRAMS.get(backend)
         if state is None:
             with backend.driver_session() as driver:
-                state = _ProgramState(code=driver.program(qpu_tiled_sgemm), uniforms=driver.alloc(7, dtype=np.uint32))
+                state = _ProgramState(
+                    code=driver.program(qpu_tiled_sgemm),
+                    uniforms=driver.alloc(64, dtype=np.uint32),
+                )
             _PROGRAMS[backend] = state
         return state
 
@@ -197,7 +202,7 @@ def _execute_tiled_fp32_gemm(backend: Backend, args: tuple[Any, ...], grid: tupl
         raise KernelError(f"tiled FP32 GEMM grid must be {expected_grid}, got {grid}")
     state = _program_state(backend)
     with backend.driver_session() as driver:
-        state.uniforms[:] = (
+        state.uniforms[:7] = (
             left.numpy().strides[0],
             left.address,
             right.numpy().strides[0],
@@ -211,7 +216,11 @@ def _execute_tiled_fp32_gemm(backend: Backend, args: tuple[Any, ...], grid: tupl
             local_invocation=(16, 1, 1),
             uniforms=state.uniforms.addresses()[0],
             workgroup=grid,
-            wgs_per_sg=24,
+            wgs_per_sg=(
+                _SMALL_WGS_PER_SG
+                if grid[0] * grid[1] <= 32
+                else _LARGE_WGS_PER_SG
+            ),
             thread=grid[0] * grid[1],
         )
 

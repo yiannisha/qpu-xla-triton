@@ -5,6 +5,7 @@ from qpu_xla.scheduler.placement import (
     CostModel,
     ExecutionCandidate,
     OperationSpec,
+    PartitionSpec,
     Placement,
     PlannedExecution,
 )
@@ -14,6 +15,7 @@ __all__ = [
     "CostModel",
     "ExecutionCandidate",
     "OperationSpec",
+    "PartitionSpec",
     "Placement",
     "PlannedExecution",
 ]

@@ -12,11 +12,31 @@ from typing import Self, cast
 
 
 class Placement(Enum):
-    """A requested or selected whole-operator execution device."""
+    """A requested or selected whole-operator execution strategy."""
 
     AUTO = "auto"
     CPU = "cpu"
     QPU = "qpu"
+    HYBRID = "hybrid"
+
+
+@dataclass(frozen=True, slots=True)
+class PartitionSpec:
+    """Disjoint output partition assigned to the QPU side of a hybrid plan."""
+
+    axis: str
+    qpu_units: int
+    total_units: int
+    alignment: int = 1
+
+    def __post_init__(self: Self) -> None:
+        """Reject empty, overlapping, or misaligned partition descriptions."""
+        if not self.axis or self.total_units <= 0 or self.alignment <= 0:
+            raise ValueError("hybrid partitions require an axis and positive sizes")
+        if self.qpu_units <= 0 or self.qpu_units >= self.total_units:
+            raise ValueError("hybrid partitions must assign non-empty work to both CPU and QPU")
+        if self.qpu_units % self.alignment:
+            raise ValueError("QPU partition units must satisfy the kernel alignment")
 
 
 @dataclass(frozen=True, slots=True)
@@ -37,11 +57,17 @@ class ExecutionCandidate:
     placement: Placement
     supported: Callable[[OperationSpec], bool]
     estimate_seconds: Callable[[OperationSpec], float]
+    partition: PartitionSpec | None = None
+    requires_calibration: bool = False
 
     def __post_init__(self: Self) -> None:
         """Reject nonsensical registry entries before scheduling can use them."""
         if self.placement is Placement.AUTO:
             raise ValueError("execution candidates must name CPU or QPU placement")
+        if self.placement is Placement.HYBRID and self.partition is None:
+            raise ValueError("hybrid execution candidates require a partition")
+        if self.placement is not Placement.HYBRID and self.partition is not None:
+            raise ValueError("only hybrid execution candidates may carry a partition")
 
 
 @dataclass(frozen=True, slots=True)
@@ -173,6 +199,11 @@ class CapabilityRegistry:
             for candidate in self._candidates
             if candidate.supported(specification)
             and (preference is Placement.AUTO or candidate.placement is preference)
+            and not (
+                preference is Placement.AUTO
+                and candidate.requires_calibration
+                and (cost_model is None or cost_model.estimate(specification, candidate.name) is None)
+            )
         ]
         if not eligible:
             raise ValueError(f"no {preference.value} implementation supports {specification.name!r}")
