@@ -1,0 +1,137 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 8192,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.hidden",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.001092416001483798,
+          0.0010596009669825435,
+          0.001048989943228662,
+          0.0010400640312582254,
+          0.0010748410131782293,
+          0.0010749530047178268,
+          0.001050489954650402
+        ],
+        "cpu_reference": "torch-int32",
+        "cpu_seconds": [
+          0.0011637849966064095,
+          0.0011413029860705137,
+          0.0011201190063729882,
+          0.001110397046431899,
+          0.0011186560150235891,
+          0.0011069709435105324,
+          0.0011126738972961903
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x512x512",
+      "source_hash": "ab4a2e8e85d97b8f9b49c3a5f20f05a09388733b2d6b5b77fe14cd2444ffe812",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 24576,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.up",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          1.0217865380691364,
+          0.0025487529346719384,
+          0.0022915879962965846,
+          0.002315050922334194,
+          0.002299941028468311,
+          0.0022370520746335387,
+          0.00223497801925987
+        ],
+        "cpu_reference": "torch-int32",
+        "cpu_seconds": [
+          0.0033132079988718033,
+          0.0033658930333331227,
+          0.003357337904162705,
+          0.0033325969707220793,
+          0.003337708069011569,
+          0.003317207912914455,
+          0.003305966965854168
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x512x1536",
+      "source_hash": "ab4a2e8e85d97b8f9b49c3a5f20f05a09388733b2d6b5b77fe14cd2444ffe812",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 8192,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.down",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0023267739452421665,
+          0.002310198964551091,
+          0.0023045330308377743,
+          0.0022830519592389464,
+          0.0022648849990218878,
+          0.002263830043375492,
+          0.002282680943608284
+        ],
+        "cpu_reference": "torch-int32",
+        "cpu_seconds": [
+          0.003338466980494559,
+          0.0032840240746736526,
+          0.003246246022172272,
+          0.003244820050895214,
+          0.003208838985301554,
+          0.0032097470248118043,
+          0.0032199129927903414
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x1536x512",
+      "source_hash": "ab4a2e8e85d97b8f9b49c3a5f20f05a09388733b2d6b5b77fe14cd2444ffe812",
+      "status": "supported-win"
+    }
+  ],
+  "schema_version": 1
+}

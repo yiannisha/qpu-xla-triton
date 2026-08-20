@@ -1,0 +1,40 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/pool2d.py --num-qpus 1
+Pool contract: NCHW, kernel=2x2, stride=2, padding=0.
+Integer avgpool uses truncation toward zero to match the Torch baseline.
+dtypes: fp32, int32, int16
+
+==== fp32 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 1 QPU) ====
+maxpool:
+numpy:     0.001163 sec, 2.656 GiB/s
+torch:     0.001016 sec, 3.041 GiB/s
+QPU:       0.005153 sec, 0.600 GiB/s
+
+avgpool:
+numpy:     0.001358 sec, 2.276 GiB/s
+torch:     0.001227 sec, 2.518 GiB/s
+QPU:       0.005212 sec, 0.593 GiB/s
+
+
+==== int32 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 1 QPU) ====
+maxpool:
+numpy:     0.001230 sec, 2.511 GiB/s
+torch:     0.001014 sec, 3.048 GiB/s
+QPU:       0.005152 sec, 0.600 GiB/s
+
+avgpool:
+numpy:     0.004558 sec, 0.678 GiB/s
+torch:     0.004649 sec, 0.665 GiB/s
+QPU:       0.005326 sec, 0.580 GiB/s
+
+
+==== int16 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 1 QPU) ====
+maxpool:
+numpy:     0.000416 sec, 3.715 GiB/s
+torch:     0.000354 sec, 4.361 GiB/s
+QPU:       0.003363 sec, 0.459 GiB/s
+
+avgpool:
+numpy:     0.003950 sec, 0.391 GiB/s
+torch:     0.003822 sec, 0.404 GiB/s
+QPU:       0.003532 sec, 0.437 GiB/s
+

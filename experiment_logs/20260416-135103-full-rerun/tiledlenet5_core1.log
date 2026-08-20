@@ -1,0 +1,55 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/tiledlenet5.py --num-qpus 1
+==== LeNet-5 fp32 example ====
+Architecture: Conv5x5(1->6) -> ReLU -> AvgPool -> Conv5x5(6->16) -> ReLU -> AvgPool -> Linear(400->120) -> ReLU -> Linear(120->84) -> ReLU -> Linear(84->10)
+Batch: 48, num_qpus: 1
+QPU steady-state layout: on-device gather lowering -> position-major matrices -> zero-copy flatten -> FC.
+Steady-state CPU compute in the QPU path: none.
+Excluded one-time CPU setup: weight reshape/padding, metadata generation, kernel assembly, buffer allocation.
+QPU setup (excluded): 0.5594 sec
+numpy: 0.0182 sec, 2.2438 Gop/s
+torch native lenet5: 0.0037 sec, 11.0430 Gop/s
+QPU host prep: 0.0000 sec
+QPU cached total: 0.0315 sec, 1.2993 Gop/s
+QPU execute only: 0.0314 sec, 1.3012 Gop/s
+QPU prep+cached total: 0.0315 sec, 1.2993 Gop/s
+QPU upload+readback overhead inside cached total: 0.0000 sec
+Maximum absolute error: nan
+QPU execute breakdown:
+  conv1 gather             0.012180 sec
+  conv1 gemm+bias+relu     0.003617 sec
+  pool1 avgpool            0.003574 sec
+  conv2 gather             0.009476 sec
+  conv2 gemm+bias+relu     0.001413 sec
+  pool2 avgpool            0.000484 sec
+  fc1 gemm+bias+relu       0.000345 sec
+  fc2 gemm+bias+relu       0.000188 sec
+  fc3 gemm+bias            0.000138 sec
+
+
+==== LeNet-5 int32 example ====
+Architecture: Conv5x5(1->6) -> ReLU -> AvgPool -> Conv5x5(6->16) -> ReLU -> AvgPool -> Linear(400->120) -> ReLU -> Linear(120->84) -> ReLU -> Linear(84->10)
+Batch: 48, num_qpus: 1
+QPU steady-state layout: on-device gather lowering -> position-major matrices -> zero-copy flatten -> FC.
+Steady-state CPU compute in the QPU path: none.
+Excluded one-time CPU setup: weight reshape/padding, metadata generation, kernel assembly, buffer allocation.
+Actual smul24 stage maxima: input=2, pool1=24, pool2_flat=342, fc1=4579, fc2=22929
+QPU setup (excluded): 0.5692 sec
+numpy: 0.0498 sec, 0.8211 Gop/s
+torch native lenet5: 0.0055 sec, 7.3982 Gop/s
+QPU host prep: 0.0000 sec
+QPU cached total: 0.0317 sec, 1.2913 Gop/s
+QPU execute only: 0.0315 sec, 1.2970 Gop/s
+QPU prep+cached total: 0.0317 sec, 1.2913 Gop/s
+QPU upload+readback overhead inside cached total: 0.0001 sec
+Maximum absolute error: 81424898.0
+QPU execute breakdown:
+  conv1 gather             0.012172 sec
+  conv1 gemm+bias+relu     0.003615 sec
+  pool1 avgpool            0.003746 sec
+  conv2 gather             0.009469 sec
+  conv2 gemm+bias+relu     0.001412 sec
+  pool2 avgpool            0.000496 sec
+  fc1 gemm+bias+relu       0.000343 sec
+  fc2 gemm+bias+relu       0.000187 sec
+  fc3 gemm+bias            0.000137 sec
+

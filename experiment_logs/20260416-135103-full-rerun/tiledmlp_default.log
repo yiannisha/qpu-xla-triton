@@ -1,0 +1,87 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/tiledmlp.py
+==== tiledmlp fp32 example ====
+Operator: Linear -> ReLU -> Linear
+Dimensions: x=256x1024, w1=1024x1024, w2=1024x512
+Benchmark mode: steady-state QPU timings use precompiled kernels and persistent device buffers.
+QPU setup (excluded): 0.0447 sec
+
+-- MLP total --
+numpy: 0.0120 sec, 67.4173 Gop/s
+torch native mlp: 0.0102 sec, 79.0828 Gop/s
+QPU host prep: 0.0001 sec
+QPU cached total: 0.0371 sec, 21.7194 Gop/s
+QPU execute only: 0.0366 sec, 22.0089 Gop/s
+QPU prep+cached total: 0.0372 sec, 21.6452 Gop/s
+Maximum absolute error: nan
+
+-- Layer1 only --
+numpy: 0.0079 sec, 68.1484 Gop/s
+torch native linear: 0.0064 sec, 84.4416 Gop/s
+QPU host prep: 0.0001 sec
+QPU cached total: 0.0252 sec, 21.3293 Gop/s
+QPU execute only: 0.0244 sec, 22.0344 Gop/s
+QPU prep+cached total: 0.0253 sec, 21.2242 Gop/s
+Maximum absolute error: nan
+
+-- ReLU only --
+numpy: 0.0002 sec, 1.5481 Gop/s
+torch relu: 0.0001 sec, 2.1306 Gop/s
+QPU host prep: 0.0003 sec
+QPU cached total: 0.0011 sec, 0.2364 Gop/s
+QPU execute only: 0.0003 sec, 0.9181 Gop/s
+QPU prep+cached total: 0.0014 sec, 0.1883 Gop/s
+Maximum absolute error: 45.80464172363281
+
+-- Layer2 only --
+numpy: 0.0039 sec, 68.7269 Gop/s
+torch native linear: 0.0032 sec, 83.6757 Gop/s
+QPU host prep: 0.0003 sec
+QPU cached total: 0.0127 sec, 21.0745 Gop/s
+QPU execute only: 0.0122 sec, 21.9357 Gop/s
+QPU prep+cached total: 0.0130 sec, 20.6166 Gop/s
+Maximum absolute error: 281079029.14691734
+
+
+==== tiledmlp int32 example ====
+Operator: Linear -> ReLU -> Linear
+Dimensions: x=256x1024, w1=1024x1024, w2=1024x512
+Kernel contract: x, w1, and w2 must fit the signed 24-bit range, and layer1 output must also stay within it.
+Benchmark mode: steady-state QPU timings use precompiled kernels and persistent device buffers.
+QPU setup (excluded): 0.0501 sec
+
+-- MLP total --
+numpy: 2.9992 sec, 0.2687 Gop/s
+torch int32 mlp: 0.0921 sec, 8.7475 Gop/s
+QPU host prep: 0.0002 sec
+QPU cached total: 0.0372 sec, 21.6573 Gop/s
+QPU execute only: 0.0366 sec, 22.0083 Gop/s
+QPU prep+cached total: 0.0374 sec, 21.5491 Gop/s
+Maximum absolute error: 2147657713.0
+
+-- Layer1 only --
+numpy: 2.3862 sec, 0.2251 Gop/s
+torch int32 linear: 0.0606 sec, 8.8682 Gop/s
+QPU host prep: 0.0001 sec
+QPU cached total: 0.0253 sec, 21.2128 Gop/s
+QPU execute only: 0.0244 sec, 22.0316 Gop/s
+QPU prep+cached total: 0.0254 sec, 21.1199 Gop/s
+Maximum absolute error: 272796693.0
+
+-- ReLU only --
+numpy: 0.0002 sec, 1.3809 Gop/s
+torch int32 relu: 0.0001 sec, 2.6386 Gop/s
+QPU host prep: 0.0003 sec
+QPU cached total: 0.0012 sec, 0.2167 Gop/s
+QPU execute only: 0.0003 sec, 0.9151 Gop/s
+QPU prep+cached total: 0.0015 sec, 0.1752 Gop/s
+Maximum absolute error: 3530.0
+
+-- Layer2 only --
+numpy: 0.6028 sec, 0.4455 Gop/s
+torch int32 linear: 0.0316 sec, 8.5115 Gop/s
+QPU host prep: 0.0003 sec
+QPU cached total: 0.0128 sec, 20.9306 Gop/s
+QPU execute only: 0.0122 sec, 21.9341 Gop/s
+QPU prep+cached total: 0.0131 sec, 20.5054 Gop/s
+Maximum absolute error: 2147747576.0
+

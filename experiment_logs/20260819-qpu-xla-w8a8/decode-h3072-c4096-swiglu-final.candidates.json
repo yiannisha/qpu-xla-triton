@@ -1,0 +1,49 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 8192,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 1.9073486328125e-06,
+        "max_relative_error": 4.285127223284696e-07,
+        "mean_abs_error": 1.4821354143990106e-08,
+        "nan_count": 0,
+        "p99_abs_error": 2.384185791015625e-07,
+        "reference": "numpy-fp32-silu-times-up",
+        "saturation_count": 0
+      },
+      "dtype": "fp32",
+      "layout": "contiguous-row-major",
+      "name": "vc7.swiglu.decode-h3072-c4096",
+      "operation": "swiglu",
+      "performance": {
+        "candidate_seconds": [
+          0.00021742400713264942,
+          0.00020092399790883064,
+          0.0001997209619730711,
+          0.0001909059938043356,
+          0.00018755299970507622,
+          0.00018294306937605143,
+          0.00024881307035684586
+        ],
+        "cpu_reference": "numpy-vectorized",
+        "cpu_seconds": [
+          8.851697202771902e-05,
+          8.718401659280062e-05,
+          8.664792403578758e-05,
+          8.611008524894714e-05,
+          8.605397306382656e-05,
+          8.609204087406397e-05,
+          8.605408947914839e-05
+        ],
+        "fused_model_win": false
+      },
+      "reason": "below the 1.05x gate or numerical tolerance",
+      "shape_class": "1x8192",
+      "source_hash": "ca6879eaf3d9da385f73c716a31570a8de86672ef9fc0afc22053e9e3e455279",
+      "status": "experimental-correct-slower"
+    }
+  ],
+  "schema_version": 1
+}

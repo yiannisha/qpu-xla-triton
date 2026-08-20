@@ -1,0 +1,31 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/minmax.py --num-qpus 12 --length 4194432
+length: 4194432 scalar values
+repeat: 5
+dtypes: fp32, int32, int16
+
+==== fp32 elementwise min/max (4.0 Mi elements, 12 QPUs) ====
+numpy:     0.004272 sec, 10.974 GiB/s
+torch:     0.006973 sec, 6.722 GiB/s
+QPU:       0.007143 sec, 6.563 GiB/s
+
+numpy:     0.004269 sec, 10.981 GiB/s
+torch:     0.006802 sec, 6.892 GiB/s
+QPU:       0.007235 sec, 6.479 GiB/s
+
+==== int32 elementwise min/max (4.0 Mi elements, 12 QPUs) ====
+numpy:     0.007599 sec, 6.169 GiB/s
+torch:     0.007622 sec, 6.150 GiB/s
+QPU:       0.007224 sec, 6.489 GiB/s
+
+numpy:     0.007529 sec, 6.226 GiB/s
+torch:     0.007613 sec, 6.157 GiB/s
+QPU:       0.007301 sec, 6.421 GiB/s
+
+==== int16 elementwise min/max (4.0 Mi elements, 12 QPUs) ====
+numpy:     0.003486 sec, 6.723 GiB/s
+torch:     0.003701 sec, 6.332 GiB/s
+QPU:       0.003877 sec, 6.046 GiB/s
+
+numpy:     0.003399 sec, 6.896 GiB/s
+torch:     0.003862 sec, 6.068 GiB/s
+QPU:       0.003868 sec, 6.060 GiB/s

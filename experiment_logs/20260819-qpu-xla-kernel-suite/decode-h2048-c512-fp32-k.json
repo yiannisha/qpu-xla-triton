@@ -1,0 +1,337 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state-total",
+    "thermal_zone0_temp_millicelsius": "58950",
+    "timestamp_utc": "2026-08-19T19:18:07.699490+00:00"
+  },
+  "results": [
+    {
+      "candidate_seconds": [
+        0.0012820609845221043,
+        0.001196320983581245,
+        0.0013097090413793921
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "numpy_cpu_seconds": [
+        0.00016697891987860203,
+        0.00014305394142866135,
+        0.00012242398224771023
+      ],
+      "partition": null,
+      "placement": "qpu",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.11158122987572665,
+      "status": "experimental-correct-slower",
+      "torch_cpu_seconds": [
+        0.009937935043126345,
+        0.004011884913779795,
+        0.003978514927439392
+      ]
+    },
+    {
+      "candidate_seconds": [
+        0.010585428099147975,
+        0.006113140960223973,
+        0.006150622037239373
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 32,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.023258451025364786,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.006529840989969671,
+        0.006393305025994778,
+        0.006405952968634665
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 48,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.022331406760101643,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.005320834927260876,
+        0.00530872296076268,
+        0.005267946049571037
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 64,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.026946959275514624,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.00560377596411854,
+        0.0056602018885314465,
+        0.005669164936989546
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 80,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.025273646461005838,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.0045536760007962584,
+        0.004531935090199113,
+        0.004589379066601396
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 96,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.03141504608664447,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.003696165047585964,
+        0.003710850956849754,
+        0.0037641089875251055
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 128,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.03855017167008612,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.002155774040147662,
+        0.002155922004021704,
+        0.0021393490023911
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 192,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.0663585045392154,
+      "status": "experimental-correct-slower"
+    },
+    {
+      "candidate_seconds": [
+        0.0012893580133095384,
+        0.0012979130260646343,
+        0.0012930419761687517
+      ],
+      "case": {
+        "cache_length": 512,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "decode-h2048-c512",
+        "phase": "decode",
+        "query_heads": 32,
+        "tokens": 1,
+        "vocabulary_size": 32000
+      },
+      "cpu_reference": "numpy.matmul",
+      "max_abs_error": 0.000152587890625,
+      "partition": {
+        "axis": "output-columns",
+        "qpu_units": 224,
+        "total_units": 256
+      },
+      "placement": "hybrid",
+      "projection": "k",
+      "shape": [
+        1,
+        2048,
+        256
+      ],
+      "speedup": 0.1106336407210277,
+      "status": "experimental-correct-slower"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/sgemm_fast.py
+==== fast sgemm example (1024x1024 times 1024x1024) ====
+numpy: 0.0377 sec, 57.0699 Gflop/s
+torch: 0.0730 sec, 29.4604 Gflop/s
+QPU naive: 0.1146 sec, 18.7701 Gflop/s
+QPU fast payload:    0.0948 sec, 22.6760 Gflop/s
+QPU fast qpu-aware:  0.0975 sec, 22.0471 Gflop/s
+Speedup over naive: 1.208x
+Naive NaN count: 0
+Naive Inf count: 0
+Naive minimum absolute error: 0.0
+Naive maximum absolute error: 333.2373046875
+Naive minimum relative error: 0.0
+Naive maximum relative error: 11605.98046875
+Fast payload NaN count: 416
+Fast payload Inf count: 188
+Fast payload minimum absolute error: 0.00018310546875
+Fast payload maximum absolute error: inf
+Fast payload minimum relative error: 2.2590065782424062e-06
+Fast payload maximum relative error: inf
+Fast qpu-aware NaN count: 256
+Fast qpu-aware Inf count: 306
+Fast qpu-aware minimum absolute error: 0.00018310546875
+Fast qpu-aware maximum absolute error: inf
+Fast qpu-aware minimum relative error: 2.2590065782424062e-06
+Fast qpu-aware maximum relative error: inf

@@ -1,0 +1,221 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/sgemm.py
+/home/yiannis/side/py-videocore7/examples/sgemm.py:661: RuntimeWarning: overflow encountered in divide
+  print(f"Maximum relative error: {np.max(np.abs((c - expected) / expected))}")
+/home/yiannis/side/py-videocore7/examples/sgemm.py:673: RuntimeWarning: overflow encountered in divide
+  "max_rel_error": float(np.max(np.abs((c - expected) / expected))),
+
+==== sgemm example (256x256 times 256x256) ====
+numpy: 0.0012 sec, 28.7423 Gflop/s
+torch: 0.0201 sec, 1.6796 Gflop/s
+QPU:   0.0053 sec, 6.3976 Gflop/s
+Minimum absolute error: 0.0
+Maximum absolute error: 143.4606170654297
+Minimum relative error: 0.0
+Maximum relative error: 4197.4638671875
+
+==== sgemm example (512x512 times 512x512) ====
+numpy: 0.0052 sec, 51.7915 Gflop/s
+torch: 0.0149 sec, 18.1111 Gflop/s
+QPU:   0.0123 sec, 21.9670 Gflop/s
+Minimum absolute error: 0.0
+Maximum absolute error: 229.41651916503906
+Minimum relative error: 0.0
+Maximum relative error: 10315.4462890625
+
+==== sgemm example (768x768 times 768x768) ====
+numpy: 0.0157 sec, 57.8879 Gflop/s
+torch: 0.0433 sec, 20.9660 Gflop/s
+QPU:   0.0429 sec, 21.1441 Gflop/s
+Minimum absolute error: 0.0
+Maximum absolute error: 315.7813415527344
+Minimum relative error: 0.0
+Maximum relative error: 114232.3828125
+
+==== sgemm example (1024x1024 times 1024x1024) ====
+numpy: 0.0386 sec, 55.6800 Gflop/s
+torch: 0.0446 sec, 48.2101 Gflop/s
+QPU:   0.0984 sec, 21.8613 Gflop/s
+Minimum absolute error: 0.0
+Maximum absolute error: 330.2965393066406
+Minimum relative error: 0.0
+Maximum relative error: 11605.98046875
+
+==== sgemm example (1536x1536 times 1536x1536) ====
+numpy: 0.1119 sec, 64.8354 Gflop/s
+torch: 0.1095 sec, 66.2521 Gflop/s
+QPU:   0.3214 sec, 22.5735 Gflop/s
+Minimum absolute error: nan
+Maximum absolute error: nan
+Minimum relative error: nan
+Maximum relative error: nan
+
+==== sgemm example (2048x2048 times 2048x2048) ====
+numpy: 0.2414 sec, 71.2270 Gflop/s
+torch: 0.2032 sec, 84.6010 Gflop/s
+QPU:   0.7577 sec, 22.6912 Gflop/s
+Minimum absolute error: nan
+Maximum absolute error: nan
+Minimum relative error: nan
+Maximum relative error: nan
+
+==== sgemm size sweep summary ====
+  size   numpy GF/s   torch GF/s     QPU GF/s    QPU sec    max abs err
+   256      28.7423       1.6796       6.3976     0.0053        143.461
+   512      51.7915      18.1111      21.9670     0.0123        229.417
+   768      57.8879      20.9660      21.1441     0.0429        315.781
+  1024      55.6800      48.2101      21.8613     0.0984        330.297
+  1536      64.8354      66.2521      22.5735     0.3214            nan
+  2048      71.2270      84.6010      22.6912     0.7577            nan
+
+
+==== batched sgemm sweep for size 128 ====
+==== batched sgemm example (single dispatch, batch=1, 128x128 times 128x128) ====
+numpy: 0.0002 sec, 17.5043 Gflop/s
+torch: 0.0136 sec, 0.3110 Gflop/s
+QPU:   0.0039 sec, 1.0882 Gflop/s
+Maximum absolute error: 101.7644271850586
+Maximum relative error: 221.2483367919922
+
+==== batched sgemm example (single dispatch, batch=2, 128x128 times 128x128) ====
+numpy: 0.0004 sec, 21.1402 Gflop/s
+torch: 0.0137 sec, 0.6177 Gflop/s
+QPU:   0.0006 sec, 14.9327 Gflop/s
+Maximum absolute error: 87.40705108642578
+Maximum relative error: 11870.302734375
+
+==== batched sgemm example (single dispatch, batch=4, 128x128 times 128x128) ====
+numpy: 0.0005 sec, 33.8377 Gflop/s
+torch: 0.0335 sec, 0.5063 Gflop/s
+QPU:   0.0012 sec, 14.7562 Gflop/s
+Maximum absolute error: 104.28404998779297
+Maximum relative error: 4398.39013671875
+
+==== batched sgemm example (single dispatch, batch=8, 128x128 times 128x128) ====
+numpy: 0.0008 sec, 42.0284 Gflop/s
+torch: 0.0684 sec, 0.4965 Gflop/s
+QPU:   0.0103 sec, 3.2891 Gflop/s
+Maximum absolute error: 103.19575500488281
+Maximum relative error: 10959.978515625
+
+==== batched sgemm example (single dispatch, batch=16, 128x128 times 128x128) ====
+numpy: 0.0015 sec, 46.3285 Gflop/s
+torch: 0.0833 sec, 0.8152 Gflop/s
+QPU:   0.0072 sec, 9.3662 Gflop/s
+Maximum absolute error: 112.175537109375
+Maximum relative error: 32516.771484375
+
+==== batched sgemm example (single dispatch, batch=32, 128x128 times 128x128) ====
+numpy: 0.0030 sec, 45.9510 Gflop/s
+torch: 0.0889 sec, 1.5269 Gflop/s
+QPU:   0.0102 sec, 13.2917 Gflop/s
+Maximum absolute error: 113.43132019042969
+Maximum relative error: 11617.388671875
+
+
+==== batched sgemm sweep for size 256 ====
+==== batched sgemm example (single dispatch, batch=1, 256x256 times 256x256) ====
+numpy: 0.0012 sec, 28.1727 Gflop/s
+torch: 0.0211 sec, 1.5963 Gflop/s
+QPU:   0.0036 sec, 9.3026 Gflop/s
+Maximum absolute error: 140.39231872558594
+Maximum relative error: 4197.4638671875
+
+==== batched sgemm example (single dispatch, batch=2, 256x256 times 256x256) ====
+numpy: 0.0152 sec, 4.4348 Gflop/s
+torch: 0.0301 sec, 2.2422 Gflop/s
+QPU:   0.0120 sec, 5.6346 Gflop/s
+Maximum absolute error: 143.51516723632812
+Maximum relative error: 691.0121459960938
+
+==== batched sgemm example (single dispatch, batch=4, 256x256 times 256x256) ====
+numpy: 0.0026 sec, 51.4068 Gflop/s
+torch: 0.0320 sec, 4.2197 Gflop/s
+QPU:   0.0063 sec, 21.2797 Gflop/s
+Maximum absolute error: 164.609375
+Maximum relative error: 20902.5703125
+
+==== batched sgemm example (single dispatch, batch=8, 256x256 times 256x256) ====
+numpy: 0.0049 sec, 54.6729 Gflop/s
+torch: 0.0776 sec, 3.4810 Gflop/s
+QPU:   0.0160 sec, 16.9093 Gflop/s
+Maximum absolute error: 178.93585205078125
+Maximum relative error: 6498.12353515625
+
+==== batched sgemm example (single dispatch, batch=16, 256x256 times 256x256) ====
+numpy: 0.0104 sec, 51.9291 Gflop/s
+torch: 0.0928 sec, 5.8173 Gflop/s
+QPU:   0.0283 sec, 19.0757 Gflop/s
+Maximum absolute error: inf
+Maximum relative error: inf
+
+==== batched sgemm example (single dispatch, batch=32, 256x256 times 256x256) ====
+numpy: 0.0267 sec, 40.5255 Gflop/s
+torch: 0.1032 sec, 10.4647 Gflop/s
+QPU:   0.0529 sec, 20.4216 Gflop/s
+Maximum absolute error: 186.0936279296875
+Maximum relative error: 56909.6015625
+
+
+==== batched sgemm sweep for size 512 ====
+==== batched sgemm example (single dispatch, batch=1, 512x512 times 512x512) ====
+numpy: 0.0051 sec, 52.4517 Gflop/s
+torch: 0.0288 sec, 9.3334 Gflop/s
+QPU:   0.0123 sec, 21.9666 Gflop/s
+Maximum absolute error: 234.5069580078125
+Maximum relative error: 10315.4462890625
+
+==== batched sgemm example (single dispatch, batch=2, 512x512 times 512x512) ====
+numpy: 0.0098 sec, 55.1763 Gflop/s
+torch: 0.0583 sec, 9.2365 Gflop/s
+QPU:   0.0277 sec, 19.4419 Gflop/s
+Maximum absolute error: 222.89633178710938
+Maximum relative error: 5525.31103515625
+
+==== batched sgemm example (single dispatch, batch=4, 512x512 times 512x512) ====
+numpy: 0.0213 sec, 50.4419 Gflop/s
+torch: 0.0849 sec, 12.6817 Gflop/s
+QPU:   0.0517 sec, 20.8213 Gflop/s
+Maximum absolute error: 243.04116821289062
+Maximum relative error: 66504.9375
+
+==== batched sgemm example (single dispatch, batch=8, 512x512 times 512x512) ====
+numpy: 0.0430 sec, 50.0881 Gflop/s
+torch: 0.1043 sec, 20.6558 Gflop/s
+QPU:   0.0996 sec, 21.6302 Gflop/s
+Maximum absolute error: 246.42210388183594
+Maximum relative error: 114611.6953125
+
+==== batched sgemm example (single dispatch, batch=16, 512x512 times 512x512) ====
+numpy: 0.0786 sec, 54.8226 Gflop/s
+torch: 0.1319 sec, 32.6504 Gflop/s
+QPU:   0.1954 sec, 22.0425 Gflop/s
+Maximum absolute error: 253.0756072998047
+Maximum relative error: 55175.33203125
+
+==== batched sgemm example (single dispatch, batch=32, 512x512 times 512x512) ====
+numpy: 0.1592 sec, 54.1155 Gflop/s
+torch: 0.1915 sec, 44.9975 Gflop/s
+QPU:   0.3869 sec, 22.2677 Gflop/s
+Maximum absolute error: inf
+Maximum relative error: inf
+
+==== batched sgemm summary ====
+  size  batch   numpy GF/s   torch GF/s     QPU GF/s    QPU sec
+   128      1      17.5043       0.3110       1.0882     0.0039
+   128      2      21.1402       0.6177      14.9327     0.0006
+   128      4      33.8377       0.5063      14.7562     0.0012
+   128      8      42.0284       0.4965       3.2891     0.0103
+   128     16      46.3285       0.8152       9.3662     0.0072
+   128     32      45.9510       1.5269      13.2917     0.0102
+   256      1      28.1727       1.5963       9.3026     0.0036
+   256      2       4.4348       2.2422       5.6346     0.0120
+   256      4      51.4068       4.2197      21.2797     0.0063
+   256      8      54.6729       3.4810      16.9093     0.0160
+   256     16      51.9291       5.8173      19.0757     0.0283
+   256     32      40.5255      10.4647      20.4216     0.0529
+   512      1      52.4517       9.3334      21.9666     0.0123
+   512      2      55.1763       9.2365      19.4419     0.0277
+   512      4      50.4419      12.6817      20.8213     0.0517
+   512      8      50.0881      20.6558      21.6302     0.0996
+   512     16      54.8226      32.6504      22.0425     0.1954
+   512     32      54.1155      44.9975      22.2677     0.3869

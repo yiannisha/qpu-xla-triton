@@ -1,0 +1,40 @@
+$ ./.venv/bin/python examples/pool2d.py
+Pool contract: NCHW, kernel=2x2, stride=2, padding=0.
+Integer avgpool uses truncation toward zero to match the Torch baseline.
+dtypes: fp32, int32, int16
+
+==== fp32 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 12 QPUs) ====
+maxpool:
+numpy:     0.001167 sec, 2.648 GiB/s
+torch:     0.001005 sec, 3.075 GiB/s
+QPU:       0.001179 sec, 2.620 GiB/s
+
+avgpool:
+numpy:     0.001349 sec, 2.291 GiB/s
+torch:     0.001292 sec, 2.392 GiB/s
+QPU:       0.001166 sec, 2.651 GiB/s
+
+
+==== int32 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 12 QPUs) ====
+maxpool:
+numpy:     0.001170 sec, 2.640 GiB/s
+torch:     0.000985 sec, 3.138 GiB/s
+QPU:       0.001224 sec, 2.525 GiB/s
+
+avgpool:
+numpy:     0.004558 sec, 0.678 GiB/s
+torch:     0.004599 sec, 0.672 GiB/s
+QPU:       0.001198 sec, 2.579 GiB/s
+
+
+==== int16 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 12 QPUs) ====
+maxpool:
+numpy:     0.000422 sec, 3.659 GiB/s
+torch:     0.000366 sec, 4.218 GiB/s
+QPU:       0.001112 sec, 1.389 GiB/s
+
+avgpool:
+numpy:     0.003931 sec, 0.393 GiB/s
+torch:     0.003857 sec, 0.401 GiB/s
+QPU:       0.001160 sec, 1.332 GiB/s
+

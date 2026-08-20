@@ -1,0 +1,225 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 8192,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.hidden.fused-qpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0005888279993087053,
+          0.000546308932825923,
+          0.000552940065972507,
+          0.0005379760405048728,
+          0.0006641970248892903,
+          0.0006725490093231201,
+          0.0005716240266337991
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.000266868039034307,
+          0.00023785000666975975,
+          0.00024586799554526806,
+          0.0003033120883628726,
+          0.00037416303530335426,
+          0.0003003670135512948,
+          0.00025149702560156584
+        ],
+        "fused_model_win": false
+      },
+      "reason": "correct, but below the 1.05x end-to-end gate",
+      "shape_class": "16x512x512",
+      "source_hash": "8abf8c85280b24c708a2c690578642e0a598565d95dd395ccd2959c839bd6320",
+      "status": "experimental-correct-slower"
+    },
+    {
+      "correctness": {
+        "cases": 1024,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.kv.fused-qpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.00045332894660532475,
+          0.00045332894660532475,
+          0.0004549219738692045,
+          0.0004303299356251955,
+          0.0004596810322254896,
+          0.0004423850914463401,
+          0.00043393997475504875
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          2.7463072910904884e-05,
+          2.6480993255972862e-05,
+          2.6166089810431004e-05,
+          2.5999965146183968e-05,
+          2.5833025574684143e-05,
+          2.5852001272141933e-05,
+          2.5814981199800968e-05
+        ],
+        "fused_model_win": false
+      },
+      "reason": "correct, but below the 1.05x end-to-end gate",
+      "shape_class": "16x512x64",
+      "source_hash": "8abf8c85280b24c708a2c690578642e0a598565d95dd395ccd2959c839bd6320",
+      "status": "experimental-correct-slower"
+    },
+    {
+      "correctness": {
+        "cases": 24576,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.up.fused-qpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0007920479401946068,
+          0.0007770670345053077,
+          0.00078388093970716,
+          0.0007823999039828777,
+          0.0007747339550405741,
+          0.0007786779897287488,
+          0.0007821220206096768
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.0015178369358181953,
+          0.0015303000109270215,
+          0.0015057820128276944,
+          0.0015436520334333181,
+          0.0015412999782711267,
+          0.0015225970419123769,
+          0.0015427630860358477
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x512x1536",
+      "source_hash": "8abf8c85280b24c708a2c690578642e0a598565d95dd395ccd2959c839bd6320",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 8192,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.down.fused-qpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0010190459433943033,
+          0.0009864899329841137,
+          0.0009682129602879286,
+          0.0009824539301916957,
+          0.0010632120538502932,
+          0.000966008985415101,
+          0.0009592869319021702
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.0017583169974386692,
+          0.001837296993471682,
+          0.0017794090090319514,
+          0.0021784789860248566,
+          0.001790093956515193,
+          0.0019097599433735013,
+          0.0017498539527878165
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x1536x512",
+      "source_hash": "8abf8c85280b24c708a2c690578642e0a598565d95dd395ccd2959c839bd6320",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 512000,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.lm_head.fused-qpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.007534408941864967,
+          0.0075727240182459354,
+          0.007526613073423505,
+          0.007516428013332188,
+          0.007530278991907835,
+          0.007572037982754409,
+          0.0075096499640494585
+        ],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.03332499600946903,
+          0.03322140406817198,
+          0.03546767798252404,
+          0.03391684195958078,
+          0.033138292958028615,
+          0.03214693197514862,
+          0.032561095082201064
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x512x32000",
+      "source_hash": "8abf8c85280b24c708a2c690578642e0a598565d95dd395ccd2959c839bd6320",
+      "status": "supported-win"
+    }
+  ],
+  "schema_version": 1
+}

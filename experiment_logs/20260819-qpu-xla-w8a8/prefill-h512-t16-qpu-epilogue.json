@@ -1,0 +1,232 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "60600",
+    "timestamp_utc": "2026-08-19T16:02:49.681194+00:00"
+  },
+  "results": [
+    {
+      "case": {
+        "cache_length": 16,
+        "head_dim": 64,
+        "hidden_size": 512,
+        "intermediate_size": 1536,
+        "kv_heads": 1,
+        "name": "prefill-h512-t16",
+        "phase": "prefill",
+        "query_heads": 8,
+        "tokens": 16,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 8192,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-int32",
+      "fp32_model_reference_max_abs_error": 0.8776493072509766,
+      "numpy_seconds": [
+        0.004656992037780583,
+        0.004642955027520657,
+        0.004647159017622471,
+        0.004637566045857966,
+        0.00463276996742934,
+        0.004646547022275627,
+        0.004653380019590259
+      ],
+      "projection": "hidden",
+      "qpu_kernel_only_seconds": [
+        0.0006833820370957255,
+        0.0006780859548598528,
+        0.0006777530070394278,
+        0.000677697011269629,
+        0.0006752150366082788,
+        0.000675235060043633,
+        0.0006814380176365376
+      ],
+      "qpu_total_seconds": [
+        0.001092416001483798,
+        0.0010596009669825435,
+        0.001048989943228662,
+        0.0010400640312582254,
+        0.0010748410131782293,
+        0.0010749530047178268,
+        0.001050489954650402
+      ],
+      "shape": [
+        16,
+        512,
+        512
+      ],
+      "speedup_over_fastest_cpu": 1.0557332900603313,
+      "status": "supported-win",
+      "torch_seconds": [
+        0.0011637849966064095,
+        0.0011413029860705137,
+        0.0011201190063729882,
+        0.001110397046431899,
+        0.0011186560150235891,
+        0.0011069709435105324,
+        0.0011126738972961903
+      ]
+    },
+    {
+      "case": {
+        "cache_length": 16,
+        "head_dim": 64,
+        "hidden_size": 512,
+        "intermediate_size": 1536,
+        "kv_heads": 1,
+        "name": "prefill-h512-t16",
+        "phase": "prefill",
+        "query_heads": 8,
+        "tokens": 16,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 24576,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-int32",
+      "fp32_model_reference_max_abs_error": 0.9841947555541992,
+      "numpy_seconds": [
+        0.014302804949693382,
+        0.014326749020256102,
+        0.014287195052020252,
+        0.014371527009643614,
+        0.014313768013380468,
+        0.014335970976389945,
+        0.01456061692442745
+      ],
+      "projection": "up",
+      "qpu_kernel_only_seconds": [
+        0.0016574100591242313,
+        0.0016530579887330532,
+        0.0016677059466019273,
+        0.001648631994612515,
+        0.0016546689439564943,
+        0.001647020922973752,
+        0.0016462620114907622
+      ],
+      "qpu_total_seconds": [
+        1.0217865380691364,
+        0.0025487529346719384,
+        0.0022915879962965846,
+        0.002315050922334194,
+        0.002299941028468311,
+        0.0022370520746335387,
+        0.00223497801925987
+      ],
+      "shape": [
+        16,
+        512,
+        1536
+      ],
+      "speedup_over_fastest_cpu": 1.4489923565307608,
+      "status": "supported-win",
+      "torch_seconds": [
+        0.0033132079988718033,
+        0.0033658930333331227,
+        0.003357337904162705,
+        0.0033325969707220793,
+        0.003337708069011569,
+        0.003317207912914455,
+        0.003305966965854168
+      ]
+    },
+    {
+      "case": {
+        "cache_length": 16,
+        "head_dim": 64,
+        "hidden_size": 512,
+        "intermediate_size": 1536,
+        "kv_heads": 1,
+        "name": "prefill-h512-t16",
+        "phase": "prefill",
+        "query_heads": 8,
+        "tokens": 16,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 8192,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-int32",
+      "fp32_model_reference_max_abs_error": 1.729583740234375,
+      "numpy_seconds": [
+        0.01959658705163747,
+        0.019819103996269405,
+        0.014087141025811434,
+        0.014027715078555048,
+        0.013985864003188908,
+        0.014062252012081444,
+        0.014059177949093282
+      ],
+      "projection": "down",
+      "qpu_kernel_only_seconds": [
+        0.0017175569664686918,
+        0.0017131499480456114,
+        0.0017164279706776142,
+        0.0017124650767073035,
+        0.0017110760090872645,
+        0.001709762029349804,
+        0.0017102980054914951
+      ],
+      "qpu_total_seconds": [
+        0.0023267739452421665,
+        0.002310198964551091,
+        0.0023045330308377743,
+        0.0022830519592389464,
+        0.0022648849990218878,
+        0.002263830043375492,
+        0.002282680943608284
+      ],
+      "shape": [
+        16,
+        1536,
+        512
+      ],
+      "speedup_over_fastest_cpu": 1.4212642151065507,
+      "status": "supported-win",
+      "torch_seconds": [
+        0.003338466980494559,
+        0.0032840240746736526,
+        0.003246246022172272,
+        0.003244820050895214,
+        0.003208838985301554,
+        0.0032097470248118043,
+        0.0032199129927903414
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/igemm_int16.py
+
+==== packed int16 igemm example (256x256 times 256x256) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 0.0288 sec, 1.1666 Gop/s
+QPU:   0.0053 sec, 6.2981 Gop/s
+Maximum absolute error: 62050486
+
+==== packed int16 igemm example (512x512 times 512x512) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 0.4739 sec, 0.5664 Gop/s
+QPU:   0.0160 sec, 16.8201 Gop/s
+Maximum absolute error: 79513364
+
+==== packed int16 igemm example (768x768 times 768x768) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 1.4990 sec, 0.6044 Gop/s
+QPU:   0.0442 sec, 20.4931 Gop/s
+Maximum absolute error: 86806904
+
+==== packed int16 igemm example (1024x1024 times 1024x1024) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 9.3535 sec, 0.2296 Gop/s
+QPU:   0.0991 sec, 21.6689 Gop/s
+Maximum absolute error: 100577955
+
+==== packed int16 igemm size sweep summary ====
+  size   numpy GO/s     QPU GO/s    QPU sec    max abs err
+   256       1.1666       6.2981     0.0053       62050486
+   512       0.5664      16.8201     0.0160       79513364
+   768       0.6044      20.4931     0.0442       86806904
+  1024       0.2296      21.6689     0.0991      100577955

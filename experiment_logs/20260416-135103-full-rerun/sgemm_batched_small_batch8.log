@@ -1,0 +1,22 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/sgemm_batched_small.py --batch 8
+
+==== small batched sgemm (128x128, batch=8) ====
+numpy:        0.0010 sec, 32.8535 Gflop/s
+torch:        0.0529 sec, 0.6417 Gflop/s
+QPU generic:  0.0017 sec, 19.7978 Gflop/s (median of 5)
+QPU small:    0.0017 sec, 19.7995 Gflop/s (median of 5)
+Generic max abs error: 102.7874755859375
+Small max abs error:   103.19575500488281
+
+==== small batched sgemm (256x256, batch=8) ====
+numpy:        0.0166 sec, 16.3088 Gflop/s
+torch:        0.0616 sec, 4.3830 Gflop/s
+QPU generic:  0.0124 sec, 21.7934 Gflop/s (median of 5)
+QPU small:    0.0124 sec, 21.7923 Gflop/s (median of 5)
+Generic max abs error: 178.93585205078125
+Small max abs error:   178.93585205078125
+
+==== small batched sgemm summary ====
+  size  batch   numpy GF/s   torch GF/s   generic GF/s   small GF/s   speedup
+   128      8      32.8535       0.6417        19.7978      19.7995     1.000x
+   256      8      16.3088       4.3830        21.7934      21.7923     1.000x

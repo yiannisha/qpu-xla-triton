@@ -1,0 +1,102 @@
+{
+  "case": {
+    "cache_length": 512,
+    "head_dim": 64,
+    "hidden_size": 2048,
+    "intermediate_size": 5632,
+    "kv_heads": 4,
+    "name": "decode-h2048-c512",
+    "phase": "decode",
+    "query_heads": 32,
+    "tokens": 1,
+    "vocabulary_size": 32000
+  },
+  "config": {
+    "hidden_size": 2048,
+    "intermediate_size": 5632,
+    "max_position_embeddings": 528,
+    "num_attention_heads": 32,
+    "num_hidden_layers": 1,
+    "num_key_value_heads": 4,
+    "rms_norm_eps": 1e-05,
+    "rope_theta": 10000.0,
+    "vocab_size": 32000
+  },
+  "correctness": {
+    "qpu_vs_calibrated_cpu_oracle": {
+      "inf_count": 0,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "nan_count": 0,
+      "p99_abs_error": 0.0,
+      "top1_agreement": 1.0
+    },
+    "qpu_vs_fp32": {
+      "inf_count": 0,
+      "max_abs_error": 0.4352792799472809,
+      "mean_abs_error": 0.08207233011961944,
+      "nan_count": 0,
+      "p99_abs_error": 0.26560983747243755,
+      "top1_agreement": 0.0
+    }
+  },
+  "layers": 1,
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "60600",
+    "timestamp_utc": "2026-08-19T17:28:33.721885+00:00"
+  },
+  "timings": {
+    "fp32_cpu_seconds": [
+      0.04347987100481987,
+      0.04326783597934991,
+      0.045655442983843386,
+      0.042935562087222934,
+      0.0450578749878332,
+      0.04292100598104298,
+      0.04507570806890726
+    ],
+    "mixed_cpu_qpu_seconds": [
+      0.07276556605938822,
+      0.07271801109891385,
+      0.07257117901463062,
+      0.07253543892875314,
+      0.07244051399175078,
+      0.07242930994834751,
+      0.07235464500263333
+    ],
+    "speedup_over_fp32_cpu": 0.5994293499419964
+  },
+  "trace": {
+    "mean_seconds_per_forward_by_category": {
+      "host": 0.05469708822222223,
+      "qpu": 0.019365485777777778
+    },
+    "mean_seconds_per_forward_by_event": {
+      "llama.decode.attention_residual": 6.146033333333333e-05,
+      "llama.decode.cached_gqa": 0.011416400666666666,
+      "llama.decode.embed": 1.8407333333333332e-05,
+      "llama.decode.final_rms_norm": 0.00015681744444444448,
+      "llama.decode.input_rms_norm": 0.00012742477777777776,
+      "llama.decode.mlp_residual": 6.010433333333334e-05,
+      "llama.decode.post_attention_rms_norm": 0.00016976577777777776,
+      "llama.decode.rope": 0.0002315821111111111,
+      "llama.linear_fp32_reference": 0.04190674811111113,
+      "llama.swiglu": 0.0001963357777777778,
+      "tinyllama.w8a8_linear.dequantize": 0.00022421355555555557,
+      "tinyllama.w8a8_linear.prepare": 0.000127828,
+      "vc7.w8a8_gemv": 0.019365485777777778
+    }
+  },
+  "weight_bytes": {
+    "fp32_contract": 700473344,
+    "w8a8_contract": 175464448
+  }
+}

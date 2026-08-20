@@ -1,0 +1,80 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "58950",
+    "timestamp_utc": "2026-08-19T16:21:49.387576+00:00"
+  },
+  "results": [
+    {
+      "case": {
+        "cache_length": 64,
+        "head_dim": 64,
+        "hidden_size": 1024,
+        "intermediate_size": 2816,
+        "kv_heads": 4,
+        "name": "prefill-h1024-t64",
+        "phase": "prefill",
+        "query_heads": 16,
+        "tokens": 64,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 16384,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-int32",
+      "fp32_model_reference_max_abs_error": 1.3690757751464844,
+      "numpy_seconds": [
+        0.01837495109066367,
+        0.018419562024064362,
+        0.01844728400465101,
+        0.01844176498707384,
+        0.018353451043367386
+      ],
+      "projection": "kv",
+      "qpu_kernel_only_seconds": [
+        0.0022535889875143766,
+        0.002241551992483437,
+        0.0022454779827967286,
+        0.0022370159858837724,
+        0.0022348109632730484
+      ],
+      "qpu_total_seconds": [
+        0.0031706909649074078,
+        0.0031284879660233855,
+        0.003086969954892993,
+        0.003064099932089448,
+        0.0030463029397651553
+      ],
+      "shape": [
+        64,
+        1024,
+        256
+      ],
+      "speedup_over_fastest_cpu": 1.3216118267352066,
+      "status": "supported-win",
+      "torch_seconds": [
+        0.004079776001162827,
+        0.0041230329079553485,
+        0.004048979026265442,
+        0.004071127041243017,
+        0.004085108987055719
+      ]
+    }
+  ]
+}

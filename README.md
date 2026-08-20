@@ -29,12 +29,15 @@ Implemented runtime pieces include:
   path;
 - unnormalized attention and mixed QPU-GEMM/CPU-softmax SDPA;
 - persistent INT32 convolution, MLP, and attention plans;
+- native GGML Q4_0×Q8_0 M=1/M=4 QPU kernels and an out-of-tree C runtime for
+  pinned `llama.cpp` evaluation;
 - a constrained QPU-XLA DSL, differential candidate runner, video contracts,
   and TinyLlama model/runtime scaffolding.
 
 The runtime is not yet a general XLA compiler. Hybrid partitioning is explicit,
-not automatically selected by the scheduler, and native quantized projection
-kernels are still pending.
+not automatically selected by the scheduler. The native Q4_0 candidates are
+hardware-differential tested but currently slower than the exact optimized CPU
+nodes, so they remain experimental and are not automatic placements.
 
 ## Installation and hardware access
 
@@ -59,17 +62,27 @@ The runtime matrix compares CPU-only, QPU-only, automatic placement, explicit
 CPU/QPU row splits, and mixed attention execution:
 
 ```console
-uv run examples/benchmark_qpu_xla_matrix.py
-uv run examples/benchmark_qpu_xla_matrix.py --size 512 --warmup 2 --repeat 7
+OPENBLAS_NUM_THREADS=4 OMP_NUM_THREADS=4 uv run examples/benchmark_qpu_xla_matrix.py
+OPENBLAS_NUM_THREADS=4 OMP_NUM_THREADS=4 uv run examples/benchmark_qpu_xla_matrix.py \
+  --size 512 --warmup 2 --repeat 7 --output fp32-matmul-attention-s512.json
 ```
 
-On the currently tested machine, the 512x512 FP32 split with 128 QPU output
-rows and 384 CPU output rows measured 4.207 ms versus 4.932 ms for the
-CPU-only qpu_xla path. This is a machine- and shape-specific heterogeneous
-execution result; it is not a claim that QPU-only FP32 GEMM beats CPU GEMM.
-
-The benchmark implementation and timing definitions are documented in
+FP32 kernel coverage, current exact-shape results, promotion evidence, and
+reproduction commands are maintained together in the
+[FP32 kernel-suite directory](experiment_logs/20260819-qpu-xla-kernel-suite/README.md).
+General runtime architecture and the legacy benchmark inventory remain in
 [QPU-XLA.md](QPU-XLA.md) and [EXPERIMENTS_REGISTRY.md](EXPERIMENTS_REGISTRY.md).
+
+Run the exhaustive W8A8 dense/convolution matrix in isolated jobs with:
+
+```console
+uv run scripts/run_w8a8_evaluation.py --output-root experiment_logs/w8a8-matrix
+```
+
+This covers all Llama and YOLO manifest shapes, square 64³/512³ GEMMs, CPU/QPU
+row and output splits, CPU/standalone-QPU/fused-QPU dequantization, all four CPU
+references, raw samples, FP32 quality metrics, calibrated registry generation,
+and one-layer regressions for standalone deployment winners.
 
 ## Running tests
 

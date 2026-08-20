@@ -1,0 +1,45 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h4096-t16.hidden.fused-qpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.007521186023950577,
+          0.007383076008409262,
+          0.00719278200995177,
+          0.007147615076974034,
+          0.007118929992429912
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.02883773494977504,
+          0.028128056903369725,
+          0.028472775942645967,
+          0.02880912402179092,
+          0.028681033058091998
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "16x4096x4096",
+      "source_hash": "8abf8c85280b24c708a2c690578642e0a598565d95dd395ccd2959c839bd6320",
+      "status": "supported-win"
+    }
+  ],
+  "schema_version": 1
+}

@@ -23,8 +23,9 @@ Notes:
 The newer runtime-facing benchmark is:
 
 ```bash
-uv run examples/benchmark_qpu_xla_matrix.py
-uv run examples/benchmark_qpu_xla_matrix.py --size 512 --warmup 2 --repeat 7
+OPENBLAS_NUM_THREADS=4 OMP_NUM_THREADS=4 uv run examples/benchmark_qpu_xla_matrix.py
+OPENBLAS_NUM_THREADS=4 OMP_NUM_THREADS=4 uv run examples/benchmark_qpu_xla_matrix.py \
+  --size 512 --warmup 2 --repeat 7 --output fp32-matmul-attention-s512.json
 ```
 
 It is the canonical benchmark for the current `src/qpu_xla` work. It compares
@@ -32,18 +33,97 @@ CPU-only, QPU-only, uncalibrated automatic placement, explicit concurrent
 CPU/QPU matmul row splits, CPU-only SDPA, the QPU GEMM attention core, and
 mixed QPU-GEMM/CPU-softmax SDPA.
 
-On the tested machine, the best recorded FP32 matmul case was 512x512 with
-128 QPU output rows and 384 CPU output rows:
+The maintained FP32 inventory, exact-shape results, promotion evidence, and
+reproduction commands are in the
+[`FP32 kernel-suite directory`](experiment_logs/20260819-qpu-xla-kernel-suite/README.md).
+For general runtime architecture and operator status, see
+[`QPU-XLA.md`](QPU-XLA.md).
 
-- CPU-only qpu_xla path: 4.932 ms;
-- explicit CPU/QPU split: 4.207 ms;
-- maximum absolute error: `8.39e-05`.
+## Native llama.cpp Q4_0 and end-to-end evaluation
 
-This is a machine- and shape-specific heterogeneous execution result. It does
-not mean that QPU-only FP32 GEMM beats CPU-only GEMM. The scheduler currently
-does not automatically select hybrid partitions.
+Build the out-of-tree C runtime and its live hardware differential tests with:
 
-For runtime architecture and operator status, see [`QPU-XLA.md`](QPU-XLA.md).
+```bash
+cmake -S integrations/llama_cpp -B build/llama-qpu-runtime \
+  -DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON \
+  -DQPU_LLAMA_BUILD_BENCHMARK=ON \
+  -DLLAMA_CPP_ROOT=/home/yiannis/side/llama.cpp
+cmake --build build/llama-qpu-runtime --parallel 4
+ctest --test-dir build/llama-qpu-runtime --output-on-failure
+```
+
+The exact-shape native operator matrix is driven from bounded payloads in the
+GGUF manifests:
+
+```bash
+python examples/benchmark_llama_cpp_qpu_ops.py \
+  experiment_logs/20260819-llama-cpp-qpu/gemma-mtp-gguf-manifest.json \
+  --tensor blk.0.ffn_gate.weight --rows 4 \
+  --output experiment_logs/20260819-llama-cpp-qpu/operator-session.json
+```
+
+Generate and selectively execute the CPU end-to-end matrix with:
+
+```bash
+python scripts/generate_llama_cpp_evaluation_cases.py \
+  --output experiment_logs/20260819-llama-cpp-qpu/full-evaluation-cases.json
+python scripts/run_llama_cpp_qpu_evaluation.py \
+  --case-file experiment_logs/20260819-llama-cpp-qpu/full-evaluation-cases.json \
+  --case gemma-mtp-n2-t3-c0-decode --samples 31 \
+  --session-id gemma-mtp-session-1 \
+  --output experiment_logs/20260819-llama-cpp-qpu/gemma-mtp-session-1.json
+```
+
+Only performance-governor, unthrottled, no-swap-change sessions qualify for
+retention. Current records are diagnostics rejected for the `ondemand`
+governor; no native Q4_0 candidate is promoted. The generated result is
+[`LLAMA_CPP_QPU_MATRIX.md`](experiment_logs/20260819-llama-cpp-qpu/LLAMA_CPP_QPU_MATRIX.md).
+
+## Packed W8A8 model-kernel benchmarks
+
+Dense Llama projection matrix:
+
+```bash
+uv run examples/benchmark_qpu_xla_w8a8.py --case prefill-h512-t16 --epilogue fused-qpu
+uv run examples/benchmark_qpu_xla_w8a8.py --case prefill-h1024-t64 --epilogue standalone-qpu
+uv run examples/benchmark_qpu_xla_w8a8.py --case square-512x512x512 --epilogue cpu
+uv run examples/benchmark_qpu_xla_w8a8.py --case decode-h2048-c512 --projection hidden
+uv run examples/benchmark_qpu_xla_llama_stages.py --case prefill-h1024-t64
+uv run examples/benchmark_qpu_xla_tinyllama_runtime.py --case prefill-h1024-t64
+uv run examples/benchmark_qpu_xla_tinyllama_runtime.py --case decode-h2048-c512
+uv run scripts/build_llama_candidate_registry.py
+uv run scripts/run_w8a8_evaluation.py --output-root experiment_logs/w8a8-matrix
+```
+
+The script records NumPy/Torch dynamic-W8A8, NumPy/OpenBLAS/Torch FP32, host
+quantization/packing, kernel-only, dequantization, whole-operation, and hybrid
+raw samples. `same-contract-win` means a 1.05x win over dynamic W8A8 CPU;
+`supported-win` additionally clears FP32 quality gates and beats the fastest
+deployable FP32 CPU backend by 1.05x. Only the latter enters AUTO placement.
+
+YOLO convolution candidates:
+
+```bash
+uv run examples/benchmark_qpu_xla_yolo_w8a8.py --case p3-1x1
+uv run examples/benchmark_qpu_xla_yolo_w8a8.py --case p3-3x3-s1
+uv run examples/benchmark_qpu_xla_yolo_w8a8.py --case depthwise-p3
+```
+
+This benchmark keeps NumPy/Torch dynamic W8A8, NumPy lowered FP32, Torch native
+FP32 conv2d, host preparation, QPU execution events, row/output hybrids, and
+steady-state total timings distinct. Unsupported grouped/depthwise output
+splits are retained explicitly in JSON.
+Current YOLO candidates are correct but slower and remain experimental.
+
+The merged archive for this machine is:
+
+```text
+experiment_logs/20260819-qpu-xla-w8a8/llama-calibrated.candidates.json
+```
+
+It contains 48 winning and slower Llama records. The builder also demotes
+standalone wins when their measured one-layer composition regresses versus
+FP32 CPU; only the remaining 17 `supported-win` entries are visible to AUTO.
 
 The entries below are the legacy example-script inventory. They remain useful
 for low-level kernel comparisons but are not the canonical API description of

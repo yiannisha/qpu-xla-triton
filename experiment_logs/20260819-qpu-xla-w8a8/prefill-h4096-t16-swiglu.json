@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "60600",
+    "timestamp_utc": "2026-08-19T16:29:06.993438+00:00"
+  },
+  "results": [
+    {
+      "case": {
+        "cache_length": 16,
+        "head_dim": 128,
+        "hidden_size": 4096,
+        "intermediate_size": 11008,
+        "kv_heads": 8,
+        "name": "prefill-h4096-t16",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 16,
+        "vocabulary_size": 128000
+      },
+      "correctness": {
+        "cases": 176128,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 1.9073486328125e-06,
+        "max_relative_error": 5.44360539130323e-07,
+        "mean_abs_error": 1.4670186068516756e-08,
+        "nan_count": 0,
+        "p99_abs_error": 2.384185791015625e-07,
+        "reference": "numpy-fp32-silu-times-up",
+        "saturation_count": 0
+      },
+      "cpu_seconds": [
+        0.0019307959591969848,
+        0.0019398879958316684,
+        0.0019173519685864449,
+        0.001938481000252068,
+        0.0019151299493387341,
+        0.002008350915275514,
+        0.0019289810443297029
+      ],
+      "operation": "swiglu",
+      "qpu_seconds": [
+        0.002297366037964821,
+        0.0022878850577399135,
+        0.002282792003825307,
+        0.0022764040622860193,
+        0.002270551980473101,
+        0.002280015032738447,
+        0.002267792937345803
+      ],
+      "shape": [
+        16,
+        11008
+      ],
+      "speedup_over_cpu": 0.8468347495402135,
+      "status": "experimental-correct-slower"
+    }
+  ]
+}

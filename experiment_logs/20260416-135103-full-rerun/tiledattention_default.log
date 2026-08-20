@@ -1,0 +1,69 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/tiledattention.py
+==== tiledattention fp32 example ====
+Operator: single-head dot-product attention core O = (Q @ K^T) @ V
+Dimensions: q=128x128, k=128x128, v=128x128
+Benchmark mode: steady-state QPU timings use precompiled kernels and persistent device buffers.
+QPU setup (excluded): 0.0199 sec
+-- Score stage (Q @ K^T) --
+numpy: 0.0001 sec, 78.6703 Gop/s
+torch matmul: 0.0012 sec, 3.5259 Gop/s
+QPU host prep: 0.0000 sec
+QPU cached total: 0.0004 sec, 11.3486 Gop/s
+QPU execute only: 0.0003 sec, 14.2899 Gop/s
+QPU prep+cached total: 0.0004 sec, 10.1832 Gop/s
+Maximum absolute error: 19.59319281578064
+
+-- Value stage (Scores @ V, reference scores) --
+numpy: 0.0001 sec, 80.4600 Gop/s
+torch matmul: 0.0038 sec, 1.1171 Gop/s
+QPU host prep: 0.0000 sec
+QPU cached total: 0.0004 sec, 11.7580 Gop/s
+QPU execute only: 0.0003 sec, 14.2926 Gop/s
+QPU prep+cached total: 0.0004 sec, 11.3208 Gop/s
+Maximum absolute error: 514.3143844604492
+
+-- Attention total --
+numpy: 0.0001 sec, 82.3462 Gop/s
+torch matmul attention core: 0.0016 sec, 5.2768 Gop/s
+torch native sdpa: 0.0014 sec, 5.9664 Gop/s
+torch native sdpa note: includes softmax with scale=1.0; speed baseline only, not a correctness reference.
+QPU host prep: 0.0000 sec
+QPU cached total: 0.0007 sec, 12.7380 Gop/s
+QPU execute only: 0.0006 sec, 14.3138 Gop/s
+QPU prep+cached total: 0.0007 sec, 12.0361 Gop/s
+Maximum absolute error: 547.2508546113968
+
+
+==== tiledattention int32 example ====
+Operator: single-head dot-product attention core O = (Q @ K^T) @ V
+Dimensions: q=128x128, k=128x128, v=128x128
+Kernel contract: q, k, and v must fit the signed 24-bit range, and the intermediate score matrix must also stay within it.
+Benchmark mode: steady-state QPU timings use precompiled kernels and persistent device buffers.
+QPU setup (excluded): 0.0171 sec
+-- Score stage (Q @ K^T) --
+numpy: 0.0054 sec, 0.7782 Gop/s
+torch int32 matmul: 0.0041 sec, 1.0283 Gop/s
+QPU host prep: 0.0001 sec
+QPU cached total: 0.0004 sec, 11.4115 Gop/s
+QPU execute only: 0.0003 sec, 14.3080 Gop/s
+QPU prep+cached total: 0.0005 sec, 8.3593 Gop/s
+Maximum absolute error: 1563.0
+
+-- Value stage (Scores @ V, reference scores) --
+numpy: 0.0020 sec, 2.1040 Gop/s
+torch int32 matmul: 0.0006 sec, 6.9953 Gop/s
+QPU host prep: 0.0001 sec
+QPU cached total: 0.0004 sec, 11.7930 Gop/s
+QPU execute only: 0.0003 sec, 14.3315 Gop/s
+QPU prep+cached total: 0.0005 sec, 9.2500 Gop/s
+Maximum absolute error: 1824924.0
+
+-- Attention total --
+numpy: 0.0075 sec, 1.1255 Gop/s
+torch int32 attention core: 0.0047 sec, 1.7893 Gop/s
+QPU host prep: 0.0001 sec
+QPU cached total: 0.0007 sec, 12.8083 Gop/s
+QPU execute only: 0.0006 sec, 14.4122 Gop/s
+QPU prep+cached total: 0.0008 sec, 10.7032 Gop/s
+Maximum absolute error: 78106785.0
+

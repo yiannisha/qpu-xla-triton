@@ -1,0 +1,32 @@
+$ ./.venv/bin/python examples/igemm.py
+
+==== igemm example (256x256 times 256x256) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 0.0285 sec, 1.1777 Gop/s
+QPU:   0.0053 sec, 6.3117 Gop/s
+Maximum absolute error: 0
+
+==== igemm example (512x512 times 512x512) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 0.4687 sec, 0.5728 Gop/s
+QPU:   0.0160 sec, 16.8029 Gop/s
+Maximum absolute error: 0
+
+==== igemm example (768x768 times 768x768) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 1.5520 sec, 0.5837 Gop/s
+QPU:   0.0442 sec, 20.4751 Gop/s
+Maximum absolute error: 0
+
+==== igemm example (1024x1024 times 1024x1024) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 9.3040 sec, 0.2308 Gop/s
+QPU:   0.0993 sec, 21.6290 Gop/s
+Maximum absolute error: 0
+
+==== igemm size sweep summary ====
+  size   numpy GO/s     QPU GO/s    QPU sec    max abs err
+   256       1.1777       6.3117     0.0053              0
+   512       0.5728      16.8029     0.0160              0
+   768       0.5837      20.4751     0.0442              0
+  1024       0.2308      21.6290     0.0993              0

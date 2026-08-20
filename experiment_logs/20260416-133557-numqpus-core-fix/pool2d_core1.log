@@ -1,0 +1,29 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/pool2d.py --num-qpus 1
+Pool contract: NCHW, kernel=2x2, stride=2, padding=0.
+Integer avgpool uses truncation toward zero to match the Torch baseline.
+dtypes: fp32, int32, int16
+
+==== fp32 2x2/2 pool (1x32x144x144 -> 1x32x72x72, 1 QPU) ====
+maxpool:
+numpy:     0.001144 sec, 2.700 GiB/s
+torch:     0.001008 sec, 3.065 GiB/s
+Traceback (most recent call last):
+  File "/home/yiannis/side/py-videocore7/examples/pool2d.py", line 797, in <module>
+    main()
+  File "/home/yiannis/side/py-videocore7/examples/pool2d.py", line 781, in main
+    run_dtype_benchmarks(
+  File "/home/yiannis/side/py-videocore7/examples/pool2d.py", line 733, in run_dtype_benchmarks
+    qpu_out, _ = run_qpu_pool2d(
+                 ^^^^^^^^^^^^^^^
+  File "/home/yiannis/side/py-videocore7/examples/pool2d.py", line 610, in run_qpu_pool2d
+    with Driver(data_area_size=data_area_size) as drv:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yiannis/side/py-videocore7/src/_videocore7/driver.py", line 229, in __init__
+    raise e
+  File "/home/yiannis/side/py-videocore7/src/_videocore7/driver.py", line 221, in __init__
+    self._drm = DRM_V3D()
+                ^^^^^^^^^
+  File "/home/yiannis/side/py-videocore7/src/_videocore7/drm_v3d.py", line 53, in __init__
+    self._fd = os.open(path, os.O_RDWR)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/dri/by-path/platform-1002000000.v3d-card'

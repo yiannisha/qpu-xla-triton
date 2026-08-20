@@ -1,0 +1,316 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "56750",
+    "timestamp_utc": "2026-08-19T16:43:05.097896+00:00"
+  },
+  "results": [
+    {
+      "case": {
+        "cache_length": 128,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "prefill-h2048-t128",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 128,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 262144,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "numpy-fp32",
+      "fp32_model_reference_max_abs_error": 2.504446029663086,
+      "numpy_fp32_seconds": [
+        0.01759937102906406,
+        0.016280013020150363
+      ],
+      "numpy_seconds": [
+        0.5862596340011805,
+        0.5856946950079873
+      ],
+      "projection": "hidden",
+      "qpu_kernel_only_seconds": [
+        0.012505993014201522,
+        0.012486048974096775
+      ],
+      "qpu_total_seconds": [
+        0.016602269955910742,
+        0.01646145700942725
+      ],
+      "shape": [
+        128,
+        2048,
+        2048
+      ],
+      "speedup_over_fastest_cpu": 1.0246692420588737,
+      "status": "experimental-correct-slower",
+      "torch_fp32_seconds": [
+        0.027669647010043263,
+        0.0309678940102458
+      ],
+      "torch_seconds": [
+        0.11914202803745866,
+        0.11915999103803188
+      ]
+    },
+    {
+      "case": {
+        "cache_length": 128,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "prefill-h2048-t128",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 128,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 32768,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "numpy-fp32",
+      "fp32_model_reference_max_abs_error": 2.3812904357910156,
+      "numpy_fp32_seconds": [
+        0.002658660989254713,
+        0.0020414440659806132
+      ],
+      "numpy_seconds": [
+        0.07386924896854907,
+        0.07341906893998384
+      ],
+      "projection": "kv",
+      "qpu_kernel_only_seconds": [
+        0.0017564459703862667,
+        0.0017643719911575317
+      ],
+      "qpu_total_seconds": [
+        0.00454205006826669,
+        0.009557744022458792
+      ],
+      "shape": [
+        128,
+        2048,
+        256
+      ],
+      "speedup_over_fastest_cpu": 0.3333456520706885,
+      "status": "experimental-correct-slower",
+      "torch_fp32_seconds": [
+        0.010382421081885695,
+        0.002280144952237606
+      ],
+      "torch_seconds": [
+        0.016285198042169213,
+        0.016236866009421647
+      ]
+    },
+    {
+      "case": {
+        "cache_length": 128,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "prefill-h2048-t128",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 128,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 720896,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-fp32",
+      "fp32_model_reference_max_abs_error": 3.0837602615356445,
+      "numpy_fp32_seconds": [
+        0.05003134498838335,
+        0.048977854079566896
+      ],
+      "numpy_seconds": [
+        1.607520840014331,
+        1.6100467599462718
+      ],
+      "projection": "up",
+      "qpu_kernel_only_seconds": [
+        0.03382518095895648,
+        0.033800108009018004
+      ],
+      "qpu_total_seconds": [
+        0.041314147994853556,
+        0.041213279007934034
+      ],
+      "shape": [
+        128,
+        2048,
+        5632
+      ],
+      "speedup_over_fastest_cpu": 1.0615455155357867,
+      "status": "supported-win",
+      "torch_fp32_seconds": [
+        0.044501858996227384,
+        0.043104761047288775
+      ],
+      "torch_seconds": [
+        0.3245852430118248,
+        0.3238377870293334
+      ]
+    },
+    {
+      "case": {
+        "cache_length": 128,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "prefill-h2048-t128",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 128,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 262144,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-fp32",
+      "fp32_model_reference_max_abs_error": 5.3665313720703125,
+      "numpy_fp32_seconds": [
+        0.05171140201855451,
+        0.052179711987264454
+      ],
+      "numpy_seconds": [
+        1.5980019239941612,
+        1.5986425839364529
+      ],
+      "projection": "down",
+      "qpu_kernel_only_seconds": [
+        0.033083096030168235,
+        0.033051540958695114
+      ],
+      "qpu_total_seconds": [
+        0.04382490192074329,
+        0.044130861992016435
+      ],
+      "shape": [
+        128,
+        5632,
+        2048
+      ],
+      "speedup_over_fastest_cpu": 0.9494363458110243,
+      "status": "experimental-correct-slower",
+      "torch_fp32_seconds": [
+        0.04554383107461035,
+        0.0379645680077374
+      ],
+      "torch_seconds": [
+        0.3880498290527612,
+        0.3894950379617512
+      ]
+    },
+    {
+      "case": {
+        "cache_length": 128,
+        "head_dim": 64,
+        "hidden_size": 2048,
+        "intermediate_size": 5632,
+        "kv_heads": 4,
+        "name": "prefill-h2048-t128",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 128,
+        "vocabulary_size": 32000
+      },
+      "correctness": {
+        "cases": 4096000,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "numpy-fp32",
+      "fp32_model_reference_max_abs_error": 2.8775558471679688,
+      "numpy_fp32_seconds": [
+        0.27048391092102975,
+        0.2703592089237645
+      ],
+      "numpy_seconds": [
+        9.123250934062526,
+        9.132924917968921
+      ],
+      "projection": "lm_head",
+      "qpu_kernel_only_seconds": [
+        0.19154339691158384,
+        0.1916770440293476
+      ],
+      "qpu_total_seconds": [
+        0.22649099305272102,
+        0.23636858502868563
+      ],
+      "shape": [
+        128,
+        2048,
+        32000
+      ],
+      "speedup_over_fastest_cpu": 1.1684820741673667,
+      "status": "supported-win",
+      "torch_fp32_seconds": [
+        0.2807893150020391,
+        0.26078976306598634
+      ],
+      "torch_seconds": [
+        1.8265246270457283,
+        1.8257643179968
+      ]
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "62800",
+    "timestamp_utc": "2026-08-19T17:23:49.398392+00:00"
+  },
+  "results": [
+    {
+      "case": {
+        "cache_length": 4096,
+        "head_dim": 128,
+        "hidden_size": 3072,
+        "intermediate_size": 8192,
+        "kv_heads": 8,
+        "name": "decode-h3072-c4096",
+        "phase": "decode",
+        "query_heads": 24,
+        "tokens": 1,
+        "vocabulary_size": 128000
+      },
+      "correctness": {
+        "cases": 128000,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-int32",
+      "fp32_model_reference_max_abs_error": 3.2921072244644165,
+      "numpy_fp32_seconds": [
+        0.13044536800589412,
+        0.12942565593402833,
+        0.12890317989513278
+      ],
+      "numpy_seconds": [
+        0.42674847901798785,
+        0.42552027001511306,
+        0.42622883699368685
+      ],
+      "projection": "lm_head",
+      "qpu_kernel_only_seconds": [
+        0.12271709297783673,
+        0.1226467969827354,
+        0.12257452006451786
+      ],
+      "qpu_total_seconds": [
+        0.1560442839981988,
+        0.12375243392307311,
+        0.12386119295842946
+      ],
+      "shape": [
+        1,
+        3072,
+        128000
+      ],
+      "speedup_over_fastest_cpu": 0.974587084535637,
+      "status": "experimental-correct-slower",
+      "torch_fp32_seconds": [
+        0.7894071249756962,
+        0.7869793330319226,
+        0.7950485140318051
+      ],
+      "torch_seconds": [
+        0.12071351893246174,
+        0.12072833406273276,
+        0.12051220599096268
+      ]
+    }
+  ]
+}

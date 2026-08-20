@@ -1,0 +1,49 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 1024,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h512-t16.kv.cpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0006511600222438574,
+          0.0006127160741016269,
+          0.0006032719975337386,
+          0.0006047160131856799,
+          0.0005867910804226995,
+          0.0005898460512980819,
+          0.0005857349606230855
+        ],
+        "cpu_reference": "torch-int32",
+        "cpu_seconds": [
+          0.00029040395747870207,
+          0.00026281201280653477,
+          0.0002522009890526533,
+          0.0002455910434946418,
+          0.00024733005557209253,
+          0.0002450719475746155,
+          0.00024390500038862228
+        ],
+        "fused_model_win": false
+      },
+      "reason": "correct, but below the 1.05x end-to-end gate",
+      "shape_class": "16x512x64",
+      "source_hash": "7cfca4088f5f7ac5fdc91dd9dda06266336ec8867d6e54b513cd2de5a091c859",
+      "status": "experimental-correct-slower"
+    }
+  ],
+  "schema_version": 1
+}

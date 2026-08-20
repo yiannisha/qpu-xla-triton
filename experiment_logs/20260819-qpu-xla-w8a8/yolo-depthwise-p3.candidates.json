@@ -1,0 +1,56 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 819200,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 im2col + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [],
+      "layout": "nchw-oihw-packed-k4",
+      "name": "vc7.w8a8.conv2d.depthwise-p3",
+      "operation": "conv2d",
+      "partition": null,
+      "performance": {
+        "candidate_seconds": [
+          0.5344339080620557,
+          0.5332949359435588,
+          0.5324263139627874,
+          0.5323744990164414,
+          0.6167805199511349,
+          0.5315684870583937,
+          0.5311466190032661
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-native-conv2d-fp32",
+        "cpu_seconds": [
+          0.008434038027189672,
+          0.008389631053432822,
+          0.008635591017082334,
+          0.010009894031099975,
+          0.00831239006947726,
+          0.008434906951151788,
+          0.008382815984077752
+        ],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": []
+      },
+      "placement": "qpu",
+      "quality": null,
+      "reason": "correct, but below the 1.05x end-to-end gate",
+      "shape_class": "1x128x80x80-128x3x3-s1-g128",
+      "source_hash": "e048a23d0302abd1631b16502f62d07d2ac7c79eac42cb1bca2143851b3b0a95",
+      "status": "experimental-correct-slower"
+    }
+  ],
+  "schema_version": 2
+}

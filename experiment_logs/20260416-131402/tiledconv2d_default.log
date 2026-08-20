@@ -1,0 +1,29 @@
+$ ./.venv/bin/python examples/tiledconv2d.py
+==== tiledconv2d fp32 example ====
+numpy: 0.0020 sec, 21.8424 Gop/s
+torch native conv2d: 0.0006 sec, 70.9510 Gop/s
+QPU host prep: 0.0009 sec
+QPU cached total: 0.0026 sec, 16.4920 Gop/s
+QPU execute only: 0.0022 sec, 19.6938 Gop/s
+QPU prep+cached total: 0.0035 sec, 12.1208 Gop/s
+Maximum absolute error: 5.7220458984375e-06
+
+==== tiledconv2d int32 example ====
+numpy: 0.0083 sec, 1.4359 Gop/s
+torch native conv2d: 0.0014 sec, 8.4038 Gop/s
+QPU host prep: 0.0003 sec
+QPU cached total: 0.0008 sec, 15.1749 Gop/s
+QPU execute only: 0.0006 sec, 18.5686 Gop/s
+QPU prep+cached total: 0.0011 sec, 10.9182 Gop/s
+Maximum absolute error: 0
+
+==== tiledconv2d int16 example ====
+Kernel contract: int16 inputs are packed as int32 pairs and accumulated into int32.
+numpy: 0.0084 sec, 1.4292 Gop/s
+torch native conv2d: 0.0011 sec, 11.1884 Gop/s
+torch note: native int16 conv2d returns int16 on this build, so it is a speed baseline only.
+QPU host prep: 0.0004 sec
+QPU cached total: 0.0008 sec, 15.8542 Gop/s
+QPU execute only: 0.0007 sec, 18.3222 Gop/s
+QPU prep+cached total: 0.0012 sec, 10.1775 Gop/s
+Maximum absolute error: 125045

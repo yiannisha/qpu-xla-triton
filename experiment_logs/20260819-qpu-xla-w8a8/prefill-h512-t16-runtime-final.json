@@ -1,0 +1,108 @@
+{
+  "case": {
+    "cache_length": 16,
+    "head_dim": 64,
+    "hidden_size": 512,
+    "intermediate_size": 1536,
+    "kv_heads": 1,
+    "name": "prefill-h512-t16",
+    "phase": "prefill",
+    "query_heads": 8,
+    "tokens": 16,
+    "vocabulary_size": 32000
+  },
+  "config": {
+    "hidden_size": 512,
+    "intermediate_size": 1536,
+    "max_position_embeddings": 256,
+    "num_attention_heads": 8,
+    "num_hidden_layers": 1,
+    "num_key_value_heads": 1,
+    "rms_norm_eps": 1e-05,
+    "rope_theta": 10000.0,
+    "vocab_size": 32000
+  },
+  "correctness": {
+    "qpu_vs_fp32": {
+      "inf_count": 0,
+      "max_abs_error": 0.41083069145679474,
+      "mean_abs_error": 0.06552534565258974,
+      "nan_count": 0,
+      "p99_abs_error": 0.21676578246057035,
+      "top1_agreement": 0.6875
+    },
+    "qpu_vs_w8a8_cpu": {
+      "inf_count": 0,
+      "max_abs_error": 0.0,
+      "mean_abs_error": 0.0,
+      "nan_count": 0,
+      "p99_abs_error": 0.0,
+      "top1_agreement": 1.0
+    },
+    "w8a8_cpu_vs_fp32": {
+      "inf_count": 0,
+      "max_abs_error": 0.41083069145679474,
+      "mean_abs_error": 0.06552534565258974,
+      "nan_count": 0,
+      "p99_abs_error": 0.21676578246057035,
+      "top1_agreement": 0.6875
+    }
+  },
+  "layers": 1,
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "58950",
+    "timestamp_utc": "2026-08-19T17:25:18.171267+00:00"
+  },
+  "timings": {
+    "fp32_numpy_reference_seconds": [
+      0.047533422941341996,
+      0.04751946101896465,
+      0.04693192907143384
+    ],
+    "mixed_cpu_qpu_seconds": [
+      0.01663894800003618,
+      0.016981555963866413,
+      0.016498449025675654
+    ],
+    "speedup_over_fp32_numpy": 2.855917394468768,
+    "speedup_over_w8a8_cpu": 21.003525886118116,
+    "w8a8_cpu_reference_seconds": [
+      0.3494765750365332,
+      0.3500192170031369,
+      0.34939526091329753
+    ]
+  },
+  "trace": {
+    "mean_seconds_per_forward_by_category": {
+      "host": 0.007346988750000003,
+      "qpu": 0.01606502725
+    },
+    "mean_seconds_per_forward_by_event": {
+      "llama.attention_residual": 0.0001377255,
+      "llama.causal_gqa": 0.0003646075,
+      "llama.embed": 4.708775e-05,
+      "llama.final_rms_norm": 0.00014646125,
+      "llama.input_rms_norm": 0.0001757205,
+      "llama.linear_fp32_reference": 0.00464931525,
+      "llama.mlp_residual": 0.00012823975,
+      "llama.post_attention_rms_norm": 0.00017752625,
+      "llama.rope": 0.00031036724999999995,
+      "llama.snapshot": 2.8208250000000002e-05,
+      "llama.swiglu": 0.00044934725,
+      "tinyllama.w8a8_linear.prepare": 0.0007323822499999999,
+      "vc7.tiled_w8a8_gemm_dequantize": 0.01606502725
+    }
+  },
+  "weight_bytes": {
+    "fp32_contract": 142874624,
+    "w8a8_contract": 35998208
+  }
+}

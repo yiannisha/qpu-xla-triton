@@ -1,0 +1,95 @@
+{
+  "case": {
+    "groups": 1,
+    "height": 80,
+    "in_channels": 128,
+    "kernel": 1,
+    "name": "p3-1x1",
+    "out_channels": 64,
+    "stride": 1,
+    "width": 80
+  },
+  "correctness": {
+    "cases": 409600,
+    "exact": true,
+    "inf_count": 0,
+    "max_abs_error": 0.0,
+    "max_relative_error": 0.0,
+    "mean_abs_error": 0.0,
+    "nan_count": 0,
+    "p99_abs_error": 0.0,
+    "reference": "dynamic-per-row-int8 im2col + numpy-int32-matmul + fp32-scales",
+    "saturation_count": 0
+  },
+  "cpu_reference": "torch-native-conv2d-fp32",
+  "fp32_torch_reference_max_abs_error": 0.5854892730712891,
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "cpu_reference": "fastest-of-torch-and-numpy-blas",
+    "hostname": "yiannis",
+    "manifest": "yolo-detection-v1",
+    "numpy": "2.2.2",
+    "numpy_blas": "scipy-openblas",
+    "numpy_blas_configuration": "OpenBLAS 0.3.28  USE64BITINT DYNAMIC_ARCH NO_AFFINITY neoversen1 MAX_THREADS=64",
+    "numpy_blas_version": "0.3.28",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "60050",
+    "timestamp_utc": "2026-08-19T20:12:44.597227+00:00",
+    "torch": "2.11.0+cu130",
+    "torch_interop_threads": "4",
+    "torch_threads": "4"
+  },
+  "numpy_dynamic_w8a8_seconds": [
+    0.06450419698376209,
+    0.06472538004163653,
+    0.06458325195126235,
+    0.06473264005035162,
+    0.06471058493480086,
+    0.06450410501565784,
+    0.06449397502001375
+  ],
+  "numpy_openblas_dynamic_w8a8_seconds": [
+    0.06450419698376209,
+    0.06472538004163653,
+    0.06458325195126235,
+    0.06473264005035162,
+    0.06471058493480086,
+    0.06450410501565784,
+    0.06449397502001375
+  ],
+  "qpu_execute_event_seconds": [],
+  "qpu_host_prep_event_seconds": [
+    0.014516133,
+    0.013816287,
+    0.014014322000000001,
+    0.01382362,
+    0.013837231,
+    0.014053119000000001,
+    0.014088007,
+    0.014121228999999999,
+    0.013817175999999999
+  ],
+  "qpu_prep_cached_total_seconds": [
+    0.01994699309580028,
+    0.019851585966534913,
+    0.019777253037318587,
+    0.020003900048322976,
+    0.020035455003380775,
+    0.02007791807409376,
+    0.01988928997889161
+  ],
+  "speedup_over_fastest_cpu": 0.21563726604974015,
+  "status": "experimental-correct-slower",
+  "torch_native_seconds": [
+    0.004232611041516066,
+    0.004301315057091415,
+    0.004552997997961938,
+    0.004345407010987401,
+    0.004319628933444619,
+    0.0042575179832056165,
+    0.004249795922078192
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.hidden.cpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0030714160529896617,
+          0.002956805983558297,
+          0.002856769016943872
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.0037888720398768783,
+          0.003550891997292638,
+          0.0035270039224997163
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "64x1024x1024",
+      "source_hash": "40122a0de38014ac8c77545bce19e19455e82c0f8a3e4061be474c77e20d65b9",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 16384,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.kv.cpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.0016828540246933699,
+          0.0015200040070340037,
+          0.0014937629457563162
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.0004782920004799962,
+          0.00041949597653001547,
+          0.0004104969557374716
+        ],
+        "fused_model_win": false
+      },
+      "reason": "correct, but below the 1.05x end-to-end gate",
+      "shape_class": "64x1024x256",
+      "source_hash": "40122a0de38014ac8c77545bce19e19455e82c0f8a3e4061be474c77e20d65b9",
+      "status": "experimental-correct-slower"
+    },
+    {
+      "correctness": {
+        "cases": 180224,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.up.cpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.006752992048859596,
+          0.006578493979759514,
+          0.006735158967785537
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.009372227010317147,
+          0.009295005002059042,
+          0.009549373062327504
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "64x1024x2816",
+      "source_hash": "40122a0de38014ac8c77545bce19e19455e82c0f8a3e4061be474c77e20d65b9",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.cpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.007254727999679744,
+          0.006976822973228991,
+          0.0068778060376644135
+        ],
+        "cpu_reference": "numpy-fp32",
+        "cpu_seconds": [
+          0.01023936690762639,
+          0.010581215959973633,
+          0.010404660948552191
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "64x2816x1024",
+      "source_hash": "40122a0de38014ac8c77545bce19e19455e82c0f8a3e4061be474c77e20d65b9",
+      "status": "supported-win"
+    },
+    {
+      "correctness": {
+        "cases": 2048000,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.lm_head.cpu-dequant",
+      "operation": "linear",
+      "performance": {
+        "candidate_seconds": [
+          0.06295138993300498,
+          0.06330603500828147,
+          0.06296392797958106
+        ],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.09347184398211539,
+          0.08788632194045931,
+          0.08925242198165506
+        ],
+        "fused_model_win": false
+      },
+      "reason": "",
+      "shape_class": "64x1024x32000",
+      "source_hash": "40122a0de38014ac8c77545bce19e19455e82c0f8a3e4061be474c77e20d65b9",
+      "status": "supported-win"
+    }
+  ],
+  "schema_version": 1
+}

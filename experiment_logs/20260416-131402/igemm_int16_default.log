@@ -1,0 +1,36 @@
+$ ./.venv/bin/python examples/igemm_int16.py
+
+==== packed int16 igemm example (256x256 times 256x256) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 0.0286 sec, 1.1725 Gop/s
+QPU:   0.0053 sec, 6.3106 Gop/s
+Maximum absolute error: 32515061
+
+==== packed int16 igemm example (512x512 times 512x512) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 0.4714 sec, 0.5694 Gop/s
+QPU:   0.0186 sec, 14.4225 Gop/s
+Maximum absolute error: 49375571
+
+==== packed int16 igemm example (768x768 times 768x768) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 1.5252 sec, 0.5940 Gop/s
+QPU:   0.0442 sec, 20.4802 Gop/s
+Maximum absolute error: 62342264
+
+==== packed int16 igemm example (1024x1024 times 1024x1024) ====
+Kernel contract: A/B are packed int16 pairs in int32 words; accumulation is signed int32 via smul24.
+This reduces input bandwidth, but it is not a packed int8/int16 dot-product kernel.
+numpy: 9.9596 sec, 0.2156 Gop/s
+QPU:   0.0992 sec, 21.6475 Gop/s
+Maximum absolute error: 79515509
+
+==== packed int16 igemm size sweep summary ====
+  size   numpy GO/s     QPU GO/s    QPU sec    max abs err
+   256       1.1725       6.3106     0.0053       32515061
+   512       0.5694      14.4225     0.0186       49375571
+   768       0.5940      20.4802     0.0442       62342264
+  1024       0.2156      21.6475     0.0992       79515509

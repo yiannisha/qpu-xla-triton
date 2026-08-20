@@ -1,0 +1,31 @@
+$ ./.venv/bin/python examples/minmax.py --length 4194432
+length: 4194432 scalar values
+repeat: 5
+dtypes: fp32, int32, int16
+
+==== fp32 elementwise min/max (4.0 Mi elements, 12 QPUs) ====
+numpy:     0.004139 sec, 11.326 GiB/s
+torch:     0.006710 sec, 6.986 GiB/s
+QPU:       0.007214 sec, 6.498 GiB/s
+
+numpy:     0.004208 sec, 11.139 GiB/s
+torch:     0.006854 sec, 6.839 GiB/s
+QPU:       0.007221 sec, 6.492 GiB/s
+
+==== int32 elementwise min/max (4.0 Mi elements, 12 QPUs) ====
+numpy:     0.007595 sec, 6.172 GiB/s
+torch:     0.009061 sec, 5.173 GiB/s
+QPU:       0.007294 sec, 6.427 GiB/s
+
+numpy:     0.007567 sec, 6.195 GiB/s
+torch:     0.009266 sec, 5.059 GiB/s
+QPU:       0.007128 sec, 6.576 GiB/s
+
+==== int16 elementwise min/max (4.0 Mi elements, 12 QPUs) ====
+numpy:     0.003531 sec, 6.638 GiB/s
+torch:     0.004601 sec, 5.095 GiB/s
+QPU:       0.003924 sec, 5.974 GiB/s
+
+numpy:     0.003779 sec, 6.201 GiB/s
+torch:     0.004565 sec, 5.134 GiB/s
+QPU:       0.003884 sec, 6.034 GiB/s

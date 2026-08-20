@@ -1,0 +1,983 @@
+{
+  "records": [
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": NaN,
+        "max_relative_error": NaN,
+        "mean_abs_error": NaN,
+        "nan_count": 1379,
+        "p99_abs_error": NaN,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant",
+      "operation": "linear",
+      "partition": null,
+      "performance": {
+        "candidate_seconds": [
+          0.006138959084637463,
+          0.006127478089183569,
+          0.006039219908416271,
+          0.006011478952132165,
+          0.005986238014884293,
+          0.005975145963020623,
+          0.006077070953324437
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [
+          0.000220943009480834,
+          0.00021090498194098473,
+          0.0002171460073441267,
+          0.0002158869756385684,
+          0.00021616497542709112,
+          0.00021662702783942223,
+          0.00022009003441780806
+        ],
+        "fused_model_win": false,
+        "host_prep_seconds": [
+          0.000461051007732749,
+          0.0004369590897113085,
+          0.0004388670204207301,
+          0.0004322360036894679,
+          0.0004311809316277504,
+          0.0004298669518902898,
+          0.00042962597217410803
+        ],
+        "kernel_seconds": [
+          0.004432845977135003,
+          0.00442212400957942,
+          0.004427365027368069,
+          0.004437012947164476,
+          0.004454753012396395,
+          0.004456789931282401,
+          0.004436030983924866
+        ],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "qpu",
+      "quality": {
+        "cosine_similarity": 0.9707729611823541,
+        "inf_count": 0,
+        "max_abs_error": 208.4792251586914,
+        "mean_abs_error": 1.9851903786933216,
+        "nan_count": 1379,
+        "normalized_rmse": 0.2400372808610556,
+        "p99_abs_error": 56.72390243530281,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 295.85729217529297,
+        "max_relative_error": 8687.833587183879,
+        "mean_abs_error": 0.7207186691015863,
+        "nan_count": 0,
+        "p99_abs_error": 14.62158912122278,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o128",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 128,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.18061131704598665,
+          0.1805342809529975,
+          0.18065215006936342,
+          0.18054867000319064,
+          0.1806006139377132,
+          0.1805963549995795,
+          0.18057687301188707
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9876300461383257,
+        "inf_count": 0,
+        "max_abs_error": 295.3308868408203,
+        "mean_abs_error": 1.2166513497612073,
+        "nan_count": 0,
+        "normalized_rmse": 0.1573148743192637,
+        "p99_abs_error": 14.254404588043885,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 255.19073486328125,
+        "max_relative_error": 2876.5002135945124,
+        "mean_abs_error": 0.9617165881061283,
+        "nan_count": 0,
+        "p99_abs_error": 36.44354462623613,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o192",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 192,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.1648718579672277,
+          0.16487593203783035,
+          0.16501439304556698,
+          0.16487374703865498,
+          0.16469858202617615,
+          0.16489904304035008,
+          0.16469526791479439
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9834861994250428,
+        "inf_count": 0,
+        "max_abs_error": 255.6532211303711,
+        "mean_abs_error": 1.4554665135984806,
+        "nan_count": 0,
+        "normalized_rmse": 0.18170404505581794,
+        "p99_abs_error": 36.33790826797502,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 301.1244583129883,
+        "max_relative_error": 8323.167092793032,
+        "mean_abs_error": 1.4212638439041996,
+        "nan_count": 0,
+        "p99_abs_error": 59.321816897392296,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o256",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 256,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.1551091179717332,
+          0.15505924890749156,
+          0.15495573193766177,
+          0.15508535993285477,
+          0.15504936000797898,
+          0.15614929399453104,
+          0.15514095197431743
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9761595949030207,
+        "inf_count": 0,
+        "max_abs_error": 300.5980529785156,
+        "mean_abs_error": 1.9113140686053214,
+        "nan_count": 0,
+        "normalized_rmse": 0.21845885015042932,
+        "p99_abs_error": 59.54822901487356,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 267.2455825805664,
+        "max_relative_error": 4092.666678543447,
+        "mean_abs_error": 1.6825293720938248,
+        "nan_count": 0,
+        "p99_abs_error": 69.50785871148118,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o320",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 320,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.13985796889755875,
+          0.14172048901673406,
+          0.14096432900987566,
+          0.13998731994070113,
+          0.14013211498968303,
+          0.13992613495793194,
+          0.1398178949020803
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9708672190547014,
+        "inf_count": 0,
+        "max_abs_error": 267.23307037353516,
+        "mean_abs_error": 2.170820828018293,
+        "nan_count": 0,
+        "normalized_rmse": 0.24135434724873478,
+        "p99_abs_error": 69.4279425799847,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 266.4844436645508,
+        "max_relative_error": 7230.500289355868,
+        "mean_abs_error": 1.9028690509058777,
+        "nan_count": 0,
+        "p99_abs_error": 75.38051548004151,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o384",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 384,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.12962317804340273,
+          0.12957445695064962,
+          0.1296213639434427,
+          0.1295974380336702,
+          0.1298896020743996,
+          0.1297268820926547,
+          0.1296902890317142
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9675040118645851,
+        "inf_count": 0,
+        "max_abs_error": 266.2401809692383,
+        "mean_abs_error": 2.3899913858212756,
+        "nan_count": 0,
+        "normalized_rmse": 0.25490794269206074,
+        "p99_abs_error": 75.57632961273208,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 325.2271270751953,
+        "max_relative_error": 8323.167092793032,
+        "mean_abs_error": 2.536673734386369,
+        "nan_count": 0,
+        "p99_abs_error": 88.98561840057374,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o512",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 512,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.11201716202776879,
+          0.10230625607073307,
+          0.10465151199605316,
+          0.10382994508836418,
+          0.10240838502068073,
+          0.10344095004256815,
+          0.10228305298369378
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9580205264472167,
+        "inf_count": 0,
+        "max_abs_error": 325.75482177734375,
+        "mean_abs_error": 3.017402876377588,
+        "nan_count": 0,
+        "normalized_rmse": 0.28999225547681245,
+        "p99_abs_error": 89.38250131607057,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 324.65489196777344,
+        "max_relative_error": 7415.500816309845,
+        "mean_abs_error": 3.8062267622058243,
+        "nan_count": 0,
+        "p99_abs_error": 107.77181357145318,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o768",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 768,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.053033322910778224,
+          0.05305889598093927,
+          0.052963398047722876,
+          0.05291536101140082,
+          0.052977101993747056,
+          0.052995119942352176,
+          0.05298637901432812
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9348545470050706,
+        "inf_count": 0,
+        "max_abs_error": 325.1825866699219,
+        "mean_abs_error": 4.278420702329072,
+        "nan_count": 0,
+        "normalized_rmse": 0.36102874622120834,
+        "p99_abs_error": 107.7182751655579,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 321.8653564453125,
+        "max_relative_error": 7246.500127331584,
+        "mean_abs_error": 4.440556673990912,
+        "nan_count": 0,
+        "p99_abs_error": 113.2480572700501,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-o896",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "outputs",
+        "qpu_units": 896,
+        "total_units": 1024
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.026920760050415993,
+          0.026891167042776942,
+          0.02685053797904402,
+          0.026862796978093684,
+          0.02683776104822755,
+          0.02692537009716034,
+          0.026929000043310225
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9251297481839812,
+        "inf_count": 0,
+        "max_abs_error": 322.39305114746094,
+        "mean_abs_error": 4.905603213570387,
+        "nan_count": 0,
+        "normalized_rmse": 0.3872376275971367,
+        "p99_abs_error": 113.08771109581018,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 248.80292510986328,
+        "max_relative_error": 1114.4817432854304,
+        "mean_abs_error": 1.4164805529494942,
+        "nan_count": 0,
+        "p99_abs_error": 60.61496777534488,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-r16",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "rows",
+        "qpu_units": 16,
+        "total_units": 64
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.15295299200806767,
+          0.15219075803179294,
+          0.15236512606497854,
+          0.15240131202153862,
+          0.15217646094970405,
+          0.15266484499443322,
+          0.15232818201184273
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9764677626800561,
+        "inf_count": 0,
+        "max_abs_error": 248.57632446289062,
+        "mean_abs_error": 1.9076118523374106,
+        "nan_count": 0,
+        "normalized_rmse": 0.21706568340330878,
+        "p99_abs_error": 60.52746086120612,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 252.28077697753906,
+        "max_relative_error": 1611.1667037904774,
+        "mean_abs_error": 2.584238187218361,
+        "nan_count": 0,
+        "p99_abs_error": 91.17253556251548,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-r32",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "rows",
+        "qpu_units": 32,
+        "total_units": 64
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.102362793055363,
+          0.10219012794550508,
+          0.10221323801670223,
+          0.1021553500322625,
+          0.10215738695114851,
+          0.10237245995085686,
+          0.10211366589646786
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9571584330177655,
+        "inf_count": 0,
+        "max_abs_error": 251.57907104492188,
+        "mean_abs_error": 3.0652258659178955,
+        "nan_count": 0,
+        "normalized_rmse": 0.29304599004591797,
+        "p99_abs_error": 91.00986833572405,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    },
+    {
+      "correctness": {
+        "cases": 65536,
+        "exact": false,
+        "inf_count": 0,
+        "max_abs_error": 304.37667083740234,
+        "max_relative_error": 1545.4999283114955,
+        "mean_abs_error": 3.7875249219172673,
+        "nan_count": 0,
+        "p99_abs_error": 106.69649057388305,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "dtype": "w8a8-i32-fp32",
+      "kernels": [
+        "vc7.tiled_w8a8_gemm",
+        "numpy.int32_matmul"
+      ],
+      "layout": "row-major-packed-k4",
+      "name": "vc7.w8a8.prefill-h1024-t64.down.standalone-qpu-dequant.hybrid-r48",
+      "operation": "linear",
+      "partition": {
+        "alignment": 16,
+        "axis": "rows",
+        "qpu_units": 48,
+        "total_units": 64
+      },
+      "performance": {
+        "candidate_seconds": [
+          0.05283156596124172,
+          0.05209718400146812,
+          0.053460540948435664,
+          0.05195277801249176,
+          0.0520099630812183,
+          0.051950554945506155,
+          0.0521182770607993
+        ],
+        "cold_start_seconds": [],
+        "cpu_reference": "torch-fp32",
+        "cpu_seconds": [
+          0.01405716105364263,
+          0.01409119798336178,
+          0.016346490941941738,
+          0.0106771569699049,
+          0.007343207020312548,
+          0.007022580015473068,
+          0.006877211038954556
+        ],
+        "dequantization_seconds": [],
+        "fused_model_win": false,
+        "host_prep_seconds": [],
+        "kernel_seconds": [],
+        "same_contract_reference": "torch-int32",
+        "same_contract_seconds": [
+          0.04098892107140273,
+          0.040876402985304594,
+          0.04087375500239432,
+          0.04098518006503582,
+          0.04089306900277734,
+          0.04092964401934296,
+          0.040812626015394926
+        ]
+      },
+      "placement": "hybrid",
+      "quality": {
+        "cosine_similarity": 0.9365800630107178,
+        "inf_count": 0,
+        "max_abs_error": 303.8502655029297,
+        "mean_abs_error": 4.258781828231392,
+        "nan_count": 0,
+        "normalized_rmse": 0.3566579026876902,
+        "p99_abs_error": 106.76911144256593,
+        "reference": "numpy-openblas-fp32",
+        "top1_agreement": null
+      },
+      "reason": "failed the dynamic-W8A8 differential tolerance",
+      "shape_class": "64x2816x1024",
+      "source_hash": "a9a158638d0e67035376399ac44526cf25a285e592d6b84d1305f27e8ff7a164",
+      "status": "quarantined-incorrect"
+    }
+  ],
+  "schema_version": 3
+}

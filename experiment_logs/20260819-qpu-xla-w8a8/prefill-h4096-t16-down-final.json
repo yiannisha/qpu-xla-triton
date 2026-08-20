@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "hostname": "yiannis",
+    "manifest": "llama-dense-v1",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state",
+    "thermal_zone0_temp_millicelsius": "62250",
+    "timestamp_utc": "2026-08-19T17:23:15.010709+00:00"
+  },
+  "results": [
+    {
+      "case": {
+        "cache_length": 16,
+        "head_dim": 128,
+        "hidden_size": 4096,
+        "intermediate_size": 11008,
+        "kv_heads": 8,
+        "name": "prefill-h4096-t16",
+        "phase": "prefill",
+        "query_heads": 32,
+        "tokens": 16,
+        "vocabulary_size": 128000
+      },
+      "correctness": {
+        "cases": 65536,
+        "exact": true,
+        "inf_count": 0,
+        "max_abs_error": 0.0,
+        "max_relative_error": 0.0,
+        "mean_abs_error": 0.0,
+        "nan_count": 0,
+        "p99_abs_error": 0.0,
+        "reference": "dynamic-per-row-int8 + numpy-int32-matmul + fp32-scales",
+        "saturation_count": 0
+      },
+      "cpu_reference": "torch-fp32",
+      "fp32_model_reference_max_abs_error": 6.2714385986328125,
+      "numpy_fp32_seconds": [
+        0.1278180229710415,
+        0.12879606895148754,
+        0.13727352197747678,
+        0.12885484599974006,
+        0.12958093092311174
+      ],
+      "numpy_seconds": [
+        0.7934842649847269,
+        0.7889793829526752,
+        0.7885550539940596,
+        0.788863846915774,
+        0.7889593269210309
+      ],
+      "projection": "down",
+      "qpu_kernel_only_seconds": [
+        0.016545448102988303,
+        0.016565299942158163,
+        0.016527096973732114,
+        0.016529393033124506,
+        0.016528763924725354
+      ],
+      "qpu_total_seconds": [
+        0.018507780972868204,
+        0.018316024099476635,
+        0.01821656199172139,
+        0.018368746037594974,
+        0.01828767196275294
+      ],
+      "shape": [
+        16,
+        11008,
+        4096
+      ],
+      "speedup_over_fastest_cpu": 5.3165259791641635,
+      "status": "supported-win",
+      "torch_fp32_seconds": [
+        0.09830433095339686,
+        0.09684714092873037,
+        0.09714297205209732,
+        0.09737761795986444,
+        0.09781257598660886
+      ],
+      "torch_seconds": [
+        0.16397757502272725,
+        0.1645977731095627,
+        0.1639897229615599,
+        0.16475560399703681,
+        0.16485751199070364
+      ]
+    }
+  ]
+}

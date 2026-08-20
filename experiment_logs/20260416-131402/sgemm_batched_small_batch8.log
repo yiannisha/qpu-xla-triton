@@ -1,0 +1,22 @@
+$ ./.venv/bin/python examples/sgemm_batched_small.py --batch 8
+
+==== small batched sgemm (128x128, batch=8) ====
+numpy:        0.0133 sec, 2.5546 Gflop/s
+torch:        0.0632 sec, 0.5370 Gflop/s
+QPU generic:  0.0017 sec, 19.4359 Gflop/s (median of 5)
+QPU small:    0.0017 sec, 19.6663 Gflop/s (median of 5)
+Generic max abs error: 2.09808349609375e-05
+Small max abs error:   2.09808349609375e-05
+
+==== small batched sgemm (256x256, batch=8) ====
+numpy:        0.0065 sec, 41.7412 Gflop/s
+torch:        0.0690 sec, 3.9130 Gflop/s
+QPU generic:  0.0124 sec, 21.7446 Gflop/s (median of 5)
+QPU small:    0.0124 sec, 21.7446 Gflop/s (median of 5)
+Generic max abs error: 4.57763671875e-05
+Small max abs error:   4.57763671875e-05
+
+==== small batched sgemm summary ====
+  size  batch   numpy GF/s   torch GF/s   generic GF/s   small GF/s   speedup
+   128      8       2.5546       0.5370        19.4359      19.6663     1.012x
+   256      8      41.7412       3.9130        21.7446      21.7446     1.000x

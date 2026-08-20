@@ -325,3 +325,32 @@ The next serious implementation step is not cosmetic tuning. It is:
 - fix and revalidate packed `int16`
 - then reduce or remove `im2col`
 - then specialize direct conv kernels for common shapes
+
+## Packaged QPU-XLA W8A8 Candidates
+
+The packaged runtime now also contains a separate W8A8 candidate family. It
+does not change the public `tiledconv2d_int16` contract described above.
+
+- `vc7.tiled_w8a8_gemm` consumes four signed INT8 values packed into every
+  `uint32` word and uses signed `v8dot` to accumulate exactly into INT32.
+- `vc7.tiled_w8a8_gemm_dequantize` fuses row/column FP32 scaling into the
+  native-dot GEMM store path.
+- Its logical tile is 16 output rows by 16 output columns by 16 reduction
+  values. Host padding and packing are implemented by `PreparedW8A8Linear`.
+- `vc7.w8a8_gemv` is the exact single-row decode candidate.
+- `vc7.w8a8_dequantize` is an optional tiled INT32-to-FP32 scaling epilogue.
+- `vc7.swiglu_fp32` is the fused FP32 SiLU-gate multiplication candidate.
+- `Conv2dW8A8Plan` reuses the packed GEMM for dense and grouped convolution.
+  Pointwise 1x1 avoids window expansion; general 3x3 still uses vectorized
+  im2col and is not a direct spatial QPU kernel.
+- Prepared dense and convolution plans support calibrated row and output
+  hybrids. The two partition axes are mutually exclusive, and grouped output
+  splits require 16 aligned outputs per group. Depthwise output splits are
+  explicitly unsupported.
+
+Every W8A8 assembly path has hardware differential tests. Automatic placement
+must use an exact-shape `supported-win` record from `CandidateRegistry`.
+Correct-but-slower GEMV, dequantization, and convolution candidates remain
+available for explicit evaluation but must not be promoted by default.
+Full one-layer model regressions also demote standalone stage wins; current
+decode shapes and the 2048-hidden/256-token SwiGLU shape are CPU by default.

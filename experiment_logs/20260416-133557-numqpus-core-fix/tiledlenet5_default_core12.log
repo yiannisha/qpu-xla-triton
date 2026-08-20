@@ -1,0 +1,25 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/tiledlenet5.py
+==== LeNet-5 fp32 example ====
+Architecture: Conv5x5(1->6) -> ReLU -> AvgPool -> Conv5x5(6->16) -> ReLU -> AvgPool -> Linear(400->120) -> ReLU -> Linear(120->84) -> ReLU -> Linear(84->10)
+Batch: 48, num_qpus: 12
+QPU steady-state layout: on-device gather lowering -> position-major matrices -> zero-copy flatten -> FC.
+Steady-state CPU compute in the QPU path: none.
+Excluded one-time CPU setup: weight reshape/padding, metadata generation, kernel assembly, buffer allocation.
+QPU benchmark unavailable: [Errno 2] No such file or directory: '/dev/dri/by-path/platform-1002000000.v3d-card'
+numpy: 0.0184 sec, 2.2183 Gop/s
+torch native lenet5: 0.0037 sec, 11.0322 Gop/s
+QPU: unavailable
+
+
+==== LeNet-5 int32 example ====
+Architecture: Conv5x5(1->6) -> ReLU -> AvgPool -> Conv5x5(6->16) -> ReLU -> AvgPool -> Linear(400->120) -> ReLU -> Linear(120->84) -> ReLU -> Linear(84->10)
+Batch: 48, num_qpus: 12
+QPU steady-state layout: on-device gather lowering -> position-major matrices -> zero-copy flatten -> FC.
+Steady-state CPU compute in the QPU path: none.
+Excluded one-time CPU setup: weight reshape/padding, metadata generation, kernel assembly, buffer allocation.
+Actual smul24 stage maxima: input=2, pool1=24, pool2_flat=342, fc1=4579, fc2=22929
+QPU benchmark unavailable: [Errno 2] No such file or directory: '/dev/dri/by-path/platform-1002000000.v3d-card'
+numpy: 0.0501 sec, 0.8167 Gop/s
+torch native lenet5: 0.0055 sec, 7.4167 Gop/s
+QPU: unavailable
+

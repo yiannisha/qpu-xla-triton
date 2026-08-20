@@ -1,0 +1,10 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/minmax.py
+Traceback (most recent call last):
+  File "/home/yiannis/side/py-videocore7/examples/minmax.py", line 604, in <module>
+    main()
+  File "/home/yiannis/side/py-videocore7/examples/minmax.py", line 583, in main
+    iterations_by_dtype = validate_length(args.length, args.num_qpus, configs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yiannis/side/py-videocore7/examples/minmax.py", line 352, in validate_length
+    raise ValueError(f"length must be a multiple of {chunk} for dtype={config.name} and num_qpus={num_qpus}")
+ValueError: length must be a multiple of 192 for dtype=fp32 and num_qpus=12

@@ -1,0 +1,94 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/sgemm_batched_small.py
+
+==== small batched sgemm (128x128, batch=1) ====
+numpy:        0.0003 sec, 15.9242 Gflop/s
+torch:        0.0113 sec, 0.3760 Gflop/s
+QPU generic:  0.0003 sec, 14.2763 Gflop/s (median of 5)
+QPU small:    0.0003 sec, 14.1458 Gflop/s (median of 5)
+Generic max abs error: 101.39855194091797
+Small max abs error:   101.39855194091797
+
+==== small batched sgemm (128x128, batch=2) ====
+numpy:        0.0003 sec, 28.1389 Gflop/s
+torch:        0.0189 sec, 0.4488 Gflop/s
+QPU generic:  0.0005 sec, 17.3795 Gflop/s (median of 5)
+QPU small:    0.0005 sec, 17.4477 Gflop/s (median of 5)
+Generic max abs error: 85.41255187988281
+Small max abs error:   87.40705108642578
+
+==== small batched sgemm (128x128, batch=4) ====
+numpy:        0.0005 sec, 37.5809 Gflop/s
+torch:        0.0310 sec, 0.5473 Gflop/s
+QPU generic:  0.0009 sec, 18.8488 Gflop/s (median of 5)
+QPU small:    0.0009 sec, 18.8364 Gflop/s (median of 5)
+Generic max abs error: 104.6340103149414
+Small max abs error:   104.6340103149414
+
+==== small batched sgemm (128x128, batch=8) ====
+numpy:        0.0009 sec, 38.6310 Gflop/s
+torch:        0.0670 sec, 0.5069 Gflop/s
+QPU generic:  0.0017 sec, 19.8977 Gflop/s (median of 5)
+QPU small:    0.0017 sec, 19.8761 Gflop/s (median of 5)
+Generic max abs error: 102.7874755859375
+Small max abs error:   103.19575500488281
+
+==== small batched sgemm (128x128, batch=16) ====
+numpy:        0.0129 sec, 5.2795 Gflop/s
+torch:        0.0838 sec, 0.8101 Gflop/s
+QPU generic:  0.0033 sec, 20.2749 Gflop/s (median of 5)
+QPU small:    0.0033 sec, 20.2848 Gflop/s (median of 5)
+Generic max abs error: 108.17369079589844
+Small max abs error:   112.175537109375
+
+==== small batched sgemm (256x256, batch=1) ====
+numpy:        0.0012 sec, 28.9229 Gflop/s
+torch:        0.0163 sec, 2.0654 Gflop/s
+QPU generic:  0.0016 sec, 20.4779 Gflop/s (median of 5)
+QPU small:    0.0016 sec, 20.5187 Gflop/s (median of 5)
+Generic max abs error: 146.27500915527344
+Small max abs error:   146.27500915527344
+
+==== small batched sgemm (256x256, batch=2) ====
+numpy:        0.0016 sec, 42.9296 Gflop/s
+torch:        0.0203 sec, 3.3300 Gflop/s
+QPU generic:  0.0032 sec, 21.3414 Gflop/s (median of 5)
+QPU small:    0.0032 sec, 21.3219 Gflop/s (median of 5)
+Generic max abs error: 143.51516723632812
+Small max abs error:   143.51516723632812
+
+==== small batched sgemm (256x256, batch=4) ====
+numpy:        0.0027 sec, 50.1504 Gflop/s
+torch:        0.0403 sec, 3.3535 Gflop/s
+QPU generic:  0.0063 sec, 21.5302 Gflop/s (median of 5)
+QPU small:    0.0063 sec, 21.5441 Gflop/s (median of 5)
+Generic max abs error: 164.609375
+Small max abs error:   164.609375
+
+==== small batched sgemm (256x256, batch=8) ====
+numpy:        0.0054 sec, 49.8810 Gflop/s
+torch:        0.0596 sec, 4.5302 Gflop/s
+QPU generic:  0.0124 sec, 21.7773 Gflop/s (median of 5)
+QPU small:    0.0124 sec, 21.7746 Gflop/s (median of 5)
+Generic max abs error: 178.93585205078125
+Small max abs error:   178.93585205078125
+
+==== small batched sgemm (256x256, batch=16) ====
+numpy:        0.0098 sec, 54.8924 Gflop/s
+torch:        0.0871 sec, 6.2013 Gflop/s
+QPU generic:  0.0247 sec, 21.8635 Gflop/s (median of 5)
+QPU small:    0.0247 sec, 21.8632 Gflop/s (median of 5)
+Generic max abs error: 186.0501708984375
+Small max abs error:   186.0501708984375
+
+==== small batched sgemm summary ====
+  size  batch   numpy GF/s   torch GF/s   generic GF/s   small GF/s   speedup
+   128      1      15.9242       0.3760        14.2763      14.1458     0.991x
+   128      2      28.1389       0.4488        17.3795      17.4477     1.004x
+   128      4      37.5809       0.5473        18.8488      18.8364     0.999x
+   128      8      38.6310       0.5069        19.8977      19.8761     0.999x
+   128     16       5.2795       0.8101        20.2749      20.2848     1.000x
+   256      1      28.9229       2.0654        20.4779      20.5187     1.002x
+   256      2      42.9296       3.3300        21.3414      21.3219     0.999x
+   256      4      50.1504       3.3535        21.5302      21.5441     1.001x
+   256      8      49.8810       4.5302        21.7773      21.7746     1.000x
+   256     16      54.8924       6.2013        21.8635      21.8632     1.000x

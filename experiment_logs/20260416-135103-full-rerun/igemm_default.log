@@ -1,0 +1,32 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/igemm.py
+
+==== igemm example (256x256 times 256x256) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 0.0284 sec, 1.1796 Gop/s
+QPU:   0.0053 sec, 6.3012 Gop/s
+Maximum absolute error: 1620066157
+
+==== igemm example (512x512 times 512x512) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 0.4742 sec, 0.5661 Gop/s
+QPU:   0.0161 sec, 16.6905 Gop/s
+Maximum absolute error: 1032671774
+
+==== igemm example (768x768 times 768x768) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 1.6027 sec, 0.5653 Gop/s
+QPU:   0.0442 sec, 20.4908 Gop/s
+Maximum absolute error: 958161664
+
+==== igemm example (1024x1024 times 1024x1024) ====
+Kernel contract: inputs must fit in signed 24-bit integers because it uses smul24.
+numpy: 10.0292 sec, 0.2141 Gop/s
+QPU:   0.2001 sec, 10.7326 Gop/s
+Maximum absolute error: 882835775
+
+==== igemm size sweep summary ====
+  size   numpy GO/s     QPU GO/s    QPU sec    max abs err
+   256       1.1796       6.3012     0.0053     1620066157
+   512       0.5661      16.6905     0.0161     1032671774
+   768       0.5653      20.4908     0.0442      958161664
+  1024       0.2141      10.7326     0.2001      882835775

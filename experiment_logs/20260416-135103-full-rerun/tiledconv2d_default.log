@@ -1,0 +1,29 @@
+$ /home/yiannis/side/py-videocore7/.venv/bin/python examples/tiledconv2d.py
+==== tiledconv2d fp32 example ====
+numpy: 0.0020 sec, 21.6917 Gop/s
+torch native conv2d: 0.0033 sec, 12.7378 Gop/s
+QPU host prep: 0.0009 sec
+QPU cached total: 0.0026 sec, 16.2549 Gop/s
+QPU execute only: 0.0021 sec, 19.8662 Gop/s
+QPU prep+cached total: 0.0035 sec, 12.0349 Gop/s
+Maximum absolute error: 37.749603271484375
+
+==== tiledconv2d int32 example ====
+numpy: 0.0083 sec, 1.4354 Gop/s
+torch native conv2d: 0.0014 sec, 8.2980 Gop/s
+QPU host prep: 0.0003 sec
+QPU cached total: 0.0008 sec, 15.0788 Gop/s
+QPU execute only: 0.0006 sec, 18.6018 Gop/s
+QPU prep+cached total: 0.0011 sec, 10.8520 Gop/s
+Maximum absolute error: 670088
+
+==== tiledconv2d int16 example ====
+Kernel contract: int16 inputs are packed as int32 pairs and accumulated into int32.
+numpy: 0.0083 sec, 1.4458 Gop/s
+torch native conv2d: 0.0008 sec, 15.4468 Gop/s
+torch note: native int16 conv2d returns int16 on this build, so it is a speed baseline only.
+QPU host prep: 0.0004 sec
+QPU cached total: 0.0007 sec, 15.9736 Gop/s
+QPU execute only: 0.0006 sec, 18.4269 Gop/s
+QPU prep+cached total: 0.0012 sec, 10.2894 Gop/s
+Maximum absolute error: 3993623
