@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cstring>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
@@ -36,6 +37,7 @@ struct options {
     int64_t fixture_max_bytes = 64 * 1024 * 1024;
     bool mtp = false;
     bool quiet = false;
+    bool fixture_all_sources = false;
 };
 
 static int32_t parse_i32(const char * value, const char * name) {
@@ -70,6 +72,7 @@ static void usage(const char * argv0) {
         << "  --fixture-dir DIR         optionally capture bounded node tensors\n"
         << "  --fixture-pattern REGEX   node name/op selection for capture\n"
         << "  --fixture-max-bytes N     maximum bytes per captured tensor\n"
+        << "  --fixture-all-sources     capture every populated node source, not only src1\n"
         << "  --quiet                   suppress non-error llama.cpp logs\n";
 }
 
@@ -116,6 +119,8 @@ static options parse_options(int argc, char ** argv) {
             result.fixture_pattern = value();
         } else if (argument == "--fixture-max-bytes") {
             result.fixture_max_bytes = parse_i64(value(), "fixture-max-bytes");
+        } else if (argument == "--fixture-all-sources") {
+            result.fixture_all_sources = true;
         } else if (argument == "--quiet") {
             result.quiet = true;
         } else if (argument == "--help" || argument == "-h") {
@@ -164,6 +169,40 @@ static json tensor_metadata(const ggml_tensor * tensor) {
     };
 }
 
+static std::string hex_bytes(const void * data, size_t size) {
+    static constexpr char digits[] = "0123456789abcdef";
+    const auto * bytes = static_cast<const uint8_t *>(data);
+    std::string result(size * 2, '0');
+    for (size_t index = 0; index < size; ++index) {
+        result[2 * index] = digits[bytes[index] >> 4];
+        result[2 * index + 1] = digits[bytes[index] & 0x0f];
+    }
+    return result;
+}
+
+static json op_params_metadata(const ggml_tensor * tensor) {
+    json result = {
+        {"byte_count", GGML_MAX_OP_PARAMS},
+        {"raw_little_endian_hex", hex_bytes(tensor->op_params, GGML_MAX_OP_PARAMS)},
+    };
+    if (tensor->op == GGML_OP_FLASH_ATTN_EXT) {
+        float scale = 0.0f;
+        float max_bias = 0.0f;
+        float logit_softcap = 0.0f;
+        std::memcpy(&scale, tensor->op_params + 0, sizeof(scale));
+        std::memcpy(&max_bias, tensor->op_params + 1, sizeof(max_bias));
+        std::memcpy(&logit_softcap, tensor->op_params + 2, sizeof(logit_softcap));
+        result["parsed"] = {
+            {"scale", scale},
+            {"max_bias", max_bias},
+            {"logit_softcap", logit_softcap},
+            {"precision", static_cast<int32_t>(ggml_flash_attn_ext_get_prec(tensor))},
+            {"has_sinks", tensor->src[4] != nullptr},
+        };
+    }
+    return result;
+}
+
 static std::string safe_filename(std::string value) {
     for (char & character : value) {
         if (!(std::isalnum(static_cast<unsigned char>(character)) || character == '-' ||
@@ -185,6 +224,8 @@ struct profile_state {
     std::filesystem::path fixture_dir;
     std::regex fixture_filter;
     bool capture_fixtures = false;
+    bool fixture_all_sources = false;
+    std::string callback_error;
     json nodes = json::array();
     json fixtures = json::array();
     std::unordered_map<ggml_tensor *, clock_type::time_point> starts;
@@ -224,7 +265,7 @@ static json dump_tensor(
     return record;
 }
 
-static bool profile_callback(ggml_tensor * tensor, bool ask, void * user_data) {
+static bool profile_callback_impl(ggml_tensor * tensor, bool ask, void * user_data) {
     auto & state = *static_cast<profile_state *>(user_data);
     if (!state.active) {
         return false;
@@ -245,7 +286,9 @@ static bool profile_callback(ggml_tensor * tensor, bool ask, void * user_data) {
     json sources = json::array();
     for (int index = 0; index < GGML_MAX_SRC; ++index) {
         if (tensor->src[index] != nullptr) {
-            sources.push_back(tensor_metadata(tensor->src[index]));
+            json source = tensor_metadata(tensor->src[index]);
+            source["source_index"] = index;
+            sources.push_back(std::move(source));
         }
     }
     json record = tensor_metadata(tensor);
@@ -253,6 +296,7 @@ static bool profile_callback(ggml_tensor * tensor, bool ask, void * user_data) {
     record["node_index"] = node_index;
     record["op"] = ggml_op_name(tensor->op);
     record["op_description"] = ggml_op_desc(tensor);
+    record["op_params"] = op_params_metadata(tensor);
     record["duration_ns"] = duration_ns;
     record["sources"] = sources;
 
@@ -265,12 +309,36 @@ static bool profile_callback(ggml_tensor * tensor, bool ask, void * user_data) {
             {"node", tensor_metadata(tensor)},
             {"tensors", json::array()},
         };
-        fixture["tensors"].push_back(dump_tensor(state, tensor->src[1], "src1", node_index));
+        fixture["node"]["op"] = ggml_op_name(tensor->op);
+        fixture["node"]["op_params"] = op_params_metadata(tensor);
+        if (state.fixture_all_sources) {
+            for (int index = 0; index < GGML_MAX_SRC; ++index) {
+                if (tensor->src[index] != nullptr) {
+                    fixture["tensors"].push_back(dump_tensor(
+                        state, tensor->src[index], "src" + std::to_string(index), node_index));
+                }
+            }
+        } else {
+            fixture["tensors"].push_back(dump_tensor(state, tensor->src[1], "src1", node_index));
+        }
         fixture["tensors"].push_back(dump_tensor(state, tensor, "output", node_index));
         state.fixtures.push_back(std::move(fixture));
     }
     state.nodes.push_back(std::move(record));
     return true;
+}
+
+static bool profile_callback(ggml_tensor * tensor, bool ask, void * user_data) noexcept {
+    auto & state = *static_cast<profile_state *>(user_data);
+    try {
+        return profile_callback_impl(tensor, ask, user_data);
+    } catch (const std::exception & error) {
+        state.callback_error = error.what();
+    } catch (...) {
+        state.callback_error = "unknown callback failure";
+    }
+    state.active = false;
+    return false;
 }
 
 static std::vector<llama_token> tokenize_exact(
@@ -381,6 +449,7 @@ int main(int argc, char ** argv) {
         state.fixture_max_bytes = opts.fixture_max_bytes;
         state.fixture_dir = opts.fixture_dir;
         state.capture_fixtures = !opts.fixture_dir.empty();
+        state.fixture_all_sources = opts.fixture_all_sources;
         if (state.capture_fixtures) {
             state.fixture_filter = std::regex(opts.fixture_pattern, std::regex::optimize);
         }
@@ -484,6 +553,7 @@ int main(int argc, char ** argv) {
             }
             state.run_index = run - opts.warmups;
             state.node_index = 0;
+            state.callback_error.clear();
             state.active = run >= opts.warmups;
             const auto started = clock_type::now();
             const int32_t status = other_context == nullptr
@@ -503,6 +573,9 @@ int main(int argc, char ** argv) {
             const int64_t wall_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
                 clock_type::now() - started).count();
             state.active = false;
+            if (!state.callback_error.empty()) {
+                throw std::runtime_error("profile callback failed: " + state.callback_error);
+            }
             if (status != 0) {
                 throw std::runtime_error("profiled decode failed with status " + std::to_string(status));
             }
@@ -519,7 +592,9 @@ int main(int argc, char ** argv) {
              {
                  {"node_duration", "callback-bracketed graph view execution plus backend synchronization"},
                  {"serialization", "eval callback requests every node and therefore serializes node execution"},
-                 {"fixture_timing_eligible", !state.capture_fixtures},
+                 {"timing_eligible_for_promotion", false},
+                 {"fixture_capture_enabled", state.capture_fixtures},
+                 {"fixture_all_sources", state.fixture_all_sources},
                  {"fixture_weight_source", "native weights are regenerated from the GGUF manifest, not backend repack buffers"},
              }},
             {"model", std::filesystem::absolute(opts.model).string()},

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Linux-c++"
+	tests="11"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname="yiannis"
+	time="0"
+	timestamp="2026-08-20T00:04:43"
+	>
+	<testcase name="qpu_llama_cpu_repack_bench_help" classname="qpu_llama_cpu_repack_bench_help" time="0.00204268" status="run">
+		<properties/>
+		<system-out>usage: /home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_repack_bench --weights FILE --activation-f32 FILE --output-bin FILE [--weight-type q4_0|q4_k|q6_k|q8_0] --input-columns N --output-columns N --rows 1|4 --cpu-threads N --warmups N --samples N
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_cpu_flash_attn_bench_help" classname="qpu_llama_cpu_flash_attn_bench_help" time="0.00201376" status="run">
+		<properties/>
+		<system-out>usage: /home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_flash_attn_bench --query-f32 FILE --key-f16 FILE --value-f16 FILE --mask-f16 FILE --output-bin FILE --heads N --kv-rows N --head-dim N --cpu-threads N --warmups N --samples N --scale F --max-bias F --logit-softcap F
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_graph_profile_help" classname="qpu_llama_graph_profile_help" time="0.00281719" status="run">
+		<properties/>
+		<system-out>usage: /home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_graph_profile --model FILE --output FILE [options]
+  --other-model FILE        target model that owns an MTP context's shared state
+  --batch N                 target decode/verification width (default 1)
+  --context N               exact populated context tokens (default 0)
+  --context-size N          llama context capacity (default 8192)
+  --threads N               CPU generation and batch threads (default 3)
+  --warmups N               untimed graph warmups (default 1)
+  --iterations N            profiled graph calls (default 3)
+  --context-type default|mtp
+  --prompt TEXT             deterministic token source
+  --fixture-dir DIR         optionally capture bounded node tensors
+  --fixture-pattern REGEX   node name/op selection for capture
+  --fixture-max-bytes N     maximum bytes per captured tensor
+  --fixture-all-sources     capture every populated node source, not only src1
+  --quiet                   suppress non-error llama.cpp...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_runtime_unit" classname="qpu_llama_runtime_unit" time="0.000975361" status="run">
+		<properties/>
+		<system-out>qpu llama runtime tests passed
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_w8a8_hardware" classname="qpu_llama_w8a8_hardware" time="0.00459182" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out>native W8A8 GEMV hardware differential passed
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_q4_0_hardware" classname="qpu_llama_q4_0_hardware" time="0.00125843" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out>submit_wait_ns=66574 output_copy_ns=1370 complete_ns=68888 resident_bytes=680
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_q4_0_m4_hardware" classname="qpu_llama_q4_0_m4_hardware" time="0.00111223" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out>input_copy_ns=1056 submit_wait_ns=61278 output_copy_ns=1333 complete_ns=63722
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_q4_k_hardware" classname="qpu_llama_q4_k_hardware" time="0.00118525" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out>input_copy_ns=797 submit_wait_ns=85703 output_copy_ns=1463 complete_ns=88129
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_q6_k_hardware" classname="qpu_llama_q6_k_hardware" time="0.00112217" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out>input_copy_ns=797 submit_wait_ns=94796 output_copy_ns=1296 complete_ns=97092
+</system-out>
+	</testcase>
+	<testcase name="qpu_llama_q8_0_hardware" classname="qpu_llama_q8_0_hardware" time="0.00105442" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out></system-out>
+	</testcase>
+	<testcase name="qpu_llama_native_safety_hardware" classname="qpu_llama_native_safety_hardware" time="0.0326157" status="run">
+		<properties>
+			<property name="cmake_labels" value="hardware"/>
+		</properties>
+		<system-out>Q4_0 x Q8_0 M1 native safety matrix passed
+Q4_0 x Q8_0 M4 native safety matrix passed
+Q4_K x Q8_K M4 native safety matrix passed
+Q6_K x Q8_K M4 native safety matrix passed
+Q8_0 x Q8_0 M4 native safety matrix passed
+</system-out>
+	</testcase>
+</testsuite>

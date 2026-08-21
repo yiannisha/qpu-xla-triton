@@ -58,6 +58,7 @@ def normalize_case(case: dict[str, Any], index: int) -> dict[str, Any]:
             f"case {normalized['name']!r} must set fixture_dir and fixture_pattern together"
         )
     normalized.setdefault("fixture_max_bytes", 64 * 1024 * 1024)
+    normalized.setdefault("fixture_all_sources", False)
     if int(normalized["fixture_max_bytes"]) <= 0:
         raise ValueError(f"case {normalized['name']!r} has invalid fixture_max_bytes")
     return normalized
@@ -114,6 +115,8 @@ def build_command(binary: Path, case: dict[str, Any], output: Path) -> list[str]
                 str(case["fixture_max_bytes"]),
             ]
         )
+        if case.get("fixture_all_sources"):
+            command.append("--fixture-all-sources")
     return command
 
 
@@ -141,6 +144,9 @@ def validate_session(
     governors = {entry["governor"] for entry in before["cpu_frequency"]}
     if governors != {"performance"}:
         reasons.append(f"CPU governors were {sorted(str(value) for value in governors)}")
+    active_servers = before["commands"].get("llama_servers", {}).get("stdout", "").strip()
+    if active_servers:
+        reasons.append("one or more pre-existing llama-server processes were active")
     return {
         "profile_execution_valid": not any(record["returncode"] != 0 for record in records),
         "environment_retained": not reasons,

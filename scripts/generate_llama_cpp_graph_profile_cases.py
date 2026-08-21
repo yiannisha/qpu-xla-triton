@@ -75,12 +75,33 @@ def drafter_profile_cases(
     ]
 
 
+def configure_gemma_attention_fixtures(
+    cases: list[dict[str, Any]], fixture_root: Path
+) -> None:
+    """Capture one sliding-window and one global Gemma attention node in place."""
+    for case in cases:
+        if (
+            case.get("model_role") == "base"
+            and int(case["batch"]) in {1, 4}
+            and int(case["context_tokens"]) in {0, 512, 2048, 4096}
+        ):
+            case["fixture_dir"] = str((fixture_root / case["name"]).resolve())
+            case["fixture_pattern"] = r"^(node_30|node_235) FLASH_ATTN_EXT$"
+            case["fixture_max_bytes"] = 32 * 1024 * 1024
+            case["fixture_all_sources"] = True
+
+
 def main() -> None:
     """Write available graph cases and explicit missing-model gaps."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gemma-base", type=Path, default=DEFAULT_GEMMA_BASE)
     parser.add_argument("--gemma-draft", type=Path, default=DEFAULT_GEMMA_DRAFT)
     parser.add_argument("--qwen-model", type=Path)
+    parser.add_argument(
+        "--attention-fixture-root",
+        type=Path,
+        help="attach bounded all-source captures to required Gemma attention cases",
+    )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     cases: list[dict[str, Any]] = []
@@ -121,6 +142,8 @@ def main() -> None:
                         "context_type": "default",
                     }
                 )
+    if args.attention_fixture_root is not None:
+        configure_gemma_attention_fixtures(cases, args.attention_fixture_root)
     payload = {
         "schema_version": 1,
         "kind": "llama-cpp-qpu-graph-profile-cases",

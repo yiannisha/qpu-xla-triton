@@ -1,0 +1,522 @@
+{
+  "created_utc": "2026-08-20T03:08:06+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-20T03:08:06+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400027136\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "19824 /home/yiannis/side/llama.cpp/build/bin/llama-server --model /home/yiannis/side/models/Qwen3.5-4B-MTP-GGUF/Qwen3.5-4B-UD-Q4_K_XL.gguf --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-n-min 0 --threads 4 --ctx-size 8192 --parallel 1 --flash-attn on --kv-unified --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 --reasoning off --reasoning-budget 0 --jinja --host 0.0.0.0 --port 8081 --alias Qwen3.5-4B-n3-t4\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  5190828032   509247488   102236160  2983444480  3263774720\nSwap:     2147467264  2145959936     1507328\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2145959936  100      \n"
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": " 23:08:06 up  2:41,  7 users,  load average: 0.52, 0.25, 0.19\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "temp=58.7'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960012800\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:06+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T03:08:06+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 57300,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-20T03:08:05+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400037120\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "19824 /home/yiannis/side/llama.cpp/build/bin/llama-server --model /home/yiannis/side/models/Qwen3.5-4B-MTP-GGUF/Qwen3.5-4B-UD-Q4_K_XL.gguf --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-n-min 0 --threads 4 --ctx-size 8192 --parallel 1 --flash-attn on --kv-unified --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 --reasoning off --reasoning-budget 0 --jinja --host 0.0.0.0 --port 8081 --alias Qwen3.5-4B-n3-t4\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  5175476224   524599296   101629952  2982838272  3279126528\nSwap:     2147467264  2145959936     1507328\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2145959936  100      \n"
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": " 23:08:05 up  2:41,  7 users,  load average: 0.52, 0.25, 0.19\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "temp=58.7'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960012800\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T03:08:05+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T03:08:05+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 56750,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "kind": "llama-cpp-qpu-gemma-flash-attention-diagnostic",
+  "measurement_contract": {
+    "qpu_timing": "persistent mapped inputs, one fused dispatch and wait, no host copies",
+    "reasons": [
+      "the exact CPU comparator is a standalone pinned GGML node over deterministic synthetic tensors, not a captured model node",
+      "the candidate supports only M=1, 256-wide, one-KV-head, no-ALiBi/no-softcap/no-sinks records",
+      "environment retention must be established by an isolated multi-session runner"
+    ],
+    "timing_eligible_for_promotion": false
+  },
+  "records": [
+    {
+      "context_rows": 4096,
+      "cpu_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_flash_attn_bench",
+        "--query-f32",
+        "/tmp/llama-qpu-attention-91e0xnhy/query-4096.f32.bin",
+        "--key-f16",
+        "/tmp/llama-qpu-attention-91e0xnhy/key-4096.f16.bin",
+        "--value-f16",
+        "/tmp/llama-qpu-attention-91e0xnhy/value-4096.f16.bin",
+        "--mask-f16",
+        "/tmp/llama-qpu-attention-91e0xnhy/mask-4096.f16.bin",
+        "--output-bin",
+        "/tmp/llama-qpu-attention-91e0xnhy/cpu-output-4096.f32.bin",
+        "--heads",
+        "8",
+        "--kv-rows",
+        "4096",
+        "--head-dim",
+        "256",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "5",
+        "--samples",
+        "31",
+        "--scale",
+        "0.0625",
+        "--max-bias",
+        "0",
+        "--logit-softcap",
+        "0"
+      ],
+      "cpu_exact_ggml_node_ns": [
+        4608473,
+        3366356,
+        7386984,
+        3482188,
+        5515558,
+        3777445,
+        5467188,
+        3363930,
+        6208513,
+        3481688,
+        3864629,
+        2697362,
+        1661910,
+        1741186,
+        1691095,
+        1735390,
+        1675224,
+        1656909,
+        1601170,
+        1651114,
+        1623336,
+        1622576,
+        1603373,
+        1632577,
+        1610096,
+        1659947,
+        1621725,
+        1641836,
+        1664521,
+        1808667,
+        1988611
+      ],
+      "cpu_exact_ggml_node_summary": {
+        "count": 31,
+        "mad_ns": 125294.0,
+        "median_ns": 1735390.0,
+        "p05_ns": 1606734.5,
+        "p95_ns": 5862035.5
+      },
+      "diagnostic_speedup_vs_exact_ggml_cpu": 0.20279630061143075,
+      "dispatch_count": 1,
+      "exact_ggml_cpu_correctness": {
+        "atol": 0.005,
+        "elements": 2048,
+        "inf_count": 0,
+        "max_absolute": 6.781541742384434e-05,
+        "max_relative": 6.030676482141138,
+        "mean_absolute": 1.2728447946502852e-05,
+        "nan_count": 0,
+        "p99_absolute": 4.5940726995468136e-05,
+        "passed": true,
+        "rtol": 0.005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -0.003613321343436837,
+        "worst_index": [
+          4,
+          82
+        ],
+        "worst_reference": -0.003545505926012993
+      },
+      "head_dim": 256,
+      "independent_oracle_correctness": {
+        "atol": 0.005,
+        "elements": 2048,
+        "inf_count": 0,
+        "max_absolute": 6.78161159157753e-05,
+        "max_relative": 6.029851886985573,
+        "mean_absolute": 1.2728506267517536e-05,
+        "nan_count": 0,
+        "p99_absolute": 4.5936787500977516e-05,
+        "passed": true,
+        "rtol": 0.005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -0.003613322041928768,
+        "worst_index": [
+          4,
+          82
+        ],
+        "worst_reference": -0.003545505926012993
+      },
+      "kv_heads": 1,
+      "native_input_bytes": 4210688,
+      "output_bytes": 8192,
+      "qpu_persistent_execute_ns": [
+        8595564,
+        8571620,
+        8566768,
+        8567453,
+        8558490,
+        8561028,
+        8566527,
+        8567472,
+        8552157,
+        8548917,
+        8553768,
+        8547713,
+        8538213,
+        8550306,
+        8552398,
+        8571139,
+        8551435,
+        8551046,
+        8553268,
+        8572805,
+        8549935,
+        8557306,
+        8557731,
+        8561564,
+        8553084,
+        8564472,
+        8561176,
+        8569583,
+        8550527,
+        8504529,
+        8517565
+      ],
+      "qpu_persistent_execute_summary": {
+        "count": 31,
+        "mad_ns": 7166.0,
+        "median_ns": 8557306.0,
+        "p05_ns": 8527889.0,
+        "p95_ns": 8572212.5
+      },
+      "query_heads": 8,
+      "query_rows": 1,
+      "scale": 0.0625
+    }
+  ],
+  "samples": 31,
+  "schema_version": 1,
+  "seed": 4962,
+  "warmups": 5
+}

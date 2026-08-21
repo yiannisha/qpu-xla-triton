@@ -1,19 +1,29 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from pathlib import Path
 
 import pytest
 
 import scripts.run_llama_cpp_qpu_evaluation as evaluation
 from scripts.run_llama_cpp_qpu_evaluation import (
+    _build_server_request,
     _exact_prompt,
+    _parse_process_memory,
+    _response_semantics,
     _server_speculative_metrics,
+    _validate_structured_tool_response,
     build_command,
     build_server_command,
     compare_greedy_semantics,
     normalize_case,
     parse_llama_metrics,
     select_cases,
+    validate_candidate_evidence,
+    validate_candidate_execution,
+    validate_session,
+    workload_semantics_sha256,
 )
 
 
@@ -61,6 +71,269 @@ def test_mtp_command_keeps_semantic_controls_explicit() -> None:
 def test_mtp_case_requires_depth() -> None:
     with pytest.raises(ValueError, match="draft_n_max"):
         normalize_case({"mode": "mtp", "base_model": "/model.gguf"}, index=0)
+
+
+def test_fixed_structured_tool_request_retains_tokens_and_validates_schema() -> None:
+    expected = {"sensor_id": "pi5-lab-1", "temperature_c": 32.4}
+    case = normalize_case(
+        {
+            "name": "tool40",
+            "mode": "plain",
+            "workload": "structured-tool-call",
+            "request_surface": "chat-completions",
+            "surface": "server",
+            "base_model": "/model.gguf",
+            "predict_tokens": 40,
+            "messages": [{"role": "user", "content": "record it"}],
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {"name": "record_sensor_reading", "parameters": {}},
+                }
+            ],
+            "expected_tool_call": {
+                "name": "record_sensor_reading",
+                "arguments": expected,
+            },
+        },
+        index=0,
+    )
+    command = build_server_command(Path("/llama-server"), case, 8081)
+    assert command[command.index("--tools") + 1] == "all"
+    assert command[command.index("--reasoning") + 1] == "off"
+    endpoint, request = _build_server_request(case)
+    assert endpoint == "/v1/chat/completions"
+    assert request["max_tokens"] == 40
+    assert request["return_tokens"] is True
+    assert request["verbose"] is True
+
+    response = {
+        "choices": [
+            {
+                "finish_reason": "tool_calls",
+                "message": {
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": "nondeterministic-id",
+                            "type": "function",
+                            "function": {
+                                "name": "record_sensor_reading",
+                                "arguments": '{"temperature_c":32.4,"sensor_id":"pi5-lab-1"}',
+                            },
+                        }
+                    ],
+                },
+            }
+        ],
+        "usage": {"completion_tokens": 4, "prompt_tokens": 12},
+        "timings": {"predicted_n": 4},
+        "__verbose": {"tokens": [10, 11, 12, 13], "stop_type": "eos"},
+    }
+    semantics = _response_semantics(response, "chat-completions")
+    assert semantics["token_ids"] == [10, 11, 12, 13]
+    assert semantics["tool_calls"][0]["arguments"] == expected
+    assert _validate_structured_tool_response(case, semantics)["valid"] is True
+
+
+def test_structured_tool_case_rejects_non_fixed_cap() -> None:
+    with pytest.raises(ValueError, match="fixed 40-token cap"):
+        normalize_case(
+            {
+                "mode": "plain",
+                "workload": "structured-tool-call",
+                "request_surface": "chat-completions",
+                "surface": "server",
+                "base_model": "/model.gguf",
+                "predict_tokens": 39,
+                "messages": [{"role": "user", "content": "record it"}],
+                "tools": [{"type": "function"}],
+                "expected_tool_call": {"name": "record", "arguments": {}},
+            },
+            index=0,
+        )
+
+
+def test_workload_semantics_hash_ignores_tuning_but_changes_visible_input() -> None:
+    base = normalize_case(
+        {
+            "name": "tool40",
+            "model": "gemma",
+            "base_model": "/models/gemma.gguf",
+            "mode": "plain",
+            "workload": "structured-tool-call",
+            "surface": "server",
+            "request_surface": "chat-completions",
+            "predict_tokens": 40,
+            "threads": 2,
+            "messages": [{"role": "user", "content": "Record the reading."}],
+            "tools": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "record",
+                        "parameters": {"type": "object"},
+                    },
+                }
+            ],
+            "expected_tool_call": {"name": "record", "arguments": {}},
+        },
+        index=0,
+    )
+    tuned = dict(base, threads=4, placement="qpu-only", draft_n_max=7)
+    changed_prompt = dict(
+        base,
+        messages=[{"role": "user", "content": "Record another reading."}],
+    )
+    changed_schema = dict(base)
+    changed_schema["tools"] = [
+        {
+            "type": "function",
+            "function": {
+                "name": "record",
+                "parameters": {"type": "object", "required": ["temperature"]},
+            },
+        }
+    ]
+    assert workload_semantics_sha256(base) == workload_semantics_sha256(tuned)
+    assert workload_semantics_sha256(base) != workload_semantics_sha256(changed_prompt)
+    assert workload_semantics_sha256(base) != workload_semantics_sha256(changed_schema)
+
+
+def test_non_cpu_candidate_evidence_resolves_to_exact_manifest_bytes(tmp_path: Path) -> None:
+    source = tmp_path / "kernel.py"
+    binary = tmp_path / "kernel.bin"
+    manifest = tmp_path / "manifest.json"
+    source.write_text("def kernel():\n    pass\n", encoding="utf-8")
+    binary.write_bytes(b"qpu-program")
+    source_file_sha256 = hashlib.sha256(source.read_bytes()).hexdigest()
+    binary_sha256 = hashlib.sha256(binary.read_bytes()).hexdigest()
+    source_hash = "5" * 64
+    manifest.write_text(
+        json.dumps(
+            {
+                "programs": [
+                    {
+                        "name": "test-program",
+                        "source": str(source),
+                        "source_file_sha256": source_file_sha256,
+                        "source_hash": source_hash,
+                        "binary": binary.name,
+                        "binary_sha256": binary_sha256,
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    case = normalize_case(
+        {
+            "name": "candidate",
+            "base_model": "/models/gemma.gguf",
+            "placement": "qpu-only",
+            "candidate_evidence": {
+                "program_manifest_path": str(manifest),
+                "program_manifest_sha256": hashlib.sha256(manifest.read_bytes()).hexdigest(),
+                "program": "test-program",
+                "source_hash": source_hash,
+                "binary_sha256": binary_sha256,
+                "exact_shape": {"m": 1, "k": 256, "n": 2048},
+            },
+        },
+        index=0,
+    )
+    validate_candidate_evidence(case)
+    assert case["candidate_evidence"]["program_manifest_path"] == str(manifest.resolve())
+
+    binary.write_bytes(b"tampered")
+    with pytest.raises(ValueError, match="binary bytes do not match"):
+        validate_candidate_evidence(case)
+
+
+def test_retention_requires_zero_swap_usage() -> None:
+    environment = {
+        "commands": {
+            "throttling": {"stdout": "throttled=0x0"},
+            "swap": {"stdout": "stable"},
+            "swap_used_bytes": {"returncode": 0, "stdout": "0\n"},
+            "llama_servers": {"stdout": ""},
+        },
+        "cpu_frequency": [{"governor": "performance"}],
+    }
+    sample = {
+        "returncode": 0,
+        "surface": "llama-server-/completion",
+        "context_population": {"valid": True},
+        "prompt_population": {"valid": True},
+        "generation_population": {"valid": True},
+        "tool_call_validation": None,
+        "process_memory": {
+            "rss_bytes": 1024,
+            "peak_rss_bytes": 2048,
+            "swap_bytes": 0,
+        },
+        "candidate_execution": {"valid": True, "dispatch_count": 0},
+    }
+    assert validate_session(environment, environment, [sample])["retained"] is True
+
+    swapped = {
+        **environment,
+        "commands": {
+            **environment["commands"],
+            "swap_used_bytes": {"returncode": 0, "stdout": "4096\n"},
+        },
+    }
+    validation = validate_session(swapped, swapped, [sample])
+    assert validation["retained"] is False
+    assert "swap was in use" in validation["rejection_reasons"][0]
+
+
+def test_process_memory_parser_retains_peak_rss_and_swap() -> None:
+    parsed = _parse_process_memory(
+        "Name:\tllama-server\nVmHWM:\t2048 kB\nVmRSS:\t1536 kB\nVmSwap:\t4 kB\n"
+    )
+    assert parsed == {
+        "rss_bytes": 1536 * 1024,
+        "peak_rss_bytes": 2048 * 1024,
+        "swap_bytes": 4 * 1024,
+    }
+
+
+def test_candidate_execution_requires_exact_positive_dispatch_telemetry() -> None:
+    evidence = {
+        "program": "test-program",
+        "source_hash": "a" * 64,
+        "binary_sha256": "b" * 64,
+        "exact_shape": {"m": 1, "k": 256, "n": 2048},
+    }
+    case = {
+        "placement": "qpu-only",
+        "partition": None,
+        "candidate_evidence": evidence,
+    }
+    event = {
+        **evidence,
+        "placement": "qpu-only",
+        "partition": None,
+        "dispatch_count": 12,
+    }
+    log = f"unrelated\nqpu_llama_candidate_json: {json.dumps(event)}\n"
+    validation = validate_candidate_execution(case, log)
+    assert validation["valid"] is True
+    assert validation["dispatch_count"] == 12
+
+    assert validate_candidate_execution(case, "no telemetry")["valid"] is False
+    wrong = dict(event, binary_sha256="c" * 64, dispatch_count=0)
+    invalid = validate_candidate_execution(
+        case,
+        f"qpu_llama_candidate_json: {json.dumps(wrong)}",
+    )
+    assert invalid["valid"] is False
+    assert any("binary_sha256" in error for error in invalid["errors"])
+
+    cpu = {"placement": "cpu-only"}
+    assert validate_candidate_execution(cpu, "ordinary server log")["valid"] is True
+    assert validate_candidate_execution(cpu, log)["valid"] is False
 
 
 def test_case_selection_preserves_file_order_and_rejects_unknown_names() -> None:

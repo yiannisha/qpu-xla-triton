@@ -1,0 +1,1760 @@
+{
+  "benchmark_binary": {
+    "path": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+    "sha256": "8e63f99723ed8accdedf6e2303c7ea02e317cf9a76b44ae009a8956756bbea57"
+  },
+  "cpu_repack_binary": {
+    "path": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_repack_bench",
+    "sha256": "f90fd29e5249b86992ffaad05bdae3e67e797553922f376101646be5e4c77ca2"
+  },
+  "created_utc": "2026-08-20T01:57:40+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-20T01:57:40+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400017408\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  5165744128  1253179392    41091072  2168143872  3288858624\nSwap:     2147467264  2120695808    26771456\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2120695808  100      \n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "temp=60.9'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960006208\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:40+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T01:57:40+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 60600,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-20T01:57:39+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400027136\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  4773019648  1614610432    36651008  2194997248  3681583104\nSwap:     2147467264  2118598656    28868608\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2118598656  100      \n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "temp=60.9'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960006208\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-20T01:57:39+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-20T01:57:39+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 58950,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "extracted_weight": {
+    "bytes": 37748736,
+    "retained_after_replay": false,
+    "sha256": "40fa42e143bcb2f806707bd4fa8871d2bb39af3ec8798af890ebe3a2587143fd",
+    "source_model_offset": 15787200
+  },
+  "fixture_manifest": {
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-drafter-lm-head-m1-fixture-manifest.json",
+    "sha256": "1c8da0b54d0265baa50dd130d0ccdfb90376d15db7be07b962f95f707c3be459"
+  },
+  "kind": "llama-cpp-qpu-exact-node-replay",
+  "records": [
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "c139aa75470e32c96fc9fb4eaef1872fb431ca48d10fdb38059cb934ea67765a"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_repack_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1"
+      ],
+      "cpu_threads": 3,
+      "mode": "cpu",
+      "name": "cpu-only",
+      "native_operator_result": {
+        "complete_ns": [
+          3710040
+        ],
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-cpu-repack-q4-0-node-samples",
+        "mode": "cpu-repack",
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 22132147,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0,
+        "weight_buffer_bytes": 37748736,
+        "weight_buffer_type": "CPU_REPACK"
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415730476379395,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 262144,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 0.0,
+        "max_relative": 0.0,
+        "mean_absolute": 0.0,
+        "nan_count": 0,
+        "p99_absolute": 0.0,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -19.78420639038086,
+        "worst_index": 0,
+        "worst_reference": -19.78420639038086
+      },
+      "qpu_column_count": 0,
+      "qpu_column_start": 262144,
+      "returncode": 0,
+      "stderr": "repack: repack tensor fixture.weight with q4_0_4x4\n",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-cpu-repack-q4-0-node-samples\",\"mode\":\"cpu-repack\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":22132147,\"weight_buffer_type\":\"CPU_REPACK\",\"weight_buffer_bytes\":37748736,\"output_bin_written\":true,\"complete_ns\":[3710040]}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "16e2c849a489e278c08ac4a5f8fdcace56392185e5ab1907b5235d504a90fba2"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "qpu",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "0",
+        "--qpu-column-count",
+        "262144",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "qpu",
+      "name": "qpu-only",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          41442949
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0011671014691747906,
+          "mean_absolute": 5.596198775492667e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -18.4631557,
+          "worst_column": 72151,
+          "worst_reference": -18.4631615,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "qpu",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 16809715,
+        "qpu_column_count": 262144,
+        "qpu_column_start": 0,
+        "qpu_input_copy_ns": [
+          3778
+        ],
+        "qpu_output_copy_ns": [
+          789307
+        ],
+        "qpu_submit_wait_ns": [
+          40647272
+        ],
+        "quantize_ns": [
+          1222
+        ],
+        "resident_bytes": 41944128,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 170327,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.00023623349318466373,
+        "mean_absolute": 3.4719878527766923e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 262144,
+      "qpu_column_start": 0,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"qpu\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":0,\"qpu_column_count\":262144,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":16809715,\"resident_bytes\":41944128,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[41442949],\"quantize_ns\":[1222],\"qpu_input_copy_ns\":[3778],\"qpu_submit_wait_ns\":[40647272],\"qpu_output_copy_ns\":[789307],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.0011671014691747906,\"mean_absolute\":5.5961987754926668e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":72151,\"worst_reference\":-18.4631615,\"worst_actual\":-18.4631557}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "77e209a414aca01de37eb852c12e80b35fcb5bfdf9044f8b42108eace65c6a71"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "240304",
+        "--qpu-column-count",
+        "21840",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-21840-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          5721799
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0002443494196701283,
+          "mean_absolute": 6.555626441695495e-08,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -17.7754498,
+          "worst_column": 255369,
+          "worst_reference": -17.775444,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 1411838,
+        "qpu_column_count": 21840,
+        "qpu_column_start": 240304,
+        "qpu_input_copy_ns": [
+          8241
+        ],
+        "qpu_output_copy_ns": [
+          75295
+        ],
+        "qpu_submit_wait_ns": [
+          5632393
+        ],
+        "quantize_ns": [
+          1278
+        ],
+        "resident_bytes": 3495488,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 127026,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 5.085449359398808e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -19.445507049560547,
+        "worst_index": 145692,
+        "worst_reference": -19.44550132751465
+      },
+      "qpu_column_count": 21840,
+      "qpu_column_start": 240304,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":240304,\"qpu_column_count\":21840,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":1411838,\"resident_bytes\":3495488,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[5721799],\"quantize_ns\":[1278],\"qpu_input_copy_ns\":[8241],\"qpu_submit_wait_ns\":[5632393],\"qpu_output_copy_ns\":[75295],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00024434941967012828,\"mean_absolute\":6.5556264416954946e-08,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":255369,\"worst_reference\":-17.775444,\"worst_actual\":-17.7754498}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "98d202c997c5c904e3ec45b1a64ac9022ed1964d01e3729675c6da6753a5d886"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "218448",
+        "--qpu-column-count",
+        "43696",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-43696-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          7800557
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.00031560675398453525,
+          "mean_absolute": 1.1277245448582107e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -17.7754498,
+          "worst_column": 255369,
+          "worst_reference": -17.775444,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 2668679,
+        "qpu_column_count": 43696,
+        "qpu_column_start": 218448,
+        "qpu_input_copy_ns": [
+          7315
+        ],
+        "qpu_output_copy_ns": [
+          150369
+        ],
+        "qpu_submit_wait_ns": [
+          7637930
+        ],
+        "quantize_ns": [
+          1000
+        ],
+        "resident_bytes": 6992448,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 130911,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.934084998353683e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -19.445507049560547,
+        "worst_index": 145692,
+        "worst_reference": -19.44550132751465
+      },
+      "qpu_column_count": 43696,
+      "qpu_column_start": 218448,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":218448,\"qpu_column_count\":43696,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":2668679,\"resident_bytes\":6992448,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[7800557],\"quantize_ns\":[1000],\"qpu_input_copy_ns\":[7315],\"qpu_submit_wait_ns\":[7637930],\"qpu_output_copy_ns\":[150369],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00031560675398453525,\"mean_absolute\":1.1277245448582107e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":255369,\"worst_reference\":-17.775444,\"worst_actual\":-17.7754498}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "ab3c12c33a4331b51d9df97f359d31f352551f48022f16c049cd91dbf99b86a3"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "196608",
+        "--qpu-column-count",
+        "65536",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-65536-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          12186739
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.00031560675398453525,
+          "mean_absolute": 1.6133219560288126e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -17.7754498,
+          "worst_column": 255369,
+          "worst_reference": -17.775444,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 3867020,
+        "qpu_column_count": 65536,
+        "qpu_column_start": 196608,
+        "qpu_input_copy_ns": [
+          7908
+        ],
+        "qpu_output_copy_ns": [
+          202275
+        ],
+        "qpu_submit_wait_ns": [
+          11970112
+        ],
+        "quantize_ns": [
+          1389
+        ],
+        "resident_bytes": 10486848,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 134753,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.775740833906639e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -19.445507049560547,
+        "worst_index": 145692,
+        "worst_reference": -19.44550132751465
+      },
+      "qpu_column_count": 65536,
+      "qpu_column_start": 196608,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":196608,\"qpu_column_count\":65536,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":3867020,\"resident_bytes\":10486848,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[12186739],\"quantize_ns\":[1389],\"qpu_input_copy_ns\":[7908],\"qpu_submit_wait_ns\":[11970112],\"qpu_output_copy_ns\":[202275],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00031560675398453525,\"mean_absolute\":1.6133219560288126e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":255369,\"worst_reference\":-17.775444,\"worst_actual\":-17.7754498}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "a395f29b39d4336923a25c7585582427880deea2fe48eb9e32aa92c4dcf9cd32"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "174768",
+        "--qpu-column-count",
+        "87376",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-87376-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          14577272
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.00031560675398453525,
+          "mean_absolute": 2.0905883957311744e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -17.7754498,
+          "worst_column": 255369,
+          "worst_reference": -17.775444,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 5384154,
+        "qpu_column_count": 87376,
+        "qpu_column_start": 174768,
+        "qpu_input_copy_ns": [
+          8870
+        ],
+        "qpu_output_copy_ns": [
+          273257
+        ],
+        "qpu_submit_wait_ns": [
+          14289330
+        ],
+        "quantize_ns": [
+          1278
+        ],
+        "resident_bytes": 13981248,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 138566,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.6228033312445405e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -19.445507049560547,
+        "worst_index": 145692,
+        "worst_reference": -19.44550132751465
+      },
+      "qpu_column_count": 87376,
+      "qpu_column_start": 174768,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":174768,\"qpu_column_count\":87376,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":5384154,\"resident_bytes\":13981248,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[14577272],\"quantize_ns\":[1278],\"qpu_input_copy_ns\":[8870],\"qpu_submit_wait_ns\":[14289330],\"qpu_output_copy_ns\":[273257],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00031560675398453525,\"mean_absolute\":2.0905883957311744e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":255369,\"worst_reference\":-17.775444,\"worst_actual\":-17.7754498}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "a6144ba736e6676ead99cfece4958e81e84fbc01297e54e74f40f1570148bd76"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "152912",
+        "--qpu-column-count",
+        "109232",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-109232-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          17125341
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.00031560675398453525,
+          "mean_absolute": 2.5658675895101624e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -17.7754498,
+          "worst_column": 255369,
+          "worst_reference": -17.775444,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 6281998,
+        "qpu_column_count": 109232,
+        "qpu_column_start": 152912,
+        "qpu_input_copy_ns": [
+          7703
+        ],
+        "qpu_output_copy_ns": [
+          335219
+        ],
+        "qpu_submit_wait_ns": [
+          16777159
+        ],
+        "quantize_ns": [
+          1259
+        ],
+        "resident_bytes": 17478208,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 142469,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.467227441296018e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -19.445507049560547,
+        "worst_index": 145692,
+        "worst_reference": -19.44550132751465
+      },
+      "qpu_column_count": 109232,
+      "qpu_column_start": 152912,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":152912,\"qpu_column_count\":109232,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":6281998,\"resident_bytes\":17478208,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[17125341],\"quantize_ns\":[1259],\"qpu_input_copy_ns\":[7703],\"qpu_submit_wait_ns\":[16777159],\"qpu_output_copy_ns\":[335219],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00031560675398453525,\"mean_absolute\":2.5658675895101624e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":255369,\"worst_reference\":-17.775444,\"worst_actual\":-17.7754498}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "3b7b044a150da33aa71f196bf52be357f4406ec8bbfd47170fa147e1ec155530"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "131072",
+        "--qpu-column-count",
+        "131072",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-131072-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          20661105
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.00031560675398453525,
+          "mean_absolute": 3.0348780910571804e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -18.4307728,
+          "worst_column": 147808,
+          "worst_reference": -18.4307785,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 7439505,
+        "qpu_column_count": 131072,
+        "qpu_column_start": 131072,
+        "qpu_input_copy_ns": [
+          7926
+        ],
+        "qpu_output_copy_ns": [
+          400644
+        ],
+        "qpu_submit_wait_ns": [
+          20247294
+        ],
+        "quantize_ns": [
+          1297
+        ],
+        "resident_bytes": 20972608,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 146376,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.3146506101265913e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 131072,
+      "qpu_column_start": 131072,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":131072,\"qpu_column_count\":131072,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":7439505,\"resident_bytes\":20972608,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[20661105],\"quantize_ns\":[1297],\"qpu_input_copy_ns\":[7926],\"qpu_submit_wait_ns\":[20247294],\"qpu_output_copy_ns\":[400644],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00031560675398453525,\"mean_absolute\":3.0348780910571804e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":147808,\"worst_reference\":-18.4307785,\"worst_actual\":-18.4307728}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "89c379d288b7bd95c3d12c4e537022d7329f524be3489cf005d8bdcd8d3f8611"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "109232",
+        "--qpu-column-count",
+        "152912",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-152912-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          23510449
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0004534119247336205,
+          "mean_absolute": 3.498762453091331e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -18.4307728,
+          "worst_column": 147808,
+          "worst_reference": -18.4307785,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 26813252,
+        "qpu_column_count": 152912,
+        "qpu_column_start": 109232,
+        "qpu_input_copy_ns": [
+          8685
+        ],
+        "qpu_output_copy_ns": [
+          474607
+        ],
+        "qpu_submit_wait_ns": [
+          23022083
+        ],
+        "quantize_ns": [
+          1241
+        ],
+        "resident_bytes": 24467008,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 150291,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.162526252571297e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 152912,
+      "qpu_column_start": 109232,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":109232,\"qpu_column_count\":152912,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":26813252,\"resident_bytes\":24467008,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[23510449],\"quantize_ns\":[1241],\"qpu_input_copy_ns\":[8685],\"qpu_submit_wait_ns\":[23022083],\"qpu_output_copy_ns\":[474607],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00045341192473362049,\"mean_absolute\":3.4987624530913308e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":147808,\"worst_reference\":-18.4307785,\"worst_actual\":-18.4307728}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "ab926e0611ee70fc377d87293d74955297fcab680827d2b818c9e5e48e84be25"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "87376",
+        "--qpu-column-count",
+        "174768",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-174768-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          26431792
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0004534119247336205,
+          "mean_absolute": 3.947146751670516e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -21.5090199,
+          "worst_column": 88303,
+          "worst_reference": -21.5090256,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 11412284,
+        "qpu_column_count": 174768,
+        "qpu_column_start": 87376,
+        "qpu_input_copy_ns": [
+          10111
+        ],
+        "qpu_output_copy_ns": [
+          526458
+        ],
+        "qpu_submit_wait_ns": [
+          25889741
+        ],
+        "quantize_ns": [
+          1481
+        ],
+        "resident_bytes": 27963968,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 154101,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 4.0204455586945187e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 174768,
+      "qpu_column_start": 87376,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":87376,\"qpu_column_count\":174768,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":11412284,\"resident_bytes\":27963968,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[26431792],\"quantize_ns\":[1481],\"qpu_input_copy_ns\":[10111],\"qpu_submit_wait_ns\":[25889741],\"qpu_output_copy_ns\":[526458],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00045341192473362049,\"mean_absolute\":3.9471467516705161e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":88303,\"worst_reference\":-21.5090256,\"worst_actual\":-21.5090199}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "60d823e23fbc069c767482e1522fd44e5d2ccb8a5fa4c3a55cea9bdab143dfcb"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "65536",
+        "--qpu-column-count",
+        "196608",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-196608-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          29640762
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0004534119247336205,
+          "mean_absolute": 4.388169259073038e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -18.4631557,
+          "worst_column": 72151,
+          "worst_reference": -18.4631615,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 11729466,
+        "qpu_column_count": 196608,
+        "qpu_column_start": 65536,
+        "qpu_input_copy_ns": [
+          10148
+        ],
+        "qpu_output_copy_ns": [
+          608013
+        ],
+        "qpu_submit_wait_ns": [
+          29015972
+        ],
+        "quantize_ns": [
+          1426
+        ],
+        "resident_bytes": 31458368,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 157998,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 3.87822616687572e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 196608,
+      "qpu_column_start": 65536,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":65536,\"qpu_column_count\":196608,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":11729466,\"resident_bytes\":31458368,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[29640762],\"quantize_ns\":[1426],\"qpu_input_copy_ns\":[10148],\"qpu_submit_wait_ns\":[29015972],\"qpu_output_copy_ns\":[608013],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00045341192473362049,\"mean_absolute\":4.3881692590730381e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":72151,\"worst_reference\":-18.4631615,\"worst_actual\":-18.4631557}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "8c9e368611ffb0e5f07114ae3dd2803af3399079ffe0ee29f6b9a51cec926f6e"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "43696",
+        "--qpu-column-count",
+        "218448",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-218448-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          31928426
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0004534119247336205,
+          "mean_absolute": 4.81294648579933e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -18.4631557,
+          "worst_column": 72151,
+          "worst_reference": -18.4631615,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 12091925,
+        "qpu_column_count": 218448,
+        "qpu_column_start": 43696,
+        "qpu_input_copy_ns": [
+          6871
+        ],
+        "qpu_output_copy_ns": [
+          654568
+        ],
+        "qpu_submit_wait_ns": [
+          31261432
+        ],
+        "quantize_ns": [
+          1389
+        ],
+        "resident_bytes": 34952768,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 162043,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 3.7367303917790196e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 218448,
+      "qpu_column_start": 43696,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":43696,\"qpu_column_count\":218448,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":12091925,\"resident_bytes\":34952768,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[31928426],\"quantize_ns\":[1389],\"qpu_input_copy_ns\":[6871],\"qpu_submit_wait_ns\":[31261432],\"qpu_output_copy_ns\":[654568],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00045341192473362049,\"mean_absolute\":4.8129464857993298e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":72151,\"worst_reference\":-18.4631615,\"worst_actual\":-18.4631557}}\n"
+    },
+    {
+      "candidate_output": {
+        "bytes": 1048576,
+        "retained_after_replay": false,
+        "sha256": "fdddd51e368d1323629e57098746033d806557c9df47dfa6668c21f2bed6a06b"
+      },
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/tmp/llama-qpu-node-replay-evjidky5/weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+        "--mode",
+        "hybrid",
+        "--input-columns",
+        "256",
+        "--output-columns",
+        "262144",
+        "--rows",
+        "1",
+        "--qpu-column-start",
+        "21840",
+        "--qpu-column-count",
+        "240304",
+        "--cpu-threads",
+        "3",
+        "--warmups",
+        "0",
+        "--samples",
+        "1",
+        "--output-bin",
+        "/tmp/llama-qpu-node-replay-evjidky5/candidate.f32.bin"
+      ],
+      "cpu_threads": 3,
+      "mode": "hybrid",
+      "name": "hybrid-qpu-suffix-240304-of-262144",
+      "native_operator_result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          34983583
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 5.7220458984375e-06,
+          "max_relative": 0.0004534119247336205,
+          "mean_absolute": 5.223973857937381e-07,
+          "nan_count": 0,
+          "p99_absolute": 1.9073486328125e-06,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -18.4631557,
+          "worst_column": 72151,
+          "worst_reference": -18.4631615,
+          "worst_row": 0
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 3,
+        "input_columns": 256,
+        "kind": "llama-qpu-q4-0-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 262144,
+        "prepare_ns": 13438376,
+        "qpu_column_count": 240304,
+        "qpu_column_start": 21840,
+        "qpu_input_copy_ns": [
+          4333
+        ],
+        "qpu_output_copy_ns": [
+          721845
+        ],
+        "qpu_submit_wait_ns": [
+          34253016
+        ],
+        "quantize_ns": [
+          796
+        ],
+        "resident_bytes": 38449728,
+        "retained_samples": 1,
+        "rows": 1,
+        "schema_version": 1,
+        "warmups": 0
+      },
+      "production_graph_correctness": {
+        "actual_argmax": 236770,
+        "actual_argmax_value": 15.415729522705078,
+        "atol": 0.0002,
+        "bitwise_equal_elements": 166028,
+        "elements": 262144,
+        "greedy_argmax_matches": true,
+        "inf_count": 0,
+        "max_absolute": 5.7220458984375e-06,
+        "max_relative": 0.0009620670698185816,
+        "mean_absolute": 3.603416089958955e-07,
+        "nan_count": 0,
+        "p99_absolute": 1.9073486328125e-06,
+        "passed": true,
+        "reference_argmax": 236770,
+        "reference_argmax_value": 15.415730476379395,
+        "rtol": 2e-05,
+        "tolerance_violation_count": 0,
+        "worst_actual": -18.478050231933594,
+        "worst_index": 160884,
+        "worst_reference": -18.478055953979492
+      },
+      "qpu_column_count": 240304,
+      "qpu_column_start": 21840,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\",\"mode\":\"hybrid\",\"input_columns\":256,\"output_columns\":262144,\"rows\":1,\"cpu_threads\":3,\"qpu_column_start\":21840,\"qpu_column_count\":240304,\"warmups\":0,\"retained_samples\":1,\"prepare_ns\":13438376,\"resident_bytes\":38449728,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[34983583],\"quantize_ns\":[796],\"qpu_input_copy_ns\":[4333],\"qpu_submit_wait_ns\":[34253016],\"qpu_output_copy_ns\":[721845],\"correctness\":{\"max_absolute\":5.7220458984375e-06,\"max_relative\":0.00045341192473362049,\"mean_absolute\":5.2239738579373807e-07,\"p99_absolute\":1.9073486328125e-06,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":0,\"worst_column\":72151,\"worst_reference\":-18.4631615,\"worst_actual\":-18.4631557}}\n"
+    }
+  ],
+  "schema_version": 1,
+  "validation": {
+    "all_candidates_passed": true,
+    "candidate_count": 13,
+    "failure_count": 0,
+    "timing_eligible_for_promotion": false,
+    "timing_ineligibility_reasons": [
+      "each subprocess prepares weights and retains only one untimed correctness sample",
+      "QPU/hybrid subprocesses use the direct block-dot only as an internal oracle; the separate cpu-only record uses the production CPU_REPACK graph node",
+      "the source graph callback serializes node execution"
+    ]
+  }
+}

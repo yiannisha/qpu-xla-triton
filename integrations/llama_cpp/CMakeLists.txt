@@ -9,6 +9,9 @@ set(LLAMA_CPP_ROOT "" CACHE PATH "Path to the pinned llama.cpp source tree")
 
 add_library(qpu_llama_runtime STATIC
     src/qpu_llama_q4_0.c
+    src/qpu_llama_q4_k.c
+    src/qpu_llama_q6_k.c
+    src/qpu_llama_q8_0.c
     src/qpu_llama_runtime.c
     src/qpu_llama_sha256.c)
 target_compile_features(qpu_llama_runtime PUBLIC c_std_11)
@@ -17,10 +20,15 @@ target_link_libraries(qpu_llama_runtime PUBLIC pthread)
 target_compile_options(qpu_llama_runtime PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 if(QPU_LLAMA_BUILD_BENCHMARK)
+    enable_language(CXX)
     if(NOT IS_DIRECTORY "${LLAMA_CPP_ROOT}")
         message(FATAL_ERROR "LLAMA_CPP_ROOT must point to the pinned llama.cpp source tree")
     endif()
     find_library(GGML_CPU_LIBRARY NAMES ggml-cpu
+        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+    find_library(GGML_LIBRARY_FOR_BENCH NAMES ggml
+        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+    find_library(GGML_BASE_LIBRARY_FOR_BENCH NAMES ggml-base
         PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
     add_executable(qpu_llama_q4_0_bench bench/qpu_llama_q4_0_bench.c)
     target_include_directories(qpu_llama_q4_0_bench PRIVATE
@@ -32,6 +40,43 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
     set_target_properties(qpu_llama_q4_0_bench PROPERTIES
         BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
     target_compile_options(qpu_llama_q4_0_bench PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+    add_executable(qpu_llama_cpu_repack_bench bench/qpu_llama_cpu_repack_bench.cpp)
+    target_include_directories(qpu_llama_cpu_repack_bench PRIVATE
+        "${LLAMA_CPP_ROOT}/ggml/include"
+        "${LLAMA_CPP_ROOT}/ggml/src"
+        "${LLAMA_CPP_ROOT}/ggml/src/ggml-cpu")
+    target_link_libraries(qpu_llama_cpu_repack_bench PRIVATE
+        "${GGML_CPU_LIBRARY}"
+        "${GGML_LIBRARY_FOR_BENCH}"
+        "${GGML_BASE_LIBRARY_FOR_BENCH}")
+    set_target_properties(qpu_llama_cpu_repack_bench PROPERTIES
+        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+    target_compile_features(qpu_llama_cpu_repack_bench PRIVATE cxx_std_17)
+    target_compile_options(qpu_llama_cpu_repack_bench PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    if(BUILD_TESTING)
+        add_test(NAME qpu_llama_cpu_repack_bench_help COMMAND qpu_llama_cpu_repack_bench --help)
+    endif()
+
+    add_executable(qpu_llama_cpu_flash_attn_bench bench/qpu_llama_cpu_flash_attn_bench.cpp)
+    target_include_directories(qpu_llama_cpu_flash_attn_bench PRIVATE
+        "${LLAMA_CPP_ROOT}/ggml/include"
+        "${LLAMA_CPP_ROOT}/ggml/src"
+        "${LLAMA_CPP_ROOT}/ggml/src/ggml-cpu")
+    target_link_libraries(qpu_llama_cpu_flash_attn_bench PRIVATE
+        "${GGML_CPU_LIBRARY}"
+        "${GGML_LIBRARY_FOR_BENCH}"
+        "${GGML_BASE_LIBRARY_FOR_BENCH}")
+    set_target_properties(qpu_llama_cpu_flash_attn_bench PROPERTIES
+        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+    target_compile_features(qpu_llama_cpu_flash_attn_bench PRIVATE cxx_std_17)
+    target_compile_options(qpu_llama_cpu_flash_attn_bench PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    if(BUILD_TESTING)
+        add_test(NAME qpu_llama_cpu_flash_attn_bench_help
+            COMMAND qpu_llama_cpu_flash_attn_bench --help)
+    endif()
 endif()
 
 if(QPU_LLAMA_BUILD_GRAPH_PROFILER)
@@ -93,5 +138,31 @@ if(BUILD_TESTING)
         target_link_libraries(qpu_llama_q4_0_m4_smoke PRIVATE qpu_llama_runtime)
         add_test(NAME qpu_llama_q4_0_m4_hardware COMMAND qpu_llama_q4_0_m4_smoke)
         set_tests_properties(qpu_llama_q4_0_m4_hardware PROPERTIES LABELS hardware)
+
+        add_executable(qpu_llama_q4_k_smoke tests/qpu_llama_q4_k_smoke.c)
+        target_include_directories(qpu_llama_q4_k_smoke PRIVATE generated)
+        target_link_libraries(qpu_llama_q4_k_smoke PRIVATE qpu_llama_runtime)
+        add_test(NAME qpu_llama_q4_k_hardware COMMAND qpu_llama_q4_k_smoke)
+        set_tests_properties(qpu_llama_q4_k_hardware PROPERTIES LABELS hardware)
+
+        add_executable(qpu_llama_q6_k_smoke tests/qpu_llama_q6_k_smoke.c)
+        target_include_directories(qpu_llama_q6_k_smoke PRIVATE generated)
+        target_link_libraries(qpu_llama_q6_k_smoke PRIVATE qpu_llama_runtime)
+        add_test(NAME qpu_llama_q6_k_hardware COMMAND qpu_llama_q6_k_smoke)
+        set_tests_properties(qpu_llama_q6_k_hardware PROPERTIES LABELS hardware)
+
+        add_executable(qpu_llama_q8_0_smoke tests/qpu_llama_q8_0_smoke.c)
+        target_include_directories(qpu_llama_q8_0_smoke PRIVATE generated)
+        target_link_libraries(qpu_llama_q8_0_smoke PRIVATE qpu_llama_runtime)
+        add_test(NAME qpu_llama_q8_0_hardware COMMAND qpu_llama_q8_0_smoke)
+        set_tests_properties(qpu_llama_q8_0_hardware PROPERTIES LABELS hardware)
+
+        add_executable(qpu_llama_native_safety_smoke tests/qpu_llama_native_safety_smoke.c)
+        target_include_directories(qpu_llama_native_safety_smoke PRIVATE generated)
+        target_link_libraries(qpu_llama_native_safety_smoke PRIVATE qpu_llama_runtime)
+        target_compile_options(qpu_llama_native_safety_smoke PRIVATE
+            -Wall -Wextra -Wpedantic -Werror)
+        add_test(NAME qpu_llama_native_safety_hardware COMMAND qpu_llama_native_safety_smoke)
+        set_tests_properties(qpu_llama_native_safety_hardware PROPERTIES LABELS hardware)
     endif()
 endif()

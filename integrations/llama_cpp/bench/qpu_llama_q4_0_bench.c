@@ -1,7 +1,13 @@
 #include "qpu_llama_q4_0.h"
+#include "qpu_llama_q4_k.h"
+#include "qpu_llama_q6_k.h"
+#include "qpu_llama_q8_0.h"
 
 #include "ggml-q4-0-q8-0-m1.h"
 #include "ggml-q4-0-q8-0-m4.h"
+#include "ggml-q4-k-q8-k-m4.h"
+#include "ggml-q6-k-q8-k-m4.h"
+#include "ggml-q8-0-q8-0-m4.h"
 #include "quants.h"
 
 #include <errno.h>
@@ -17,6 +23,17 @@
 #define Q4_0_BLOCK_ELEMENTS 32U
 #define Q4_0_BLOCK_BYTES 18U
 #define Q8_0_BLOCK_BYTES 34U
+#define Q4_K_BLOCK_ELEMENTS 256U
+#define Q4_K_BLOCK_BYTES 144U
+#define Q8_K_BLOCK_BYTES 292U
+#define Q6_K_BLOCK_BYTES 210U
+
+typedef enum weight_format {
+    WEIGHT_Q4_0,
+    WEIGHT_Q4_K,
+    WEIGHT_Q6_K,
+    WEIGHT_Q8_0,
+} weight_format;
 
 typedef enum bench_mode {
     BENCH_CPU,
@@ -27,12 +44,15 @@ typedef enum bench_mode {
 typedef struct options {
     const char *weights_path;
     const char *activation_path;
+    const char *output_path;
     bench_mode mode;
+    weight_format format;
     uint32_t input_columns;
     uint32_t output_columns;
     uint32_t rows;
     uint32_t qpu_column_start;
     uint32_t qpu_column_count;
+    uint32_t qpu_wgs_per_sg;
     uint32_t cpu_threads;
     uint32_t warmups;
     uint32_t samples;
@@ -49,6 +69,7 @@ typedef struct cpu_job {
     uint32_t column_count;
     size_t weight_row_bytes;
     size_t activation_row_bytes;
+    weight_format format;
 } cpu_job;
 
 typedef struct cpu_pool cpu_pool;
@@ -108,8 +129,10 @@ static bool parse_u32(const char *text, uint32_t *result) {
 static void usage(const char *program) {
     fprintf(stderr,
         "usage: %s --weights FILE --activation-f32 FILE --mode cpu|qpu|hybrid "
+        "[--weight-type q4_0|q4_k|q6_k|q8_0] "
         "--input-columns N --output-columns N --rows 1|4 --qpu-column-start N "
-        "--qpu-column-count N --cpu-threads N --warmups N --samples N\n",
+        "--qpu-column-count N [--qpu-wgs-per-sg N] --cpu-threads N --warmups N --samples N "
+        "[--output-bin FILE]\n",
         program);
 }
 
@@ -129,10 +152,31 @@ static bool parse_mode(const char *text, bench_mode *result) {
     return false;
 }
 
+static bool parse_weight_format(const char *text, weight_format *result) {
+    if (strcmp(text, "q4_0") == 0) {
+        *result = WEIGHT_Q4_0;
+        return true;
+    }
+    if (strcmp(text, "q4_k") == 0) {
+        *result = WEIGHT_Q4_K;
+        return true;
+    }
+    if (strcmp(text, "q6_k") == 0) {
+        *result = WEIGHT_Q6_K;
+        return true;
+    }
+    if (strcmp(text, "q8_0") == 0) {
+        *result = WEIGHT_Q8_0;
+        return true;
+    }
+    return false;
+}
+
 static bool parse_options(int argc, char **argv, options *result) {
     options value = {
         .mode = BENCH_CPU,
         .cpu_threads = 1,
+        .qpu_wgs_per_sg = 24,
         .warmups = 5,
         .samples = 31,
     };
@@ -146,8 +190,14 @@ static bool parse_options(int argc, char **argv, options *result) {
             value.weights_path = argument;
         } else if (strcmp(name, "--activation-f32") == 0) {
             value.activation_path = argument;
+        } else if (strcmp(name, "--output-bin") == 0) {
+            value.output_path = argument;
         } else if (strcmp(name, "--mode") == 0) {
             if (!parse_mode(argument, &value.mode)) {
+                return false;
+            }
+        } else if (strcmp(name, "--weight-type") == 0) {
+            if (!parse_weight_format(argument, &value.format)) {
                 return false;
             }
         } else if (strcmp(name, "--input-columns") == 0) {
@@ -170,6 +220,10 @@ static bool parse_options(int argc, char **argv, options *result) {
             if (!parse_u32(argument, &value.qpu_column_count)) {
                 return false;
             }
+        } else if (strcmp(name, "--qpu-wgs-per-sg") == 0) {
+            if (!parse_u32(argument, &value.qpu_wgs_per_sg)) {
+                return false;
+            }
         } else if (strcmp(name, "--cpu-threads") == 0) {
             if (!parse_u32(argument, &value.cpu_threads)) {
                 return false;
@@ -187,8 +241,17 @@ static bool parse_options(int argc, char **argv, options *result) {
         }
     }
     if (value.weights_path == NULL || value.activation_path == NULL || value.input_columns == 0 ||
-        value.input_columns % Q4_0_BLOCK_ELEMENTS != 0 || value.output_columns == 0 ||
-        (value.rows != 1 && value.rows != 4) || value.cpu_threads == 0 || value.samples == 0) {
+        value.input_columns % (value.format == WEIGHT_Q4_0
+                || value.format == WEIGHT_Q8_0 ? Q4_0_BLOCK_ELEMENTS : Q4_K_BLOCK_ELEMENTS) != 0 ||
+        value.output_columns == 0 ||
+        (value.rows != 1 && value.rows != 4) || value.qpu_wgs_per_sg == 0 ||
+        value.qpu_wgs_per_sg > UINT8_MAX || value.cpu_threads == 0 || value.samples == 0) {
+        return false;
+    }
+    if (value.format != WEIGHT_Q4_0 && value.rows != 4) {
+        return false;
+    }
+    if (value.format == WEIGHT_Q4_0 && value.qpu_wgs_per_sg != 24U) {
         return false;
     }
     if (value.mode == BENCH_QPU) {
@@ -235,6 +298,23 @@ static void *read_exact_file(const char *path, size_t expected_size) {
     return data;
 }
 
+static bool write_exact_file(const char *path, const void *data, size_t size) {
+    FILE *output = fopen(path, "wb");
+    if (output == NULL) {
+        fprintf(stderr, "open %s: %s\n", path, strerror(errno));
+        return false;
+    }
+    const bool ok = fwrite(data, 1, size, output) == size && fflush(output) == 0;
+    if (fclose(output) != 0) {
+        fprintf(stderr, "close %s: %s\n", path, strerror(errno));
+        return false;
+    }
+    if (!ok) {
+        fprintf(stderr, "write %s: %s\n", path, strerror(errno));
+    }
+    return ok;
+}
+
 static void cpu_compute_range(const cpu_job *job, uint32_t worker_index, uint32_t worker_count) {
     const uint32_t begin = job->column_start +
         (uint32_t) ((uint64_t) job->column_count * worker_index / worker_count);
@@ -245,8 +325,19 @@ static void cpu_compute_range(const cpu_job *job, uint32_t worker_index, uint32_
         for (uint32_t column = begin; column < end; ++column) {
             const uint8_t *weight = job->weights + (size_t) column * job->weight_row_bytes;
             float *destination = job->destination + (size_t) row * job->output_columns + column;
-            ggml_vec_dot_q4_0_q8_0(
-                (int) job->input_columns, destination, 0, weight, 0, activation, 0, 1);
+            if (job->format == WEIGHT_Q4_0) {
+                ggml_vec_dot_q4_0_q8_0(
+                    (int) job->input_columns, destination, 0, weight, 0, activation, 0, 1);
+            } else if (job->format == WEIGHT_Q4_K) {
+                ggml_vec_dot_q4_K_q8_K(
+                    (int) job->input_columns, destination, 0, weight, 0, activation, 0, 1);
+            } else if (job->format == WEIGHT_Q6_K) {
+                ggml_vec_dot_q6_K_q8_K(
+                    (int) job->input_columns, destination, 0, weight, 0, activation, 0, 1);
+            } else {
+                ggml_vec_dot_q8_0_q8_0(
+                    (int) job->input_columns, destination, 0, weight, 0, activation, 0, 1);
+            }
         }
     }
 }
@@ -399,15 +490,29 @@ static const char *mode_name(bench_mode mode) {
     return mode == BENCH_CPU ? "cpu" : mode == BENCH_QPU ? "qpu" : "hybrid";
 }
 
+static const char *weight_format_name(weight_format format) {
+    return format == WEIGHT_Q4_0
+        ? "q4_0" : format == WEIGHT_Q4_K ? "q4_k" : format == WEIGHT_Q6_K ? "q6_k" : "q8_0";
+}
+
 int main(int argc, char **argv) {
     options config;
     if (!parse_options(argc, argv, &config)) {
         usage(argv[0]);
         return 2;
     }
-    const size_t blocks = config.input_columns / Q4_0_BLOCK_ELEMENTS;
-    const size_t weight_row_bytes = blocks * Q4_0_BLOCK_BYTES;
-    const size_t activation_row_bytes = blocks * Q8_0_BLOCK_BYTES;
+    const uint32_t block_elements = config.format == WEIGHT_Q4_0 || config.format == WEIGHT_Q8_0
+        ? Q4_0_BLOCK_ELEMENTS : Q4_K_BLOCK_ELEMENTS;
+    const uint32_t weight_block_bytes = config.format == WEIGHT_Q4_0
+        ? Q4_0_BLOCK_BYTES
+        : config.format == WEIGHT_Q4_K
+            ? Q4_K_BLOCK_BYTES : config.format == WEIGHT_Q6_K ? Q6_K_BLOCK_BYTES : Q8_0_BLOCK_BYTES;
+    const uint32_t activation_block_bytes =
+        config.format == WEIGHT_Q4_0 || config.format == WEIGHT_Q8_0
+            ? Q8_0_BLOCK_BYTES : Q8_K_BLOCK_BYTES;
+    const size_t blocks = config.input_columns / block_elements;
+    const size_t weight_row_bytes = blocks * weight_block_bytes;
+    const size_t activation_row_bytes = blocks * activation_block_bytes;
     const size_t weight_bytes = (size_t) config.output_columns * weight_row_bytes;
     const size_t activation_f32_bytes =
         (size_t) config.rows * config.input_columns * sizeof(float);
@@ -435,6 +540,9 @@ int main(int argc, char **argv) {
 
     qpu_llama_context *context = NULL;
     qpu_llama_q4_0_linear *linear = NULL;
+    qpu_llama_q4_k_linear *linear_q4_k = NULL;
+    qpu_llama_q6_k_linear *linear_q6_k = NULL;
+    qpu_llama_q8_0_linear *linear_q8_0 = NULL;
     uint8_t *activation_q8 = malloc(activation_q8_bytes);
     float *destination = malloc(output_bytes);
     uint64_t prepare_ns = 0;
@@ -445,25 +553,66 @@ int main(int argc, char **argv) {
         const uint64_t prepare_start = monotonic_ns();
         status = qpu_llama_context_create(NULL, &context);
         if (status == QPU_LLAMA_OK) {
-            const qpu_llama_q4_0_linear_desc desc = {
-                .weights = weights,
-                .weight_size = weight_bytes,
-                .input_columns = config.input_columns,
-                .output_columns = config.output_columns,
-                .rows = config.rows,
-                .resident_column_start = config.qpu_column_start,
-                .resident_column_count = config.qpu_column_count,
-                .expected_source_hash = config.rows == 1
-                    ? qpu_ggml_q4_0_q8_0_m1_source_hash
-                    : qpu_ggml_q4_0_q8_0_m4_source_hash,
-            };
-            status = qpu_llama_q4_0_linear_prepare(context, &desc, &linear);
+            if (config.format == WEIGHT_Q4_0) {
+                const qpu_llama_q4_0_linear_desc desc = {
+                    .weights = weights,
+                    .weight_size = weight_bytes,
+                    .input_columns = config.input_columns,
+                    .output_columns = config.output_columns,
+                    .rows = config.rows,
+                    .resident_column_start = config.qpu_column_start,
+                    .resident_column_count = config.qpu_column_count,
+                    .expected_source_hash = config.rows == 1
+                        ? qpu_ggml_q4_0_q8_0_m1_source_hash
+                        : qpu_ggml_q4_0_q8_0_m4_source_hash,
+                };
+                status = qpu_llama_q4_0_linear_prepare(context, &desc, &linear);
+            } else if (config.format == WEIGHT_Q4_K) {
+                const qpu_llama_q4_k_linear_desc desc = {
+                    .weights = weights,
+                    .weight_size = weight_bytes,
+                    .input_columns = config.input_columns,
+                    .output_columns = config.output_columns,
+                    .resident_column_start = config.qpu_column_start,
+                    .resident_column_count = config.qpu_column_count,
+                    .workgroups_per_supergroup = config.qpu_wgs_per_sg,
+                    .expected_source_hash = qpu_ggml_q4_k_q8_k_m4_source_hash,
+                };
+                status = qpu_llama_q4_k_linear_prepare(context, &desc, &linear_q4_k);
+            } else if (config.format == WEIGHT_Q6_K) {
+                const qpu_llama_q6_k_linear_desc desc = {
+                    .weights = weights,
+                    .weight_size = weight_bytes,
+                    .input_columns = config.input_columns,
+                    .output_columns = config.output_columns,
+                    .resident_column_start = config.qpu_column_start,
+                    .resident_column_count = config.qpu_column_count,
+                    .workgroups_per_supergroup = config.qpu_wgs_per_sg,
+                    .expected_source_hash = qpu_ggml_q6_k_q8_k_m4_source_hash,
+                };
+                status = qpu_llama_q6_k_linear_prepare(context, &desc, &linear_q6_k);
+            } else {
+                const qpu_llama_q8_0_linear_desc desc = {
+                    .weights = weights,
+                    .weight_size = weight_bytes,
+                    .input_columns = config.input_columns,
+                    .output_columns = config.output_columns,
+                    .resident_column_start = config.qpu_column_start,
+                    .resident_column_count = config.qpu_column_count,
+                    .workgroups_per_supergroup = config.qpu_wgs_per_sg,
+                    .expected_source_hash = qpu_ggml_q8_0_q8_0_m4_source_hash,
+                };
+                status = qpu_llama_q8_0_linear_prepare(context, &desc, &linear_q8_0);
+            }
         }
         prepare_ns = monotonic_ns() - prepare_start;
     }
     if (status != QPU_LLAMA_OK) {
         fprintf(stderr, "setup: %s%s%s\n", qpu_llama_status_string(status),
             context == NULL ? "" : " (", context == NULL ? "" : qpu_llama_context_last_error(context));
+        qpu_llama_q8_0_linear_destroy(linear_q8_0);
+        qpu_llama_q6_k_linear_destroy(linear_q6_k);
+        qpu_llama_q4_k_linear_destroy(linear_q4_k);
         qpu_llama_q4_0_linear_destroy(linear);
         qpu_llama_context_destroy(context);
         free(destination);
@@ -476,8 +625,13 @@ int main(int argc, char **argv) {
     }
 
     for (uint32_t row = 0; row < config.rows; ++row) {
-        quantize_row_q8_0(activation_f32 + (size_t) row * config.input_columns,
-            activation_q8 + (size_t) row * activation_row_bytes, config.input_columns);
+        if (config.format == WEIGHT_Q4_0 || config.format == WEIGHT_Q8_0) {
+            quantize_row_q8_0(activation_f32 + (size_t) row * config.input_columns,
+                activation_q8 + (size_t) row * activation_row_bytes, config.input_columns);
+        } else {
+            quantize_row_q8_K(activation_f32 + (size_t) row * config.input_columns,
+                activation_q8 + (size_t) row * activation_row_bytes, config.input_columns);
+        }
     }
     cpu_job full_job = {
         .weights = weights,
@@ -490,6 +644,7 @@ int main(int argc, char **argv) {
         .column_count = config.output_columns,
         .weight_row_bytes = weight_row_bytes,
         .activation_row_bytes = activation_row_bytes,
+        .format = config.format,
     };
     cpu_pool_start(&pool, &full_job);
     cpu_pool_wait(&pool);
@@ -517,25 +672,85 @@ int main(int argc, char **argv) {
         .column_start = config.qpu_column_start,
         .column_count = config.qpu_column_count,
     };
+    qpu_llama_q4_k_execution execution_q4_k = {
+        .activation = activation_q8,
+        .activation_size = activation_q8_bytes,
+        .activation_offset = 0,
+        .destination = destination,
+        .destination_size = output_bytes,
+        .destination_offset = 0,
+        .column_start = config.qpu_column_start,
+        .column_count = config.qpu_column_count,
+    };
+    qpu_llama_q6_k_execution execution_q6_k = {
+        .activation = activation_q8,
+        .activation_size = activation_q8_bytes,
+        .activation_offset = 0,
+        .destination = destination,
+        .destination_size = output_bytes,
+        .destination_offset = 0,
+        .column_start = config.qpu_column_start,
+        .column_count = config.qpu_column_count,
+    };
+    qpu_llama_q8_0_execution execution_q8_0 = {
+        .activation = activation_q8,
+        .activation_size = activation_q8_bytes,
+        .activation_offset = 0,
+        .destination = destination,
+        .destination_size = output_bytes,
+        .destination_offset = 0,
+        .column_start = config.qpu_column_start,
+        .column_count = config.qpu_column_count,
+    };
     const uint32_t iterations = config.warmups + config.samples;
     for (uint32_t iteration = 0; iteration < iterations; ++iteration) {
         const uint64_t complete_start = monotonic_ns();
         const uint64_t quantize_start = complete_start;
         for (uint32_t row = 0; row < config.rows; ++row) {
-            quantize_row_q8_0(activation_f32 + (size_t) row * config.input_columns,
-                activation_q8 + (size_t) row * activation_row_bytes, config.input_columns);
+            if (config.format == WEIGHT_Q4_0 || config.format == WEIGHT_Q8_0) {
+                quantize_row_q8_0(activation_f32 + (size_t) row * config.input_columns,
+                    activation_q8 + (size_t) row * activation_row_bytes, config.input_columns);
+            } else {
+                quantize_row_q8_K(activation_f32 + (size_t) row * config.input_columns,
+                    activation_q8 + (size_t) row * activation_row_bytes, config.input_columns);
+            }
         }
         const uint64_t quantize_end = monotonic_ns();
         qpu_llama_q4_0_timing qpu_timing = {0};
+        qpu_llama_q4_k_timing qpu_timing_q4_k = {0};
+        qpu_llama_q6_k_timing qpu_timing_q6_k = {0};
+        qpu_llama_q8_0_timing qpu_timing_q8_0 = {0};
         if (config.mode == BENCH_CPU) {
             candidate_job.column_count = config.output_columns;
             cpu_pool_start(&pool, &candidate_job);
             cpu_pool_wait(&pool);
         } else if (config.mode == BENCH_QPU) {
-            status = qpu_llama_q4_0_linear_execute(linear, &execution, &qpu_timing);
+            if (config.format == WEIGHT_Q4_0) {
+                status = qpu_llama_q4_0_linear_execute(linear, &execution, &qpu_timing);
+            } else if (config.format == WEIGHT_Q4_K) {
+                status = qpu_llama_q4_k_linear_execute(
+                    linear_q4_k, &execution_q4_k, &qpu_timing_q4_k);
+            } else if (config.format == WEIGHT_Q6_K) {
+                status = qpu_llama_q6_k_linear_execute(
+                    linear_q6_k, &execution_q6_k, &qpu_timing_q6_k);
+            } else {
+                status = qpu_llama_q8_0_linear_execute(
+                    linear_q8_0, &execution_q8_0, &qpu_timing_q8_0);
+            }
         } else {
             cpu_pool_start(&pool, &candidate_job);
-            status = qpu_llama_q4_0_linear_execute(linear, &execution, &qpu_timing);
+            if (config.format == WEIGHT_Q4_0) {
+                status = qpu_llama_q4_0_linear_execute(linear, &execution, &qpu_timing);
+            } else if (config.format == WEIGHT_Q4_K) {
+                status = qpu_llama_q4_k_linear_execute(
+                    linear_q4_k, &execution_q4_k, &qpu_timing_q4_k);
+            } else if (config.format == WEIGHT_Q6_K) {
+                status = qpu_llama_q6_k_linear_execute(
+                    linear_q6_k, &execution_q6_k, &qpu_timing_q6_k);
+            } else {
+                status = qpu_llama_q8_0_linear_execute(
+                    linear_q8_0, &execution_q8_0, &qpu_timing_q8_0);
+            }
             cpu_pool_wait(&pool);
         }
         const uint64_t complete_end = monotonic_ns();
@@ -548,23 +763,58 @@ int main(int argc, char **argv) {
             const uint32_t sample = iteration - config.warmups;
             complete_samples[sample] = complete_end - complete_start;
             quantize_samples[sample] = quantize_end - quantize_start;
-            input_copy_samples[sample] = qpu_timing.input_copy_ns;
-            submit_wait_samples[sample] = qpu_timing.submit_wait_ns;
-            output_copy_samples[sample] = qpu_timing.output_copy_ns;
+            input_copy_samples[sample] = config.format == WEIGHT_Q4_0
+                ? qpu_timing.input_copy_ns
+                : config.format == WEIGHT_Q4_K
+                    ? qpu_timing_q4_k.input_copy_ns
+                    : config.format == WEIGHT_Q6_K
+                        ? qpu_timing_q6_k.input_copy_ns : qpu_timing_q8_0.input_copy_ns;
+            submit_wait_samples[sample] = config.format == WEIGHT_Q4_0
+                ? qpu_timing.submit_wait_ns
+                : config.format == WEIGHT_Q4_K
+                    ? qpu_timing_q4_k.submit_wait_ns
+                    : config.format == WEIGHT_Q6_K
+                        ? qpu_timing_q6_k.submit_wait_ns : qpu_timing_q8_0.submit_wait_ns;
+            output_copy_samples[sample] = config.format == WEIGHT_Q4_0
+                ? qpu_timing.output_copy_ns
+                : config.format == WEIGHT_Q4_K
+                    ? qpu_timing_q4_k.output_copy_ns
+                    : config.format == WEIGHT_Q6_K
+                        ? qpu_timing_q6_k.output_copy_ns : qpu_timing_q8_0.output_copy_ns;
         }
     }
 
+    const bool output_written = config.output_path != NULL &&
+        write_exact_file(config.output_path, destination, output_bytes);
     const error_metrics errors = calculate_error(reference, destination, output_elements, config.output_columns);
-    printf("{\"schema_version\":1,\"kind\":\"llama-qpu-q4-0-native-operator-samples\","
-        "\"mode\":\"%s\",\"input_columns\":%u,\"output_columns\":%u,\"rows\":%u,"
+    printf("{\"schema_version\":1,\"kind\":\"llama-qpu-native-operator-samples\","
+        "\"mode\":\"%s\",\"weight_type\":\"%s\",\"input_columns\":%u,"
+        "\"output_columns\":%u,\"rows\":%u,"
         "\"cpu_threads\":%u,\"qpu_column_start\":%u,\"qpu_column_count\":%u,"
+        "\"qpu_wgs_per_sg\":%u,"
         "\"warmups\":%u,\"retained_samples\":%u,\"prepare_ns\":%llu,"
-        "\"resident_bytes\":%zu,\"activation_contract\":\"native-q8-0-from-f32-each-sample\","
-        "\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":",
-        mode_name(config.mode), config.input_columns, config.output_columns, config.rows,
-        config.cpu_threads, config.qpu_column_start, config.qpu_column_count, config.warmups,
+        "\"resident_bytes\":%zu,\"output_bin_requested\":%s,\"output_bin_written\":%s,"
+        "\"activation_contract\":\"native-%s-from-f32-each-sample\","
+        "\"cpu_kernel\":\"%s\",\"complete_ns\":",
+        mode_name(config.mode), weight_format_name(config.format), config.input_columns,
+        config.output_columns, config.rows,
+        config.cpu_threads, config.qpu_column_start, config.qpu_column_count,
+        config.qpu_wgs_per_sg, config.warmups,
         config.samples, (unsigned long long) prepare_ns,
-        qpu_llama_q4_0_linear_resident_bytes(linear));
+        config.format == WEIGHT_Q4_0 ? qpu_llama_q4_0_linear_resident_bytes(linear)
+            : config.format == WEIGHT_Q4_K
+                ? qpu_llama_q4_k_linear_resident_bytes(linear_q4_k)
+                : config.format == WEIGHT_Q6_K
+                    ? qpu_llama_q6_k_linear_resident_bytes(linear_q6_k)
+                    : qpu_llama_q8_0_linear_resident_bytes(linear_q8_0),
+        config.output_path == NULL ? "false" : "true", output_written ? "true" : "false",
+        config.format == WEIGHT_Q4_0 || config.format == WEIGHT_Q8_0 ? "q8-0" : "q8-k",
+        config.format == WEIGHT_Q4_0
+            ? "ggml_vec_dot_q4_0_q8_0"
+            : config.format == WEIGHT_Q4_K
+                ? "ggml_vec_dot_q4_K_q8_K"
+                : config.format == WEIGHT_Q6_K
+                    ? "ggml_vec_dot_q6_K_q8_K" : "ggml_vec_dot_q8_0_q8_0");
     print_u64_array(complete_samples, config.samples);
     printf(",\"quantize_ns\":");
     print_u64_array(quantize_samples, config.samples);
@@ -589,6 +839,9 @@ int main(int argc, char **argv) {
     free(input_copy_samples);
     free(quantize_samples);
     free(complete_samples);
+    qpu_llama_q8_0_linear_destroy(linear_q8_0);
+    qpu_llama_q6_k_linear_destroy(linear_q6_k);
+    qpu_llama_q4_k_linear_destroy(linear_q4_k);
     qpu_llama_q4_0_linear_destroy(linear);
     qpu_llama_context_destroy(context);
     free(destination);
@@ -597,5 +850,8 @@ int main(int argc, char **argv) {
     free(reference);
     free(activation_f32);
     free(weights);
-    return errors.nan_count == 0 && errors.inf_count == 0 ? 0 : 1;
+    return errors.nan_count == 0 && errors.inf_count == 0 &&
+            (config.output_path == NULL || output_written)
+        ? 0
+        : 1;
 }

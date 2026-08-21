@@ -24,7 +24,11 @@ if str(ROOT / "src") not in sys.path:
 from _videocore7.assembler import assemble  # noqa: E402
 from qpu_xla.kernels.gemm_int8 import qpu_tiled_w8a8_gemm  # noqa: E402
 from qpu_xla.kernels.gemv_int8 import qpu_w8a8_gemv  # noqa: E402
+from qpu_xla.kernels.ggml_flash_attn import qpu_ggml_gemma_flash_attn_f16_m1  # noqa: E402
 from qpu_xla.kernels.ggml_q4_0 import qpu_ggml_q4_0_q8_0_linear  # noqa: E402
+from qpu_xla.kernels.ggml_q4_k import qpu_ggml_q4_k_q8_k_linear_m4  # noqa: E402
+from qpu_xla.kernels.ggml_q6_k import qpu_ggml_q6_k_q8_k_linear_m4  # noqa: E402
+from qpu_xla.kernels.ggml_q8_0 import qpu_ggml_q8_0_q8_0_linear_m4  # noqa: E402
 from scripts.llama_cpp_common import sha256_file, write_json_atomic  # noqa: E402
 
 
@@ -44,6 +48,121 @@ class ProgramSpec:
 
 
 PROGRAMS = {
+    "ggml-gemma-flash-attn-f16-m1": ProgramSpec(
+        name="ggml-gemma-flash-attn-f16-m1",
+        symbol="qpu_ggml_gemma_flash_attn_f16_m1",
+        function=qpu_ggml_gemma_flash_attn_f16_m1,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "kv_row_pairs", "type": "uint32"},
+            {"name": "query_address", "type": "gpu_address"},
+            {"name": "query_head_stride_bytes", "type": "uint32"},
+            {"name": "key_address", "type": "gpu_address"},
+            {"name": "key_row_stride_bytes", "type": "uint32"},
+            {"name": "value_address", "type": "gpu_address"},
+            {"name": "value_row_stride_bytes", "type": "uint32"},
+            {"name": "mask_address", "type": "gpu_address"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "output_head_stride_bytes", "type": "uint32"},
+            {"name": "scale", "type": "float32"},
+            {"name": "log2_e", "type": "float32"},
+            {"name": "negative_infinity", "type": "float32"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["query_heads", 1, 1],
+            "wgs_per_sg": 48,
+            "thread": "query_heads",
+        },
+        description=(
+            "Experimental fused Gemma M=1 attention for 256-wide F32 query heads, "
+            "one native F16 KV head/mask, and no ALiBi, softcap, or sinks."
+        ),
+    ),
+    "ggml-q8-0-q8-0-m4": ProgramSpec(
+        name="ggml-q8-0-q8-0-m4",
+        symbol="qpu_ggml_q8_0_q8_0_m4",
+        function=qpu_ggml_q8_0_q8_0_linear_m4,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "reduction_blocks", "type": "uint32"},
+            {"name": "activation_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_address", "type": "gpu_address"},
+            {"name": "weight_row_stride_bytes", "type": "uint32"},
+            {"name": "weight_address", "type": "gpu_address"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "weight_column_offset", "type": "uint32"},
+            {"name": "output_column_offset", "type": "uint32"},
+            {"name": "q8_0_block_bytes", "type": "uint32", "value": "34"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["selected_output_columns / 16", 1, 1],
+            "wgs_per_sg": 24,
+            "thread": "workgroup_x",
+        },
+        description="Native GGML Q8_0 by Q8_0 four-row linear with FP32 output.",
+    ),
+    "ggml-q6-k-q8-k-m4": ProgramSpec(
+        name="ggml-q6-k-q8-k-m4",
+        symbol="qpu_ggml_q6_k_q8_k_m4",
+        function=qpu_ggml_q6_k_q8_k_linear_m4,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "reduction_superblocks", "type": "uint32"},
+            {"name": "activation_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_address", "type": "gpu_address"},
+            {"name": "weight_row_stride_bytes", "type": "uint32"},
+            {"name": "weight_address", "type": "gpu_address"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "weight_column_offset", "type": "uint32"},
+            {"name": "output_column_offset", "type": "uint32"},
+            {"name": "nibble_mask", "type": "uint32", "value": "0x0f0f0f0f"},
+            {"name": "two_bit_mask", "type": "uint32", "value": "0x03030303"},
+            {"name": "signed_byte_ones", "type": "uint32", "value": "0x01010101"},
+            {"name": "q6_k_block_bytes", "type": "uint32", "value": "210"},
+            {"name": "q8_k_block_bytes", "type": "uint32", "value": "292"},
+            {"name": "q6_k_ql_half_bytes", "type": "uint32", "value": "64"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["selected_output_columns / 16", 1, 1],
+            "wgs_per_sg": 24,
+            "thread": "workgroup_x",
+        },
+        description="Native GGML Q6_K by Q8_K four-row linear with FP32 output.",
+    ),
+    "ggml-q4-k-q8-k-m4": ProgramSpec(
+        name="ggml-q4-k-q8-k-m4",
+        symbol="qpu_ggml_q4_k_q8_k_m4",
+        function=qpu_ggml_q4_k_q8_k_linear_m4,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "reduction_superblocks", "type": "uint32"},
+            {"name": "activation_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_address", "type": "gpu_address"},
+            {"name": "weight_row_stride_bytes", "type": "uint32"},
+            {"name": "weight_address", "type": "gpu_address"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "weight_column_offset", "type": "uint32"},
+            {"name": "output_column_offset", "type": "uint32"},
+            {"name": "nibble_mask", "type": "uint32", "value": "0x0f0f0f0f"},
+            {"name": "signed_byte_ones", "type": "uint32", "value": "0x01010101"},
+            {"name": "six_bit_mask", "type": "uint32", "value": "0x0000003f"},
+            {"name": "q4_k_block_bytes", "type": "uint32", "value": "144"},
+            {"name": "q8_k_block_bytes", "type": "uint32", "value": "292"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["selected_output_columns / 16", 1, 1],
+            "wgs_per_sg": 24,
+            "thread": "workgroup_x",
+        },
+        description="Native GGML Q4_K by Q8_K four-row linear with FP32 output.",
+    ),
     "ggml-q4-0-q8-0-m1": ProgramSpec(
         name="ggml-q4-0-q8-0-m1",
         symbol="qpu_ggml_q4_0_q8_0_m1",

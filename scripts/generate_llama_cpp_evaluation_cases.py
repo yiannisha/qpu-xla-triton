@@ -15,6 +15,38 @@ if str(ROOT) not in sys.path:
 from scripts.llama_cpp_common import write_json_atomic  # noqa: E402
 
 ARTICLE_PROMPT = "Explain photosynthesis in 300 words."
+STRUCTURED_TOOL_TOKEN_CAP = 40
+STRUCTURED_TOOL_PROMPT = (
+    "Record this environmental reading with the supplied tool exactly once: "
+    "fixed Pi 5 lab sensor, temperature 32.4 C and humidity 86 percent."
+)
+STRUCTURED_TOOL_MESSAGES: list[dict[str, str]] = [
+    {
+        "role": "system",
+        "content": "You are an offline sensor agent. Call the supplied function and emit no prose.",
+    },
+    {"role": "user", "content": STRUCTURED_TOOL_PROMPT},
+]
+STRUCTURED_TOOL_DEFINITION: dict[str, Any] = {
+    "type": "function",
+    "function": {
+        "name": "record",
+        "description": "Record temperature and humidity for the fixed Pi 5 lab sensor.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "c": {"type": "number", "const": 32.4},
+                "h": {"type": "integer", "const": 86},
+            },
+            "required": ["c", "h"],
+            "additionalProperties": False,
+        },
+    },
+}
+STRUCTURED_TOOL_EXPECTED_ARGUMENTS: dict[str, Any] = {
+    "c": 32.4,
+    "h": 86,
+}
 DEFAULT_GEMMA_BASE = Path(
     "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/"
     "gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"
@@ -57,6 +89,8 @@ def _base_case(
         "surface": "server",
         "base_model": str(base_model.resolve()),
         "prompt": ARTICLE_PROMPT,
+        "workload": "decode",
+        "request_surface": "completion",
         "predict_tokens": predict_tokens,
         "context_size": 8192,
         "context_tokens_target": context_tokens,
@@ -66,6 +100,30 @@ def _base_case(
         "seed": 1234,
         "temperature": 0.0,
     }
+
+
+def _structured_tool_case(case: dict[str, Any]) -> dict[str, Any]:
+    """Turn a decode configuration into the plan's fixed tool-call workload."""
+    application = dict(case)
+    application.update(
+        {
+            "name": case["name"].replace("-decode", "-application-tool40"),
+            "prompt": STRUCTURED_TOOL_PROMPT,
+            "workload": "structured-tool-call",
+            "request_surface": "chat-completions",
+            "predict_tokens": STRUCTURED_TOOL_TOKEN_CAP,
+            "context_tokens_target": 0,
+            "messages": [dict(message) for message in STRUCTURED_TOOL_MESSAGES],
+            "tools": [STRUCTURED_TOOL_DEFINITION],
+            "tool_choice": "required",
+            "parallel_tool_calls": False,
+            "expected_tool_call": {
+                "name": STRUCTURED_TOOL_DEFINITION["function"]["name"],
+                "arguments": dict(STRUCTURED_TOOL_EXPECTED_ARGUMENTS),
+            },
+        }
+    )
+    return application
 
 
 def gemma_cases(
@@ -123,8 +181,15 @@ def gemma_cases(
                 context_tokens=0,
                 predict_tokens=0,
             )
+            case["workload"] = "prompt"
             case["prompt_tokens_target"] = prompt_size
             cases.append(case)
+    application_decode = [
+        case
+        for case in cases
+        if case["mode"] in {"plain", "mtp"} and case["context_tokens_target"] == 0
+    ]
+    cases.extend(_structured_tool_case(case) for case in application_decode)
     return cases
 
 
@@ -184,11 +249,18 @@ def qwen_cases(
             )
             case.update(
                 {
+                    "workload": "prompt",
                     "prompt_tokens_target": prompt_size,
                     "server_extra_arguments": ["--kv-unified"],
                 }
             )
             cases.append(case)
+    application_decode = [
+        case
+        for case in cases
+        if case["mode"] in {"plain", "mtp"} and case["context_tokens_target"] == 0
+    ]
+    cases.extend(_structured_tool_case(case) for case in application_decode)
     return cases
 
 
@@ -198,6 +270,12 @@ def main() -> None:
     parser.add_argument("--gemma-base", type=Path, default=DEFAULT_GEMMA_BASE)
     parser.add_argument("--gemma-draft", type=Path, default=DEFAULT_GEMMA_DRAFT)
     parser.add_argument("--qwen-model", type=Path)
+    parser.add_argument(
+        "--gemma-mmproj",
+        type=Path,
+        help="Gemma multimodal projector/vision GGUF; vision cases remain a gap until supplied",
+    )
+    parser.add_argument("--vision-image", type=Path)
     parser.add_argument("--threads", type=lambda value: parse_integer_list(value, allow_zero=False), default=(2, 3, 4))
     parser.add_argument("--gemma-contexts", type=parse_integer_list, default=(0, 512, 2048))
     parser.add_argument("--qwen-contexts", type=parse_integer_list, default=(0, 512, 2048, 4096))
@@ -236,6 +314,25 @@ def main() -> None:
                 "required_paths": [str(args.gemma_base), str(args.gemma_draft)],
             }
         )
+    if (
+        args.gemma_mmproj is None
+        or not args.gemma_mmproj.is_file()
+        or args.vision_image is None
+        or not args.vision_image.is_file()
+    ):
+        gaps.append(
+            {
+                "model": "gemma-4-e2b-vision",
+                "reason": (
+                    "multimodal projector/vision GGUF or representative image is unavailable; "
+                    "the local text GGUF manifest contains no vision tensors"
+                ),
+                "required_paths": [
+                    str(args.gemma_mmproj) if args.gemma_mmproj is not None else None,
+                    str(args.vision_image) if args.vision_image is not None else None,
+                ],
+            }
+        )
     if args.qwen_model is not None and args.qwen_model.is_file():
         cases.extend(
             qwen_cases(
@@ -258,7 +355,10 @@ def main() -> None:
     payload = {
         "schema_version": 1,
         "kind": "llama-cpp-qpu-evaluation-cases",
-        "measurement_surface": "isolated llama-server /completion",
+        "measurement_surface": (
+            "isolated llama-server /completion for decode/prompt and "
+            "/v1/chat/completions for structured tool calls"
+        ),
         "source_workload": (
             "https://github.com/Mjrovai/EdgeML-with-Raspberry-Pi/blob/main/mtp-rasp/README.md"
         ),
@@ -270,6 +370,7 @@ def main() -> None:
             "gemma_draft_depths": list(args.gemma_depths),
             "qwen_draft_depths": list(args.qwen_depths),
             "prompt_token_sizes": list(args.prompt_sizes),
+            "structured_tool_call_token_cap": STRUCTURED_TOOL_TOKEN_CAP,
         },
         "coverage_gaps": gaps,
         "cases": cases,
