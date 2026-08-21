@@ -35,6 +35,32 @@ from qpu_xla.kernels.ggml_q4_0 import (
     unpack_ggml_q4_0_blocks,
     unpack_ggml_q8_0_blocks,
 )
+from qpu_xla.kernels.ggml_q4_k import (
+    GGML_Q4_K_Q8_K_LINEAR_M4_KERNEL,
+    ggml_q4_k_q8_k_reference,
+    pack_ggml_q4_k_blocks,
+    pack_ggml_q8_k_blocks,
+    supports_ggml_q4_k_q8_k_linear_m4,
+    unpack_ggml_q4_k_blocks,
+    unpack_ggml_q8_k_blocks,
+)
+from qpu_xla.kernels.ggml_q6_k import (
+    GGML_Q6_K_Q8_K_LINEAR_M4_KERNEL,
+    ggml_q6_k_q8_k_reference,
+    pack_ggml_q6_k_blocks,
+    supports_ggml_q6_k_q8_k_linear_m4,
+    unpack_ggml_q6_k_blocks,
+)
+from qpu_xla.kernels.ggml_q8_0 import (
+    GGML_Q8_0_Q8_0_LINEAR_M4_KERNEL,
+    ggml_q8_0_q8_0_reference,
+    supports_ggml_q8_0_q8_0_linear_m4,
+)
+from qpu_xla.kernels.ggml_flash_attn import (
+    GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL,
+    ggml_flash_attn_ext_reference,
+    supports_ggml_gemma_flash_attn_f16_m1,
+)
 from qpu_xla.kernels.minmax import MAXIMUM_WORD_KERNEL, MINIMUM_WORD_KERNEL, supports_word_minmax
 from qpu_xla.kernels.pool2d import (
     AVGPOOL2D_FP32_KERNEL,
@@ -65,6 +91,10 @@ __all__ = [
     "TILED_FP32_GEMM_KERNEL",
     "FP32_GEMV_KERNEL",
     "GGML_Q4_0_Q8_0_LINEAR_KERNEL",
+    "GGML_Q4_K_Q8_K_LINEAR_M4_KERNEL",
+    "GGML_Q6_K_Q8_K_LINEAR_M4_KERNEL",
+    "GGML_Q8_0_Q8_0_LINEAR_M4_KERNEL",
+    "GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL",
     "AVGPOOL2D_INT32_KERNEL",
     "AVGPOOL2D_FP32_KERNEL",
     "TILED_INT32_GEMM_KERNEL",
@@ -88,6 +118,9 @@ __all__ = [
     "supports_tiled_fp32_gemm",
     "supports_fp32_gemv",
     "supports_ggml_q4_0_q8_0_linear",
+    "supports_ggml_q4_k_q8_k_linear_m4",
+    "supports_ggml_q6_k_q8_k_linear_m4",
+    "supports_ggml_q8_0_q8_0_linear_m4",
     "supports_tiled_w8a8_gemm",
     "supports_tiled_w8a8_gemm_dequantize",
     "supports_w8a8_gemv",
@@ -109,4 +142,15 @@ __all__ = [
     "unpack_ggml_q4_0_blocks",
     "unpack_ggml_q8_0_blocks",
     "ggml_q4_0_q8_0_reference",
+    "pack_ggml_q4_k_blocks",
+    "pack_ggml_q8_k_blocks",
+    "unpack_ggml_q4_k_blocks",
+    "unpack_ggml_q8_k_blocks",
+    "ggml_q4_k_q8_k_reference",
+    "pack_ggml_q6_k_blocks",
+    "unpack_ggml_q6_k_blocks",
+    "ggml_q6_k_q8_k_reference",
+    "ggml_q8_0_q8_0_reference",
+    "ggml_flash_attn_ext_reference",
+    "supports_ggml_gemma_flash_attn_f16_m1",
 ]

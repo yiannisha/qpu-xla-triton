@@ -9,5 +9,9 @@ dist/
 wheels/
 *.egg-info
 
+# Reproducible llama.cpp graph captures are hashed by retained manifests but
+# their materialized tensor payloads must not be committed.
+experiment_logs/**/*.bin
+
 # Virtual environments
 .venv
