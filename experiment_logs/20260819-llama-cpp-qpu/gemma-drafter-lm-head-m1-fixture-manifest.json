@@ -1,0 +1,151 @@
+{
+  "activation_f32": {
+    "bytes": 1024,
+    "materialized": true,
+    "name": "result_norm",
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_norm-src1.bin",
+    "sha256": "ab93c1b29ca2518eda7be339adf5c6119d5a45fb47becfb1a1831242e1767669",
+    "shape": [
+      256,
+      1,
+      1,
+      1
+    ],
+    "strides": [
+      4,
+      1024,
+      1024,
+      1024
+    ],
+    "type": "f32"
+  },
+  "case": {
+    "batch": 1,
+    "context_size": 8192,
+    "context_tokens": 0,
+    "context_type": "mtp",
+    "fixture_dir": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1",
+    "fixture_max_bytes": 2097152,
+    "fixture_pattern": "^result_output ",
+    "iterations": 1,
+    "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+    "model_role": "mtp-drafter",
+    "name": "gemma-drafter-lm-head-m1-fixture",
+    "other_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+    "prompt": "A deterministic graph profiling sentence records stable inference data. ",
+    "threads": 3,
+    "warmups": 0
+  },
+  "dimensions": {
+    "input_columns": 256,
+    "output_columns": 262144,
+    "rows": 1
+  },
+  "fixture_id": "gemma-drafter-lm-head-m1-fixture-run0-node124",
+  "kind": "llama-cpp-qpu-exact-node-fixture",
+  "measurement_contract": {
+    "correctness_eligible": true,
+    "reason": "the eval callback serializes graph nodes; its node duration is diagnostic only",
+    "timing_eligible_for_promotion": false,
+    "weight_materialization": "replay tools seek this bounded tensor range from the hashed GGUF at runtime"
+  },
+  "node": {
+    "index": 124,
+    "name": "result_output",
+    "op": "MUL_MAT",
+    "run_index": 0,
+    "serialized_profile_duration_ns": 3669885,
+    "shape": [
+      262144,
+      1,
+      1,
+      1
+    ],
+    "strides": [
+      4,
+      1048576,
+      1048576,
+      1048576
+    ],
+    "type": "f32"
+  },
+  "reference_output_f32": {
+    "bytes": 1048576,
+    "materialized": true,
+    "name": "result_output",
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/fixtures/gemma-drafter-lm-head-m1/run0-node124-result_output-output.bin",
+    "sha256": "c139aa75470e32c96fc9fb4eaef1872fb431ca48d10fdb38059cb934ea67765a",
+    "shape": [
+      262144,
+      1,
+      1,
+      1
+    ],
+    "strides": [
+      4,
+      1048576,
+      1048576,
+      1048576
+    ],
+    "type": "f32"
+  },
+  "replay_contract": {
+    "activation_layout": "row-major FP32; native operator quantizes each row to Q8_0",
+    "atol": 0.0002,
+    "greedy_argmax_must_match": true,
+    "output_layout": "row-major FP32 logits",
+    "reference_backend": "pinned llama.cpp CPU graph output captured after result_output",
+    "rtol": 2e-05,
+    "supported_candidate_rows": [
+      1,
+      4
+    ],
+    "weight_layout": "native GGUF Q4_0 blocks, one output column per contiguous row"
+  },
+  "schema_version": 1,
+  "source": {
+    "case_file": {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/graph-fixture-cases.json",
+      "sha256": "8fb8f0eeb205a6a8a381a4a427f09d0b6ec0fa27a1bd66ddf005d9065e88b646"
+    },
+    "gguf_manifest": {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-mtp-gguf-manifest.json",
+      "sha256": "014e9c8e0112cb807eeb5b97e6319b7513a4bcc6d6180481c8e86da8271b396b"
+    },
+    "graph_profile_session": {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-drafter-lm-head-fixture-session.json",
+      "sha256": "c60047fc0591f1881d3f12feae87af667923962e19791024a932257263a14acd"
+    },
+    "native_profile": {
+      "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-drafter-lm-head-fixture-session/gemma-drafter-lm-head-m1-fixture.json",
+      "sha256": "586414d80a33d7fb9e0a5e996a641c9f2ae889226c7ebd56ba8a9ceecfae32ff"
+    },
+    "profile_binary": {
+      "path": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_graph_profile",
+      "sha256": "9fb548214e7146d83f0e7e8c7d7a3dc2b3d84e39469134d491ad326088b68709"
+    }
+  },
+  "weight": {
+    "bytes": 37748736,
+    "data_relative_offset": 1024,
+    "file_offset": 15787200,
+    "ggml_nb_bytes": [
+      18,
+      144
+    ],
+    "ggml_type": "Q4_0",
+    "is_aligned": true,
+    "materialized": false,
+    "model": {
+      "path": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+      "sha256": "586f2460b909008640981ec34060aa864e03c144fbabfb3173c4335087e4aae0",
+      "size_bytes": 59235648
+    },
+    "name": "token_embd.weight",
+    "required_alignment": 32,
+    "shape": [
+      256,
+      262144
+    ]
+  }
+}
