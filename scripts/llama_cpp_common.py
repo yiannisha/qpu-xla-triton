@@ -133,8 +133,14 @@ def collect_environment() -> dict[str, Any]:
     """Collect the environment fields required by retained benchmark sessions."""
     commands = {
         "lscpu": run_capture(["lscpu"]),
+        "process_affinity": run_capture(
+            ["taskset", "--pid", "--cpu-list", str(os.getpid())]
+        ),
         "memory": run_capture(["free", "--bytes"]),
         "swap": run_capture(["swapon", "--show", "--bytes", "--output-all"]),
+        "swap_used_bytes": run_capture(
+            ["swapon", "--show", "--bytes", "--noheadings", "--output", "USED"]
+        ),
         "kernel": run_capture(["uname", "-a"]),
         "firmware": run_capture(["vcgencmd", "version"]),
         "throttling": run_capture(["vcgencmd", "get_throttled"]),
@@ -142,6 +148,8 @@ def collect_environment() -> dict[str, Any]:
         "cpu_clock": run_capture(["vcgencmd", "measure_clock", "arm"]),
         "v3d_clock": run_capture(["vcgencmd", "measure_clock", "v3d"]),
         "zram": run_capture(["zramctl", "--json"]),
+        "llama_servers": run_capture(["pgrep", "-a", "-x", "llama-server"]),
+        "system_load": run_capture(["uptime"]),
     }
     return {
         "captured_utc": utc_now(),
@@ -157,3 +165,15 @@ def command_stdout(record: dict[str, Any]) -> str:
     """Return normalized stdout from a run record."""
     value = record.get("stdout", "")
     return str(value).strip()
+
+
+def swap_used_bytes(environment: dict[str, Any]) -> int | None:
+    """Sum active swap usage from the dedicated machine-readable environment probe."""
+    record = environment.get("commands", {}).get("swap_used_bytes", {})
+    if record.get("returncode") != 0:
+        return None
+    values = str(record.get("stdout", "")).split()
+    try:
+        return sum(int(value) for value in values)
+    except ValueError:
+        return None

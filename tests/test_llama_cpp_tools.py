@@ -24,6 +24,11 @@ def test_tensor_classification_preserves_layer_and_component() -> None:
     assert classify_operator("token_embd.weight") == "embedding"
     assert classify_operator("blk.3.ssm_conv1d.weight") == "deltanet_convolution"
     assert classify_operator("blk.3.layer_output_scale.weight") == "output_scaling"
+    assert tensor_owner("blk.32.ffn_gate.weight", "base", embedded_mtp_layer_start=32) == {
+        "component": "mtp_head",
+        "layer": 32,
+        "operator": "ffn_gate",
+    }
 
 
 def test_atomic_json_and_hash(tmp_path: Path) -> None:

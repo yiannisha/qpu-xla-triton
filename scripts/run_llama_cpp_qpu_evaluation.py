@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
 from scripts.llama_cpp_common import (  # noqa: E402
     collect_environment,
     sha256_file,
+    swap_used_bytes,
     utc_now,
     write_json_atomic,
 )
@@ -50,6 +51,8 @@ DRAFT_ACCEPTANCE_RE = re.compile(
     r"draft acceptance\s*=\s*(?P<acceptance>[0-9.]+),\s*mean len\s*=\s*(?P<mean>[0-9.]+)"
 )
 ACCEPTANCE_POSITION_RE = re.compile(r"acc per pos\s*=\s*\((?P<positions>[^)]*)\)")
+STRUCTURED_TOOL_TOKEN_CAP = 40
+QPU_TELEMETRY_PREFIX = "qpu_llama_candidate_json:"
 
 
 def parse_llama_metrics(output: str) -> dict[str, Any]:
@@ -175,6 +178,10 @@ def build_server_command(binary: Path, case: dict[str, Any], port: int) -> list[
         str(port),
         "--log-verbosity",
         "4",
+        "--reasoning",
+        "off",
+        "--reasoning-budget",
+        "0",
     ]
     if case["mode"] == "mtp":
         command.extend(
@@ -193,6 +200,8 @@ def build_server_command(binary: Path, case: dict[str, Any], port: int) -> list[
             command.extend(["--spec-draft-threads", str(case["draft_threads"])])
     else:
         command.extend(["--spec-type", "none"])
+    if case.get("workload") == "structured-tool-call":
+        command.extend(["--tools", "all"])
     command.extend(str(argument) for argument in case.get("server_extra_arguments", []))
     return command
 
@@ -202,6 +211,8 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
     normalized = dict(case)
     normalized.setdefault("name", f"case-{index}")
     normalized.setdefault("mode", "plain")
+    normalized.setdefault("workload", "prompt" if normalized["mode"] == "prompt" else "decode")
+    normalized.setdefault("request_surface", "completion")
     normalized.setdefault("predict_tokens", 256)
     normalized.setdefault("context_size", 8192)
     normalized.setdefault("threads", 3)
@@ -216,6 +227,20 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
     if normalized["surface"] not in {"server", "cli"}:
         raise ValueError(
             f"case {normalized['name']!r} has unsupported surface {normalized['surface']!r}"
+        )
+    if normalized["placement"] not in {"cpu-only", "qpu-only", "hybrid"}:
+        raise ValueError(
+            f"case {normalized['name']!r} has unsupported placement "
+            f"{normalized['placement']!r}"
+        )
+    if normalized["workload"] not in {"decode", "prompt", "structured-tool-call"}:
+        raise ValueError(
+            f"case {normalized['name']!r} has unsupported workload {normalized['workload']!r}"
+        )
+    if normalized["request_surface"] not in {"completion", "chat-completions"}:
+        raise ValueError(
+            f"case {normalized['name']!r} has unsupported request_surface "
+            f"{normalized['request_surface']!r}"
         )
     if not normalized.get("base_model"):
         raise ValueError(f"case {normalized['name']!r} has no base_model")
@@ -240,6 +265,49 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
         raise ValueError(f"case {normalized['name']!r} uses prompt_tokens_target outside prompt mode")
     if normalized["mode"] == "prompt" and int(normalized["predict_tokens"]) != 0:
         raise ValueError(f"prompt case {normalized['name']!r} must set predict_tokens to zero")
+    if normalized["mode"] == "prompt" and normalized["workload"] != "prompt":
+        raise ValueError(f"prompt case {normalized['name']!r} must use prompt workload")
+    if normalized["workload"] == "structured-tool-call":
+        if normalized["surface"] != "server" or normalized["request_surface"] != "chat-completions":
+            raise ValueError(
+                f"structured tool case {normalized['name']!r} must use server chat-completions"
+            )
+        if int(normalized["predict_tokens"]) != STRUCTURED_TOOL_TOKEN_CAP:
+            raise ValueError(
+                f"structured tool case {normalized['name']!r} must use the fixed "
+                f"{STRUCTURED_TOOL_TOKEN_CAP}-token cap"
+            )
+        if context_target or prompt_target:
+            raise ValueError(
+                f"structured tool case {normalized['name']!r} must start from an empty cache"
+            )
+        if not isinstance(normalized.get("messages"), list) or not normalized["messages"]:
+            raise ValueError(f"structured tool case {normalized['name']!r} has no messages")
+        if not isinstance(normalized.get("tools"), list) or not normalized["tools"]:
+            raise ValueError(f"structured tool case {normalized['name']!r} has no tools")
+        expected = normalized.get("expected_tool_call")
+        if not isinstance(expected, dict) or not expected.get("name"):
+            raise ValueError(
+                f"structured tool case {normalized['name']!r} has no expected_tool_call"
+            )
+        if not isinstance(expected.get("arguments"), dict):
+            raise ValueError(
+                f"structured tool case {normalized['name']!r} expected arguments are not an object"
+            )
+        tool_names = {
+            function.get("name")
+            for tool in normalized["tools"]
+            if isinstance(tool, dict)
+            and isinstance((function := tool.get("function")), dict)
+        }
+        if expected["name"] not in tool_names:
+            raise ValueError(
+                f"structured tool case {normalized['name']!r} expected tool is not declared"
+            )
+    elif normalized["request_surface"] != "completion":
+        raise ValueError(
+            f"non-tool case {normalized['name']!r} must use the completion request surface"
+        )
     return normalized
 
 
@@ -254,6 +322,141 @@ def select_cases(cases: list[dict[str, Any]], names: list[str]) -> list[dict[str
     if missing:
         raise ValueError(f"case names not found: {', '.join(missing)}")
     return selected
+
+
+def workload_semantics_sha256(case: dict[str, Any]) -> str:
+    """Hash only fields that define model-visible workload semantics, not tuning knobs."""
+    semantics = {
+        "model": case.get("model"),
+        "workload": case.get("workload"),
+        "request_surface": case.get("request_surface"),
+        "prompt": case.get("prompt"),
+        "messages": case.get("messages"),
+        "tools": case.get("tools"),
+        "tool_choice": case.get("tool_choice"),
+        "parallel_tool_calls": case.get("parallel_tool_calls"),
+        "predict_tokens": case.get("predict_tokens"),
+        "context_size": case.get("context_size"),
+        "context_tokens_target": case.get("context_tokens_target"),
+        "prompt_tokens_target": case.get("prompt_tokens_target"),
+        "context_filler": case.get("context_filler"),
+        "prompt_filler": case.get("prompt_filler"),
+        "seed": case.get("seed"),
+        "temperature": case.get("temperature"),
+    }
+    encoded = json.dumps(semantics, sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def validate_candidate_evidence(case: dict[str, Any]) -> None:
+    """Verify that a non-CPU case names an exact exported program and immutable bytes."""
+    if case["placement"] == "cpu-only":
+        return
+    evidence = case.get("candidate_evidence")
+    if not isinstance(evidence, dict):
+        raise ValueError(f"non-CPU case {case['name']!r} has no candidate_evidence object")
+    required = {
+        "program_manifest_path",
+        "program_manifest_sha256",
+        "program",
+        "source_hash",
+        "binary_sha256",
+        "exact_shape",
+    }
+    missing = sorted(required - evidence.keys())
+    if missing:
+        raise ValueError(
+            f"non-CPU case {case['name']!r} candidate_evidence is missing "
+            f"{', '.join(missing)}"
+        )
+    if not isinstance(evidence["exact_shape"], dict) or not evidence["exact_shape"]:
+        raise ValueError(f"non-CPU case {case['name']!r} has no exact_shape description")
+    manifest_path = Path(str(evidence["program_manifest_path"])).resolve()
+    if not manifest_path.is_file():
+        raise ValueError(f"candidate program manifest not found: {manifest_path}")
+    manifest_sha256 = sha256_file(manifest_path)
+    if evidence["program_manifest_sha256"] != manifest_sha256:
+        raise ValueError(f"candidate program manifest hash mismatch for {case['name']!r}")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not isinstance(manifest, dict) or not isinstance(manifest.get("programs"), list):
+        raise ValueError(f"candidate program manifest has no programs array: {manifest_path}")
+    entries = [
+        item
+        for item in manifest["programs"]
+        if isinstance(item, dict)
+        if item.get("name") == evidence["program"]
+    ]
+    if len(entries) != 1:
+        raise ValueError(
+            f"candidate program {evidence['program']!r} was not unique in {manifest_path}"
+        )
+    entry = entries[0]
+    if evidence["source_hash"] != entry.get("source_hash"):
+        raise ValueError(f"candidate source hash mismatch for {case['name']!r}")
+    if evidence["binary_sha256"] != entry.get("binary_sha256"):
+        raise ValueError(f"candidate binary hash mismatch for {case['name']!r}")
+    binary_path = manifest_path.parent / str(entry["binary"])
+    if not binary_path.is_file() or sha256_file(binary_path) != evidence["binary_sha256"]:
+        raise ValueError(f"candidate binary bytes do not match for {case['name']!r}")
+    source_path = Path(str(entry["source"]))
+    if not source_path.is_absolute():
+        source_path = ROOT / source_path
+    if (
+        not source_path.is_file()
+        or sha256_file(source_path) != entry.get("source_file_sha256")
+    ):
+        raise ValueError(f"candidate source file does not match for {case['name']!r}")
+    if case["placement"] == "hybrid" and not isinstance(case.get("partition"), dict):
+        raise ValueError(f"hybrid case {case['name']!r} has no partition description")
+    evidence["program_manifest_path"] = str(manifest_path)
+
+
+def validate_candidate_execution(case: dict[str, Any], server_log: str) -> dict[str, Any]:
+    """Require exact native telemetry instead of trusting a placement label."""
+    events: list[dict[str, Any]] = []
+    errors: list[str] = []
+    for line in server_log.splitlines():
+        if QPU_TELEMETRY_PREFIX not in line:
+            continue
+        encoded = line.split(QPU_TELEMETRY_PREFIX, 1)[1].strip()
+        try:
+            event = json.loads(encoded)
+        except json.JSONDecodeError as exc:
+            errors.append(f"malformed QPU telemetry: {exc.msg}")
+            continue
+        if not isinstance(event, dict):
+            errors.append("QPU telemetry was not a JSON object")
+            continue
+        events.append(event)
+    if case["placement"] == "cpu-only":
+        if events:
+            errors.append("CPU-only case reported QPU dispatch telemetry")
+        return {"valid": not errors, "errors": errors, "events": events, "dispatch_count": 0}
+    evidence = case["candidate_evidence"]
+    if not events:
+        errors.append("non-CPU case reported no QPU dispatch telemetry")
+    dispatch_count = 0
+    for event in events:
+        for field in ("program", "source_hash", "binary_sha256", "exact_shape"):
+            if event.get(field) != evidence[field]:
+                errors.append(f"QPU telemetry {field} did not match candidate evidence")
+        if event.get("placement") != case["placement"]:
+            errors.append("QPU telemetry placement did not match the case")
+        if event.get("partition") != case.get("partition"):
+            errors.append("QPU telemetry partition did not match the case")
+        value = event.get("dispatch_count")
+        if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+            errors.append("QPU telemetry dispatch_count was not a positive integer")
+        else:
+            dispatch_count += value
+    if events and dispatch_count <= 0:
+        errors.append("non-CPU case did not attest any QPU dispatches")
+    return {
+        "valid": not errors,
+        "errors": errors,
+        "events": events,
+        "dispatch_count": dispatch_count,
+    }
 
 
 def _throttle_value(environment: dict[str, Any]) -> int | None:
@@ -271,15 +474,55 @@ def validate_session(before: dict[str, Any], after: dict[str, Any], samples: lis
         reasons.append("throttling flags were unavailable or nonzero")
     if before["commands"]["swap"].get("stdout") != after["commands"]["swap"].get("stdout"):
         reasons.append("swapon state changed during the session")
+    before_swap_used = swap_used_bytes(before)
+    after_swap_used = swap_used_bytes(after)
+    if before_swap_used is None or after_swap_used is None:
+        reasons.append("swap usage was unavailable")
+    elif before_swap_used != 0 or after_swap_used != 0:
+        reasons.append(
+            f"swap was in use before/after the session ({before_swap_used}/{after_swap_used} bytes)"
+        )
     governors = {entry["governor"] for entry in before["cpu_frequency"]}
     if governors != {"performance"}:
         reasons.append(f"CPU governors were {sorted(str(value) for value in governors)}")
+    active_servers = before["commands"].get("llama_servers", {}).get("stdout", "").strip()
+    if active_servers:
+        reasons.append("one or more pre-existing llama-server processes were active")
     if any(sample["returncode"] != 0 for sample in samples):
         reasons.append("one or more llama.cpp processes failed")
     if any(not sample.get("context_population", {}).get("valid", True) for sample in samples):
         reasons.append("one or more populated-context requests did not reuse the requested prefix")
     if any(not sample.get("prompt_population", {}).get("valid", True) for sample in samples):
         reasons.append("one or more exact-prompt requests did not evaluate the requested token count")
+    server_samples = [
+        sample for sample in samples if str(sample.get("surface", "")).startswith("llama-server-")
+    ]
+    if any(
+        not sample.get("generation_population", {}).get("valid", True)
+        for sample in server_samples
+    ):
+        reasons.append("one or more server responses did not satisfy generated-token coverage")
+    if any(
+        validation is not None and not validation.get("valid", False)
+        for sample in server_samples
+        if (validation := sample.get("tool_call_validation")) is not None
+    ):
+        reasons.append("one or more structured tool-call responses violated the fixed contract")
+    if any(
+        sample.get("process_memory", {}).get("peak_rss_bytes") is None
+        for sample in samples
+    ):
+        reasons.append("one or more process peak-RSS measurements were unavailable")
+    if any(
+        int(sample.get("process_memory", {}).get("swap_bytes") or 0) != 0
+        for sample in samples
+    ):
+        reasons.append("one or more llama.cpp processes used swap")
+    if any(
+        not sample.get("candidate_execution", {}).get("valid", False)
+        for sample in samples
+    ):
+        reasons.append("one or more cases lacked valid exact candidate execution telemetry")
     return {"retained": not reasons, "rejection_reasons": reasons}
 
 
@@ -328,6 +571,34 @@ def _wait_for_health(port: int, process: subprocess.Popen[bytes], timeout_second
     raise TimeoutError(f"llama-server did not become healthy within {timeout_seconds:.1f} seconds")
 
 
+def _parse_process_memory(status: str) -> dict[str, int | None]:
+    """Parse Linux process peak/current RSS and swap into bytes."""
+    fields = {"VmRSS": "rss_bytes", "VmHWM": "peak_rss_bytes", "VmSwap": "swap_bytes"}
+    result: dict[str, int | None] = {name: None for name in fields.values()}
+    for line in status.splitlines():
+        key, separator, value = line.partition(":")
+        if not separator or key not in fields:
+            continue
+        parts = value.split()
+        if not parts:
+            continue
+        try:
+            amount = int(parts[0])
+        except ValueError:
+            continue
+        multiplier = 1024 if len(parts) == 1 or parts[1].lower() == "kb" else 1
+        result[fields[key]] = amount * multiplier
+    return result
+
+
+def _process_memory(pid: int) -> dict[str, int | None]:
+    try:
+        status = Path(f"/proc/{pid}/status").read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return {"rss_bytes": None, "peak_rss_bytes": None, "swap_bytes": None}
+    return _parse_process_memory(status)
+
+
 def _server_speculative_metrics(log: str, predicted_per_second: float | None) -> dict[str, Any]:
     acceptance_matches = list(DRAFT_ACCEPTANCE_RE.finditer(log))
     position_matches = list(ACCEPTANCE_POSITION_RE.finditer(log))
@@ -335,7 +606,7 @@ def _server_speculative_metrics(log: str, predicted_per_second: float | None) ->
         parsed = parse_llama_metrics(log)["speculative"]
         if not parsed:
             return {}
-        result = parsed[-1]
+        result = dict(parsed[-1])
         if result.get("mean_accepted_length") is not None and predicted_per_second:
             result["cycle_seconds"] = result["mean_accepted_length"] / predicted_per_second
         return result
@@ -365,6 +636,173 @@ def _post_json(port: int, path: str, payload: dict[str, Any], timeout: float) ->
     with urllib.request.urlopen(request, timeout=timeout) as response:  # noqa: S310 - fixed loopback URL
         raw = response.read()
     return raw, json.loads(raw)
+
+
+def _build_server_request(case: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    """Build the endpoint-specific request while preserving a raw-token correctness surface."""
+    common = {
+        "cache_prompt": False,
+        "temperature": float(case.get("temperature", 0.0)),
+        "seed": int(case["seed"]),
+        "return_tokens": True,
+    }
+    if case["request_surface"] == "completion":
+        return (
+            "/completion",
+            {
+                **common,
+                "prompt": str(case["prompt"]),
+                "n_predict": int(case["predict_tokens"]),
+            },
+        )
+    if case["request_surface"] == "chat-completions":
+        return (
+            "/v1/chat/completions",
+            {
+                **common,
+                "messages": case["messages"],
+                "max_tokens": int(case["predict_tokens"]),
+                "tools": case["tools"],
+                "tool_choice": case.get("tool_choice", "required"),
+                "parallel_tool_calls": bool(case.get("parallel_tool_calls", False)),
+                "parse_tool_calls": True,
+                "stream": False,
+                "verbose": True,
+            },
+        )
+    raise ValueError(f"unsupported request surface {case['request_surface']!r}")
+
+
+def _normalized_tool_calls(raw_calls: Any) -> list[dict[str, Any]]:
+    """Drop nondeterministic IDs and parse function arguments for exact comparisons."""
+    if not isinstance(raw_calls, list):
+        return []
+    calls: list[dict[str, Any]] = []
+    for raw_call in raw_calls:
+        if not isinstance(raw_call, dict):
+            calls.append(
+                {
+                    "name": None,
+                    "arguments": raw_call,
+                    "arguments_json_valid": False,
+                }
+            )
+            continue
+        function = raw_call.get("function")
+        function = function if isinstance(function, dict) else raw_call
+        arguments = function.get("arguments")
+        arguments_json_valid = isinstance(arguments, dict)
+        if isinstance(arguments, str):
+            try:
+                arguments = json.loads(arguments)
+                arguments_json_valid = isinstance(arguments, dict)
+            except json.JSONDecodeError:
+                arguments_json_valid = False
+        calls.append(
+            {
+                "name": function.get("name"),
+                "arguments": arguments,
+                "arguments_json_valid": arguments_json_valid,
+            }
+        )
+    return calls
+
+
+def _response_semantics(response: dict[str, Any], request_surface: str) -> dict[str, Any]:
+    """Extract comparable generated tokens and model-visible output from either endpoint."""
+    timings_value = response.get("timings")
+    timings: dict[str, Any] = timings_value if isinstance(timings_value, dict) else {}
+    if request_surface == "completion":
+        content = str(response.get("content", ""))
+        token_ids = response.get("tokens")
+        token_count = response.get("tokens_predicted", timings.get("predicted_n"))
+        stop_reason = response.get("stop_type")
+        tool_calls: list[dict[str, Any]] = []
+    elif request_surface == "chat-completions":
+        choices = response.get("choices")
+        choice = choices[0] if isinstance(choices, list) and choices else {}
+        choice = choice if isinstance(choice, dict) else {}
+        message = choice.get("message")
+        message = message if isinstance(message, dict) else {}
+        content_value = message.get("content")
+        content = "" if content_value is None else str(content_value)
+        verbose = response.get("__verbose")
+        verbose = verbose if isinstance(verbose, dict) else {}
+        token_ids = verbose.get("tokens")
+        usage_value = response.get("usage")
+        usage: dict[str, Any] = usage_value if isinstance(usage_value, dict) else {}
+        token_count = usage.get("completion_tokens", timings.get("predicted_n"))
+        stop_reason = choice.get("finish_reason", verbose.get("stop_type"))
+        tool_calls = _normalized_tool_calls(message.get("tool_calls"))
+    else:
+        raise ValueError(f"unsupported request surface {request_surface!r}")
+    normalized_tokens = (
+        [int(token) for token in token_ids]
+        if isinstance(token_ids, list) and all(isinstance(token, int) for token in token_ids)
+        else None
+    )
+    semantic_payload = {"content": content, "tool_calls": tool_calls}
+    semantic_json = json.dumps(semantic_payload, sort_keys=True, separators=(",", ":"))
+    return {
+        **semantic_payload,
+        "token_ids": normalized_tokens,
+        "token_count": int(token_count) if token_count is not None else None,
+        "stop_reason": stop_reason,
+        "semantic_sha256": hashlib.sha256(semantic_json.encode()).hexdigest(),
+    }
+
+
+def _validate_structured_tool_response(
+    case: dict[str, Any], semantics: dict[str, Any]
+) -> dict[str, Any]:
+    """Validate the fixed application workload independently of timing success."""
+    expected = case["expected_tool_call"]
+    calls = semantics["tool_calls"]
+    errors: list[str] = []
+    if len(calls) != 1:
+        errors.append(f"expected exactly one tool call, received {len(calls)}")
+    else:
+        call = calls[0]
+        if call.get("name") != expected["name"]:
+            errors.append(
+                f"expected tool {expected['name']!r}, received {call.get('name')!r}"
+            )
+        if not call.get("arguments_json_valid"):
+            errors.append("tool arguments were not a JSON object")
+        elif call.get("arguments") != expected["arguments"]:
+            errors.append("tool arguments did not match the fixed expected object")
+    if semantics["content"]:
+        errors.append("structured tool response contained assistant prose")
+    if semantics["stop_reason"] != "tool_calls":
+        errors.append(f"expected tool_calls stop reason, received {semantics['stop_reason']!r}")
+    token_count = semantics["token_count"]
+    if token_count is None or token_count <= 0 or token_count > STRUCTURED_TOOL_TOKEN_CAP:
+        errors.append(
+            f"generated token count {token_count!r} was outside 1..{STRUCTURED_TOOL_TOKEN_CAP}"
+        )
+    token_ids = semantics["token_ids"]
+    if token_ids is None or token_count is None or len(token_ids) != token_count:
+        errors.append("raw generated token IDs were unavailable or incomplete")
+    return {
+        "valid": not errors,
+        "errors": errors,
+        "token_cap": STRUCTURED_TOOL_TOKEN_CAP,
+        "generated_tokens": token_count,
+        "expected": expected,
+        "observed": calls,
+    }
+
+
+def _has_complete_generated_tokens(semantics: dict[str, Any]) -> bool:
+    """Return whether a response retained every generated token ID it counted."""
+    token_ids = semantics.get("token_ids")
+    token_count = semantics.get("token_count")
+    return (
+        isinstance(token_ids, list)
+        and isinstance(token_count, int)
+        and token_count > 0
+        and len(token_ids) == token_count
+    )
 
 
 def _context_prompt(port: int, case: dict[str, Any], timeout: float) -> tuple[str | list[int], list[int]]:
@@ -423,16 +861,10 @@ def run_server_case(
     startup_timeout: float,
     request_timeout: float,
 ) -> dict[str, Any]:
-    """Run one isolated server, wait for readiness, and time one completion request."""
+    """Run one isolated server, wait for readiness, and time one endpoint request."""
     port = _available_loopback_port()
     command = build_server_command(binary, case, port)
-    request_payload = {
-        "prompt": str(case["prompt"]),
-        "n_predict": int(case["predict_tokens"]),
-        "cache_prompt": False,
-        "temperature": float(case.get("temperature", 0.0)),
-        "seed": int(case["seed"]),
-    }
+    request_endpoint, request_payload = _build_server_request(case)
     started_utc = utc_now()
     process_started_ns = monotonic_ns()
     response_bytes = b""
@@ -440,6 +872,11 @@ def run_server_case(
     error: str | None = None
     request_wall_ns: int | None = None
     startup_ns: int | None = None
+    process_memory: dict[str, int | None] = {
+        "rss_bytes": None,
+        "peak_rss_bytes": None,
+        "swap_bytes": None,
+    }
     context_population: dict[str, Any] = {
         "target_tokens": int(case.get("context_tokens_target", 0)),
         "prefix_token_count": 0,
@@ -457,39 +894,40 @@ def run_server_case(
         try:
             _wait_for_health(port, process, startup_timeout)
             startup_ns = monotonic_ns() - process_started_ns
-            exact_prompt = _exact_prompt(port, case, request_timeout)
-            if exact_prompt is None:
-                prompt, prefix_tokens = _context_prompt(port, case, request_timeout)
-            else:
-                prompt, prefix_tokens = exact_prompt, []
-                prompt_population["request_token_count"] = len(exact_prompt)
-            request_payload["prompt"] = prompt
-            if prefix_tokens:
-                prefill_payload = {
-                    "prompt": prefix_tokens,
-                    "n_predict": 0,
-                    "cache_prompt": True,
-                    "temperature": 0.0,
-                    "seed": int(case["seed"]),
-                }
-                prefill_started_ns = monotonic_ns()
-                _, prefill_response = _post_json(
-                    port,
-                    "/completion",
-                    prefill_payload,
-                    request_timeout,
-                )
-                context_population = {
-                    "target_tokens": int(case["context_tokens_target"]),
-                    "prefix_token_count": len(prefix_tokens),
-                    "prefill_wall_ns": monotonic_ns() - prefill_started_ns,
-                    "prefill_response": prefill_response,
-                }
-                request_payload["cache_prompt"] = True
+            if case["request_surface"] == "completion":
+                exact_prompt = _exact_prompt(port, case, request_timeout)
+                if exact_prompt is None:
+                    prompt, prefix_tokens = _context_prompt(port, case, request_timeout)
+                else:
+                    prompt, prefix_tokens = exact_prompt, []
+                    prompt_population["request_token_count"] = len(exact_prompt)
+                request_payload["prompt"] = prompt
+                if prefix_tokens:
+                    prefill_payload = {
+                        "prompt": prefix_tokens,
+                        "n_predict": 0,
+                        "cache_prompt": True,
+                        "temperature": 0.0,
+                        "seed": int(case["seed"]),
+                    }
+                    prefill_started_ns = monotonic_ns()
+                    _, prefill_response = _post_json(
+                        port,
+                        "/completion",
+                        prefill_payload,
+                        request_timeout,
+                    )
+                    context_population = {
+                        "target_tokens": int(case["context_tokens_target"]),
+                        "prefix_token_count": len(prefix_tokens),
+                        "prefill_wall_ns": monotonic_ns() - prefill_started_ns,
+                        "prefill_response": prefill_response,
+                    }
+                    request_payload["cache_prompt"] = True
             request_started_ns = monotonic_ns()
             response_bytes, response_payload = _post_json(
                 port,
-                "/completion",
+                request_endpoint,
                 request_payload,
                 request_timeout,
             )
@@ -497,6 +935,7 @@ def run_server_case(
         except (OSError, RuntimeError, TimeoutError, ValueError, urllib.error.URLError) as exc:
             error = f"{type(exc).__name__}: {exc}"
         finally:
+            process_memory = _process_memory(process.pid)
             if process.poll() is None:
                 process.terminate()
                 try:
@@ -507,6 +946,7 @@ def run_server_case(
             log_file.flush()
             log_file.seek(0)
             server_log = log_file.read().decode(errors="replace")
+    candidate_execution = validate_candidate_execution(case, server_log)
     timings = response_payload.get("timings", {}) if response_payload else {}
     predicted_per_second_value = timings.get("predicted_per_second")
     predicted_per_second = (
@@ -516,7 +956,20 @@ def run_server_case(
     request_cache_tokens = int(timings.get("cache_n", 0))
     prefill_response = context_population.get("prefill_response") or {}
     prefill_cached_tokens = int(prefill_response.get("tokens_cached", 0))
-    request_prompt_tokens = int(response_payload.get("tokens_evaluated", 0)) if response_payload else 0
+    verbose_response_value = (
+        response_payload.get("__verbose", {}) if isinstance(response_payload, dict) else {}
+    )
+    verbose_response = verbose_response_value if isinstance(verbose_response_value, dict) else {}
+    usage_value = response_payload.get("usage", {}) if isinstance(response_payload, dict) else {}
+    usage = usage_value if isinstance(usage_value, dict) else {}
+    request_prompt_tokens = int(
+        response_payload.get(
+            "tokens_evaluated",
+            verbose_response.get("tokens_evaluated", usage.get("prompt_tokens", 0)),
+        )
+        if response_payload
+        else 0
+    )
     context_population["request_cache_n"] = request_cache_tokens
     context_population["prefill_tokens_cached"] = prefill_cached_tokens
     context_population["request_tokens_evaluated"] = request_prompt_tokens
@@ -540,25 +993,56 @@ def run_server_case(
             and timed_prompt_tokens == target_prompt_tokens
         )
     )
-    content = str(response_payload.get("content", "")) if response_payload else ""
+    semantics = _response_semantics(response_payload or {}, case["request_surface"])
+    tool_call_validation = (
+        _validate_structured_tool_response(case, semantics)
+        if case["workload"] == "structured-tool-call"
+        else None
+    )
+    generation_target = int(case["predict_tokens"])
+    full_target_required = case["workload"] == "decode" and generation_target >= 256
+    complete_generated_tokens = _has_complete_generated_tokens(semantics)
+    generation_population = {
+        "target_tokens": generation_target,
+        "actual_tokens": semantics["token_count"],
+        "raw_token_ids_complete": complete_generated_tokens,
+        "full_target_required": full_target_required,
+        "valid": (
+            generation_target == 0
+            or (
+                complete_generated_tokens
+                and (
+                    not full_target_required
+                    or int(semantics["token_count"]) >= generation_target
+                )
+            )
+        ),
+    }
     return {
         "sample_index": sample_index,
         "started_utc": started_utc,
         "finished_utc": utc_now(),
-        "surface": "llama-server-/completion",
+        "surface": f"llama-server-{request_endpoint}",
         "command": command,
+        "request_endpoint": request_endpoint,
         "request": request_payload,
         "context_population": context_population,
         "prompt_population": prompt_population,
+        "generation_population": generation_population,
         "returncode": 0 if response_payload is not None and error is None else 1,
         "server_exit_after_termination": process.returncode,
         "startup_ns": startup_ns,
         "request_wall_ns": request_wall_ns,
+        "process_memory": process_memory,
         "error": error,
         "response_raw": response_bytes.decode(errors="replace"),
         "response": response_payload,
+        "response_semantics": semantics,
+        "tool_call_validation": tool_call_validation,
+        "candidate_execution": candidate_execution,
         "server_log": server_log,
-        "content_sha256": hashlib.sha256(content.encode()).hexdigest(),
+        "content_sha256": hashlib.sha256(semantics["content"].encode()).hexdigest(),
+        "semantic_sha256": semantics["semantic_sha256"],
         "metrics": {
             "timings": timings,
             "speculative": _server_speculative_metrics(server_log, predicted_per_second),
@@ -573,7 +1057,11 @@ def compare_greedy_semantics(results: list[dict[str, Any]]) -> list[dict[str, An
         case = result["case"]
         key = (
             case.get("model"),
+            case.get("workload"),
+            case.get("request_surface"),
             case.get("prompt"),
+            json.dumps(case.get("messages"), sort_keys=True, separators=(",", ":")),
+            json.dumps(case.get("tools"), sort_keys=True, separators=(",", ":")),
             case.get("seed"),
             case.get("temperature"),
             case.get("predict_tokens"),
@@ -597,26 +1085,61 @@ def compare_greedy_semantics(results: list[dict[str, Any]]) -> list[dict[str, An
                 if index >= len(baseline_samples):
                     break
                 baseline_sample = baseline_samples[index]
-                baseline_response = baseline_sample.get("response") or {}
-                candidate_response = candidate_sample.get("response") or {}
-                token_ids_identical = baseline_response.get("tokens") == candidate_response.get("tokens")
-                text_identical = baseline_sample.get("content_sha256") == candidate_sample.get("content_sha256")
-                token_count_identical = baseline_response.get("tokens_predicted") == candidate_response.get(
-                    "tokens_predicted"
+                baseline_semantics = baseline_sample.get("response_semantics") or _response_semantics(
+                    baseline_sample.get("response") or {},
+                    str(baseline["case"].get("request_surface", "completion")),
                 )
-                stop_identical = baseline_response.get("stop_type") == candidate_response.get("stop_type")
+                candidate_semantics = candidate_sample.get(
+                    "response_semantics"
+                ) or _response_semantics(
+                    candidate_sample.get("response") or {},
+                    str(member["case"].get("request_surface", "completion")),
+                )
+                token_ids_available = (
+                    _has_complete_generated_tokens(baseline_semantics)
+                    and _has_complete_generated_tokens(candidate_semantics)
+                )
+                token_ids_identical = (
+                    token_ids_available
+                    and baseline_semantics["token_ids"] == candidate_semantics["token_ids"]
+                )
+                semantic_output_identical = (
+                    baseline_semantics["semantic_sha256"]
+                    == candidate_semantics["semantic_sha256"]
+                )
+                text_bytes_identical = (
+                    baseline_semantics["content"] == candidate_semantics["content"]
+                )
+                token_count_identical = (
+                    baseline_semantics["token_count"] == candidate_semantics["token_count"]
+                )
+                stop_identical = (
+                    baseline_semantics["stop_reason"] == candidate_semantics["stop_reason"]
+                )
+                tool_calls_identical = (
+                    baseline_semantics["tool_calls"] == candidate_semantics["tool_calls"]
+                )
                 comparisons.append(
                     {
                         "group": list(key),
                         "baseline_case": baseline["case"]["name"],
                         "candidate_case": member["case"]["name"],
                         "sample_index": index,
+                        "token_ids_available": token_ids_available,
                         "token_ids_identical": token_ids_identical,
-                        "text_bytes_identical": text_identical,
+                        "text_bytes_identical": text_bytes_identical,
+                        "semantic_output_identical": semantic_output_identical,
+                        "tool_calls_identical": tool_calls_identical,
                         "token_count_identical": token_count_identical,
                         "stop_reason_identical": stop_identical,
                         "identical": all(
-                            (token_ids_identical, text_identical, token_count_identical, stop_identical)
+                            (
+                                token_ids_identical,
+                                semantic_output_identical,
+                                tool_calls_identical,
+                                token_count_identical,
+                                stop_identical,
+                            )
                         ),
                     }
                 )
@@ -677,6 +1200,10 @@ def main() -> None:
         case["base_model"] = str(base_model.resolve())
         if case.get("draft_model"):
             case["draft_model"] = str(Path(case["draft_model"]).resolve())
+        try:
+            validate_candidate_evidence(case)
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
+            parser.error(str(exc))
 
     before = collect_environment()
     model_paths = {
@@ -706,6 +1233,10 @@ def main() -> None:
         results.append(
             {
                 "case": case,
+                "case_sha256": hashlib.sha256(
+                    json.dumps(case, sort_keys=True, separators=(",", ":")).encode()
+                ).hexdigest(),
+                "workload_semantics_sha256": workload_semantics_sha256(case),
                 "prompt_sha256": hashlib.sha256(str(case["prompt"]).encode()).hexdigest(),
                 "base_model_sha256": model_hashes[case["base_model"]],
                 "draft_model_sha256": (
@@ -724,9 +1255,24 @@ def main() -> None:
         "session_id": args.session_id,
         "measurement_contract": {
             "server_startup": "cold model load and initialization through health readiness",
-            "server_request": "one /completion request after health readiness",
+            "server_request": (
+                "one endpoint-specific request after health readiness; /completion for raw "
+                "decode/prompt and /v1/chat/completions for structured tool calls"
+            ),
             "cli_process_wall": "cold-start fallback surface including model load and initialization",
             "separation": "startup and request/inference timings are never collapsed",
+            "correctness": (
+                "server requests retain raw generated token IDs; structured tool calls also "
+                "validate the parsed function name, exact arguments, stop reason, and token cap"
+            ),
+            "memory": (
+                "server samples retain Linux process peak RSS and swap; retained sessions "
+                "require zero system and per-process swap"
+            ),
+            "candidate_execution": (
+                "non-CPU cases require exact qpu_llama_candidate_json telemetry matching the "
+                "retained program, hashes, shape, placement, partition, and dispatch count"
+            ),
         },
         "llama_cli": {
             "path": str(args.llama_cli.resolve()),

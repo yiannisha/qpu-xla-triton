@@ -15,6 +15,19 @@ def test_profile_case_command_is_explicit() -> None:
     assert command[command.index("--context-type") + 1] == "default"
     assert "--quiet" in command
 
+    fixture = normalize_case(
+        {
+            "model": "/model.gguf",
+            "fixture_dir": "/fixtures",
+            "fixture_pattern": "FLASH_ATTN",
+            "fixture_all_sources": True,
+        },
+        0,
+    )
+    assert "--fixture-all-sources" in build_command(
+        Path("/profiler"), fixture, Path("/out.json")
+    )
+
     mtp = normalize_case(
         {
             "name": "draft",

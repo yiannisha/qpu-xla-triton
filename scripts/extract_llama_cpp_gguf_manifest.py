@@ -54,12 +54,25 @@ def classify_operator(name: str) -> str:
     return "other"
 
 
-def tensor_owner(name: str, component: str) -> dict[str, Any]:
+def tensor_owner(
+    name: str,
+    component: str,
+    *,
+    embedded_mtp_layer_start: int | None = None,
+) -> dict[str, Any]:
     """Return model component, layer, and operator ownership."""
     match = LAYER_RE.search(name)
+    layer = int(match.group(1)) if match else None
+    resolved_component = (
+        "mtp_head"
+        if embedded_mtp_layer_start is not None
+        and layer is not None
+        and layer >= embedded_mtp_layer_start
+        else component
+    )
     return {
-        "component": component,
-        "layer": int(match.group(1)) if match else None,
+        "component": resolved_component,
+        "layer": layer,
         "operator": classify_operator(name),
     }
 
@@ -109,6 +122,15 @@ def build_manifest(model: Path, component: str, llama_root: Path, *, include_has
     from gguf import GGML_QUANT_SIZES, GGUFReader  # type: ignore[import-not-found]
 
     reader = GGUFReader(model, "r")
+    architecture = _architecture_metadata(reader)
+    architecture_name = str(architecture.get("general.architecture", ""))
+    total_layers = int(architecture.get(f"{architecture_name}.block_count", 0))
+    nextn_layers = int(architecture.get(f"{architecture_name}.nextn_predict_layers", 0))
+    embedded_mtp_layer_start = (
+        total_layers - nextn_layers
+        if component == "base" and 0 < nextn_layers < total_layers
+        else None
+    )
     tensors: list[dict[str, Any]] = []
     by_type: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     by_operator: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
@@ -116,7 +138,11 @@ def build_manifest(model: Path, component: str, llama_root: Path, *, include_has
     for tensor in reader.tensors:
         shape = [int(value) for value in tensor.shape.tolist()]
         block_size, type_size = GGML_QUANT_SIZES[tensor.tensor_type]
-        owner = tensor_owner(tensor.name, component)
+        owner = tensor_owner(
+            tensor.name,
+            component,
+            embedded_mtp_layer_start=embedded_mtp_layer_start,
+        )
         absolute_offset = int(tensor.data_offset)
         record = {
             "name": tensor.name,
@@ -163,8 +189,9 @@ def build_manifest(model: Path, component: str, llama_root: Path, *, include_has
             "component": component,
             "gguf_alignment": int(reader.alignment),
             "gguf_data_offset": int(reader.data_offset),
+            "embedded_mtp_layer_start": embedded_mtp_layer_start,
         },
-        "architecture": _architecture_metadata(reader),
+        "architecture": architecture,
         "tensors": tensors,
         "aggregates": {
             "by_tensor_type": {name: dict(values) for name, values in sorted(by_type.items())},
