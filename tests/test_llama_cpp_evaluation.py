@@ -10,6 +10,7 @@ import scripts.run_llama_cpp_qpu_evaluation as evaluation
 from scripts.run_llama_cpp_qpu_evaluation import (
     _build_server_request,
     _exact_prompt,
+    _expected_timed_suffix_tokens,
     _parse_process_memory,
     _response_semantics,
     _server_speculative_metrics,
@@ -288,6 +289,37 @@ def test_retention_requires_zero_swap_usage() -> None:
     assert "swap was in use" in validation["rejection_reasons"][0]
 
 
+def test_retention_allows_historical_but_not_current_throttling_flags() -> None:
+    environment = {
+        "commands": {
+            "throttling": {"stdout": "throttled=0x80000"},
+            "swap": {"stdout": "stable"},
+            "swap_configuration": {"stdout": "/dev/zram0 partition 1 100"},
+            "swap_used_bytes": {"returncode": 0, "stdout": "0\n"},
+            "llama_servers": {"stdout": ""},
+        },
+        "cpu_frequency": [{"governor": "performance"}],
+    }
+    sample = {
+        "returncode": 0,
+        "surface": "llama-server-/completion",
+        "context_population": {"valid": True},
+        "prompt_population": {"valid": True},
+        "generation_population": {"valid": True},
+        "process_memory": {"peak_rss_bytes": 1, "swap_bytes": 0},
+        "candidate_execution": {"valid": True},
+    }
+    assert validate_session(environment, environment, [sample])["retained"] is True
+    active = {
+        **environment,
+        "commands": {
+            **environment["commands"],
+            "throttling": {"stdout": "throttled=0x80008"},
+        },
+    }
+    assert validate_session(active, active, [sample])["retained"] is False
+
+
 def test_process_memory_parser_retains_peak_rss_and_swap() -> None:
     parsed = _parse_process_memory(
         "Name:\tllama-server\nVmHWM:\t2048 kB\nVmRSS:\t1536 kB\nVmSwap:\t4 kB\n"
@@ -395,6 +427,29 @@ def test_exact_prompt_uses_native_token_ids_and_exact_count(monkeypatch: pytest.
         {"prompt": "deterministic", "prompt_tokens_target": 7},
         5.0,
     ) == list(range(7))
+
+
+def test_exact_suffix_accounts_for_native_kv_cache_replay() -> None:
+    assert _expected_timed_suffix_tokens(512, 507, 16) == (5, 21)
+    assert _expected_timed_suffix_tokens(4096, 4096, 128) == (0, 128)
+
+
+def test_candidate_server_command_retains_explicit_device_arguments_and_environment() -> None:
+    case = normalize_case(
+        {
+            "name": "qpu",
+            "mode": "plain",
+            "base_model": "/model.gguf",
+            "surface": "server",
+            "placement": "hybrid",
+            "process_environment": {"LD_PRELOAD": "/lib/libggml-qpu-inline.so"},
+            "server_extra_arguments": ["--device", "QPU0"],
+        },
+        index=0,
+    )
+    command = build_server_command(Path("/llama-server"), case, 8081)
+    assert command[-2:] == ["--device", "QPU0"]
+    assert case["process_environment"]["LD_PRELOAD"].endswith("libggml-qpu-inline.so")
 
 
 def test_server_acceptance_log_produces_cycle_measure() -> None:

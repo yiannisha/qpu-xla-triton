@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import socket
 import subprocess
@@ -222,6 +223,7 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
     normalized.setdefault("flash_attention", True)
     normalized.setdefault("placement", "cpu-only")
     normalized.setdefault("surface", "server")
+    normalized.setdefault("process_environment", {})
     if normalized["mode"] not in {"plain", "mtp", "prompt"}:
         raise ValueError(f"case {normalized['name']!r} has unsupported mode {normalized['mode']!r}")
     if normalized["surface"] not in {"server", "cli"}:
@@ -232,6 +234,14 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
         raise ValueError(
             f"case {normalized['name']!r} has unsupported placement "
             f"{normalized['placement']!r}"
+        )
+    process_environment = normalized["process_environment"]
+    if not isinstance(process_environment, dict) or not all(
+        isinstance(key, str) and isinstance(value, str)
+        for key, value in process_environment.items()
+    ):
+        raise ValueError(
+            f"case {normalized['name']!r} process_environment must map strings to strings"
         )
     if normalized["workload"] not in {"decode", "prompt", "structured-tool-call"}:
         raise ValueError(
@@ -253,6 +263,7 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
             raise ValueError(f"case {normalized['name']!r} has invalid {field}")
     context_target = int(normalized.get("context_tokens_target", 0))
     prompt_target = int(normalized.get("prompt_tokens_target", 0))
+    suffix_target = int(normalized.get("suffix_tokens_target", 0))
     if context_target < 0 or context_target >= int(normalized["context_size"]):
         raise ValueError(f"case {normalized['name']!r} has invalid context_tokens_target")
     if prompt_target < 0 or prompt_target >= int(normalized["context_size"]):
@@ -260,6 +271,12 @@ def normalize_case(case: dict[str, Any], *, index: int) -> dict[str, Any]:
     if context_target and prompt_target:
         raise ValueError(
             f"case {normalized['name']!r} cannot combine populated context and exact prompt targets"
+        )
+    if suffix_target < 0 or suffix_target >= int(normalized["context_size"]):
+        raise ValueError(f"case {normalized['name']!r} has invalid suffix_tokens_target")
+    if suffix_target and not context_target:
+        raise ValueError(
+            f"case {normalized['name']!r} requires a populated context for an exact suffix"
         )
     if prompt_target and normalized["mode"] != "prompt":
         raise ValueError(f"case {normalized['name']!r} uses prompt_tokens_target outside prompt mode")
@@ -338,8 +355,10 @@ def workload_semantics_sha256(case: dict[str, Any]) -> str:
         "predict_tokens": case.get("predict_tokens"),
         "context_size": case.get("context_size"),
         "context_tokens_target": case.get("context_tokens_target"),
+        "suffix_tokens_target": case.get("suffix_tokens_target"),
         "prompt_tokens_target": case.get("prompt_tokens_target"),
         "context_filler": case.get("context_filler"),
+        "suffix_filler": case.get("suffix_filler"),
         "prompt_filler": case.get("prompt_filler"),
         "seed": case.get("seed"),
         "temperature": case.get("temperature"),
@@ -470,9 +489,18 @@ def _throttle_value(environment: dict[str, Any]) -> int | None:
 def validate_session(before: dict[str, Any], after: dict[str, Any], samples: list[dict[str, Any]]) -> dict[str, Any]:
     """Apply environmental and process-success retention gates without hiding failures."""
     reasons: list[str] = []
-    if _throttle_value(before) != 0 or _throttle_value(after) != 0:
-        reasons.append("throttling flags were unavailable or nonzero")
-    if before["commands"]["swap"].get("stdout") != after["commands"]["swap"].get("stdout"):
+    before_throttle = _throttle_value(before)
+    after_throttle = _throttle_value(after)
+    if before_throttle is None or after_throttle is None or \
+            before_throttle & 0xffff or after_throttle & 0xffff:
+        reasons.append("current throttling flags were unavailable or nonzero")
+    before_swap_configuration = before["commands"].get(
+        "swap_configuration", before["commands"]["swap"]
+    ).get("stdout")
+    after_swap_configuration = after["commands"].get(
+        "swap_configuration", after["commands"]["swap"]
+    ).get("stdout")
+    if before_swap_configuration != after_swap_configuration:
         reasons.append("swapon state changed during the session")
     before_swap_used = swap_used_bytes(before)
     after_swap_used = swap_used_bytes(after)
@@ -531,7 +559,11 @@ def run_case(binary: Path, case: dict[str, Any], sample_index: int) -> dict[str,
     command = build_command(binary, case)
     started_utc = utc_now()
     started_ns = monotonic_ns()
-    completed = subprocess.run(command, text=True, capture_output=True, check=False)
+    environment = os.environ.copy()
+    environment.update(case.get("process_environment", {}))
+    completed = subprocess.run(
+        command, text=True, capture_output=True, check=False, env=environment
+    )
     wall_ns = monotonic_ns() - started_ns
     combined = completed.stderr + "\n" + completed.stdout
     generated_sha256 = hashlib.sha256(completed.stdout.encode()).hexdigest()
@@ -805,10 +837,12 @@ def _has_complete_generated_tokens(semantics: dict[str, Any]) -> bool:
     )
 
 
-def _context_prompt(port: int, case: dict[str, Any], timeout: float) -> tuple[str | list[int], list[int]]:
+def _context_prompt(
+    port: int, case: dict[str, Any], timeout: float
+) -> tuple[str | list[int], list[int], list[int]]:
     target = int(case.get("context_tokens_target", 0))
     if target <= 0:
-        return str(case["prompt"]), []
+        return str(case["prompt"]), [], []
     filler_text = case.get(
         "context_filler",
         "A deterministic context sentence records a stable benchmark fact. ",
@@ -823,14 +857,48 @@ def _context_prompt(port: int, case: dict[str, Any], timeout: float) -> tuple[st
     if len(filler_tokens) < target:
         raise RuntimeError(f"tokenized context filler produced {len(filler_tokens)} tokens, need {target}")
     prefix_tokens = filler_tokens[:target]
-    _, task_response = _post_json(
-        port,
-        "/tokenize",
-        {"content": str(case["prompt"]), "add_special": False},
-        timeout,
-    )
-    task_tokens = [int(token) for token in task_response["tokens"]]
-    return prefix_tokens + task_tokens, prefix_tokens
+    suffix_target = int(case.get("suffix_tokens_target", 0))
+    if suffix_target > 0:
+        suffix_source = str(
+            case.get(
+                "suffix_filler",
+                "A tool returned deterministic structured evidence for the agent to inspect. ",
+            )
+        )
+        _, suffix_response = _post_json(
+            port,
+            "/tokenize",
+            {
+                "content": (suffix_source + " ") * (suffix_target + 1),
+                "add_special": False,
+            },
+            timeout,
+        )
+        suffix_tokens = [int(token) for token in suffix_response["tokens"]]
+        if len(suffix_tokens) < suffix_target:
+            raise RuntimeError(
+                f"tokenized suffix produced {len(suffix_tokens)} tokens, need {suffix_target}"
+            )
+        suffix_tokens = suffix_tokens[:suffix_target]
+    else:
+        _, task_response = _post_json(
+            port,
+            "/tokenize",
+            {"content": str(case["prompt"]), "add_special": False},
+            timeout,
+        )
+        suffix_tokens = [int(token) for token in task_response["tokens"]]
+    return prefix_tokens + suffix_tokens, prefix_tokens, suffix_tokens
+
+
+def _expected_timed_suffix_tokens(
+    prefix_target: int,
+    request_cache_tokens: int,
+    suffix_target: int,
+) -> tuple[int, int]:
+    """Return native prefix replay and total timed tokens for an exact suffix."""
+    replay = max(0, prefix_target - request_cache_tokens)
+    return replay, suffix_target + replay
 
 
 def _exact_prompt(port: int, case: dict[str, Any], timeout: float) -> list[int] | None:
@@ -882,6 +950,8 @@ def run_server_case(
         "prefix_token_count": 0,
         "prefill_wall_ns": None,
         "prefill_response": None,
+        "suffix_tokens_target": int(case.get("suffix_tokens_target", 0)),
+        "suffix_token_count": 0,
     }
     prompt_population: dict[str, Any] = {
         "target_tokens": int(case.get("prompt_tokens_target", 0)),
@@ -890,16 +960,25 @@ def run_server_case(
         "timed_prompt_tokens": None,
     }
     with tempfile.TemporaryFile(mode="w+b") as log_file:
-        process = subprocess.Popen(command, stdout=log_file, stderr=subprocess.STDOUT)
+        environment = os.environ.copy()
+        environment.update(case.get("process_environment", {}))
+        process = subprocess.Popen(
+            command,
+            stdout=log_file,
+            stderr=subprocess.STDOUT,
+            env=environment,
+        )
         try:
             _wait_for_health(port, process, startup_timeout)
             startup_ns = monotonic_ns() - process_started_ns
             if case["request_surface"] == "completion":
                 exact_prompt = _exact_prompt(port, case, request_timeout)
                 if exact_prompt is None:
-                    prompt, prefix_tokens = _context_prompt(port, case, request_timeout)
+                    prompt, prefix_tokens, suffix_tokens = _context_prompt(
+                        port, case, request_timeout
+                    )
                 else:
-                    prompt, prefix_tokens = exact_prompt, []
+                    prompt, prefix_tokens, suffix_tokens = exact_prompt, [], []
                     prompt_population["request_token_count"] = len(exact_prompt)
                 request_payload["prompt"] = prompt
                 if prefix_tokens:
@@ -922,6 +1001,8 @@ def run_server_case(
                         "prefix_token_count": len(prefix_tokens),
                         "prefill_wall_ns": monotonic_ns() - prefill_started_ns,
                         "prefill_response": prefill_response,
+                        "suffix_tokens_target": int(case.get("suffix_tokens_target", 0)),
+                        "suffix_token_count": len(suffix_tokens),
                     }
                     request_payload["cache_prompt"] = True
             request_started_ns = monotonic_ns()
@@ -973,12 +1054,34 @@ def run_server_case(
     context_population["request_cache_n"] = request_cache_tokens
     context_population["prefill_tokens_cached"] = prefill_cached_tokens
     context_population["request_tokens_evaluated"] = request_prompt_tokens
+    context_population["timed_prompt_tokens"] = int(timings.get("prompt_n", 0))
+    suffix_target = int(context_population.get("suffix_tokens_target", 0))
+    # llama.cpp may deliberately retain fewer than all prefix tokens at a KV-cache
+    # checkpoint.  Those prefix tokens are replayed alongside the new suffix, so
+    # prompt_n is suffix size plus the native cache overlap rather than suffix size
+    # alone.  The model-visible tool suffix remains exactly suffix_target tokens.
+    cache_replay_tokens, expected_timed_prompt_tokens = _expected_timed_suffix_tokens(
+        target_context_tokens,
+        request_cache_tokens,
+        suffix_target,
+    )
+    context_population["cache_replay_tokens"] = cache_replay_tokens
+    context_population["expected_timed_prompt_tokens"] = expected_timed_prompt_tokens
     context_population["valid"] = (
         target_context_tokens == 0
         or (
             int(context_population["prefix_token_count"]) == target_context_tokens
             and prefill_cached_tokens == target_context_tokens
             and request_prompt_tokens >= target_context_tokens
+            and (
+                suffix_target == 0
+                or (
+                    int(context_population.get("suffix_token_count", 0)) == suffix_target
+                    and request_cache_tokens <= target_context_tokens
+                    and int(context_population["timed_prompt_tokens"])
+                    == expected_timed_prompt_tokens
+                )
+            )
         )
     )
     target_prompt_tokens = int(prompt_population["target_tokens"])

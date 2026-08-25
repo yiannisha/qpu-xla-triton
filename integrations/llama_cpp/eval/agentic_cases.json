@@ -1,0 +1,439 @@
+{
+  "cases": [
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 512,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p512-s64-tb4-cpu",
+      "placement": "cpu-only",
+      "predict_tokens": 1,
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 64,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "candidate_evidence": {
+        "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+        "exact_shape": {
+          "activation": "CPU_REPACK_Q8_0x4",
+          "output": "F32",
+          "tile": [
+            16,
+            16
+          ],
+          "weight": "Q4_0"
+        },
+        "program": "ggml-q4-0-q8-0-mx",
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "0a4b26717ef2b81beae276150ae7aab70f01e19c1bb31b9f5859c00985e75f31",
+        "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a"
+      },
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 512,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p512-s64-tb4-qpu-up-overlap",
+      "partition": {
+        "axis": "output_columns",
+        "fraction": 0.125
+      },
+      "placement": "hybrid",
+      "predict_tokens": 1,
+      "process_environment": {
+        "GGML_QPU_UP_FRACTION": "0.125",
+        "GGML_QPU_UP_HYBRID": "1",
+        "GGML_QPU_UP_MAX_FRACTION": "0.125",
+        "GGML_QPU_UP_MAX_ROWS": "257",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 64,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 512,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p512-s128-tb4-cpu",
+      "placement": "cpu-only",
+      "predict_tokens": 1,
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 128,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "candidate_evidence": {
+        "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+        "exact_shape": {
+          "activation": "CPU_REPACK_Q8_0x4",
+          "output": "F32",
+          "tile": [
+            16,
+            16
+          ],
+          "weight": "Q4_0"
+        },
+        "program": "ggml-q4-0-q8-0-mx",
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "0a4b26717ef2b81beae276150ae7aab70f01e19c1bb31b9f5859c00985e75f31",
+        "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a"
+      },
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 512,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p512-s128-tb4-qpu-up-overlap",
+      "partition": {
+        "axis": "output_columns",
+        "fraction": 0.125
+      },
+      "placement": "hybrid",
+      "predict_tokens": 1,
+      "process_environment": {
+        "GGML_QPU_UP_FRACTION": "0.125",
+        "GGML_QPU_UP_HYBRID": "1",
+        "GGML_QPU_UP_MAX_FRACTION": "0.125",
+        "GGML_QPU_UP_MAX_ROWS": "257",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 128,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 512,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p512-s256-tb4-cpu",
+      "placement": "cpu-only",
+      "predict_tokens": 1,
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 256,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "candidate_evidence": {
+        "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+        "exact_shape": {
+          "activation": "CPU_REPACK_Q8_0x4",
+          "output": "F32",
+          "tile": [
+            16,
+            16
+          ],
+          "weight": "Q4_0"
+        },
+        "program": "ggml-q4-0-q8-0-mx",
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "0a4b26717ef2b81beae276150ae7aab70f01e19c1bb31b9f5859c00985e75f31",
+        "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a"
+      },
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 512,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p512-s256-tb4-qpu-up-overlap",
+      "partition": {
+        "axis": "output_columns",
+        "fraction": 0.125
+      },
+      "placement": "hybrid",
+      "predict_tokens": 1,
+      "process_environment": {
+        "GGML_QPU_UP_FRACTION": "0.125",
+        "GGML_QPU_UP_HYBRID": "1",
+        "GGML_QPU_UP_MAX_FRACTION": "0.125",
+        "GGML_QPU_UP_MAX_ROWS": "257",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 256,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 4096,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p4096-s64-tb4-cpu",
+      "placement": "cpu-only",
+      "predict_tokens": 1,
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 64,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "candidate_evidence": {
+        "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+        "exact_shape": {
+          "activation": "CPU_REPACK_Q8_0x4",
+          "output": "F32",
+          "tile": [
+            16,
+            16
+          ],
+          "weight": "Q4_0"
+        },
+        "program": "ggml-q4-0-q8-0-mx",
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "0a4b26717ef2b81beae276150ae7aab70f01e19c1bb31b9f5859c00985e75f31",
+        "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a"
+      },
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 4096,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p4096-s64-tb4-qpu-up-overlap",
+      "partition": {
+        "axis": "output_columns",
+        "fraction": 0.125
+      },
+      "placement": "hybrid",
+      "predict_tokens": 1,
+      "process_environment": {
+        "GGML_QPU_UP_FRACTION": "0.125",
+        "GGML_QPU_UP_HYBRID": "1",
+        "GGML_QPU_UP_MAX_FRACTION": "0.125",
+        "GGML_QPU_UP_MAX_ROWS": "257",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 64,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 4096,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p4096-s128-tb4-cpu",
+      "placement": "cpu-only",
+      "predict_tokens": 1,
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 128,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "candidate_evidence": {
+        "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+        "exact_shape": {
+          "activation": "CPU_REPACK_Q8_0x4",
+          "output": "F32",
+          "tile": [
+            16,
+            16
+          ],
+          "weight": "Q4_0"
+        },
+        "program": "ggml-q4-0-q8-0-mx",
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "0a4b26717ef2b81beae276150ae7aab70f01e19c1bb31b9f5859c00985e75f31",
+        "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a"
+      },
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 4096,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p4096-s128-tb4-qpu-up-overlap",
+      "partition": {
+        "axis": "output_columns",
+        "fraction": 0.125
+      },
+      "placement": "hybrid",
+      "predict_tokens": 1,
+      "process_environment": {
+        "GGML_QPU_UP_FRACTION": "0.125",
+        "GGML_QPU_UP_HYBRID": "1",
+        "GGML_QPU_UP_MAX_FRACTION": "0.125",
+        "GGML_QPU_UP_MAX_ROWS": "257",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 128,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 4096,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p4096-s256-tb4-cpu",
+      "placement": "cpu-only",
+      "predict_tokens": 1,
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 256,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    },
+    {
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "candidate_evidence": {
+        "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+        "exact_shape": {
+          "activation": "CPU_REPACK_Q8_0x4",
+          "output": "F32",
+          "tile": [
+            16,
+            16
+          ],
+          "weight": "Q4_0"
+        },
+        "program": "ggml-q4-0-q8-0-mx",
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "0a4b26717ef2b81beae276150ae7aab70f01e19c1bb31b9f5859c00985e75f31",
+        "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a"
+      },
+      "context_filler": "A stable cached agent transcript records deterministic prior reasoning. ",
+      "context_size": 4864,
+      "context_tokens_target": 4096,
+      "flash_attention": true,
+      "mode": "plain",
+      "model": "gemma-4-e2b",
+      "name": "gemma-agentic-p4096-s256-tb4-qpu-up-overlap",
+      "partition": {
+        "axis": "output_columns",
+        "fraction": 0.125
+      },
+      "placement": "hybrid",
+      "predict_tokens": 1,
+      "process_environment": {
+        "GGML_QPU_UP_FRACTION": "0.125",
+        "GGML_QPU_UP_HYBRID": "1",
+        "GGML_QPU_UP_MAX_FRACTION": "0.125",
+        "GGML_QPU_UP_MAX_ROWS": "257",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "prompt": "Use the newly returned tool evidence to answer with one short token.",
+      "request_surface": "completion",
+      "seed": 1234,
+      "suffix_filler": "Tool result: deterministic JSON evidence was returned successfully. ",
+      "suffix_tokens_target": 256,
+      "surface": "server",
+      "temperature": 0.0,
+      "threads": 4,
+      "threads_batch": 4,
+      "workload": "decode"
+    }
+  ],
+  "contract": {
+    "candidate": "QPU computes a persistent Q4_0 ffn_up suffix while CPU_REPACK computes the prefix and gate; GEGLU is the join",
+    "pairs": "identical model-visible tokens; only ffn_up output placement differs",
+    "scenario": "cached agent transcript followed by an exact-size tool-result suffix",
+    "timed_boundary": "post-tool request through first generated token"
+  },
+  "created_utc": "2026-08-25T05:30:46+00:00",
+  "kind": "llama-qpu-agentic-prefill-cases",
+  "schema_version": 1
+}

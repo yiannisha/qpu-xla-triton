@@ -1,14 +1,18 @@
 # Native llama.cpp QPU integration
 
 This directory owns the native VideoCore VII runtime used by the llama.cpp
-acceleration work. It is intentionally built out of tree so the pinned
-llama.cpp checkout stays reproducible and unmodified.
+acceleration work. The runtime and preload libraries build out of tree. One
+narrow, reproducible patch adds opt-in weak registration, asynchronous launch,
+and join hooks to the pinned `llama.cpp` CPU backend; it is stored under
+`patches/`.
 
 The runtime currently provides:
 
 - V3D render-node discovery and compute-shader capability checks;
-- BO allocation, mapping, GPU address resolution, submission, wait, timeout,
-  and deterministic cleanup;
+- BO allocation, mapping, GPU address resolution, synchronous execution plus
+  separate asynchronous submit/wait, timeout, and deterministic cleanup;
+- cacheable DMA-heap allocation, V3D PRIME import, and explicit DMA-BUF
+  CPU/GPU coherency boundaries for low-cost inline input/output transfer;
 - persistent program and uniform BOs;
 - source and binary hash validation before program upload;
 - prepared Q4_0, Q4_K, Q6_K, and Q8_0 C ABIs with persistent selected-weight,
@@ -16,14 +20,26 @@ The runtime currently provides:
 - per-context locking and failure injection for device, allocation,
   submission, wait, and source-hash failures.
 
-The prepared operators consume llama.cpp's native quantized weight and matching
-activation blocks directly. Existing cacheable host activation
-and output pointers remain the model-visible interface. Each call copies the
-small activation into its persistent device BO, waits for the QPU to finish in
-a private staging BO, then copies only the selected output-column interval to
-the host destination. Those copies are included in complete-node timing.
-The Q4_0 logical M=1 path currently expands into the validated four-row physical pipeline;
-its expansion and extra device storage are also included in reported cost.
+There are two GGML integration boundaries:
+
+- `libggml-qpu.so` is a conventional dynamic device backend used for direct
+  correctness and partition experiments. Per-layer scheduler splits make its
+  GEGLU path slower end to end, so it is not the retained placement.
+- `libggml-qpu-inline.so` is a small preload library with no `libggml-cpu`
+  dependency. It supports the earlier exact GEGLU experiment and the retained
+  arbitrary-M experiment: register Q4_0 `ffn_up` weights before CPU_REPACK,
+  launch a QPU-owned output-column suffix while CPU computes the prefix and
+  independent `ffn_gate`, then join at the split-F32 GEGLU input. The graph and
+  model-visible tensors remain CPU-owned.
+
+The arbitrary-M path converts each selected native Q4_0 weight once into an
+int8 layout held in persistent DMA-backed memory. Each invocation converts the
+already-created CPU_REPACK Q8_0x4 activation into reusable cached DMA memory,
+submits asynchronously, and copies only the QPU-owned F32 output suffix from a
+reusable DMA allocation. Input conversion, cache synchronization, submission,
+wait, and output copy are included in complete timing. The tiled 16x16 kernel
+applies every original Q4_0 and Q8_0 block scale and agrees with the CPU_REPACK
+reference to the configured floating-point tolerance.
 
 The integration also contains an experimental fused Gemma M=1 attention
 program. It consumes native FP16 K/V/mask storage and performs online softmax
@@ -38,6 +54,7 @@ Build and test:
 cmake -S integrations/llama_cpp -B build/llama-qpu-runtime \
   -DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON \
   -DQPU_LLAMA_BUILD_BENCHMARK=ON \
+  -DQPU_LLAMA_BUILD_GGML_BACKEND=ON \
   -DLLAMA_CPP_ROOT=/home/yiannis/side/llama.cpp
 cmake --build build/llama-qpu-runtime --parallel 4
 ctest --test-dir build/llama-qpu-runtime --output-on-failure
@@ -52,9 +69,11 @@ undersized buffers, submission and wait failures, context recreation after a
 timeout, and 100 repeated launches per format.
 
 Operator benchmark retention independently enforces at least five warmups and
-31 samples, the performance governor, zero and stable swap usage, zero
-throttling flags, and no pre-existing `llama-server`. `--quick` runs therefore
-remain diagnostic even on an otherwise clean machine.
+31 samples, the performance governor, zero and stable swap usage, zero current
+throttling flags, and no pre-existing `llama-server`. Historical firmware
+throttling bits are recorded but do not reject an otherwise clean run. The
+agentic evaluator additionally cools below 60 C before every fresh CPU or QPU
+process. `--quick` runs remain screening evidence rather than promotion runs.
 
 The optional native operator and exact CPU_REPACK benchmark executables link to
 the pinned llama.cpp `libggml-cpu` out of tree. The Python matrix driver extracts bounded
@@ -85,10 +104,72 @@ python examples/benchmark_llama_cpp_qpu_attention.py \
   --output experiment_logs/20260819-llama-cpp-qpu/operator-attention.json
 ```
 
-The generic runtime is not yet an automatic llama.cpp placement. Prepared
-native-format operators and the narrow GGML integration must keep unsupported
-nodes on the native CPU path and use a staging output until successful QPU
-completion, so a failed submission cannot expose partial model state.
+Apply the inline hooks to a clean pinned checkout with:
+
+```sh
+git -C /home/yiannis/side/llama.cpp apply \
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch
+cmake --build /home/yiannis/side/llama.cpp/build --target llama-server
+```
+
+Q4_0 matmul remains disabled by default. Arbitrary-M execution is correct, but
+the complete Q8 quantization, staging, QPU, and readback boundary is much
+slower than pinned CPU_REPACK. The retained GEGLU policy is also opt-in and
+shape-bounded; unsupported rows or thread counts continue through native CPU.
+
+## Agentic incremental-prefill candidate
+
+This is the current end-to-end QPU target. Gemma 4 E2B has 15 layers with
+6144-wide FFNs and 20 with 12288-wide FFNs. A cached-prefix request adding 64,
+128, or 256 tool-result tokens reaches `ffn_up` with observed M=65, 129, or
+257. M includes the suffix tokens plus one graph/control token; it is measured
+from QPU telemetry rather than assumed from the HTTP request size.
+
+For every layer, the candidate assigns a calibrated suffix of `ffn_up` output
+columns to QPU. Four GGML threads compute the disjoint CPU prefix and then the
+independent `ffn_gate`; all threads enter the same GEGLU barrier, thread zero
+waits for QPU when needed, and the node consumes the combined exact F32
+projections. Decode and M<64 remain native CPU. Runtime failure recomputes the
+owned suffix on CPU before the join.
+
+Generate the exact-token cases and run the full calibration/held-out contract:
+
+```sh
+python scripts/generate_llama_cpp_qpu_agentic_cases.py \
+  --suffixes 64,128,256 --prefixes 512,4096 --threads 4 \
+  --output integrations/llama_cpp/eval/agentic_cases.json
+python scripts/run_llama_cpp_qpu_agentic_eval.py \
+  --calibration-sessions 3 --heldout-sessions 7 \
+  --bootstrap-resamples 10000 \
+  --output experiment_logs/20260824-qpu-agentic-prefill/agentic-up-full.json
+```
+
+Calibration uses separate fresh process pairs to choose among QPU output
+fractions 1/16, 2/16, 3/16, and 4/16 for each suffix size. Held-out evidence
+then uses fresh randomized CPU-first/candidate-first process pairs at cached
+prefixes 512 and 4096. Every measured process receives the same native token
+IDs and produces the same generated token IDs. A candidate request must attest
+exactly 35 matching QPU dispatches (15 N=6144 and 20 N=12288), zero fallbacks,
+program/source/binary hashes, exact shapes and partitions, all 35 resident
+weights, current throttle state, swap state, temperature, peak RSS, and
+per-process swap. Promotion requires a median post-tool request speedup of at
+least 1.05x and bootstrap lower bound above 1.0 in every cell.
+
+Clean-machine screening on 2026-08-25 exercised the real full model, all 35
+layers, exact output tokens, zero fallbacks, persistent weights, cached DMA
+staging, and both process orders. These two-pair screens are not the seven-pair
+promotion campaign:
+
+| Requested suffix | Observed M | Selected QPU fraction | Held-out median | Paired interval |
+|---:|---:|---:|---:|---:|
+| 64 | 65 | 0.0625 | 1.006x | 0.977-1.036x |
+| 128 | 129 | 0.125 | 1.011x | 0.992-1.030x |
+| 256 | 257 | 0.0625 | 0.986x | 0.975-0.997x |
+
+No size meets the 1.05x gate. The M=129 median is only about 1.1%, is bounded
+by a confidence interval that crosses 1.0, and cannot support an acceleration
+claim. See `UP_OVERLAP_RESULTS.md` for the timing/Amdahl analysis and concrete
+kernel target.
 
 ## End-to-end evaluation
 
@@ -129,9 +210,10 @@ of thread/depth/placement tuning, keeps cold server startup separate from
 request time, and retains prompt, decode, speculative acceptance, cycle,
 response, raw server-log, process peak-RSS, and process-swap data. A retained
 session requires the performance governor, zero system and per-process swap,
-stable swap state, zero throttling flags, no pre-existing `llama-server`, and
-complete process memory evidence. The CLI surface remains a diagnostic fallback
-because it cannot currently provide the same per-process memory contract.
+stable swap configuration, zero current throttling flags, no pre-existing
+`llama-server`, and complete process memory evidence. Historical throttle bits
+remain in the record. The CLI surface remains a diagnostic fallback because it
+cannot currently provide the same per-process memory contract.
 
 Generate the compact report from raw sessions with:
 
@@ -160,11 +242,16 @@ Median speedup must be at least 1.05x, and the bootstrap 95% lower bound must
 exceed 1.0. Operator-only wins are labeled provisional and cannot enable a
 placement.
 
-The current hardware diagnostics are correctness evidence, not retained
-performance evidence, because the host governor was `ondemand`. The native
-Q4_0, Q4_K, Q6_K, Q8_0, and fused-attention candidates were slower than pinned
-`ggml-cpu` for every tested exact shape and stable partition, so no automatic
-placement is enabled. See the generated
+The older native Q4_0, Q4_K, Q6_K, Q8_0, fused-attention, and GEGLU row-hybrid
+candidates remain slower than pinned `ggml-cpu`. The newer `ffn_up`
+column-suffix candidate reaches the complete llama.cpp request and hides most
+QPU time behind useful CPU work, but the retained clean-machine screens above
+still fail the 1.05x promotion gate. Every QPU placement remains disabled by
+default, and no end-to-end acceleration claim is made. See
+[`UP_OVERLAP_RESULTS.md`](../../experiment_logs/20260824-qpu-agentic-prefill/UP_OVERLAP_RESULTS.md)
+for the current full-model campaign,
+[`HYBRID_RESULTS.md`](../../experiment_logs/20260824-qpu-agentic-prefill/HYBRID_RESULTS.md)
+for the earlier concurrent row-partition campaign, and
 [`LLAMA_CPP_QPU_MATRIX.md`](../../experiment_logs/20260819-llama-cpp-qpu/LLAMA_CPP_QPU_MATRIX.md)
 for the full timing breakdown and
 [`RESULTS.md`](../../experiment_logs/20260819-llama-cpp-qpu/RESULTS.md) for the

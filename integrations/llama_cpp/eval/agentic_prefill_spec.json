@@ -1,0 +1,93 @@
+{
+  "schema_version": 2,
+  "name": "gemma4-e2b-agentic-qpu-up-overlap",
+  "objective": "Reduce post-tool time to first token by computing a suffix of each Q4_0 ffn_up output on QPU0 while four CPU threads compute the remaining ffn_up columns and the independent ffn_gate projection.",
+  "model": {
+    "architecture": "gemma4",
+    "path": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+    "required_ffn_up_weight_type": "Q4_0",
+    "embedding_columns": 1536,
+    "ffn_columns": [6144, 12288],
+    "ffn_up_layer_counts": {"6144": 15, "12288": 20}
+  },
+  "candidate": {
+    "integration_boundary": "CPU_REPACK ffn_up launch through the split-F32 GEGLU join",
+    "strategy": "QPU output-column suffix overlapped with the CPU output-column prefix and subsequent ffn_gate",
+    "qpu_program": "ggml-q4-0-q8-0-mx",
+    "qpu_tile": [16, 16],
+    "weights": "unpacked once from native Q4_0 into persistent DMA memory",
+    "activations": "converted per invocation from CPU_REPACK Q8_0x4 into reusable cached DMA memory",
+    "output": "copied from reusable cached DMA memory into only the QPU-owned F32 suffix",
+    "fallback": "on completion failure, recompute the owned suffix from the persistent packed buffers on CPU before GEGLU",
+    "decode_policy": "CPU only",
+    "small_prefill_policy": "CPU only below M=64"
+  },
+  "execution": {
+    "context_size": 32768,
+    "threads": 4,
+    "threads_batch": 4,
+    "flash_attention": true,
+    "requested_tool_suffix_tokens": [64, 128, 256],
+    "observed_up_rows": [65, 129, 257],
+    "calibration_qpu_output_fractions": [0.0625, 0.125, 0.1875, 0.25],
+    "default_heldout_fraction": 0.125
+  },
+  "cold_prefill": {
+    "new_token_counts": [64, 128, 256, 512, 2048],
+    "role": "diagnostic and secondary pipeline evidence"
+  },
+  "incremental_prefill": {
+    "cached_prefix_token_counts": [512, 4096],
+    "new_suffix_token_counts": [64, 128, 256],
+    "require_retained_kv": true,
+    "request_generated_tokens": 1,
+    "primary_metric": "post-tool request time through first generated token"
+  },
+  "sampling": {"seed": 1234, "temperature": 0.0},
+  "experimental_design": {
+    "calibration": "choose one QPU output fraction independently for each M using separate processes",
+    "heldout": "evaluate only the selected fraction in fresh paired CPU/QPU sessions",
+    "pairing": "identical model-visible token IDs, model, context, thread counts, and generation settings",
+    "ordering": "randomize CPU and QPU process order within each independent pair",
+    "aggregation": "reduce repeated requests within each process to one median before bootstrapping paired session speedups"
+  },
+  "retention": {
+    "prefix_population_requests_per_process": 1,
+    "measured_suffix_requests_per_fresh_process": 1,
+    "calibration_sessions": 3,
+    "heldout_sessions": 7,
+    "bootstrap_confidence": 0.95,
+    "maximum_process_start_temperature_c": 60.0,
+    "require_performance_governor": true,
+    "require_zero_swap": true,
+    "require_zero_current_throttling": true,
+    "record_historical_throttling_flags": true,
+    "require_no_competing_llama_server": true
+  },
+  "correctness": {
+    "operator_max_absolute_error": 0.00002,
+    "operator_max_relative_error": 0.00001,
+    "generated_token_ids_identical": true,
+    "model_visible_prompt_token_ids_identical": true,
+    "require_finite_outputs": true,
+    "require_zero_fallbacks": true
+  },
+  "performance_acceptance": {
+    "minimum_dispatches_per_request": 35,
+    "post_tool_ttft_median_speedup_min": 1.05,
+    "post_tool_ttft_bootstrap_lower_bound_min": 1.0,
+    "cold_prefill_median_speedup_min": 1.0,
+    "decode_slowdown_max": 1.02,
+    "m16_prefill_slowdown_max": 1.02,
+    "resident_memory_overhead_bytes_max": 734003200,
+    "calibration_results_are_not_promotion_evidence": true,
+    "nonretained_environment_results_are_diagnostic_only": true
+  },
+  "required_qpu_telemetry": [
+    "dispatch_count", "program", "source_hash", "binary_sha256", "exact_shape",
+    "placement", "partition", "strategy", "integration_boundary", "m", "k", "n",
+    "qpu_columns", "cpu_columns", "elements", "input_copy_ns", "submit_wait_ns",
+    "overlap_before_wait_ns", "output_copy_ns", "complete_ns", "fallback",
+    "35 weight-registration events with tensor, k, n, max_m, resident column range, and resident_bytes"
+  ]
+}
