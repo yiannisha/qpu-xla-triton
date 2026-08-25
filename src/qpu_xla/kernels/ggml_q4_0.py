@@ -310,7 +310,10 @@ def _emit_tiled_mx_q4_0_q8_0_linear() -> None:
 
 @qpu
 def qpu_ggml_q4_0_q8_0_tiled_gemm(
-    asm: Assembly, *, column_weight_scale: bool = False
+    asm: Assembly,
+    *,
+    column_weight_scale: bool = False,
+    activation_scale_word: bool = False,
 ) -> None:
     """Compute 16x16 tiles with exact or approximate column weight scales."""
     reg_tile_i = rf1
@@ -480,7 +483,11 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
             nop(sig=ldtmu(reg_activation_scale))
             nop(sig=ldtmu(reg_weight_scale))
         fmov(reg_activation_scale, reg_activation_scale.unpack("l"))
-        add(reg_activation_scale_pointer, reg_activation_scale_pointer, 2)
+        add(
+            reg_activation_scale_pointer,
+            reg_activation_scale_pointer,
+            4 if activation_scale_word else 2,
+        )
         if not column_weight_scale:
             fmov(reg_weight_scale, reg_weight_scale.unpack("l"))
             add(reg_weight_scale_pointer, reg_weight_scale_pointer,
@@ -533,7 +540,9 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
 
 
 @qpu
-def qpu_ggml_q4_0_q8_0_linear(asm: Assembly, *, rows: Literal[0, 1, 4]) -> None:
+def qpu_ggml_q4_0_q8_0_linear(
+    asm: Assembly, *, rows: Literal[0, 1, 4], grouped_rows: bool = False
+) -> None:
     """Compute native Q4_0 by Q8_0; ``rows=0`` selects 16x16 tiled M."""
     if rows not in {0, 1, 4}:
         raise ValueError("native Q4_0 linear supports one, four, or batched rows")
@@ -576,7 +585,10 @@ def qpu_ggml_q4_0_q8_0_linear(asm: Assembly, *, rows: Literal[0, 1, 4]) -> None:
     reg_q4_block_stride = rf47
     reg_q8_block_stride = rf48
     reg_selected_column = rf49
+    reg_row_group = rf50
     mov(reg_tile, rf3.unpack("ul"))
+    if grouped_rows:
+        mov(reg_row_group, rf3.unpack("uh"))
     nop(sig=ldunifrf(reg_blocks))
     nop(sig=ldunifrf(reg_activation_stride))
     nop(sig=ldunifrf(reg_activation_base[0]))
@@ -590,6 +602,14 @@ def qpu_ggml_q4_0_q8_0_linear(asm: Assembly, *, rows: Literal[0, 1, 4]) -> None:
     nop(sig=ldunifrf(reg_sign_bit))
     nop(sig=ldunifrf(reg_q4_block_stride))
     nop(sig=ldunifrf(reg_q8_block_stride))
+
+    if grouped_rows:
+        umul24(reg_temporary, reg_row_group, reg_activation_stride)
+        shl(reg_temporary, reg_temporary, 2)
+        add(reg_activation_base[0], reg_activation_base[0], reg_temporary)
+        umul24(reg_temporary, reg_row_group, reg_output_stride)
+        shl(reg_temporary, reg_temporary, 2)
+        add(reg_output_base, reg_output_base, reg_temporary)
 
     pipeline_rows = 4
     for row in range(1, pipeline_rows):
@@ -693,7 +713,9 @@ class _ProgramState:
 
 
 _STATE_LOCK = Lock()
-_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[int, _ProgramState]] = WeakKeyDictionary()
+_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[tuple[int, bool], _ProgramState]] = (
+    WeakKeyDictionary()
+)
 
 
 def supports_ggml_q4_0_q8_0_linear(
@@ -735,17 +757,24 @@ def supports_ggml_q4_0_q8_0_linear(
     return all(tensor.numpy().flags.c_contiguous for tensor in (activation, weight, destination))
 
 
-def _program_state(backend: PyVideoCore7Backend, rows: Literal[0, 1, 4]) -> _ProgramState:
+def _program_state(
+    backend: PyVideoCore7Backend, rows: Literal[0, 1, 4], grouped_rows: bool = False
+) -> _ProgramState:
     with _STATE_LOCK:
         states = _PROGRAMS.setdefault(backend, {})
-        state = states.get(rows)
+        key = (rows, grouped_rows)
+        state = states.get(key)
         if state is None:
             with backend.driver_session() as driver:
                 state = _ProgramState(
-                    code=driver.program(qpu_ggml_q4_0_q8_0_linear, rows=rows),
+                    code=driver.program(
+                        qpu_ggml_q4_0_q8_0_linear,
+                        rows=rows,
+                        grouped_rows=grouped_rows,
+                    ),
                     uniforms=driver.alloc(13, dtype=np.uint32),
                 )
-            states[rows] = state
+            states[key] = state
         return state
 
 
@@ -775,12 +804,12 @@ def _execute_ggml_q4_0_q8_0_linear(
     if not isinstance(backend, PyVideoCore7Backend):
         raise KernelError("GGML Q4_0 linear requires PyVideoCore7Backend")
     rows = activation.shape[0]
-    row_tile = 4 if rows == 4 else MX_ROW_TILE
+    row_tile = 4
     expected_grid = (column_count // OUTPUT_TILE, rows // row_tile, 1)
     if grid != expected_grid:
         raise KernelError(f"GGML Q4_0 linear grid must be {expected_grid}, got {grid}")
-    program_rows: Literal[0, 1, 4] = 4 if rows == 4 else 0
-    state = _program_state(backend, program_rows)
+    program_rows: Literal[0, 1, 4] = 4
+    state = _program_state(backend, program_rows, grouped_rows=rows > 4)
     state.uniforms[:] = (
         activation.shape[1],
         activation.numpy().strides[0],
@@ -809,12 +838,147 @@ def _execute_ggml_q4_0_q8_0_linear(
 
 GGML_Q4_0_Q8_0_LINEAR_KERNEL = Kernel("vc7.ggml_q4_0_q8_0_linear", _execute_ggml_q4_0_q8_0_linear)
 
+
+def pack_ggml_q4_0_tiled_weights(
+    blocks: npt.NDArray[np.uint8],
+) -> tuple[npt.NDArray[np.uint16], npt.NDArray[np.uint32]]:
+    """Convert native Q4_0 weights to the persistent 16x16 tiled layout."""
+    scales, values = unpack_ggml_q4_0_blocks(blocks)
+    if blocks.ndim != 3:
+        raise ValueError("native Q4_0 weights must have shape (outputs, blocks, 18)")
+    scale_words = np.ascontiguousarray(scales.astype(np.float16).T.view(np.uint16))
+    outputs, reduction_blocks, _ = values.shape
+    groups = np.ascontiguousarray(
+        values.reshape(outputs, reduction_blocks, 8, 4).transpose(1, 2, 0, 3)
+    )
+    packed_values = groups.view(np.uint32).reshape(reduction_blocks * 8, outputs)
+    return scale_words, np.ascontiguousarray(packed_values)
+
+
+_PACKED_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, _ProgramState] = WeakKeyDictionary()
+
+
+def _packed_program_state(backend: PyVideoCore7Backend) -> _ProgramState:
+    with _STATE_LOCK:
+        state = _PACKED_PROGRAMS.get(backend)
+        if state is None:
+            with backend.driver_session() as driver:
+                state = _ProgramState(
+                    code=driver.program(
+                        qpu_ggml_q4_0_q8_0_tiled_gemm,
+                        activation_scale_word=True,
+                    ),
+                    uniforms=driver.alloc(11, dtype=np.uint32),
+                )
+            _PACKED_PROGRAMS[backend] = state
+        return state
+
+
+def supports_ggml_q4_0_q8_0_tiled_linear(
+    activation_q: Tensor,
+    activation_scales: Tensor,
+    weight_q: Tensor,
+    weight_scales: Tensor,
+    destination: Tensor,
+    backend: Backend,
+) -> bool:
+    """Return whether split tensors can run without host repacking."""
+    if not isinstance(backend, PyVideoCore7Backend):
+        return False
+    if activation_q.dtype != np.dtype(np.uint8) or weight_q.dtype != np.dtype(np.uint32):
+        return False
+    if activation_scales.dtype != np.dtype(np.uint32) or weight_scales.dtype != np.dtype(np.uint16):
+        return False
+    if destination.dtype != np.dtype(np.float32):
+        return False
+    if any(len(tensor.shape) != 2 for tensor in (
+        activation_q, activation_scales, weight_q, weight_scales, destination
+    )):
+        return False
+    rows, columns = activation_q.shape
+    blocks = columns // Q4_0_BLOCK_ELEMENTS
+    outputs = weight_q.shape[1]
+    return bool(
+        rows > 0
+        and rows % MX_ROW_TILE == 0
+        and columns > 0
+        and columns % Q4_0_BLOCK_ELEMENTS == 0
+        and outputs > 0
+        and outputs % OUTPUT_TILE == 0
+        and activation_scales.shape == (rows, blocks)
+        and weight_q.shape == (blocks * 8, outputs)
+        and weight_scales.shape == (blocks, outputs)
+        and destination.shape == (rows, outputs)
+        and all(tensor.numpy().flags.c_contiguous for tensor in (
+            activation_q, activation_scales, weight_q, weight_scales, destination
+        ))
+    )
+
+
+def _execute_ggml_q4_0_q8_0_tiled_linear(
+    backend: Backend,
+    args: tuple[Any, ...],
+    grid: tuple[int, int, int],
+) -> None:
+    if len(args) != 5 or not all(isinstance(argument, Tensor) for argument in args):
+        raise KernelError(
+            "tiled Q4_0 linear expects split activation/weight scales, values, and output"
+        )
+    activation_q, activation_scales, weight_q, weight_scales, destination = args
+    if not supports_ggml_q4_0_q8_0_tiled_linear(
+        activation_q,
+        activation_scales,
+        weight_q,
+        weight_scales,
+        destination,
+        backend,
+    ):
+        raise KernelError("tiled Q4_0 linear requires aligned contiguous split tensors")
+    if not isinstance(backend, PyVideoCore7Backend):
+        raise KernelError("tiled Q4_0 linear requires PyVideoCore7Backend")
+    blocks = activation_q.shape[1] // Q4_0_BLOCK_ELEMENTS
+    expected_grid = (destination.shape[1] // OUTPUT_TILE, destination.shape[0] // MX_ROW_TILE, 1)
+    if grid != expected_grid:
+        raise KernelError(f"tiled Q4_0 linear grid must be {expected_grid}, got {grid}")
+    state = _packed_program_state(backend)
+    state.uniforms[:] = (
+        activation_q.numpy().strides[0],
+        activation_q.address,
+        weight_q.numpy().strides[0],
+        weight_q.address,
+        destination.numpy().strides[0],
+        destination.address,
+        blocks,
+        activation_scales.numpy().strides[0],
+        activation_scales.address,
+        weight_scales.numpy().strides[0],
+        weight_scales.address,
+    )
+    with backend.driver_session() as driver:
+        driver.execute(
+            state.code,
+            local_invocation=(16, 1, 1),
+            uniforms=state.uniforms.addresses()[0],
+            workgroup=grid,
+            wgs_per_sg=24,
+            thread=grid[0] * grid[1],
+        )
+
+
+GGML_Q4_0_Q8_0_TILED_LINEAR_KERNEL = Kernel(
+    "vc7.ggml_q4_0_q8_0_tiled_linear",
+    _execute_ggml_q4_0_q8_0_tiled_linear,
+)
+
 __all__ = [
     "GGML_Q4_0_Q8_0_LINEAR_KERNEL",
+    "GGML_Q4_0_Q8_0_TILED_LINEAR_KERNEL",
     "ggml_q4_0_q8_0_reference",
     "pack_ggml_q4_0_blocks",
     "pack_ggml_q8_0_blocks",
+    "pack_ggml_q4_0_tiled_weights",
     "supports_ggml_q4_0_q8_0_linear",
+    "supports_ggml_q4_0_q8_0_tiled_linear",
     "unpack_ggml_q4_0_blocks",
     "unpack_ggml_q8_0_blocks",
 ]

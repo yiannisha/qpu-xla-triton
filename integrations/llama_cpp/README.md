@@ -32,21 +32,27 @@ There are two GGML integration boundaries:
   independent `ffn_gate`, then join at the split-F32 GEGLU input. The graph and
   model-visible tensors remain CPU-owned.
 
-The arbitrary-M path converts each selected native Q4_0 weight once into an
-int8 layout held in persistent DMA-backed memory. Each invocation converts the
-already-created CPU_REPACK Q8_0x4 activation into reusable cached DMA memory,
-submits asynchronously, and copies only the QPU-owned F32 output suffix from a
-reusable DMA allocation. Input conversion, cache synchronization, submission,
-wait, and output copy are included in complete timing. The tiled 16x16 kernel
-applies every original Q4_0 and Q8_0 block scale and agrees with the CPU_REPACK
-reference to the configured floating-point tolerance.
+The arbitrary-M path supports an exact Q4_0 program plus research-only
+per-column W8 and row/column W8A8 alternatives. Selected weights are prepared
+once into persistent DMA-backed memory. Each invocation directly deinterleaves
+the already-created CPU_REPACK Q8_0x4 activation into reusable cached DMA
+memory, submits asynchronously, and copies only the QPU-owned F32 output
+suffix from a reusable allocation. Input access, packing, synchronization,
+submission/wait, overlap, output synchronization, and output copy are recorded
+separately. The exact tiled 16x16 program applies every original Q4_0 and Q8_0
+block scale; the W8 modes are explicitly labeled approximate and remain
+disabled by default.
 
-The integration also contains an experimental fused Gemma M=1 attention
-program. It consumes native FP16 K/V/mask storage and performs online softmax
-without a score matrix. Its current exact subset (256-wide heads, one KV head,
-no ALiBi/softcap/sinks) is correctness-tested on hardware but is substantially
-slower than the pinned GGML CPU node, so it is exported for reproducibility and
-never selected automatically.
+The integration also contains experimental fused Gemma attention programs for
+M=1 and for a single launch spanning arbitrary query rows and eight query
+heads. They consume native FP16 K/V/mask storage and perform online softmax
+without a score matrix. Their current exact subset (256-wide heads, one KV
+head, no ALiBi/softcap/sinks) is correctness-tested on hardware but is
+substantially slower than the pinned GGML CPU node, so it is exported for
+reproducibility and never selected automatically. A separate fused GEGLU
+program can emit byte-exact GGML Q8_0 directly into resident memory for a
+down-projection consumer; that producer is locally faster at M=257, although
+the current QPU down projection makes the complete chain slower.
 
 Build and test:
 
@@ -245,9 +251,13 @@ placement.
 The older native Q4_0, Q4_K, Q6_K, Q8_0, fused-attention, and GEGLU row-hybrid
 candidates remain slower than pinned `ggml-cpu`. The newer `ffn_up`
 column-suffix candidate reaches the complete llama.cpp request and hides most
-QPU time behind useful CPU work, but the retained clean-machine screens above
-still fail the 1.05x promotion gate. Every QPU placement remains disabled by
-default, and no end-to-end acceleration claim is made. See
+QPU time behind useful CPU work. A subsequent retained five-pair-per-cell
+column-W8 campaign measured 1.000x at M=129 and 1.016x at M=257, with both
+bootstrap intervals crossing 1.0; it also fails the 1.05x promotion gate.
+Every QPU placement remains disabled by default, and no end-to-end acceleration
+claim is made. See
+[`IMPLEMENTATION_RESULTS.md`](eval/IMPLEMENTATION_RESULTS.md) for the five-path
+2026-08-25 follow-up and retained end-to-end result,
 [`UP_OVERLAP_RESULTS.md`](../../experiment_logs/20260824-qpu-agentic-prefill/UP_OVERLAP_RESULTS.md)
 for the current full-model campaign,
 [`HYBRID_RESULTS.md`](../../experiment_logs/20260824-qpu-agentic-prefill/HYBRID_RESULTS.md)

@@ -33,12 +33,23 @@ from qpu_xla.kernels.ggml_flash_attn import (
     supports_ggml_gemma_flash_attn_f16_m1,
     supports_ggml_gemma_flash_attn_f16_mx,
 )
+from qpu_xla.kernels.ggml_geglu_q8 import (
+    GGML_GEGLU_Q8_0_KERNEL,
+    GGML_GEGLU_Q8_0_SPLIT_KERNEL,
+    ggml_geglu_q8_0_reference,
+    ggml_gelu_fp16_table,
+    supports_ggml_geglu_q8_0,
+    supports_ggml_geglu_q8_0_split,
+)
 from qpu_xla.kernels.ggml_q4_0 import (
     GGML_Q4_0_Q8_0_LINEAR_KERNEL,
+    GGML_Q4_0_Q8_0_TILED_LINEAR_KERNEL,
     ggml_q4_0_q8_0_reference,
     pack_ggml_q4_0_blocks,
+    pack_ggml_q4_0_tiled_weights,
     pack_ggml_q8_0_blocks,
     supports_ggml_q4_0_q8_0_linear,
+    supports_ggml_q4_0_q8_0_tiled_linear,
     unpack_ggml_q4_0_blocks,
     unpack_ggml_q8_0_blocks,
 )
@@ -98,6 +109,9 @@ __all__ = [
     "GGML_Q8_0_Q8_0_LINEAR_M4_KERNEL",
     "GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL",
     "GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL",
+    "GGML_GEGLU_Q8_0_KERNEL",
+    "GGML_GEGLU_Q8_0_SPLIT_KERNEL",
+    "GGML_Q4_0_Q8_0_TILED_LINEAR_KERNEL",
     "AVGPOOL2D_INT32_KERNEL",
     "AVGPOOL2D_FP32_KERNEL",
     "TILED_INT32_GEMM_KERNEL",
@@ -142,6 +156,7 @@ __all__ = [
     "pack_int8_quads",
     "pack_ggml_q4_0_blocks",
     "pack_ggml_q8_0_blocks",
+    "pack_ggml_q4_0_tiled_weights",
     "unpack_ggml_q4_0_blocks",
     "unpack_ggml_q8_0_blocks",
     "ggml_q4_0_q8_0_reference",
@@ -155,6 +170,11 @@ __all__ = [
     "ggml_q6_k_q8_k_reference",
     "ggml_q8_0_q8_0_reference",
     "ggml_flash_attn_ext_reference",
+    "ggml_gelu_fp16_table",
+    "ggml_geglu_q8_0_reference",
     "supports_ggml_gemma_flash_attn_f16_m1",
     "supports_ggml_gemma_flash_attn_f16_mx",
+    "supports_ggml_geglu_q8_0",
+    "supports_ggml_geglu_q8_0_split",
+    "supports_ggml_q4_0_q8_0_tiled_linear",
 ]

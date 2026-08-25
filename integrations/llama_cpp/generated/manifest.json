@@ -31,8 +31,8 @@
       "name": "ggml-column-w8-q8-0-mx",
       "size_bytes": 3760,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
-      "source_hash": "7ef0236fc2abc7b643f11b9b909758c3572107dd088b3b1997e5a7592bde05cf",
+      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
+      "source_hash": "45fbd1af423819006d552e179bfc3f0490787e5a07d99071a709c800f2464fab",
       "symbol": "qpu_ggml_column_w8_q8_0_mx",
       "uniform_word_count": 10,
       "uniforms": [
@@ -75,6 +75,136 @@
         {
           "name": "column_weight_scale_address",
           "type": "gpu_address"
+        }
+      ]
+    },
+    {
+      "assembly_kwargs": {},
+      "binary": "ggml-geglu-q8-0.bin",
+      "binary_sha256": "4a9bf33674934858338fdf1a921b0d8311b60a3d35246e59da3d007abd9830e8",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Exact lookup-table GGML GEGLU fused with native per-block Q8_0 quantization for direct consumption by a down projection.",
+      "header": "ggml-geglu-q8-0.h",
+      "instruction_count": 155,
+      "launch": {
+        "constraint": "columns % 32 == 0",
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": "rows * columns / 32",
+        "wgs_per_sg": 24,
+        "workgroup": [
+          "columns / 32",
+          "rows",
+          1
+        ]
+      },
+      "name": "ggml-geglu-q8-0",
+      "size_bytes": 1240,
+      "source": "src/qpu_xla/kernels/ggml_geglu_q8.py",
+      "source_file_sha256": "3832668c85a86bd594f44d61e89927154c9f1b064791e15b3f5cb703c5a6169b",
+      "source_hash": "7412f82f365d4644f6309761b2e67b2f141c2b0ae347adf5949d1a75a546d86f",
+      "symbol": "qpu_ggml_geglu_q8_0",
+      "uniform_word_count": 7,
+      "uniforms": [
+        {
+          "name": "blocks_per_row",
+          "type": "uint32"
+        },
+        {
+          "name": "gate_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "up_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "q8_0_destination_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "ggml_gelu_fp16_table_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "inverse_127",
+          "type": "float32"
+        },
+        {
+          "name": "minimum_maximum",
+          "type": "float32"
+        }
+      ]
+    },
+    {
+      "assembly_kwargs": {
+        "split_output": true
+      },
+      "binary": "ggml-geglu-q8-0-split.bin",
+      "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Exact lookup-table GGML GEGLU fused with split Q8_0 scales/values for a zero-host-access tiled down projection.",
+      "header": "ggml-geglu-q8-0-split.h",
+      "instruction_count": 158,
+      "launch": {
+        "constraint": "columns % 32 == 0",
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": "rows * columns / 32",
+        "wgs_per_sg": 24,
+        "workgroup": [
+          "columns / 32",
+          "rows",
+          1
+        ]
+      },
+      "name": "ggml-geglu-q8-0-split",
+      "size_bytes": 1264,
+      "source": "src/qpu_xla/kernels/ggml_geglu_q8.py",
+      "source_file_sha256": "3832668c85a86bd594f44d61e89927154c9f1b064791e15b3f5cb703c5a6169b",
+      "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e",
+      "symbol": "qpu_ggml_geglu_q8_0_split",
+      "uniform_word_count": 8,
+      "uniforms": [
+        {
+          "name": "blocks_per_row",
+          "type": "uint32"
+        },
+        {
+          "name": "gate_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "up_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "q8_0_scale_word_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "q8_0_value_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "ggml_gelu_fp16_table_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "inverse_127",
+          "type": "float32"
+        },
+        {
+          "name": "minimum_maximum",
+          "type": "float32"
         }
       ]
     },
@@ -158,8 +288,8 @@
       "name": "ggml-gemma-flash-attn-f16-m1",
       "size_bytes": 5440,
       "source": "src/qpu_xla/kernels/ggml_flash_attn.py",
-      "source_file_sha256": "fb5fbc8385569ab16f4bc9b596fff7f3db2563400a4feb558693d76f2e10692f",
-      "source_hash": "860813591dfaaf46c6f9e4dd66a2ee439fa0e4bfbdaa930b2494c71da2fc4cca",
+      "source_file_sha256": "a37850fd3d9e99f72cb8cef0a089fb1d44c1b63cc56262a5d552175fdacf8549",
+      "source_hash": "bd1cde60ce6ac52955f390a4b9b82ac4a2098ff475808962e80aed0666ff4a37",
       "symbol": "qpu_ggml_gemma_flash_attn_f16_m1",
       "uniform_word_count": 13,
       "uniforms": [
@@ -245,8 +375,8 @@
       "name": "ggml-gemma-flash-attn-f16-mx",
       "size_bytes": 5528,
       "source": "src/qpu_xla/kernels/ggml_flash_attn.py",
-      "source_file_sha256": "fb5fbc8385569ab16f4bc9b596fff7f3db2563400a4feb558693d76f2e10692f",
-      "source_hash": "fcdd160081ff9c2c6a9d0e093c40f29ac5355281244ee249ae4470ba69ec692e",
+      "source_file_sha256": "a37850fd3d9e99f72cb8cef0a089fb1d44c1b63cc56262a5d552175fdacf8549",
+      "source_hash": "b5c31d9ff221d428b6138808675c05e88a5f60b1084b54a5e3acbaa9dafae97f",
       "symbol": "qpu_ggml_gemma_flash_attn_f16_mx",
       "uniform_word_count": 16,
       "uniforms": [
@@ -344,8 +474,8 @@
       "name": "ggml-q4-0-q8-0-m1",
       "size_bytes": 3808,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
-      "source_hash": "75a7787156d51be18a81f5c57ee2fdec46fddb89a075adbf57321a4ce01703f6",
+      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
+      "source_hash": "e35efa836cb40615f200a94f4bf1916e3003f9c273168826d0ed278d5cf9c730",
       "symbol": "qpu_ggml_q4_0_q8_0_m1",
       "uniform_word_count": 13,
       "uniforms": [
@@ -435,8 +565,8 @@
       "name": "ggml-q4-0-q8-0-m4",
       "size_bytes": 3808,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
-      "source_hash": "15d0de461681fc60af22d181cb09c8efb0be6f59f9e1677ab5d0b1a7208b45eb",
+      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
+      "source_hash": "d8769ceec2c61c372c47ad2bd87fcaf12d9f338526c42b5a66a323f66a98950a",
       "symbol": "qpu_ggml_q4_0_q8_0_m4",
       "uniform_word_count": 13,
       "uniforms": [
@@ -524,8 +654,8 @@
       "name": "ggml-q4-0-q8-0-mx",
       "size_bytes": 3760,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
-      "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a",
+      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
+      "source_hash": "c13fbb9a717ef7539fb4094c76713936eb2db00239cce6b7796885ed2bc7d150",
       "symbol": "qpu_ggml_q4_0_q8_0_mx",
       "uniform_word_count": 11,
       "uniforms": [
@@ -563,6 +693,85 @@
         },
         {
           "name": "activation_scale_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "weight_scale_block_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "weight_scale_address",
+          "type": "gpu_address"
+        }
+      ]
+    },
+    {
+      "assembly_kwargs": {
+        "activation_scale_word": true
+      },
+      "binary": "ggml-q4-0-q8-wordscale-mx.bin",
+      "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Exact tiled Q4_0 down projection consuming low-F16 scale words and dense Q8 values emitted directly by the fused GEGLU producer.",
+      "header": "ggml-q4-0-q8-wordscale-mx.h",
+      "instruction_count": 470,
+      "launch": {
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": "workgroup_x * workgroup_y",
+        "wgs_per_sg": 24,
+        "workgroup": [
+          "output_columns / 16",
+          "rows / 16",
+          1
+        ]
+      },
+      "name": "ggml-q4-0-q8-wordscale-mx",
+      "size_bytes": 3760,
+      "source": "src/qpu_xla/kernels/ggml_q4_0.py",
+      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
+      "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b",
+      "symbol": "qpu_ggml_q4_0_q8_wordscale_mx",
+      "uniform_word_count": 11,
+      "uniforms": [
+        {
+          "name": "activation_q_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_q_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "weight_q_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "weight_q_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "output_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "output_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "reduction_blocks",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_scale_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_scale_word_address",
           "type": "gpu_address"
         },
         {
