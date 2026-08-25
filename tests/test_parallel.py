@@ -360,3 +360,183 @@ def test_parallel_full() -> None:
         )
 
         assert np.all(dst == np.arange(48, dtype=np.uint32).reshape(48, 1))
+
+
+@qpu
+def qpu_barrier_memory_handoff_48(asm: Assembly) -> None:
+    """Exercise two global TMU handoffs across a 48-thread supergroup."""
+    reg_thread = rf0
+    reg_base = rf1
+    reg_lane_offset = rf2
+    reg_row_offset = rf3
+    reg_address = rf4
+    reg_next_thread = rf5
+    reg_value = rf6
+    reg_last_thread = rf7
+    reg_phase_stride = rf8
+    reg_phase_two_offset = rf9
+    tidx(reg_thread, sig=ldunifrf(reg_base))
+    mov(reg_last_thread, 15)
+    shl(reg_last_thread, reg_last_thread, 1)
+    add(reg_last_thread, reg_last_thread, 15)
+    add(reg_last_thread, reg_last_thread, 2)
+    mov(reg_phase_stride, 3)
+    shl(reg_phase_stride, reg_phase_stride, 10)
+    shl(reg_phase_two_offset, reg_phase_stride, 1)
+    eidx(reg_lane_offset)
+    shl(reg_lane_offset, reg_lane_offset, 2)
+    shl(reg_row_offset, reg_thread, 6)
+    add(reg_address, reg_base, reg_row_offset)
+    add(reg_address, reg_address, reg_lane_offset)
+
+    mov(tmuc, -1)
+    mov(tmud, reg_thread)
+    mov(tmua, reg_address)
+    tmuwt()
+
+    barrierid(syncb, sig=thrsw)
+    nop()
+    nop()
+
+    add(reg_next_thread, reg_thread, 1)
+    umin(reg_next_thread, reg_next_thread, reg_last_thread)
+    shl(reg_row_offset, reg_next_thread, 6)
+    add(reg_address, reg_base, reg_row_offset)
+    add(reg_address, reg_address, reg_lane_offset)
+    mov(tmua, reg_address, sig=thrsw)
+    nop()
+    nop()
+    nop(sig=ldtmu(reg_value))
+
+    add(reg_address, reg_base, reg_phase_stride)
+    shl(reg_row_offset, reg_thread, 6)
+    add(reg_address, reg_address, reg_row_offset)
+    add(reg_address, reg_address, reg_lane_offset)
+    mov(tmud, reg_value)
+    mov(tmua, reg_address)
+    tmuwt()
+
+    barrierid(syncb, sig=thrsw)
+    nop()
+    nop()
+
+    add(reg_next_thread, reg_thread, 1)
+    umin(reg_next_thread, reg_next_thread, reg_last_thread)
+    add(reg_address, reg_base, reg_phase_stride)
+    shl(reg_row_offset, reg_next_thread, 6)
+    add(reg_address, reg_address, reg_row_offset)
+    add(reg_address, reg_address, reg_lane_offset)
+    mov(tmua, reg_address, sig=thrsw)
+    nop()
+    nop()
+    nop(sig=ldtmu(reg_value))
+
+    add(reg_address, reg_base, reg_phase_two_offset)
+    shl(reg_row_offset, reg_thread, 6)
+    add(reg_address, reg_address, reg_row_offset)
+    add(reg_address, reg_address, reg_lane_offset)
+    mov(tmud, reg_value)
+    mov(tmua, reg_address)
+    tmuwt()
+
+    nop(sig=thrsw)
+    nop(sig=thrsw)
+    nop()
+    nop()
+    nop(sig=thrsw)
+    nop()
+    nop()
+    nop()
+
+
+def test_barrier_memory_handoff_48() -> None:
+    """All 48 persistent threads observe two completed global-memory phases."""
+    with Driver() as drv:
+        code = drv.program(qpu_barrier_memory_handoff_48)
+        phases: Array[np.uint32] = drv.alloc((3, 48, 16), dtype=np.uint32)
+        unif: Array[np.uint32] = drv.alloc(1, dtype=np.uint32)
+
+        phases[:] = 0xDEADBEEF
+        unif[0] = phases.addresses()[0, 0, 0]
+
+        drv.execute(
+            code,
+            local_invocation=(4, 4, 3),
+            uniforms=unif.addresses()[0],
+            workgroup=(1, 1, 1),
+            thread=48,
+            threading=True,
+        )
+
+        thread_ids = np.arange(48, dtype=np.uint32)
+        expected_phase_0 = np.repeat(thread_ids[:, None], 16, axis=1)
+        expected_phase_1 = np.repeat(np.minimum(thread_ids + 1, 47)[:, None], 16, axis=1)
+        expected_phase_2 = np.repeat(np.minimum(thread_ids + 2, 47)[:, None], 16, axis=1)
+        assert np.array_equal(phases[0], expected_phase_0)
+        assert np.array_equal(phases[1], expected_phase_1)
+        assert np.array_equal(phases[2], expected_phase_2)
+
+
+@qpu
+def qpu_uniform_stream_24(asm: Assembly) -> None:
+    """Load a fixed-stride private uniform stream in 24-thread mode."""
+    tidx(rf0, sig=ldunifrf(rf1))
+    nop(sig=ldunifrf(rf2))
+    shr(rf6, rf0, 2)
+    band(rf6, rf6, 0b1111)
+    band(rf0, rf0, 0b11)
+    shr(rf0, rf0, 1)
+    shl(rf6, rf6, 1)
+    add(rf0, rf0, rf6)
+    umul24(rf3, rf0, rf2)
+    add(rf1, rf1, rf3)
+    b(R.stream, cond="always").unif_addr(rf1)
+    nop()
+    nop()
+    nop()
+
+    L.stream
+    nop(sig=ldunifrf(rf4))
+    nop(sig=ldunifrf(rf5))
+    eidx(rf6)
+    shl(rf6, rf6, 2)
+    add(rf4, rf4, rf6)
+    mov(tmud, rf5)
+    mov(tmua, rf4)
+    tmuwt()
+
+    barrierid(syncb, sig=thrsw)
+    nop()
+    nop()
+
+    nop(sig=thrsw)
+    nop(sig=thrsw)
+    nop()
+    nop()
+    nop(sig=thrsw)
+    nop()
+    nop()
+    nop()
+
+
+def test_uniform_stream_24() -> None:
+    with Driver() as drv:
+        code = drv.program(qpu_uniform_stream_24)
+        output: Array[np.uint32] = drv.alloc((24, 16), dtype=np.uint32)
+        streams: Array[np.uint32] = drv.alloc((24, 2), dtype=np.uint32)
+        uniforms: Array[np.uint32] = drv.alloc(2, dtype=np.uint32)
+        output[:] = 0xDEADBEEF
+        for thread in range(24):
+            streams[thread] = (output.addresses()[thread, 0], thread + 100)
+        uniforms[:] = (streams.addresses()[0, 0], streams.strides[0])
+
+        drv.execute(
+            code,
+            local_invocation=(16, 1, 1),
+            uniforms=uniforms.addresses()[0],
+            wgs_per_sg=24,
+            thread=24,
+        )
+
+        expected = np.repeat((np.arange(24, dtype=np.uint32) + 100)[:, None], 16, axis=1)
+        assert np.array_equal(output, expected)
