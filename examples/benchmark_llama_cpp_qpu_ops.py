@@ -483,7 +483,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--tensor", action="append", default=[])
-    parser.add_argument("--rows", type=int, action="append", choices=(1, 4), default=[])
+    parser.add_argument(
+        "--rows",
+        type=int,
+        action="append",
+        default=[],
+        help="logical M (Q4_0 accepts any positive M; other formats require M=4)",
+    )
     parser.add_argument("--cpu-threads", type=int, action="append", default=[])
     parser.add_argument("--qpu-wgs-per-sg", type=int, default=24)
     parser.add_argument("--warmups", type=int, default=5)
@@ -505,6 +511,8 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--quick", action="store_true")
     args = parser.parse_args()
+    if any(rows <= 0 for rows in args.rows):
+        parser.error("--rows values must be positive")
     if args.quick:
         args.warmups = 1
         args.samples = 3

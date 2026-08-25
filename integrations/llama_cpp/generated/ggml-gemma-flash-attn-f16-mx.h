@@ -1,28 +1,39 @@
-#ifndef QPU_PROGRAM_QPU_GGML_GEMMA_FLASH_ATTN_F16_M1_H
-#define QPU_PROGRAM_QPU_GGML_GEMMA_FLASH_ATTN_F16_M1_H
+#ifndef QPU_PROGRAM_QPU_GGML_GEMMA_FLASH_ATTN_F16_MX_H
+#define QPU_PROGRAM_QPU_GGML_GEMMA_FLASH_ATTN_F16_MX_H
 
 #include <stddef.h>
 #include <stdint.h>
 
-static const uint64_t qpu_ggml_gemma_flash_attn_f16_m1[] = {
+static const uint64_t qpu_ggml_gemma_flash_attn_f16_mx[] = {
     UINT64_C(0x380021abf903f0c7),
     UINT64_C(0x39883186bb03f000),
     UINT64_C(0x398fb186bb03f000),
     UINT64_C(0x398e7186bb03f000),
+    UINT64_C(0x398bf186bb03f000),
     UINT64_C(0x39887186bb03f000),
     UINT64_C(0x3988b186bb03f000),
     UINT64_C(0x3988f186bb03f000),
     UINT64_C(0x39893186bb03f000),
     UINT64_C(0x39897186bb03f000),
+    UINT64_C(0x398c3186bb03f000),
     UINT64_C(0x3989b186bb03f000),
     UINT64_C(0x398ff186bb03f000),
+    UINT64_C(0x398c7186bb03f000),
     UINT64_C(0x3989f186bb03f000),
     UINT64_C(0x398a3186bb03f000),
     UINT64_C(0x398a7186bb03f000),
-    UINT64_C(0x0c001e46bbaf9000),
+    UINT64_C(0x39e021bab503fac7),
+    UINT64_C(0x39e021bb7d03fac3),
+    UINT64_C(0x0c001e46bbeb9000),
     UINT64_C(0x380021be3803ffb9),
-    UINT64_C(0x0c001fc6bbaff000),
+    UINT64_C(0x0c001bc6bbeef000),
+    UINT64_C(0x380021be3803ffaf),
+    UINT64_C(0x0c001c06bbef0000),
+    UINT64_C(0x380021a53803f970),
+    UINT64_C(0x0c001fc6bbebf000),
     UINT64_C(0x380021a63803f9bf),
+    UINT64_C(0x0c001c46bbef1000),
+    UINT64_C(0x380021a63803f9b1),
     UINT64_C(0x380021aabb03f002),
     UINT64_C(0x39e021aa7c03fa83),
     UINT64_C(0x380021be3803ffaa),
@@ -686,8 +697,8 @@ static const uint64_t qpu_ggml_gemma_flash_attn_f16_m1[] = {
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
 };
-static const size_t qpu_ggml_gemma_flash_attn_f16_m1_instruction_count = 680;
-static const char qpu_ggml_gemma_flash_attn_f16_m1_source_hash[] = "860813591dfaaf46c6f9e4dd66a2ee439fa0e4bfbdaa930b2494c71da2fc4cca";
-static const char qpu_ggml_gemma_flash_attn_f16_m1_binary_hash[] = "edde1082af4eb7274a9db5512e0ba50be4914dd272da284deded9030cf57a8ea";
+static const size_t qpu_ggml_gemma_flash_attn_f16_mx_instruction_count = 691;
+static const char qpu_ggml_gemma_flash_attn_f16_mx_source_hash[] = "fcdd160081ff9c2c6a9d0e093c40f29ac5355281244ee249ae4470ba69ec692e";
+static const char qpu_ggml_gemma_flash_attn_f16_mx_binary_hash[] = "5a409a61d8137c3fc04874bad3bc5c5ec1858f8af523cbec40e38e5652495a95";
 
 #endif

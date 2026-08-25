@@ -22,6 +22,7 @@ struct options {
     std::string mask_path;
     std::string output_path;
     uint32_t heads = 8;
+    uint32_t query_rows = 1;
     uint32_t kv_rows = 0;
     uint32_t head_dim = 256;
     uint32_t cpu_threads = 3;
@@ -63,7 +64,7 @@ bool parse_float(const char * text, float & result) {
 void usage(const char * program) {
     std::fprintf(stderr,
         "usage: %s --query-f32 FILE --key-f16 FILE --value-f16 FILE --mask-f16 FILE "
-        "--output-bin FILE --heads N --kv-rows N --head-dim N --cpu-threads N "
+        "--output-bin FILE --heads N --query-rows N --kv-rows N --head-dim N --cpu-threads N "
         "--warmups N --samples N --scale F --max-bias F --logit-softcap F\n",
         program);
 }
@@ -88,6 +89,10 @@ bool parse_options(int argc, char ** argv, options & result) {
             value.output_path = argument;
         } else if (name == "--heads") {
             if (!parse_u32(argument, value.heads)) {
+                return false;
+            }
+        } else if (name == "--query-rows") {
+            if (!parse_u32(argument, value.query_rows)) {
                 return false;
             }
         } else if (name == "--kv-rows") {
@@ -128,6 +133,7 @@ bool parse_options(int argc, char ** argv, options & result) {
     }
     if (value.query_path.empty() || value.key_path.empty() || value.value_path.empty() ||
         value.mask_path.empty() || value.output_path.empty() || value.heads == 0 ||
+        value.query_rows == 0 ||
         value.kv_rows == 0 || value.head_dim == 0 || value.cpu_threads == 0 ||
         value.samples == 0) {
         return false;
@@ -180,9 +186,11 @@ int main(int argc, char ** argv) {
         usage(argv[0]);
         return 2;
     }
-    const size_t query_bytes = static_cast<size_t>(config.heads) * config.head_dim * sizeof(float);
+    const size_t query_bytes = static_cast<size_t>(config.heads) * config.query_rows *
+        config.head_dim * sizeof(float);
     const size_t kv_bytes = static_cast<size_t>(config.kv_rows) * config.head_dim * sizeof(ggml_fp16_t);
-    const size_t mask_bytes = static_cast<size_t>(config.kv_rows) * sizeof(ggml_fp16_t);
+    const size_t mask_bytes = static_cast<size_t>(config.query_rows) * config.kv_rows *
+        sizeof(ggml_fp16_t);
     const size_t output_bytes = query_bytes;
     const std::vector<uint8_t> query_data = read_exact_file(config.query_path, query_bytes);
     const std::vector<uint8_t> key_data = read_exact_file(config.key_path, kv_bytes);
@@ -219,13 +227,13 @@ int main(int argc, char ** argv) {
         return 1;
     }
     ggml_tensor * query = ggml_new_tensor_4d(
-        context, GGML_TYPE_F32, config.head_dim, 1, config.heads, 1);
+        context, GGML_TYPE_F32, config.head_dim, config.query_rows, config.heads, 1);
     ggml_tensor * key = ggml_new_tensor_4d(
         context, GGML_TYPE_F16, config.head_dim, config.kv_rows, 1, 1);
     ggml_tensor * value = ggml_new_tensor_4d(
         context, GGML_TYPE_F16, config.head_dim, config.kv_rows, 1, 1);
     ggml_tensor * mask = ggml_new_tensor_4d(
-        context, GGML_TYPE_F16, config.kv_rows, 1, 1, 1);
+        context, GGML_TYPE_F16, config.kv_rows, config.query_rows, 1, 1);
     ggml_set_input(query);
     ggml_set_input(key);
     ggml_set_input(value);
@@ -269,9 +277,9 @@ int main(int argc, char ** argv) {
     }
     std::printf(
         "{\"kind\":\"llama-cpu-flash-attention-node-samples\","
-        "\"heads\":%u,\"kv_rows\":%u,\"head_dim\":%u,\"cpu_threads\":%u,"
+        "\"heads\":%u,\"query_rows\":%u,\"kv_rows\":%u,\"head_dim\":%u,\"cpu_threads\":%u,"
         "\"warmups\":%u,\"samples\":%u,\"complete_ns\":",
-        config.heads, config.kv_rows, config.head_dim, config.cpu_threads,
+        config.heads, config.query_rows, config.kv_rows, config.head_dim, config.cpu_threads,
         config.warmups, config.samples);
     print_u64_array(complete_samples);
     std::printf("}\n");

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Diagnose the fused Gemma M=1 attention prototype at required KV lengths."""
+"""Diagnose fused Gemma decode and batched-prefill attention at required KV lengths."""
 
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ from qpu_xla import Device  # noqa: E402
 from qpu_xla.kernels.ggml_flash_attn import (  # noqa: E402
     GEMMA_HEAD_DIM,
     GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL,
+    GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL,
     ggml_flash_attn_ext_reference,
 )
 from scripts.llama_cpp_common import (  # noqa: E402
@@ -59,6 +60,7 @@ def _time(callable_: Any, warmups: int, samples: int) -> list[int]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--context", type=int, action="append", dest="contexts")
+    parser.add_argument("--query-rows", type=int, action="append", dest="query_rows")
     parser.add_argument("--heads", type=int, default=8)
     parser.add_argument("--warmups", type=int, default=5)
     parser.add_argument("--samples", type=int, default=31)
@@ -72,9 +74,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     contexts = args.contexts or [256, 512, 2048, 4096]
+    query_rows_values = args.query_rows or [1, 17, 65, 129, 257]
     if (
         not contexts
         or any(context <= 0 or context % 2 for context in contexts)
+        or not query_rows_values
+        or any(rows <= 0 for rows in query_rows_values)
         or args.heads <= 0
         or args.heads > 12
         or args.cpu_threads <= 0
@@ -82,6 +87,8 @@ def main() -> None:
         or args.samples <= 0
     ):
         parser.error("contexts must be positive/even; heads 1..12; warmups/samples valid")
+    if any(rows > 1 for rows in query_rows_values) and args.heads != 8:
+        parser.error("batched-query attention currently requires exactly eight query heads")
     if not args.cpu_benchmark.is_file():
         parser.error(f"pinned GGML CPU benchmark not found: {args.cpu_benchmark}")
 
@@ -90,10 +97,11 @@ def main() -> None:
     scale = float(GEMMA_HEAD_DIM**-0.5)
     records: list[dict[str, Any]] = []
     largest = max(contexts)
+    largest_query = max(query_rows_values)
     data_bytes = (
-        args.heads * GEMMA_HEAD_DIM * 8
+        largest_query * args.heads * GEMMA_HEAD_DIM * 8
         + largest * GEMMA_HEAD_DIM * 4
-        + largest * 2
+        + largest_query * largest * 2
         + (4 << 20)
     )
     with (
@@ -102,9 +110,14 @@ def main() -> None:
         tempfile.TemporaryDirectory(prefix="llama-qpu-attention-") as temporary,
     ):
         temporary_root = Path(temporary)
-        for context in contexts:
+        cases = (
+            (context, query_rows)
+            for context in contexts
+            for query_rows in query_rows_values
+        )
+        for context, query_rows in cases:
             query_host = rng.normal(
-                0.0, 0.15, size=(args.heads, GEMMA_HEAD_DIM)
+                0.0, 0.15, size=(query_rows, args.heads, GEMMA_HEAD_DIM)
             ).astype(np.float32)
             key_host = rng.normal(
                 0.0, 0.15, size=(context, GEMMA_HEAD_DIM)
@@ -112,39 +125,41 @@ def main() -> None:
             value_host = rng.normal(
                 0.0, 0.2, size=(context, GEMMA_HEAD_DIM)
             ).astype(np.float16)
-            mask_host = np.zeros(context, dtype=np.float16)
-            query = device.tensor(query_host.shape, np.float32)
+            mask_host = np.zeros((query_rows, context), dtype=np.float16)
+            qpu_query_host = query_host[0] if query_rows == 1 else query_host
+            qpu_mask_host = mask_host[0] if query_rows == 1 else mask_host
+            query = device.tensor(qpu_query_host.shape, np.float32)
             key = device.tensor(key_host.shape, np.float16)
             value = device.tensor(value_host.shape, np.float16)
-            mask = device.tensor(mask_host.shape, np.float16)
-            destination = device.tensor(query_host.shape, np.float32)
-            query.numpy()[:] = query_host
+            mask = device.tensor(qpu_mask_host.shape, np.float16)
+            destination = device.tensor(qpu_query_host.shape, np.float32)
+            query.numpy()[:] = qpu_query_host
             key.numpy()[:] = key_host
             value.numpy()[:] = value_host
-            mask.numpy()[:] = mask_host
+            mask.numpy()[:] = qpu_mask_host
 
             def cpu_reference() -> npt.NDArray[np.float32]:
                 return ggml_flash_attn_ext_reference(
-                    query_host.T[:, None, :, None],
+                    query_host.transpose(2, 0, 1)[:, :, :, None],
                     key_host.T[:, :, None, None],
                     value_host.T[:, :, None, None],
-                    mask_host[:, None, None, None],
+                    mask_host.T[:, :, None, None],
                     scale=scale,
                     max_bias=0.0,
                     logit_softcap=0.0,
-                )[:, :, 0, 0].T
+                )[:, :, :, 0].transpose(2, 1, 0)
 
             expected = cpu_reference()
 
             input_paths = {
-                "query": temporary_root / f"query-{context}.f32.bin",
-                "key": temporary_root / f"key-{context}.f16.bin",
-                "value": temporary_root / f"value-{context}.f16.bin",
-                "mask": temporary_root / f"mask-{context}.f16.bin",
-                "output": temporary_root / f"cpu-output-{context}.f32.bin",
+                "query": temporary_root / f"query-{context}-{query_rows}.f32.bin",
+                "key": temporary_root / f"key-{context}-{query_rows}.f16.bin",
+                "value": temporary_root / f"value-{context}-{query_rows}.f16.bin",
+                "mask": temporary_root / f"mask-{context}-{query_rows}.f16.bin",
+                "output": temporary_root / f"cpu-output-{context}-{query_rows}.f32.bin",
             }
             for array, name in (
-                (query_host, "query"),
+                (query_host.transpose(1, 0, 2), "query"),
                 (key_host, "key"),
                 (value_host, "value"),
                 (mask_host, "mask"),
@@ -164,6 +179,8 @@ def main() -> None:
                 str(input_paths["output"]),
                 "--heads",
                 str(args.heads),
+                "--query-rows",
+                str(query_rows),
                 "--kv-rows",
                 str(context),
                 "--head-dim",
@@ -192,18 +209,26 @@ def main() -> None:
                 [line for line in completed.stdout.splitlines() if line.strip()][-1]
             )
             cpu_output = np.fromfile(input_paths["output"], dtype="<f4").reshape(
-                args.heads, GEMMA_HEAD_DIM
+                query_rows, args.heads, GEMMA_HEAD_DIM
             )
 
             def qpu_execute() -> None:
+                kernel = (
+                    GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL
+                    if query_rows == 1
+                    else GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL
+                )
+                grid = (args.heads * query_rows, 1, 1)
                 queue.submit(
-                    GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL,
+                    kernel,
                     (query, key, value, mask, destination, scale),
-                    grid=(args.heads, 1, 1),
+                    grid=grid,
                 ).wait()
 
             qpu_samples = _time(qpu_execute, args.warmups, args.samples)
-            actual = np.array(destination.numpy(), copy=True)
+            actual = np.array(destination.numpy(), copy=True).reshape(
+                query_rows, args.heads, GEMMA_HEAD_DIM
+            )
             cpu_samples = [int(value) for value in cpu_result["complete_ns"]]
             correctness = calculate_attention_error(
                 cpu_output, actual, atol=0.005, rtol=0.005
@@ -214,7 +239,7 @@ def main() -> None:
             records.append(
                 {
                     "context_rows": context,
-                    "query_rows": 1,
+                    "query_rows": query_rows,
                     "query_heads": args.heads,
                     "kv_heads": 1,
                     "head_dim": GEMMA_HEAD_DIM,
@@ -257,10 +282,13 @@ def main() -> None:
                     "the exact CPU comparator is a standalone pinned GGML node over "
                     "deterministic synthetic tensors, not a captured model node"
                 ),
-                "the candidate supports only M=1, 256-wide, one-KV-head, no-ALiBi/no-softcap/no-sinks records",
+                (
+                    "the candidate supports only 256-wide, one-KV-head, "
+                    "no-ALiBi/no-softcap/no-sinks records; batched mode requires eight query heads"
+                ),
                 "environment retention must be established by an isolated multi-session runner",
             ],
-            "qpu_timing": "persistent mapped inputs, one fused dispatch and wait, no host copies",
+            "qpu_timing": "persistent mapped inputs, one fused dispatch for all query rows and heads, no host copies",
         },
     }
     write_json_atomic(args.output, payload)

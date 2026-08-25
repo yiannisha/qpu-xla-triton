@@ -26,6 +26,13 @@ from qpu_xla.kernels.gemm_int8 import (
 )
 from qpu_xla.kernels.gemv_fp32 import FP32_GEMV_KERNEL, supports_fp32_gemv
 from qpu_xla.kernels.gemv_int8 import W8A8_GEMV_KERNEL, supports_w8a8_gemv
+from qpu_xla.kernels.ggml_flash_attn import (
+    GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL,
+    GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL,
+    ggml_flash_attn_ext_reference,
+    supports_ggml_gemma_flash_attn_f16_m1,
+    supports_ggml_gemma_flash_attn_f16_mx,
+)
 from qpu_xla.kernels.ggml_q4_0 import (
     GGML_Q4_0_Q8_0_LINEAR_KERNEL,
     ggml_q4_0_q8_0_reference,
@@ -55,11 +62,6 @@ from qpu_xla.kernels.ggml_q8_0 import (
     GGML_Q8_0_Q8_0_LINEAR_M4_KERNEL,
     ggml_q8_0_q8_0_reference,
     supports_ggml_q8_0_q8_0_linear_m4,
-)
-from qpu_xla.kernels.ggml_flash_attn import (
-    GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL,
-    ggml_flash_attn_ext_reference,
-    supports_ggml_gemma_flash_attn_f16_m1,
 )
 from qpu_xla.kernels.minmax import MAXIMUM_WORD_KERNEL, MINIMUM_WORD_KERNEL, supports_word_minmax
 from qpu_xla.kernels.pool2d import (
@@ -95,6 +97,7 @@ __all__ = [
     "GGML_Q6_K_Q8_K_LINEAR_M4_KERNEL",
     "GGML_Q8_0_Q8_0_LINEAR_M4_KERNEL",
     "GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL",
+    "GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL",
     "AVGPOOL2D_INT32_KERNEL",
     "AVGPOOL2D_FP32_KERNEL",
     "TILED_INT32_GEMM_KERNEL",
@@ -153,4 +156,5 @@ __all__ = [
     "ggml_q8_0_q8_0_reference",
     "ggml_flash_attn_ext_reference",
     "supports_ggml_gemma_flash_attn_f16_m1",
+    "supports_ggml_gemma_flash_attn_f16_mx",
 ]
