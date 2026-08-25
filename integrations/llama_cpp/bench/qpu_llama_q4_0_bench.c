@@ -5,6 +5,9 @@
 
 #include "ggml-q4-0-q8-0-m1.h"
 #include "ggml-q4-0-q8-0-m4.h"
+#include "ggml-q4-0-q8-0-mx.h"
+#include "ggml-column-w8-q8-0-mx.h"
+#include "tiled-w8a8-gemm-dequantize.h"
 #include "ggml-q4-k-q8-k-m4.h"
 #include "ggml-q6-k-q8-k-m4.h"
 #include "ggml-q8-0-q8-0-m4.h"
@@ -56,6 +59,7 @@ typedef struct options {
     uint32_t cpu_threads;
     uint32_t warmups;
     uint32_t samples;
+    qpu_llama_q4_0_weight_mode q4_0_weight_mode;
 } options;
 
 typedef struct cpu_job {
@@ -130,8 +134,10 @@ static void usage(const char *program) {
     fprintf(stderr,
         "usage: %s --weights FILE --activation-f32 FILE --mode cpu|qpu|hybrid "
         "[--weight-type q4_0|q4_k|q6_k|q8_0] "
-        "--input-columns N --output-columns N --rows 1|4 --qpu-column-start N "
-        "--qpu-column-count N [--qpu-wgs-per-sg N] --cpu-threads N --warmups N --samples N "
+        "--input-columns N --output-columns N --rows N --qpu-column-start N "
+        "--qpu-column-count N [--qpu-wgs-per-sg N] "
+        "[--qpu-weight-mode exact|column-w8|rowcol-w8a8] "
+        "--cpu-threads N --warmups N --samples N "
         "[--output-bin FILE]\n",
         program);
 }
@@ -177,6 +183,7 @@ static bool parse_options(int argc, char **argv, options *result) {
         .mode = BENCH_CPU,
         .cpu_threads = 1,
         .qpu_wgs_per_sg = 24,
+        .q4_0_weight_mode = QPU_LLAMA_Q4_0_WEIGHT_EXACT,
         .warmups = 5,
         .samples = 31,
     };
@@ -224,6 +231,16 @@ static bool parse_options(int argc, char **argv, options *result) {
             if (!parse_u32(argument, &value.qpu_wgs_per_sg)) {
                 return false;
             }
+        } else if (strcmp(name, "--qpu-weight-mode") == 0) {
+            if (strcmp(argument, "exact") == 0) {
+                value.q4_0_weight_mode = QPU_LLAMA_Q4_0_WEIGHT_EXACT;
+            } else if (strcmp(argument, "column-w8") == 0) {
+                value.q4_0_weight_mode = QPU_LLAMA_Q4_0_WEIGHT_COLUMN_W8;
+            } else if (strcmp(argument, "rowcol-w8a8") == 0) {
+                value.q4_0_weight_mode = QPU_LLAMA_Q4_0_WEIGHT_ROWCOL_W8A8;
+            } else {
+                return false;
+            }
         } else if (strcmp(name, "--cpu-threads") == 0) {
             if (!parse_u32(argument, &value.cpu_threads)) {
                 return false;
@@ -244,19 +261,22 @@ static bool parse_options(int argc, char **argv, options *result) {
         value.input_columns % (value.format == WEIGHT_Q4_0
                 || value.format == WEIGHT_Q8_0 ? Q4_0_BLOCK_ELEMENTS : Q4_K_BLOCK_ELEMENTS) != 0 ||
         value.output_columns == 0 ||
-        (value.rows != 1 && value.rows != 4) || value.qpu_wgs_per_sg == 0 ||
+        value.rows == 0 || value.rows > 4U * UINT16_MAX || value.qpu_wgs_per_sg == 0 ||
         value.qpu_wgs_per_sg > UINT8_MAX || value.cpu_threads == 0 || value.samples == 0) {
+        return false;
+    }
+    if (value.format != WEIGHT_Q4_0 &&
+        value.q4_0_weight_mode != QPU_LLAMA_Q4_0_WEIGHT_EXACT) {
         return false;
     }
     if (value.format != WEIGHT_Q4_0 && value.rows != 4) {
         return false;
     }
-    if (value.format == WEIGHT_Q4_0 && value.qpu_wgs_per_sg != 24U) {
-        return false;
-    }
     if (value.mode == BENCH_QPU) {
-        value.qpu_column_start = 0;
-        value.qpu_column_count = value.output_columns;
+        if (value.qpu_column_count == 0U) {
+            value.qpu_column_start = 0;
+            value.qpu_column_count = value.output_columns;
+        }
     }
     if (value.mode == BENCH_CPU) {
         value.qpu_column_start = value.output_columns;
@@ -562,9 +582,18 @@ int main(int argc, char **argv) {
                     .rows = config.rows,
                     .resident_column_start = config.qpu_column_start,
                     .resident_column_count = config.qpu_column_count,
-                    .expected_source_hash = config.rows == 1
+                    .weight_mode = config.q4_0_weight_mode,
+                    .workgroups_per_supergroup = config.qpu_wgs_per_sg,
+                    .expected_source_hash = config.q4_0_weight_mode ==
+                            QPU_LLAMA_Q4_0_WEIGHT_ROWCOL_W8A8
+                        ? qpu_tiled_w8a8_gemm_dequantize_source_hash
+                        : config.q4_0_weight_mode == QPU_LLAMA_Q4_0_WEIGHT_COLUMN_W8
+                            ? qpu_ggml_column_w8_q8_0_mx_source_hash
+                        : config.rows == 1
                         ? qpu_ggml_q4_0_q8_0_m1_source_hash
-                        : qpu_ggml_q4_0_q8_0_m4_source_hash,
+                        : config.rows == 4
+                            ? qpu_ggml_q4_0_q8_0_m4_source_hash
+                            : qpu_ggml_q4_0_q8_0_mx_source_hash,
                 };
                 status = qpu_llama_q4_0_linear_prepare(context, &desc, &linear);
             } else if (config.format == WEIGHT_Q4_K) {
@@ -648,6 +677,7 @@ int main(int argc, char **argv) {
     };
     cpu_pool_start(&pool, &full_job);
     cpu_pool_wait(&pool);
+    memcpy(destination, reference, output_bytes);
 
     uint64_t *complete_samples = calloc(config.samples, sizeof(uint64_t));
     uint64_t *quantize_samples = calloc(config.samples, sizeof(uint64_t));
@@ -790,7 +820,8 @@ int main(int argc, char **argv) {
     printf("{\"schema_version\":1,\"kind\":\"llama-qpu-native-operator-samples\","
         "\"mode\":\"%s\",\"weight_type\":\"%s\",\"input_columns\":%u,"
         "\"output_columns\":%u,\"rows\":%u,"
-        "\"cpu_threads\":%u,\"qpu_column_start\":%u,\"qpu_column_count\":%u,"
+        "\"cpu_threads\":%u,\"qpu_weight_mode\":\"%s\","
+        "\"qpu_column_start\":%u,\"qpu_column_count\":%u,"
         "\"qpu_wgs_per_sg\":%u,"
         "\"warmups\":%u,\"retained_samples\":%u,\"prepare_ns\":%llu,"
         "\"resident_bytes\":%zu,\"output_bin_requested\":%s,\"output_bin_written\":%s,"
@@ -798,7 +829,12 @@ int main(int argc, char **argv) {
         "\"cpu_kernel\":\"%s\",\"complete_ns\":",
         mode_name(config.mode), weight_format_name(config.format), config.input_columns,
         config.output_columns, config.rows,
-        config.cpu_threads, config.qpu_column_start, config.qpu_column_count,
+        config.cpu_threads,
+        config.q4_0_weight_mode == QPU_LLAMA_Q4_0_WEIGHT_ROWCOL_W8A8
+            ? "rowcol-w8a8"
+            : config.q4_0_weight_mode == QPU_LLAMA_Q4_0_WEIGHT_COLUMN_W8
+                ? "column-w8" : "exact",
+        config.qpu_column_start, config.qpu_column_count,
         config.qpu_wgs_per_sg, config.warmups,
         config.samples, (unsigned long long) prepare_ns,
         config.format == WEIGHT_Q4_0 ? qpu_llama_q4_0_linear_resident_bytes(linear)

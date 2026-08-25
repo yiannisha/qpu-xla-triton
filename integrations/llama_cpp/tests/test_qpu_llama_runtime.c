@@ -32,9 +32,29 @@ static void test_device_failure_injection(void) {
     assert(context == NULL);
 }
 
+static void test_cached_buffer_argument_validation(void) {
+    qpu_llama_buffer *buffer = NULL;
+    assert(qpu_llama_buffer_create_cached(NULL, 4096, &buffer) ==
+        QPU_LLAMA_INVALID_ARGUMENT);
+    assert(qpu_llama_buffer_cpu_access_begin(
+        NULL, QPU_LLAMA_CPU_ACCESS_READ) == QPU_LLAMA_INVALID_ARGUMENT);
+    assert(qpu_llama_buffer_cpu_access_end(
+        NULL, QPU_LLAMA_CPU_ACCESS_WRITE) == QPU_LLAMA_INVALID_ARGUMENT);
+}
+
+static void test_async_submission_argument_validation(void) {
+    qpu_llama_submission *submission = NULL;
+    assert(qpu_llama_program_submit(NULL, NULL, &submission) ==
+        QPU_LLAMA_INVALID_ARGUMENT);
+    assert(qpu_llama_submission_wait(NULL) == QPU_LLAMA_INVALID_ARGUMENT);
+    qpu_llama_submission_destroy(NULL);
+}
+
 int main(void) {
     test_program_validation();
     test_device_failure_injection();
+    test_cached_buffer_argument_validation();
+    test_async_submission_argument_validation();
     puts("qpu llama runtime tests passed");
     return 0;
 }

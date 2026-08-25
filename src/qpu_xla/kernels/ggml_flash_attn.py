@@ -165,8 +165,10 @@ def _load_tmu_word(address: Register, destination: Register) -> None:
 
 
 @qpu
-def qpu_ggml_gemma_flash_attn_f16_m1(asm: Assembly) -> None:
-    """Fused Gemma M=1 GQA for one F16 KV head and 256-wide heads.
+def qpu_ggml_gemma_flash_attn_f16_m1(
+    asm: Assembly, *, batched_query: bool = False
+) -> None:
+    """Fused Gemma GQA for one F16 KV head and 256-wide heads.
 
     One workgroup owns one query head.  Its 16 SIMD lanes jointly reduce QK
     while retaining all 256 online-softmax value accumulators in registers, so
@@ -212,21 +214,41 @@ def qpu_ggml_gemma_flash_attn_f16_m1(asm: Assembly) -> None:
     nop(sig=ldunifrf(reg_pair_count))
     nop(sig=ldunifrf(reg_query_pointer))
     nop(sig=ldunifrf(reg_count))  # query-head stride
+    if batched_query:
+        nop(sig=ldunifrf(reg_dot))  # query-row stride
     nop(sig=ldunifrf(reg_key_pointer))
     nop(sig=ldunifrf(reg_key_stride))
     nop(sig=ldunifrf(reg_value_pointer))
     nop(sig=ldunifrf(reg_value_stride))
     nop(sig=ldunifrf(reg_mask_pointer))
+    if batched_query:
+        nop(sig=ldunifrf(reg_product))  # mask-row stride
     nop(sig=ldunifrf(reg_output_base))
     nop(sig=ldunifrf(reg_output_pointer))  # output-head stride
+    if batched_query:
+        nop(sig=ldunifrf(reg_rotated))  # output-row stride
     nop(sig=ldunifrf(reg_scale))
     nop(sig=ldunifrf(reg_log2_e))
     nop(sig=ldunifrf(reg_negative_inf))
 
-    umul24(reg_count, reg_temporary, reg_count)
-    add(reg_query_pointer, reg_query_pointer, reg_count)
-    umul24(reg_output_pointer, reg_temporary, reg_output_pointer)
-    add(reg_output_base, reg_output_base, reg_output_pointer)
+    if batched_query:
+        band(reg_even, reg_temporary, 7)
+        shr(reg_odd, reg_temporary, 3)
+        umul24(reg_count, reg_even, reg_count)
+        add(reg_query_pointer, reg_query_pointer, reg_count)
+        umul24(reg_dot, reg_odd, reg_dot)
+        add(reg_query_pointer, reg_query_pointer, reg_dot)
+        umul24(reg_product, reg_odd, reg_product)
+        add(reg_mask_pointer, reg_mask_pointer, reg_product)
+        umul24(reg_output_pointer, reg_even, reg_output_pointer)
+        add(reg_output_base, reg_output_base, reg_output_pointer)
+        umul24(reg_rotated, reg_odd, reg_rotated)
+        add(reg_output_base, reg_output_base, reg_rotated)
+    else:
+        umul24(reg_count, reg_temporary, reg_count)
+        add(reg_query_pointer, reg_query_pointer, reg_count)
+        umul24(reg_output_pointer, reg_temporary, reg_output_pointer)
+        add(reg_output_base, reg_output_base, reg_output_pointer)
     eidx(reg_even_lane_offset)
     shl(reg_even_lane_offset, reg_even_lane_offset, 3)
     add(reg_query_pointer, reg_query_pointer, reg_even_lane_offset)
@@ -346,7 +368,7 @@ class _ProgramState:
 
 
 _STATE_LOCK = Lock()
-_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, _ProgramState] = WeakKeyDictionary()
+_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[bool, _ProgramState]] = WeakKeyDictionary()
 
 
 def supports_ggml_gemma_flash_attn_f16_m1(
@@ -381,16 +403,20 @@ def supports_ggml_gemma_flash_attn_f16_m1(
     return all(tensor.numpy().flags.c_contiguous for tensor in (query, key, value, mask, destination))
 
 
-def _program_state(backend: PyVideoCore7Backend) -> _ProgramState:
+def _program_state(backend: PyVideoCore7Backend, batched_query: bool = False) -> _ProgramState:
     with _STATE_LOCK:
-        state = _PROGRAMS.get(backend)
+        states = _PROGRAMS.setdefault(backend, {})
+        state = states.get(batched_query)
         if state is None:
             with backend.driver_session() as driver:
                 state = _ProgramState(
-                    code=driver.program(qpu_ggml_gemma_flash_attn_f16_m1),
-                    uniforms=driver.alloc(13, dtype=np.uint32),
+                    code=driver.program(
+                        qpu_ggml_gemma_flash_attn_f16_m1,
+                        batched_query=batched_query,
+                    ),
+                    uniforms=driver.alloc(16 if batched_query else 13, dtype=np.uint32),
                 )
-            _PROGRAMS[backend] = state
+            states[batched_query] = state
         return state
 
 
@@ -445,9 +471,103 @@ GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL = Kernel(
 )
 
 
+def supports_ggml_gemma_flash_attn_f16_mx(
+    query: Tensor,
+    key: Tensor,
+    value: Tensor,
+    mask: Tensor,
+    destination: Tensor,
+    backend: Backend,
+) -> bool:
+    """Return whether tensors match the eight-head batched-prefill contract."""
+    if not isinstance(backend, PyVideoCore7Backend):
+        return False
+    if query.dtype != np.dtype(np.float32) or destination.dtype != np.dtype(np.float32):
+        return False
+    if any(tensor.dtype != np.dtype(np.float16) for tensor in (key, value, mask)):
+        return False
+    if len(query.shape) != 3 or len(destination.shape) != 3:
+        return False
+    if len(key.shape) != 2 or len(value.shape) != 2 or len(mask.shape) != 2:
+        return False
+    rows, heads, head_dim = query.shape
+    kv_rows, key_dim = key.shape
+    return bool(
+        rows > 0
+        and heads == 8
+        and head_dim == GEMMA_HEAD_DIM
+        and key_dim == head_dim
+        and value.shape == (kv_rows, GEMMA_HEAD_DIM)
+        and mask.shape == (rows, kv_rows)
+        and destination.shape == query.shape
+        and kv_rows > 0
+        and kv_rows % 2 == 0
+        and all(
+            tensor.numpy().flags.c_contiguous
+            for tensor in (query, key, value, mask, destination)
+        )
+    )
+
+
+def _execute_ggml_gemma_flash_attn_f16_mx(
+    backend: Backend,
+    args: tuple[Any, ...],
+    grid: tuple[int, int, int],
+) -> None:
+    if len(args) != 6 or not all(isinstance(argument, Tensor) for argument in args[:5]):
+        raise KernelError("batched Gemma flash attention expects five tensors and scale")
+    query, key, value, mask, destination, scale = args
+    if not isinstance(scale, float | np.floating) or not math.isfinite(float(scale)):
+        raise KernelError("Gemma flash attention scale must be finite")
+    if not supports_ggml_gemma_flash_attn_f16_mx(
+        query, key, value, mask, destination, backend
+    ):
+        raise KernelError("batched Gemma flash attention requires contiguous Mx8x256 tensors")
+    if not isinstance(backend, PyVideoCore7Backend):
+        raise KernelError("Gemma flash attention requires PyVideoCore7Backend")
+    expected_grid = (query.shape[1] * query.shape[0], 1, 1)
+    if grid != expected_grid:
+        raise KernelError(f"batched Gemma attention grid must be {expected_grid}, got {grid}")
+    state = _program_state(backend, True)
+    state.uniforms[:] = (
+        key.shape[0] // 2,
+        query.address,
+        query.numpy().strides[1],
+        query.numpy().strides[0],
+        key.address,
+        key.numpy().strides[0],
+        value.address,
+        value.numpy().strides[0],
+        mask.address,
+        mask.numpy().strides[0],
+        destination.address,
+        destination.numpy().strides[1],
+        destination.numpy().strides[0],
+        np.asarray(scale, dtype=np.float32).view(np.uint32),
+        np.asarray(np.log2(np.e), dtype=np.float32).view(np.uint32),
+        np.asarray(-np.inf, dtype=np.float32).view(np.uint32),
+    )
+    with backend.driver_session() as driver:
+        driver.execute(
+            state.code,
+            local_invocation=(16, 1, 1),
+            uniforms=state.uniforms.addresses()[0],
+            workgroup=grid,
+            wgs_per_sg=48,
+            thread=query.shape[0] * query.shape[1],
+        )
+
+
+GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL = Kernel(
+    "vc7.ggml_gemma_flash_attn_f16_mx", _execute_ggml_gemma_flash_attn_f16_mx
+)
+
+
 __all__ = [
     "GEMMA_HEAD_DIM",
     "GGML_GEMMA_FLASH_ATTN_F16_M1_KERNEL",
+    "GGML_GEMMA_FLASH_ATTN_F16_MX_KERNEL",
     "ggml_flash_attn_ext_reference",
     "supports_ggml_gemma_flash_attn_f16_m1",
+    "supports_ggml_gemma_flash_attn_f16_mx",
 ]

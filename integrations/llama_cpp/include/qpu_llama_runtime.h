@@ -11,6 +11,7 @@ extern "C" {
 typedef struct qpu_llama_context qpu_llama_context;
 typedef struct qpu_llama_buffer qpu_llama_buffer;
 typedef struct qpu_llama_program qpu_llama_program;
+typedef struct qpu_llama_submission qpu_llama_submission;
 
 typedef enum qpu_llama_status {
     QPU_LLAMA_OK = 0,
@@ -33,6 +34,12 @@ typedef enum qpu_llama_failure_point {
     QPU_LLAMA_FAIL_WAIT = 1U << 3,
     QPU_LLAMA_FAIL_SOURCE_HASH = 1U << 4,
 } qpu_llama_failure_point;
+
+typedef enum qpu_llama_cpu_access {
+    QPU_LLAMA_CPU_ACCESS_READ = 1,
+    QPU_LLAMA_CPU_ACCESS_WRITE = 2,
+    QPU_LLAMA_CPU_ACCESS_READ_WRITE = 3,
+} qpu_llama_cpu_access;
 
 typedef struct qpu_llama_context_config {
     const char *render_node;
@@ -89,6 +96,10 @@ qpu_llama_status qpu_llama_buffer_create(
     qpu_llama_context *context,
     size_t size,
     qpu_llama_buffer **result);
+qpu_llama_status qpu_llama_buffer_create_cached(
+    qpu_llama_context *context,
+    size_t size,
+    qpu_llama_buffer **result);
 void qpu_llama_buffer_destroy(qpu_llama_buffer *buffer);
 void *qpu_llama_buffer_data(qpu_llama_buffer *buffer);
 size_t qpu_llama_buffer_size(const qpu_llama_buffer *buffer);
@@ -96,6 +107,12 @@ qpu_llama_status qpu_llama_buffer_gpu_address(
     const qpu_llama_buffer *buffer,
     size_t byte_offset,
     uint32_t *result);
+qpu_llama_status qpu_llama_buffer_cpu_access_begin(
+    qpu_llama_buffer *buffer,
+    qpu_llama_cpu_access access);
+qpu_llama_status qpu_llama_buffer_cpu_access_end(
+    qpu_llama_buffer *buffer,
+    qpu_llama_cpu_access access);
 
 qpu_llama_status qpu_llama_validate_program(const qpu_llama_program_desc *desc);
 qpu_llama_status qpu_llama_program_create(
@@ -106,6 +123,12 @@ void qpu_llama_program_destroy(qpu_llama_program *program);
 qpu_llama_status qpu_llama_program_execute(
     qpu_llama_program *program,
     const qpu_llama_dispatch_desc *dispatch);
+qpu_llama_status qpu_llama_program_submit(
+    qpu_llama_program *program,
+    const qpu_llama_dispatch_desc *dispatch,
+    qpu_llama_submission **result);
+qpu_llama_status qpu_llama_submission_wait(qpu_llama_submission *submission);
+void qpu_llama_submission_destroy(qpu_llama_submission *submission);
 
 const char *qpu_llama_status_string(qpu_llama_status status);
 

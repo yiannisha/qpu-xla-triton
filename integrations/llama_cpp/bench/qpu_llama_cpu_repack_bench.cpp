@@ -69,7 +69,7 @@ void usage(const char * program) {
     std::fprintf(stderr,
         "usage: %s --weights FILE --activation-f32 FILE --output-bin FILE "
         "[--weight-type q4_0|q4_k|q6_k|q8_0] "
-        "--input-columns N --output-columns N --rows 1|4 --cpu-threads N "
+        "--input-columns N --output-columns N --rows N --cpu-threads N "
         "--warmups N --samples N\n",
         program);
 }
@@ -133,7 +133,8 @@ bool parse_options(int argc, char ** argv, options & result) {
         value.input_columns % (
             value.format == weight_format::q4_0 || value.format == weight_format::q8_0
                 ? q4_0_block_elements : q4_k_block_elements) != 0 ||
-        value.output_columns == 0 || (value.rows != 1 && value.rows != 4) ||
+        value.output_columns == 0 || value.rows == 0 ||
+        (value.format != weight_format::q4_0 && value.rows != 4) ||
         value.cpu_threads == 0 || value.samples == 0) {
         return false;
     }
@@ -302,7 +303,7 @@ int main(int argc, char ** argv) {
     std::vector<uint8_t> result(output_bytes);
     ggml_backend_tensor_get(output, result.data(), 0, result.size());
     const bool output_written = write_exact_file(config.output_path, result.data(), result.size());
-    std::printf("{\"schema_version\":1,\"kind\":\"llama-cpu-repack-native-node-samples\",")
+    std::printf("{\"schema_version\":1,\"kind\":\"llama-cpu-repack-native-node-samples\","
         "\"mode\":\"cpu-repack\",\"weight_type\":\"%s\",\"input_columns\":%u,"
         "\"output_columns\":%u,\"rows\":%u,"
         "\"cpu_threads\":%u,\"warmups\":%u,\"retained_samples\":%u,\"prepare_ns\":%llu,"

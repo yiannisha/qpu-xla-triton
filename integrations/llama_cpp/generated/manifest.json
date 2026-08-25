@@ -4,6 +4,135 @@
   "kind": "videocore-vii-qpu-program-export",
   "programs": [
     {
+      "assembly_kwargs": {
+        "column_weight_scale": true
+      },
+      "binary": "ggml-column-w8-q8-0-mx.bin",
+      "binary_sha256": "0b28eca757793042df7d3be16cc82a7dc038037eb1284208dc1a8690afb33134",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Approximate per-column W8 by block-Q8_0 arbitrary-row 16x16 tiled linear with fused FP32 scaling.",
+      "header": "ggml-column-w8-q8-0-mx.h",
+      "instruction_count": 470,
+      "launch": {
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": "workgroup_x * workgroup_y",
+        "wgs_per_sg": 48,
+        "workgroup": [
+          "selected_output_columns / 16",
+          "ceil(output_rows / 16)",
+          1
+        ]
+      },
+      "name": "ggml-column-w8-q8-0-mx",
+      "size_bytes": 3760,
+      "source": "src/qpu_xla/kernels/ggml_q4_0.py",
+      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
+      "source_hash": "7ef0236fc2abc7b643f11b9b909758c3572107dd088b3b1997e5a7592bde05cf",
+      "symbol": "qpu_ggml_column_w8_q8_0_mx",
+      "uniform_word_count": 10,
+      "uniforms": [
+        {
+          "name": "activation_q_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_q_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "weight_q_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "weight_q_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "output_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "output_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "reduction_blocks",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_scale_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_scale_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "column_weight_scale_address",
+          "type": "gpu_address"
+        }
+      ]
+    },
+    {
+      "assembly_kwargs": {},
+      "binary": "ggml-geglu-split-fp32.bin",
+      "binary_sha256": "fde91d7ec392abd8acc44c7c3bda598174448fe9a5316d2c856020d0fada7a12",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Native GGML split GEGLU over equal contiguous FP32 tensors, using four words per SIMD lane and all twelve VideoCore VII QPUs.",
+      "header": "ggml-geglu-split-fp32.h",
+      "instruction_count": 114,
+      "launch": {
+        "constraint": "element_count % 768 == 0",
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": 12,
+        "wgs_per_sg": 24,
+        "workgroup": [
+          12,
+          1,
+          1
+        ]
+      },
+      "name": "ggml-geglu-split-fp32",
+      "size_bytes": 912,
+      "source": "src/qpu_xla/kernels/ggml_geglu.py",
+      "source_file_sha256": "932dea36b035fe4798fd6cc8415e3444f4da513d092a58f68fba5ef7e0d58f39",
+      "source_hash": "9a9fc49af530b7a9b272068c97997b0aca67194757e836d734ff1f2e3f2cfdaa",
+      "symbol": "qpu_ggml_geglu_split_fp32",
+      "uniform_word_count": 5,
+      "uniforms": [
+        {
+          "name": "iterations_per_workgroup",
+          "type": "uint32"
+        },
+        {
+          "name": "gate_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "up_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "destination_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "ggml_gelu_fp16_table_address",
+          "type": "gpu_address"
+        }
+      ]
+    },
+    {
       "assembly_kwargs": {},
       "binary": "ggml-gemma-flash-attn-f16-m1.bin",
       "binary_sha256": "edde1082af4eb7274a9db5512e0ba50be4914dd272da284deded9030cf57a8ea",
@@ -29,8 +158,8 @@
       "name": "ggml-gemma-flash-attn-f16-m1",
       "size_bytes": 5440,
       "source": "src/qpu_xla/kernels/ggml_flash_attn.py",
-      "source_file_sha256": "e61d901a41d0c3e780d4bc3b7d7cf9e2f72601f6513b7db14f211de2ebd8a0aa",
-      "source_hash": "9801c81595c01d0ab5a7e394ca277a6690c5965343e0f7d610609f1fa62100e5",
+      "source_file_sha256": "fb5fbc8385569ab16f4bc9b596fff7f3db2563400a4feb558693d76f2e10692f",
+      "source_hash": "860813591dfaaf46c6f9e4dd66a2ee439fa0e4bfbdaa930b2494c71da2fc4cca",
       "symbol": "qpu_ggml_gemma_flash_attn_f16_m1",
       "uniform_word_count": 13,
       "uniforms": [
@@ -90,6 +219,105 @@
     },
     {
       "assembly_kwargs": {
+        "batched_query": true
+      },
+      "binary": "ggml-gemma-flash-attn-f16-mx.bin",
+      "binary_sha256": "5a409a61d8137c3fc04874bad3bc5c5ec1858f8af523cbec40e38e5652495a95",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Experimental fused Gemma batched-prefill attention for Mx8x256 F32 queries, one native F16 KV head/mask, and no ALiBi, softcap, or sinks.",
+      "header": "ggml-gemma-flash-attn-f16-mx.h",
+      "instruction_count": 691,
+      "launch": {
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": "8 * query_rows",
+        "wgs_per_sg": 48,
+        "workgroup": [
+          "8 * query_rows",
+          1,
+          1
+        ]
+      },
+      "name": "ggml-gemma-flash-attn-f16-mx",
+      "size_bytes": 5528,
+      "source": "src/qpu_xla/kernels/ggml_flash_attn.py",
+      "source_file_sha256": "fb5fbc8385569ab16f4bc9b596fff7f3db2563400a4feb558693d76f2e10692f",
+      "source_hash": "fcdd160081ff9c2c6a9d0e093c40f29ac5355281244ee249ae4470ba69ec692e",
+      "symbol": "qpu_ggml_gemma_flash_attn_f16_mx",
+      "uniform_word_count": 16,
+      "uniforms": [
+        {
+          "name": "kv_row_pairs",
+          "type": "uint32"
+        },
+        {
+          "name": "query_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "query_head_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "query_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "key_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "key_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "value_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "value_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "mask_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "mask_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "output_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "output_head_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "output_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "scale",
+          "type": "float32"
+        },
+        {
+          "name": "log2_e",
+          "type": "float32"
+        },
+        {
+          "name": "negative_infinity",
+          "type": "float32"
+        }
+      ]
+    },
+    {
+      "assembly_kwargs": {
         "rows": 1
       },
       "binary": "ggml-q4-0-q8-0-m1.bin",
@@ -116,8 +344,8 @@
       "name": "ggml-q4-0-q8-0-m1",
       "size_bytes": 3808,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "4df7d12d6c442f610e9971dc17e45a42584339d901d44be60407677fb064f0e9",
-      "source_hash": "c933df30a1a95d3cd6006c1508293478da2bcbc52dddf57f7eb0b452c0d83cb2",
+      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
+      "source_hash": "75a7787156d51be18a81f5c57ee2fdec46fddb89a075adbf57321a4ce01703f6",
       "symbol": "qpu_ggml_q4_0_q8_0_m1",
       "uniform_word_count": 13,
       "uniforms": [
@@ -207,8 +435,8 @@
       "name": "ggml-q4-0-q8-0-m4",
       "size_bytes": 3808,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "4df7d12d6c442f610e9971dc17e45a42584339d901d44be60407677fb064f0e9",
-      "source_hash": "9f60fed06ad43134980c80dac3bff0d4e47ffcc15af803496983b288a706f264",
+      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
+      "source_hash": "15d0de461681fc60af22d181cb09c8efb0be6f59f9e1677ab5d0b1a7208b45eb",
       "symbol": "qpu_ggml_q4_0_q8_0_m4",
       "uniform_word_count": 13,
       "uniforms": [
@@ -267,6 +495,83 @@
           "name": "q8_0_block_bytes",
           "type": "uint32",
           "value": "34"
+        }
+      ]
+    },
+    {
+      "assembly_kwargs": {},
+      "binary": "ggml-q4-0-q8-0-mx.bin",
+      "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+      "code_alignment": 8,
+      "data_alignment": 4,
+      "description": "Native GGML Q4_0 by Q8_0 arbitrary-row 16x16 tiled linear with padded rows, persistent weights, and FP32 output.",
+      "header": "ggml-q4-0-q8-0-mx.h",
+      "instruction_count": 470,
+      "launch": {
+        "local_invocation": [
+          16,
+          1,
+          1
+        ],
+        "thread": "workgroup_x * workgroup_y",
+        "wgs_per_sg": 24,
+        "workgroup": [
+          "selected_output_columns / 16",
+          "ceil(output_rows / 16)",
+          1
+        ]
+      },
+      "name": "ggml-q4-0-q8-0-mx",
+      "size_bytes": 3760,
+      "source": "src/qpu_xla/kernels/ggml_q4_0.py",
+      "source_file_sha256": "b678bfeb2dc6491a4ef4674d4da4e53c92d9c9273959c6ee5d4f74539ebef18b",
+      "source_hash": "f48b5ef936b9b30e5aab4263b29b6f493cbbf29c814735c7ef6c7c477760b63a",
+      "symbol": "qpu_ggml_q4_0_q8_0_mx",
+      "uniform_word_count": 11,
+      "uniforms": [
+        {
+          "name": "activation_q_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_q_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "weight_q_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "weight_q_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "output_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "output_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "reduction_blocks",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_scale_row_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "activation_scale_address",
+          "type": "gpu_address"
+        },
+        {
+          "name": "weight_scale_block_stride_bytes",
+          "type": "uint32"
+        },
+        {
+          "name": "weight_scale_address",
+          "type": "gpu_address"
         }
       ]
     },

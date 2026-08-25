@@ -25,7 +25,12 @@ from _videocore7.assembler import assemble  # noqa: E402
 from qpu_xla.kernels.gemm_int8 import qpu_tiled_w8a8_gemm  # noqa: E402
 from qpu_xla.kernels.gemv_int8 import qpu_w8a8_gemv  # noqa: E402
 from qpu_xla.kernels.ggml_flash_attn import qpu_ggml_gemma_flash_attn_f16_m1  # noqa: E402
-from qpu_xla.kernels.ggml_q4_0 import qpu_ggml_q4_0_q8_0_linear  # noqa: E402
+from qpu_xla.kernels.ggml_geglu import qpu_ggml_geglu_split_fp32  # noqa: E402
+from qpu_xla.kernels.ggml_geglu_q8 import qpu_ggml_geglu_q8_0  # noqa: E402
+from qpu_xla.kernels.ggml_q4_0 import (  # noqa: E402
+    qpu_ggml_q4_0_q8_0_linear,
+    qpu_ggml_q4_0_q8_0_tiled_gemm,
+)
 from qpu_xla.kernels.ggml_q4_k import qpu_ggml_q4_k_q8_k_linear_m4  # noqa: E402
 from qpu_xla.kernels.ggml_q6_k import qpu_ggml_q6_k_q8_k_linear_m4  # noqa: E402
 from qpu_xla.kernels.ggml_q8_0 import qpu_ggml_q8_0_q8_0_linear_m4  # noqa: E402
@@ -48,6 +53,56 @@ class ProgramSpec:
 
 
 PROGRAMS = {
+    "ggml-geglu-q8-0": ProgramSpec(
+        name="ggml-geglu-q8-0",
+        symbol="qpu_ggml_geglu_q8_0",
+        function=qpu_ggml_geglu_q8_0,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "blocks_per_row", "type": "uint32"},
+            {"name": "gate_address", "type": "gpu_address"},
+            {"name": "up_address", "type": "gpu_address"},
+            {"name": "q8_0_destination_address", "type": "gpu_address"},
+            {"name": "ggml_gelu_fp16_table_address", "type": "gpu_address"},
+            {"name": "inverse_127", "type": "float32"},
+            {"name": "minimum_maximum", "type": "float32"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["columns / 32", "rows", 1],
+            "wgs_per_sg": 24,
+            "thread": "rows * columns / 32",
+            "constraint": "columns % 32 == 0",
+        },
+        description=(
+            "Exact lookup-table GGML GEGLU fused with native per-block Q8_0 "
+            "quantization for direct consumption by a down projection."
+        ),
+    ),
+    "ggml-geglu-split-fp32": ProgramSpec(
+        name="ggml-geglu-split-fp32",
+        symbol="qpu_ggml_geglu_split_fp32",
+        function=qpu_ggml_geglu_split_fp32,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "iterations_per_workgroup", "type": "uint32"},
+            {"name": "gate_address", "type": "gpu_address"},
+            {"name": "up_address", "type": "gpu_address"},
+            {"name": "destination_address", "type": "gpu_address"},
+            {"name": "ggml_gelu_fp16_table_address", "type": "gpu_address"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": [12, 1, 1],
+            "wgs_per_sg": 24,
+            "thread": 12,
+            "constraint": "element_count % 768 == 0",
+        },
+        description=(
+            "Native GGML split GEGLU over equal contiguous FP32 tensors, using "
+            "four words per SIMD lane and all twelve VideoCore VII QPUs."
+        ),
+    ),
     "ggml-gemma-flash-attn-f16-m1": ProgramSpec(
         name="ggml-gemma-flash-attn-f16-m1",
         symbol="qpu_ggml_gemma_flash_attn_f16_m1",
@@ -77,6 +132,40 @@ PROGRAMS = {
         description=(
             "Experimental fused Gemma M=1 attention for 256-wide F32 query heads, "
             "one native F16 KV head/mask, and no ALiBi, softcap, or sinks."
+        ),
+    ),
+    "ggml-gemma-flash-attn-f16-mx": ProgramSpec(
+        name="ggml-gemma-flash-attn-f16-mx",
+        symbol="qpu_ggml_gemma_flash_attn_f16_mx",
+        function=qpu_ggml_gemma_flash_attn_f16_m1,
+        assembly_kwargs={"batched_query": True},
+        uniforms=(
+            {"name": "kv_row_pairs", "type": "uint32"},
+            {"name": "query_address", "type": "gpu_address"},
+            {"name": "query_head_stride_bytes", "type": "uint32"},
+            {"name": "query_row_stride_bytes", "type": "uint32"},
+            {"name": "key_address", "type": "gpu_address"},
+            {"name": "key_row_stride_bytes", "type": "uint32"},
+            {"name": "value_address", "type": "gpu_address"},
+            {"name": "value_row_stride_bytes", "type": "uint32"},
+            {"name": "mask_address", "type": "gpu_address"},
+            {"name": "mask_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "output_head_stride_bytes", "type": "uint32"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "scale", "type": "float32"},
+            {"name": "log2_e", "type": "float32"},
+            {"name": "negative_infinity", "type": "float32"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["8 * query_rows", 1, 1],
+            "wgs_per_sg": 48,
+            "thread": "8 * query_rows",
+        },
+        description=(
+            "Experimental fused Gemma batched-prefill attention for Mx8x256 F32 "
+            "queries, one native F16 KV head/mask, and no ALiBi, softcap, or sinks."
         ),
     ),
     "ggml-q8-0-q8-0-m4": ProgramSpec(
@@ -221,6 +310,63 @@ PROGRAMS = {
             "thread": "workgroup_x",
         },
         description="Native GGML Q4_0 by Q8_0 four-row linear with FP32 output.",
+    ),
+    "ggml-q4-0-q8-0-mx": ProgramSpec(
+        name="ggml-q4-0-q8-0-mx",
+        symbol="qpu_ggml_q4_0_q8_0_mx",
+        function=qpu_ggml_q4_0_q8_0_tiled_gemm,
+        assembly_kwargs={},
+        uniforms=(
+            {"name": "activation_q_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_q_address", "type": "gpu_address"},
+            {"name": "weight_q_row_stride_bytes", "type": "uint32"},
+            {"name": "weight_q_address", "type": "gpu_address"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "reduction_blocks", "type": "uint32"},
+            {"name": "activation_scale_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_scale_address", "type": "gpu_address"},
+            {"name": "weight_scale_block_stride_bytes", "type": "uint32"},
+            {"name": "weight_scale_address", "type": "gpu_address"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["selected_output_columns / 16", "ceil(output_rows / 16)", 1],
+            "wgs_per_sg": 24,
+            "thread": "workgroup_x * workgroup_y",
+        },
+        description=(
+            "Native GGML Q4_0 by Q8_0 arbitrary-row 16x16 tiled linear with "
+            "padded rows, persistent weights, and FP32 output."
+        ),
+    ),
+    "ggml-column-w8-q8-0-mx": ProgramSpec(
+        name="ggml-column-w8-q8-0-mx",
+        symbol="qpu_ggml_column_w8_q8_0_mx",
+        function=qpu_ggml_q4_0_q8_0_tiled_gemm,
+        assembly_kwargs={"column_weight_scale": True},
+        uniforms=(
+            {"name": "activation_q_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_q_address", "type": "gpu_address"},
+            {"name": "weight_q_row_stride_bytes", "type": "uint32"},
+            {"name": "weight_q_address", "type": "gpu_address"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "reduction_blocks", "type": "uint32"},
+            {"name": "activation_scale_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_scale_address", "type": "gpu_address"},
+            {"name": "column_weight_scale_address", "type": "gpu_address"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["selected_output_columns / 16", "ceil(output_rows / 16)", 1],
+            "wgs_per_sg": 48,
+            "thread": "workgroup_x * workgroup_y",
+        },
+        description=(
+            "Approximate per-column W8 by block-Q8_0 arbitrary-row 16x16 "
+            "tiled linear with fused FP32 scaling."
+        ),
     ),
     "w8a8-gemv": ProgramSpec(
         name="w8a8-gemv",
