@@ -1,0 +1,895 @@
+{
+  "case_file": {
+    "path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/eval/mtp_qpu_cases.json",
+    "sha256": "1b2bc18cc1da0568280d957eb0f60b94d28d93dddc60443d3138fa596e05f4a3"
+  },
+  "created_utc": "2026-08-25T07:27:06+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-25T07:27:06+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400023808\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  1965883392  1780072448   321650688  5122097152  6488719360\nSwap:              0           0           0\n"
+      },
+      "process_affinity": {
+        "command": [
+          "taskset",
+          "--pid",
+          "--cpu-list",
+          "965023"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "pid 965023's current affinity list: 0-3\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_configuration": {
+        "command": [
+          "swapon",
+          "--show=NAME,TYPE,SIZE,PRIO",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_used_bytes": {
+        "command": [
+          "swapon",
+          "--show=USED",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": " 03:27:06 up 5 days,  7:00,  6 users,  load average: 4.46, 3.69, 2.21\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "temp=67.0'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "throttled=0xe0000\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960006208\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:27:06+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:27:06+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "performance",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 67200,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-25T07:24:51+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400037120\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  3039805440   161972224   321667072  5666160640  5414797312\nSwap:              0           0           0\n"
+      },
+      "process_affinity": {
+        "command": [
+          "taskset",
+          "--pid",
+          "--cpu-list",
+          "965023"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "pid 965023's current affinity list: 0-3\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_configuration": {
+        "command": [
+          "swapon",
+          "--show=NAME,TYPE,SIZE,PRIO",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_used_bytes": {
+        "command": [
+          "swapon",
+          "--show=USED",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": " 03:24:51 up 5 days,  6:58,  6 users,  load average: 6.26, 3.46, 1.93\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "temp=58.7'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "throttled=0xe0000\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960009536\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:24:51+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:24:51+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "performance",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 58950,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "greedy_semantic_comparisons": [],
+  "kind": "llama-cpp-qpu-end-to-end-session",
+  "llama_cli": {
+    "path": "/home/yiannis/side/llama.cpp/build/bin/llama-cli",
+    "sha256": "ed2fedeb740f33f072a47eb487854d98d3396b251ca0f5472b17661a07aa327a"
+  },
+  "llama_server": {
+    "path": "/home/yiannis/side/llama.cpp/build/bin/llama-server",
+    "sha256": "f9531554b5f311b60aafc0a511304642350ba6048d6dc0d71702337e113190b0"
+  },
+  "measurement_contract": {
+    "candidate_execution": "non-CPU cases require exact qpu_llama_candidate_json telemetry matching the retained program, hashes, shape, placement, partition, and dispatch count",
+    "cli_process_wall": "cold-start fallback surface including model load and initialization",
+    "correctness": "server requests retain raw generated token IDs; structured tool calls also validate the parsed function name, exact arguments, stop reason, and token cap",
+    "memory": "server samples retain Linux process peak RSS and swap; retained sessions require zero system and per-process swap",
+    "separation": "startup and request/inference timings are never collapsed",
+    "server_request": "one endpoint-specific request after health readiness; /completion for raw decode/prompt and /v1/chat/completions for structured tool calls",
+    "server_startup": "cold model load and initialization through health readiness"
+  },
+  "model_hashes": {
+    "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889",
+    "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf": "586f2460b909008640981ec34060aa864e03c144fbabfb3173c4335087e4aae0"
+  },
+  "results": [
+    {
+      "base_model_sha256": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889",
+      "case": {
+        "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "candidate_evidence": {
+          "binary_sha256": "642c515e0568710a6a93429b2bf5ccbbcbce8972f165126b300d5144a576792d",
+          "exact_shape": {
+            "k_multiple": 32,
+            "n_multiple": 16,
+            "operation": "q4_0-by-q8_0"
+          },
+          "program": "ggml-q4-0-q8-0-m1",
+          "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+          "program_manifest_sha256": "c91904d011eb217cbf5ed8c070bccf495bde156f6131d31164484e4a5a17fbbc",
+          "source_hash": "e35efa836cb40615f200a94f4bf1916e3003f9c273168826d0ed278d5cf9c730"
+        },
+        "context_size": 4096,
+        "draft_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+        "draft_n_max": 2,
+        "draft_n_min": 0,
+        "draft_threads": 4,
+        "flash_attention": true,
+        "mode": "mtp",
+        "model": "gemma-4-e2b",
+        "name": "gemma-mtp-n2-qpu-m1-t4-decode-64",
+        "partition": {
+          "axis": "operators",
+          "cpu": "all_other_ops",
+          "qpu": [
+            "mul_mat_q4_0_q8_0"
+          ]
+        },
+        "placement": "hybrid",
+        "predict_tokens": 64,
+        "process_environment": {
+          "GGML_BACKEND_PATH": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu.so",
+          "GGML_QPU_ENABLE_Q4_0": "1",
+          "GGML_QPU_MAX_M": "1",
+          "GGML_QPU_MIN_M": "1"
+        },
+        "prompt": "Explain why compiler optimization preserves program semantics in one concise paragraph.",
+        "request_surface": "completion",
+        "seed": 1234,
+        "server_extra_arguments": [
+          "--spec-draft-device",
+          "QPU0",
+          "--spec-draft-ngl",
+          "all"
+        ],
+        "surface": "server",
+        "temperature": 0.0,
+        "threads": 4,
+        "threads_batch": 4,
+        "workload": "decode"
+      },
+      "case_sha256": "33faa91f357b640b671736750ba40dc689e42b032a81024e40443c40523105fa",
+      "draft_model_sha256": "586f2460b909008640981ec34060aa864e03c144fbabfb3173c4335087e4aae0",
+      "prompt_sha256": "e6d2e9165679bc5605a0a7de2069a434a18ef3c26ec1611ab1dc02fd38823774",
+      "samples": [
+        {
+          "candidate_execution": {
+            "dispatch_count": 0,
+            "errors": [
+              "non-CPU case reported no QPU dispatch telemetry"
+            ],
+            "events": [],
+            "valid": false
+          },
+          "command": [
+            "/home/yiannis/side/llama.cpp/build/bin/llama-server",
+            "--model",
+            "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+            "--threads",
+            "4",
+            "--threads-batch",
+            "4",
+            "--ctx-size",
+            "4096",
+            "--parallel",
+            "1",
+            "--flash-attn",
+            "on",
+            "--n-gpu-layers",
+            "0",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "40805",
+            "--log-verbosity",
+            "4",
+            "--reasoning",
+            "off",
+            "--reasoning-budget",
+            "0",
+            "--spec-type",
+            "draft-mtp",
+            "--spec-draft-n-max",
+            "2",
+            "--spec-draft-n-min",
+            "0",
+            "--spec-draft-model",
+            "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+            "--spec-draft-threads",
+            "4",
+            "--spec-draft-device",
+            "QPU0",
+            "--spec-draft-ngl",
+            "all"
+          ],
+          "content_sha256": "2fe69802995255dce0da76b5429449879eeac477a280067c75a0aa4d804f0160",
+          "context_population": {
+            "cache_replay_tokens": 0,
+            "expected_timed_prompt_tokens": 0,
+            "prefill_response": null,
+            "prefill_tokens_cached": 0,
+            "prefill_wall_ns": null,
+            "prefix_token_count": 0,
+            "request_cache_n": 0,
+            "request_tokens_evaluated": 13,
+            "suffix_token_count": 0,
+            "suffix_tokens_target": 0,
+            "target_tokens": 0,
+            "timed_prompt_tokens": 13,
+            "valid": true
+          },
+          "error": null,
+          "finished_utc": "2026-08-25T07:27:06+00:00",
+          "generation_population": {
+            "actual_tokens": 64,
+            "full_target_required": false,
+            "raw_token_ids_complete": true,
+            "target_tokens": 64,
+            "valid": true
+          },
+          "metrics": {
+            "speculative": {
+              "acceptance_by_position": [
+                0.421,
+                0.211
+              ],
+              "accepted_drafts": 16,
+              "accepted_tokens": 24,
+              "cycle_seconds": 0.5440781075,
+              "generated_drafts": 38,
+              "generated_tokens": 76,
+              "kind": "draft-mtp",
+              "mean_accepted_length": 1.63
+            },
+            "timings": {
+              "cache_n": 0,
+              "draft_n": 76,
+              "draft_n_accepted": 24,
+              "predicted_ms": 21362.576,
+              "predicted_n": 64,
+              "predicted_per_second": 2.9958933791505293,
+              "predicted_per_token_ms": 333.79025,
+              "prompt_ms": 1086.563,
+              "prompt_n": 13,
+              "prompt_per_second": 11.964331566600372,
+              "prompt_per_token_ms": 83.58176923076924
+            }
+          },
+          "process_memory": {
+            "peak_rss_bytes": 3855024128,
+            "rss_bytes": 3707764736,
+            "swap_bytes": 0
+          },
+          "prompt_population": {
+            "request_token_count": null,
+            "request_tokens_evaluated": 13,
+            "target_tokens": 0,
+            "timed_prompt_tokens": 13,
+            "valid": true
+          },
+          "request": {
+            "cache_prompt": false,
+            "n_predict": 64,
+            "prompt": "Explain why compiler optimization preserves program semantics in one concise paragraph.",
+            "return_tokens": true,
+            "seed": 1234,
+            "temperature": 0.0
+          },
+          "request_endpoint": "/completion",
+          "request_wall_ns": 22476295013,
+          "response": {
+            "content": " Compiler optimizations operate by transforming the source code into an equivalent, but potentially more efficient, intermediate representation, ensuring that the transformed code maintains the same input-output behavior as the original program. This is achieved through rigorous formal verification techniques and by ensuring that every transformation is mathematically proven to be a semantic equivalence, meaning the optimized code",
+            "generation_settings": {
+              "backend_sampling": false,
+              "chat_format": "Content-only",
+              "dry_allowed_length": 2,
+              "dry_base": 1.75,
+              "dry_multiplier": 0.0,
+              "dry_penalty_last_n": 4096,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "dynatemp_exponent": 1.0,
+              "dynatemp_range": 0.0,
+              "frequency_penalty": 0.0,
+              "generation_prompt": "",
+              "grammar": "",
+              "grammar_lazy": false,
+              "grammar_triggers": [],
+              "ignore_eos": false,
+              "logit_bias": [],
+              "lora": [],
+              "max_tokens": 64,
+              "min_keep": 0,
+              "min_p": 0.05000000074505806,
+              "mirostat": 0,
+              "mirostat_eta": 0.10000000149011612,
+              "mirostat_tau": 5.0,
+              "n_discard": 0,
+              "n_keep": 0,
+              "n_predict": 64,
+              "n_probs": 0,
+              "post_sampling_probs": false,
+              "presence_penalty": 0.0,
+              "preserved_tokens": [],
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "seed": 1234,
+              "speculative.types": "none,draft-mtp",
+              "stop": [],
+              "stream": false,
+              "temperature": 0.0,
+              "timings_per_token": false,
+              "top_k": 64,
+              "top_n_sigma": -1.0,
+              "top_p": 0.949999988079071,
+              "typical_p": 1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612
+            },
+            "has_new_line": false,
+            "id_slot": 0,
+            "index": 0,
+            "model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+            "prompt": "<bos>Explain why compiler optimization preserves program semantics in one concise paragraph.",
+            "stop": true,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "timings": {
+              "cache_n": 0,
+              "draft_n": 76,
+              "draft_n_accepted": 24,
+              "predicted_ms": 21362.576,
+              "predicted_n": 64,
+              "predicted_per_second": 2.9958933791505293,
+              "predicted_per_token_ms": 333.79025,
+              "prompt_ms": 1086.563,
+              "prompt_n": 13,
+              "prompt_per_second": 11.964331566600372,
+              "prompt_per_token_ms": 83.58176923076924
+            },
+            "tokens": [
+              101921,
+              183660,
+              12833,
+              684,
+              43413,
+              506,
+              3738,
+              3393,
+              1131,
+              614,
+              9363,
+              236764,
+              840,
+              14846,
+              919,
+              8143,
+              236764,
+              18276,
+              10065,
+              236764,
+              17096,
+              600,
+              506,
+              22094,
+              3393,
+              32618,
+              506,
+              1638,
+              2744,
+              236772,
+              4606,
+              6868,
+              618,
+              506,
+              3303,
+              1948,
+              236761,
+              1174,
+              563,
+              11105,
+              1343,
+              44928,
+              10781,
+              28250,
+              8403,
+              532,
+              684,
+              17096,
+              600,
+              1418,
+              11918,
+              563,
+              96205,
+              14810,
+              531,
+              577,
+              496,
+              52322,
+              38789,
+              236764,
+              6590,
+              506,
+              35813,
+              3393
+            ],
+            "tokens_cached": 76,
+            "tokens_evaluated": 13,
+            "tokens_predicted": 64,
+            "truncated": false
+          },
+          "response_raw": "{\"index\":0,\"content\":\" Compiler optimizations operate by transforming the source code into an equivalent, but potentially more efficient, intermediate representation, ensuring that the transformed code maintains the same input-output behavior as the original program. This is achieved through rigorous formal verification techniques and by ensuring that every transformation is mathematically proven to be a semantic equivalence, meaning the optimized code\",\"tokens\":[101921,183660,12833,684,43413,506,3738,3393,1131,614,9363,236764,840,14846,919,8143,236764,18276,10065,236764,17096,600,506,22094,3393,32618,506,1638,2744,236772,4606,6868,618,506,3303,1948,236761,1174,563,11105,1343,44928,10781,28250,8403,532,684,17096,600,1418,11918,563,96205,14810,531,577,496,52322,38789,236764,6590,506,35813,3393],\"id_slot\":0,\"stop\":true,\"model\":\"/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf\",\"tokens_predicted\":64,\"tokens_evaluated\":13,\"generation_settings\":{\"seed\":1234,\"temperature\":0.0,\"dynatemp_range\":0.0,\"dynatemp_exponent\":1.0,\"top_k\":64,\"top_p\":0.949999988079071,\"min_p\":0.05000000074505806,\"top_n_sigma\":-1.0,\"xtc_probability\":0.0,\"xtc_threshold\":0.10000000149011612,\"typical_p\":1.0,\"repeat_last_n\":64,\"repeat_penalty\":1.0,\"presence_penalty\":0.0,\"frequency_penalty\":0.0,\"dry_multiplier\":0.0,\"dry_base\":1.75,\"dry_allowed_length\":2,\"dry_penalty_last_n\":4096,\"dry_sequence_breakers\":[\"\\n\",\":\",\"\\\"\",\"*\"],\"mirostat\":0,\"mirostat_tau\":5.0,\"mirostat_eta\":0.10000000149011612,\"stop\":[],\"max_tokens\":64,\"n_predict\":64,\"n_keep\":0,\"n_discard\":0,\"ignore_eos\":false,\"stream\":false,\"logit_bias\":[],\"n_probs\":0,\"min_keep\":0,\"grammar\":\"\",\"grammar_lazy\":false,\"grammar_triggers\":[],\"preserved_tokens\":[],\"chat_format\":\"Content-only\",\"reasoning_format\":\"deepseek\",\"reasoning_in_content\":false,\"generation_prompt\":\"\",\"samplers\":[\"penalties\",\"dry\",\"top_n_sigma\",\"top_k\",\"typ_p\",\"top_p\",\"min_p\",\"xtc\",\"temperature\"],\"speculative.types\":\"none,draft-mtp\",\"timings_per_token\":false,\"post_sampling_probs\":false,\"backend_sampling\":false,\"lora\":[]},\"prompt\":\"<bos>Explain why compiler optimization preserves program semantics in one concise paragraph.\",\"has_new_line\":false,\"truncated\":false,\"stop_type\":\"limit\",\"stopping_word\":\"\",\"tokens_cached\":76,\"timings\":{\"cache_n\":0,\"prompt_n\":13,\"prompt_ms\":1086.563,\"prompt_per_token_ms\":83.58176923076924,\"prompt_per_second\":11.964331566600372,\"predicted_n\":64,\"predicted_ms\":21362.576,\"predicted_per_token_ms\":333.79025,\"predicted_per_second\":2.9958933791505293,\"draft_n\":76,\"draft_n_accepted\":24}}",
+          "response_semantics": {
+            "content": " Compiler optimizations operate by transforming the source code into an equivalent, but potentially more efficient, intermediate representation, ensuring that the transformed code maintains the same input-output behavior as the original program. This is achieved through rigorous formal verification techniques and by ensuring that every transformation is mathematically proven to be a semantic equivalence, meaning the optimized code",
+            "semantic_sha256": "a57b42bbfb27f992afd8bea4f1f03c6102b1fa3284d8d47262c052fff4037d25",
+            "stop_reason": "limit",
+            "token_count": 64,
+            "token_ids": [
+              101921,
+              183660,
+              12833,
+              684,
+              43413,
+              506,
+              3738,
+              3393,
+              1131,
+              614,
+              9363,
+              236764,
+              840,
+              14846,
+              919,
+              8143,
+              236764,
+              18276,
+              10065,
+              236764,
+              17096,
+              600,
+              506,
+              22094,
+              3393,
+              32618,
+              506,
+              1638,
+              2744,
+              236772,
+              4606,
+              6868,
+              618,
+              506,
+              3303,
+              1948,
+              236761,
+              1174,
+              563,
+              11105,
+              1343,
+              44928,
+              10781,
+              28250,
+              8403,
+              532,
+              684,
+              17096,
+              600,
+              1418,
+              11918,
+              563,
+              96205,
+              14810,
+              531,
+              577,
+              496,
+              52322,
+              38789,
+              236764,
+              6590,
+              506,
+              35813,
+              3393
+            ],
+            "tool_calls": []
+          },
+          "returncode": 0,
+          "sample_index": 0,
+          "semantic_sha256": "a57b42bbfb27f992afd8bea4f1f03c6102b1fa3284d8d47262c052fff4037d25",
+          "server_exit_after_termination": 0,
+          "server_log": "warning: no usable GPU found, --gpu-layers option will be ignored\nwarning: one possible reason is that llama.cpp was compiled without GPU support\nwarning: consult docs/build.md for compilation instructions\nQPU: registered VideoCore VII backend (matmul M=1..1, minimum GEGLU elements=768, Q4_0=enabled, GEGLU=disabled)\n0.00.041.509 I load_backend: loaded QPU backend from /home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu.so\n0.00.041.676 I cmn  common_param: common_params_print_info: build 10073 (91d2fc387) with GNU 14.2.0 for Linux aarch64\n0.00.041.678 I cmn  common_param: common_params_print_info: verbosity = 4 (adjust with the `-lv N` CLI arg)\n0.00.041.679 I cmn  common_param: device_info:\n0.00.041.692 I cmn  common_param:   - CPU     : CPU (8062 MiB, 8062 MiB free)\n0.00.041.694 I cmn  common_param:   - QPU0    : VideoCore VII QPU via DRM/V3D (8062 MiB, 57 MiB free)\n0.00.041.777 I cmn  common_param: system_info: n_threads = 4 (n_threads_batch = 4) / 4 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | \n0.00.043.449 I srv          init: running without SSL\n0.00.049.086 I srv          init: using 5 threads for HTTP server\n0.00.072.394 W srv  llama_server: -----------------\n0.00.072.397 W srv  llama_server: CORS is set to allow all origins ('*') and no API key is set\n0.00.072.397 W srv  llama_server: this can be a security risk (cross-origin attacks)\n0.00.072.397 W srv  llama_server: more info: https://github.com/ggml-org/llama.cpp/pull/25655\n0.00.072.398 W srv  llama_server: -----------------\n0.00.072.435 I srv         start: binding port with default address family\n0.00.073.675 I srv    load_model: loading model '/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf'\n0.00.073.677 I srv    load_model: local path '/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf'\n0.01.898.402 E llama_init_from_model: failed to initialize the context: Gemma4Assistant requires ctx_other to be set (this warning is normal during memory fitting)\n0.02.377.314 W srv    load_model: [spec] failed to measure draft model memory: failed to create llama_context from model\n0.02.377.367 I cmn  common_init_: fitting params to device memory ...\n0.02.377.368 I cmn  common_init_: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)\n0.02.377.375 I common_params_fit_impl: getting device memory data for initial parameters:\n0.04.442.721 I common_memory_breakdown_print: | memory breakdown [MiB]                   | total   free    self   model   context   compute    unaccounted |\n0.04.442.732 I common_memory_breakdown_print: |   - QPU0 (VideoCore VII QPU via DRM/V3D) |  8062 =   28 + (   0 =     0 +       0 +       0) +        8034 |\n0.04.442.733 I common_memory_breakdown_print: |   - Host                                 |                 1742 =  1477 +      36 +     229                |\n0.04.442.734 I common_memory_breakdown_print: |   - CPU_REPACK                           |                 1222 =  1222 +       0 +       0                |\n0.04.883.584 I common_params_fit_impl: projected to use 0 MiB of device memory vs. 28 MiB of free device memory\n0.04.883.588 I common_params_fit_impl: cannot meet free memory target of 1024 MiB, need to reduce device memory by 995 MiB\n0.04.883.589 I common_params_fit_impl: context size set by user to 4096 -> no change\n0.04.883.638 W common_fit_params: failed to fit params to free device memory: n_gpu_layers already set by user to 0, abort\n0.04.883.648 I common_fit_params: fitting params to free memory took 2.51 seconds\n0.05.023.255 I llama_model_loader: loaded meta data with 47 key-value pairs and 541 tensors from /home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf (version GGUF V3 (latest))\n0.05.023.288 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.\n0.05.023.293 I llama_model_loader: - kv   0:                       general.architecture str              = gemma4\n0.05.023.294 I llama_model_loader: - kv   1:                               general.type str              = model\n0.05.023.296 I llama_model_loader: - kv   2:                     general.sampling.top_k i32              = 64\n0.05.023.302 I llama_model_loader: - kv   3:                     general.sampling.top_p f32              = 0.950000\n0.05.023.303 I llama_model_loader: - kv   4:                      general.sampling.temp f32              = 1.000000\n0.05.023.304 I llama_model_loader: - kv   5:                         general.size_label str              = 4.6B\n0.05.023.305 I llama_model_loader: - kv   6:                         gemma4.block_count u32              = 35\n0.05.023.306 I llama_model_loader: - kv   7:                      gemma4.context_length u32              = 131072\n0.05.023.307 I llama_model_loader: - kv   8:                    gemma4.embedding_length u32              = 1536\n0.05.023.323 I llama_model_loader: - kv   9:                 gemma4.feed_forward_length arr[i32,35]      = [6144, 6144, 6144, 6144, 6144, 6144, ...\n0.05.023.324 I llama_model_loader: - kv  10:                gemma4.attention.head_count u32              = 8\n0.05.023.325 I llama_model_loader: - kv  11:             gemma4.attention.head_count_kv u32              = 1\n0.05.023.327 I llama_model_loader: - kv  12:                      gemma4.rope.freq_base f32              = 1000000.000000\n0.05.023.328 I llama_model_loader: - kv  13:                  gemma4.rope.freq_base_swa f32              = 10000.000000\n0.05.023.330 I llama_model_loader: - kv  14:    gemma4.attention.layer_norm_rms_epsilon f32              = 0.000001\n0.05.023.331 I llama_model_loader: - kv  15:                gemma4.attention.key_length u32              = 512\n0.05.023.331 I llama_model_loader: - kv  16:              gemma4.attention.value_length u32              = 512\n0.05.023.332 I llama_model_loader: - kv  17:             gemma4.final_logit_softcapping f32              = 30.000000\n0.05.023.333 I llama_model_loader: - kv  18:            gemma4.attention.sliding_window u32              = 512\n0.05.023.334 I llama_model_loader: - kv  19:          gemma4.attention.shared_kv_layers u32              = 20\n0.05.023.334 I llama_model_loader: - kv  20:    gemma4.embedding_length_per_layer_input u32              = 256\n0.05.023.339 I llama_model_loader: - kv  21:    gemma4.attention.sliding_window_pattern arr[bool,35]     = [true, true, true, true, false, true,...\n0.05.023.340 I llama_model_loader: - kv  22:            gemma4.attention.key_length_swa u32              = 256\n0.05.023.340 I llama_model_loader: - kv  23:          gemma4.attention.value_length_swa u32              = 256\n0.05.023.341 I llama_model_loader: - kv  24:                gemma4.rope.dimension_count u32              = 512\n0.05.023.342 I llama_model_loader: - kv  25:            gemma4.rope.dimension_count_swa u32              = 256\n0.05.023.342 I llama_model_loader: - kv  26:                       tokenizer.ggml.model str              = gemma4\n0.05.075.158 I llama_model_loader: - kv  27:                      tokenizer.ggml.tokens arr[str,262144]  = [\"<pad>\", \"<eos>\", \"<bos>\", \"<unk>\", ...\n0.05.183.904 I llama_model_loader: - kv  28:                      tokenizer.ggml.scores arr[f32,262144]  = [-1000.000000, -1000.000000, -1000.00...\n0.05.197.480 I llama_model_loader: - kv  29:                  tokenizer.ggml.token_type arr[i32,262144]  = [3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, ...\n0.05.294.968 I llama_model_loader: - kv  30:                      tokenizer.ggml.merges arr[str,514906]  = [\"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n \\n\", ...\n0.05.294.989 I llama_model_loader: - kv  31:                tokenizer.ggml.bos_token_id u32              = 2\n0.05.294.991 I llama_model_loader: - kv  32:                tokenizer.ggml.eos_token_id u32              = 1\n0.05.294.993 I llama_model_loader: - kv  33:            tokenizer.ggml.unknown_token_id u32              = 3\n0.05.294.995 I llama_model_loader: - kv  34:            tokenizer.ggml.padding_token_id u32              = 0\n0.05.294.998 I llama_model_loader: - kv  35:               tokenizer.ggml.mask_token_id u32              = 4\n0.05.295.001 I llama_model_loader: - kv  36:            tokenizer.ggml.add_space_prefix bool             = false\n0.05.295.003 I llama_model_loader: - kv  37:               tokenizer.ggml.add_bos_token bool             = true\n0.05.295.006 I llama_model_loader: - kv  38:                          general.file_type u32              = 2\n0.05.295.008 I llama_model_loader: - kv  39:                tokenizer.ggml.eot_token_id u32              = 106\n0.05.295.014 I llama_model_loader: - kv  40:                       general.quantized_by str              = unsloth\n0.05.295.017 I llama_model_loader: - kv  41:                           general.basename str              = gemma-4-E2B-it\n0.05.295.021 I llama_model_loader: - kv  42:                               general.name str              = Gemma-4 E2B IT (smart Q4_0, QAT-lossl...\n0.05.295.024 I llama_model_loader: - kv  43:                           general.finetune str              = qat-it\n0.05.295.025 I llama_model_loader: - kv  44:                            general.license str              = gemma\n0.05.295.027 I llama_model_loader: - kv  45:               general.quantization_version u32              = 2\n0.05.295.051 I llama_model_loader: - kv  46:                    tokenizer.chat_template str              = {%- macro format_parameters(propertie...\n0.05.295.053 I llama_model_loader: - type  f32:  263 tensors\n0.05.295.055 I llama_model_loader: - type q4_0:  278 tensors\n0.05.295.061 I print_info: file format = GGUF V3 (latest)\n0.05.295.064 I print_info: file type   = Q4_0\n0.05.295.070 I print_info: file size   = 2.43 GiB (4.50 BPW) \n0.05.295.117 I llama_prepare_model_devices: using device QPU0 (VideoCore VII QPU via DRM/V3D) (unknown id) - 30 MiB free\n0.06.347.634 I load: 0 unused tokens\n0.06.391.934 W load: control-looking token:    212 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden\n0.06.393.551 W load: control-looking token:     50 '<|tool_response>' was not control-type; this is probably a bug in the model. its type will be overridden\n0.06.474.930 I load: printing all EOG tokens:\n0.06.474.939 I load:   - 1 ('<eos>')\n0.06.474.941 I load:   - 50 ('<|tool_response>')\n0.06.474.942 I load:   - 106 ('<turn|>')\n0.06.474.942 I load:   - 212 ('</s>')\n0.06.474.946 W load: special_eog_ids contains '<|tool_response>', removing '</s>' token from EOG list\n0.06.476.328 I load: special tokens cache size = 24\n0.06.532.283 I load: token to piece cache size = 1.9445 MB\n0.06.532.331 I print_info: arch                  = gemma4\n0.06.532.332 I print_info: vocab_only            = 0\n0.06.532.333 I print_info: no_alloc              = 0\n0.06.532.333 I print_info: n_ctx_train           = 131072\n0.06.532.334 I print_info: n_embd_inp            = 1536\n0.06.532.334 I print_info: n_embd                = 1536\n0.06.532.335 I print_info: n_embd_out            = 1536\n0.06.532.336 I print_info: n_layer               = 35\n0.06.532.337 I print_info: n_layer_all           = 35\n0.06.532.353 I print_info: n_head                = 8\n0.06.532.355 I print_info: n_head_kv             = 1\n0.06.532.355 I print_info: n_rot                 = 512\n0.06.532.356 I print_info: n_swa                 = 512\n0.06.532.356 I print_info: is_swa_any            = 1\n0.06.532.357 I print_info: n_embd_head_k         = 512\n0.06.532.357 I print_info: n_embd_head_v         = 512\n0.06.532.358 I print_info: n_gqa                 = 8\n0.06.532.368 I print_info: n_embd_k_gqa          = [256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512]\n0.06.532.373 I print_info: n_embd_v_gqa          = [256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512, 256, 256, 256, 256, 512]\n0.06.532.376 I print_info: f_norm_eps            = 0.0e+00\n0.06.532.378 I print_info: f_norm_rms_eps        = 1.0e-06\n0.06.532.378 I print_info: f_clamp_kqv           = 0.0e+00\n0.06.532.379 I print_info: f_max_alibi_bias      = 0.0e+00\n0.06.532.379 I print_info: f_logit_scale         = 0.0e+00\n0.06.532.379 I print_info: f_attn_scale          = 1.0e+00\n0.06.532.380 I print_info: f_attn_value_scale    = 0.0000\n0.06.532.392 I print_info: n_ff                  = [6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 6144, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288, 12288]\n0.06.532.393 I print_info: n_expert              = 0\n0.06.532.393 I print_info: n_expert_used         = 0\n0.06.532.394 I print_info: n_expert_groups       = 0\n0.06.532.395 I print_info: n_group_used          = 0\n0.06.532.395 I print_info: causal attn           = 1\n0.06.532.396 I print_info: pooling type          = -1\n0.06.532.396 I print_info: rope type             = 2\n0.06.532.397 I print_info: rope scaling          = linear\n0.06.532.399 I print_info: freq_base_train       = 1000000.0\n0.06.532.399 I print_info: freq_scale_train      = 1\n0.06.532.400 I print_info: freq_base_swa         = 10000.0\n0.06.532.401 I print_info: freq_scale_swa        = 1\n0.06.532.401 I print_info: n_embd_head_k_swa     = 256\n0.06.532.401 I print_info: n_embd_head_v_swa     = 256\n0.06.532.402 I print_info: n_rot_swa             = 256\n0.06.532.402 I print_info: n_ctx_orig_yarn       = 131072\n0.06.532.403 I print_info: rope_yarn_log_mul     = 0.0000\n0.06.532.403 I print_info: rope_finetuned        = unknown\n0.06.532.405 I print_info: model type            = E2B\n0.06.532.406 I print_info: model params          = 4.63 B\n0.06.532.407 I print_info: general.name          = Gemma-4 E2B IT (smart Q4_0, QAT-lossless)\n0.06.532.408 I print_info: vocab type            = BPE\n0.06.532.409 I print_info: n_vocab               = 262144\n0.06.532.409 I print_info: n_merges              = 514906\n0.06.532.410 I print_info: BOS token             = 2 '<bos>'\n0.06.532.410 I print_info: EOS token             = 1 '<eos>'\n0.06.532.411 I print_info: EOT token             = 106 '<turn|>'\n0.06.532.412 I print_info: UNK token             = 3 '<unk>'\n0.06.532.412 I print_info: PAD token             = 0 '<pad>'\n0.06.532.412 I print_info: MASK token            = 4 '<mask>'\n0.06.532.413 I print_info: LF token              = 107 '\n'\n0.06.532.414 I print_info: EOG token             = 1 '<eos>'\n0.06.532.415 I print_info: EOG token             = 50 '<|tool_response>'\n0.06.532.416 I print_info: EOG token             = 106 '<turn|>'\n0.06.532.416 I print_info: max token length      = 93\n0.06.532.417 I load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)\n0.57.845.566 I load_tensors: offloading 0 repeating layers to GPU\n0.57.845.576 I load_tensors: offloaded 0/36 layers to GPU\n0.57.845.585 I load_tensors:   CPU_Mapped model buffer size =  2483.69 MiB\n0.57.845.587 I load_tensors:   CPU_REPACK model buffer size =  1222.80 MiB\n1.03.566.851 I cmn  common_init_: added <eos> logit bias = -inf\n1.03.566.861 I cmn  common_init_: added <|tool_response> logit bias = -inf\n1.03.566.863 I cmn  common_init_: added <turn|> logit bias = -inf\n1.03.579.998 I llama_context: constructing llama_context\n1.03.580.024 I llama_context: n_seq_max     = 1\n1.03.580.032 I llama_context: n_ctx         = 4096\n1.03.580.040 I llama_context: n_ctx_seq     = 4096\n1.03.580.047 I llama_context: n_batch       = 2048\n1.03.580.055 I llama_context: n_ubatch      = 512\n1.03.580.063 I llama_context: causal_attn   = 1\n1.03.580.071 I llama_context: flash_attn    = enabled\n1.03.580.078 I llama_context: kv_unified    = false\n1.03.580.090 I llama_context: freq_base     = 1000000.0\n1.03.580.098 I llama_context: freq_scale    = 1\n1.03.580.106 I llama_context: n_rs_seq      = 0\n1.03.580.114 I llama_context: n_outputs_max = 3\n1.03.580.121 I llama_context: n_ctx_seq (4096) < n_ctx_train (131072) -- the full capacity of the model will not be utilized\n1.03.580.281 I llama_context:        CPU  output buffer size =     1.00 MiB\n1.03.580.295 I llama_kv_cache_iswa: creating non-SWA KV cache, size = 4096 cells\n1.03.580.470 I llama_kv_cache:        CPU KV buffer size =    24.00 MiB\n1.03.591.869 I llama_kv_cache: size =   24.00 MiB (  4096 cells,   3 layers,  1/1 seqs), K (f16):   12.00 MiB, V (f16):   12.00 MiB\n1.03.591.902 I llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 512\n1.03.591.904 I llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 512\n1.03.591.915 I llama_kv_cache_iswa: creating     SWA KV cache, size = 1024 cells\n1.03.592.088 I llama_kv_cache:        CPU KV buffer size =    12.00 MiB\n1.03.593.596 I llama_kv_cache: size =   12.00 MiB (  1024 cells,  12 layers,  1/1 seqs), K (f16):    6.00 MiB, V (f16):    6.00 MiB\n1.03.593.597 I llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 256\n1.03.593.598 I llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 256\n1.03.593.608 I sched_reserve: reserving ...\n1.03.594.862 I resolve_fused_ops: resolving fused Gated Delta Net support:\n1.03.597.467 I resolve_fused_ops: fused Gated Delta Net (autoregressive) enabled\n1.03.598.675 I resolve_fused_ops: fused Gated Delta Net (chunked) enabled\n1.03.598.678 I resolve_fused_ops: resolving fused Lightning Indexer support:\n1.03.599.389 I resolve_fused_ops: Lightning Indexer enabled\n1.03.599.391 I resolve_fused_ops: resolving fused DeepSeek V4 HC support:\n1.03.600.083 I resolve_fused_ops: fused DeepSeek V4 HC pre enabled\n1.03.600.769 I resolve_fused_ops: fused DeepSeek V4 HC comb enabled\n1.03.601.453 I resolve_fused_ops: fused DeepSeek V4 HC post enabled\n1.03.648.068 I sched_reserve:  QPU0_Host compute buffer size =   114.52 MiB\n1.03.648.077 I sched_reserve: graph nodes  = 1496\n1.03.648.078 I sched_reserve: graph splits = 1\n1.03.648.080 I sched_reserve: reserve took 54.47 ms, sched copies = 1\n1.03.648.365 I cmn  common_init_: warming up the model with an empty run - please wait ... (--no-warmup to disable)\n1.04.304.592 I common_speculative_init_result: loading draft model '/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf'\n1.04.928.648 I llama_model_loader: loaded meta data with 43 key-value pairs and 49 tensors from /home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf (version GGUF V3 (latest))\n1.04.928.664 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.\n1.04.928.669 I llama_model_loader: - kv   0:                       general.architecture str              = gemma4-assistant\n1.04.928.670 I llama_model_loader: - kv   1:                               general.type str              = model\n1.04.928.673 I llama_model_loader: - kv   2:                     general.sampling.top_k i32              = 64\n1.04.928.682 I llama_model_loader: - kv   3:                     general.sampling.top_p f32              = 0.950000\n1.04.928.684 I llama_model_loader: - kv   4:                      general.sampling.temp f32              = 1.000000\n1.04.928.684 I llama_model_loader: - kv   5:                               general.name str              = E2B Assistant\n1.04.928.685 I llama_model_loader: - kv   6:                         general.size_label str              = 77M\n1.04.928.686 I llama_model_loader: - kv   7:               gemma4-assistant.block_count u32              = 4\n1.04.928.687 I llama_model_loader: - kv   8:            gemma4-assistant.context_length u32              = 131072\n1.04.928.687 I llama_model_loader: - kv   9:          gemma4-assistant.embedding_length u32              = 256\n1.04.928.688 I llama_model_loader: - kv  10:       gemma4-assistant.feed_forward_length u32              = 2048\n1.04.928.689 I llama_model_loader: - kv  11:      gemma4-assistant.attention.head_count u32              = 4\n1.04.928.690 I llama_model_loader: - kv  12:   gemma4-assistant.attention.head_count_kv u32              = 1\n1.04.928.692 I llama_model_loader: - kv  13:            gemma4-assistant.rope.freq_base f32              = 1000000.000000\n1.04.928.693 I llama_model_loader: - kv  14:        gemma4-assistant.rope.freq_base_swa f32              = 10000.000000\n1.04.928.694 I llama_model_loader: - kv  15: gemma4-assistant.attention.layer_norm_rms_epsilon f32              = 0.000001\n1.04.928.695 I llama_model_loader: - kv  16:      gemma4-assistant.attention.key_length u32              = 512\n1.04.928.696 I llama_model_loader: - kv  17:    gemma4-assistant.attention.value_length u32              = 512\n1.04.928.696 I llama_model_loader: - kv  18:                          general.file_type u32              = 32\n1.04.928.697 I llama_model_loader: - kv  19:  gemma4-assistant.attention.sliding_window u32              = 512\n1.04.928.698 I llama_model_loader: - kv  20: gemma4-assistant.attention.shared_kv_layers u32              = 4\n1.04.928.698 I llama_model_loader: - kv  21: gemma4-assistant.embedding_length_per_layer_input u32              = 0\n1.04.928.711 I llama_model_loader: - kv  22: gemma4-assistant.attention.sliding_window_pattern arr[bool,4]      = [true, true, true, false]\n1.04.928.712 I llama_model_loader: - kv  23:  gemma4-assistant.attention.key_length_swa u32              = 256\n1.04.928.712 I llama_model_loader: - kv  24: gemma4-assistant.attention.value_length_swa u32              = 256\n1.04.928.713 I llama_model_loader: - kv  25:      gemma4-assistant.rope.dimension_count u32              = 512\n1.04.928.713 I llama_model_loader: - kv  26:  gemma4-assistant.rope.dimension_count_swa u32              = 256\n1.04.928.714 I llama_model_loader: - kv  27:      gemma4-assistant.embedding_length_out u32              = 1536\n1.04.928.715 I llama_model_loader: - kv  28:      gemma4-assistant.nextn_predict_layers u32              = 4\n1.04.928.715 I llama_model_loader: - kv  29:               general.quantization_version u32              = 2\n1.04.928.716 I llama_model_loader: - kv  30:                       tokenizer.ggml.model str              = gemma4\n1.04.972.743 I llama_model_loader: - kv  31:                      tokenizer.ggml.tokens arr[str,262144]  = [\"<pad>\", \"<eos>\", \"<bos>\", \"<unk>\", ...\n1.05.071.730 I llama_model_loader: - kv  32:                      tokenizer.ggml.scores arr[f32,262144]  = [-1000.000000, -1000.000000, -1000.00...\n1.05.084.667 I llama_model_loader: - kv  33:                  tokenizer.ggml.token_type arr[i32,262144]  = [3, 3, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, ...\n1.05.173.295 I llama_model_loader: - kv  34:                      tokenizer.ggml.merges arr[str,514906]  = [\"\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n\\n \\n\", ...\n1.05.173.311 I llama_model_loader: - kv  35:                tokenizer.ggml.bos_token_id u32              = 2\n1.05.173.312 I llama_model_loader: - kv  36:                tokenizer.ggml.eos_token_id u32              = 1\n1.05.173.313 I llama_model_loader: - kv  37:            tokenizer.ggml.unknown_token_id u32              = 3\n1.05.173.313 I llama_model_loader: - kv  38:            tokenizer.ggml.padding_token_id u32              = 0\n1.05.173.314 I llama_model_loader: - kv  39:               tokenizer.ggml.mask_token_id u32              = 4\n1.05.173.316 I llama_model_loader: - kv  40:            tokenizer.ggml.add_space_prefix bool             = false\n1.05.173.317 I llama_model_loader: - kv  41:               tokenizer.ggml.add_bos_token bool             = true\n1.05.173.328 I llama_model_loader: - kv  42:                    tokenizer.chat_template str              = {%- macro format_parameters(propertie...\n1.05.173.330 I llama_model_loader: - type  f32:   26 tensors\n1.05.173.332 I llama_model_loader: - type q4_0:   23 tensors\n1.05.173.334 I print_info: file format = GGUF V3 (latest)\n1.05.173.335 I print_info: file type   = BF16\n1.05.173.340 I print_info: file size   = 41.44 MiB (4.50 BPW) \n1.05.173.357 I llama_prepare_model_devices: using device QPU0 (VideoCore VII QPU via DRM/V3D) (unknown id) - 230 MiB free\n1.05.792.033 I load: 0 unused tokens\n1.05.816.639 W load: control-looking token:    212 '</s>' was not control-type; this is probably a bug in the model. its type will be overridden\n1.05.817.456 W load: control-looking token:     50 '<|tool_response>' was not control-type; this is probably a bug in the model. its type will be overridden\n1.05.870.659 I load: printing all EOG tokens:\n1.05.870.664 I load:   - 1 ('<eos>')\n1.05.870.665 I load:   - 50 ('<|tool_response>')\n1.05.870.666 I load:   - 106 ('<turn|>')\n1.05.870.666 I load:   - 212 ('</s>')\n1.05.870.669 W load: special_eog_ids contains '<|tool_response>', removing '</s>' token from EOG list\n1.05.871.431 I load: special tokens cache size = 23\n1.05.917.532 I load: token to piece cache size = 1.9445 MB\n1.05.917.587 I print_info: arch                  = gemma4-assistant\n1.05.917.589 I print_info: vocab_only            = 0\n1.05.917.590 I print_info: no_alloc              = 0\n1.05.917.590 I print_info: n_ctx_train           = 131072\n1.05.917.591 I print_info: n_embd_inp            = 1536\n1.05.917.591 I print_info: n_embd                = 256\n1.05.917.592 I print_info: n_embd_out            = 1536\n1.05.917.592 I print_info: n_layer               = 0\n1.05.917.593 I print_info: n_layer_all           = 4\n1.05.917.606 I print_info: n_head                = 4\n1.05.917.608 I print_info: n_head_kv             = 1\n1.05.917.608 I print_info: n_rot                 = 512\n1.05.917.608 I print_info: n_swa                 = 512\n1.05.917.609 I print_info: is_swa_any            = 1\n1.05.917.610 I print_info: n_embd_head_k         = 512\n1.05.917.610 I print_info: n_embd_head_v         = 512\n1.05.917.611 I print_info: n_gqa                 = 4\n1.05.917.617 I print_info: n_embd_k_gqa          = [256, 256, 256, 512]\n1.05.917.619 I print_info: n_embd_v_gqa          = [256, 256, 256, 512]\n1.05.917.620 I print_info: f_norm_eps            = 0.0e+00\n1.05.917.623 I print_info: f_norm_rms_eps        = 1.0e-06\n1.05.917.624 I print_info: f_clamp_kqv           = 0.0e+00\n1.05.917.624 I print_info: f_max_alibi_bias      = 0.0e+00\n1.05.917.624 I print_info: f_logit_scale         = 0.0e+00\n1.05.917.625 I print_info: f_attn_scale          = 1.0e+00\n1.05.917.626 I print_info: f_attn_value_scale    = 0.0000\n1.05.917.627 I print_info: n_ff                  = 2048\n1.05.917.627 I print_info: n_expert              = 0\n1.05.917.627 I print_info: n_expert_used         = 0\n1.05.917.628 I print_info: n_expert_groups       = 0\n1.05.917.628 I print_info: n_group_used          = 0\n1.05.917.629 I print_info: causal attn           = 1\n1.05.917.629 I print_info: pooling type          = -1\n1.05.917.630 I print_info: rope type             = 2\n1.05.917.630 I print_info: rope scaling          = linear\n1.05.917.632 I print_info: freq_base_train       = 1000000.0\n1.05.917.633 I print_info: freq_scale_train      = 1\n1.05.917.633 I print_info: freq_base_swa         = 10000.0\n1.05.917.634 I print_info: freq_scale_swa        = 1\n1.05.917.635 I print_info: n_embd_head_k_swa     = 256\n1.05.917.635 I print_info: n_embd_head_v_swa     = 256\n1.05.917.636 I print_info: n_rot_swa             = 256\n1.05.917.636 I print_info: n_ctx_orig_yarn       = 131072\n1.05.917.637 I print_info: rope_yarn_log_mul     = 0.0000\n1.05.917.637 I print_info: rope_finetuned        = unknown\n1.05.917.639 I print_info: model type            = ?B\n1.05.917.640 I print_info: model params          = 77.21 M\n1.05.917.640 I print_info: general.name          = E2B Assistant\n1.05.917.642 I print_info: vocab type            = BPE\n1.05.917.642 I print_info: n_vocab               = 262144\n1.05.917.642 I print_info: n_merges              = 514906\n1.05.917.643 I print_info: BOS token             = 2 '<bos>'\n1.05.917.643 I print_info: EOS token             = 1 '<eos>'\n1.05.917.644 I print_info: UNK token             = 3 '<unk>'\n1.05.917.645 I print_info: PAD token             = 0 '<pad>'\n1.05.917.645 I print_info: MASK token            = 4 '<mask>'\n1.05.917.646 I print_info: LF token              = 107 '\n'\n1.05.917.646 I print_info: EOG token             = 1 '<eos>'\n1.05.917.648 I print_info: EOG token             = 50 '<|tool_response>'\n1.05.917.648 I print_info: EOG token             = 106 '<turn|>'\n1.05.917.649 I print_info: max token length      = 93\n1.05.917.650 I load_tensors: loading model tensors, this can take a while... (mmap = true, direct_io = false)\n1.07.917.377 I load_tensors: offloading output layer to GPU\n1.07.917.383 I load_tensors: offloading 3 repeating layers to GPU\n1.07.917.384 I load_tensors: offloaded 5/5 layers to GPU\n1.07.917.389 I load_tensors:   CPU_Mapped model buffer size =    40.80 MiB\n1.07.917.391 I load_tensors:   CPU_REPACK model buffer size =    41.41 MiB\n1.08.626.740 I llama_context: constructing llama_context\n1.08.626.753 I llama_context: n_seq_max     = 1\n1.08.626.754 I llama_context: n_ctx         = 4096\n1.08.626.754 I llama_context: n_ctx_seq     = 4096\n1.08.626.755 I llama_context: n_batch       = 2048\n1.08.626.755 I llama_context: n_ubatch      = 512\n1.08.626.756 I llama_context: causal_attn   = 1\n1.08.626.757 I llama_context: flash_attn    = enabled\n1.08.626.757 I llama_context: kv_unified    = false\n1.08.626.761 I llama_context: freq_base     = 1000000.0\n1.08.626.762 I llama_context: freq_scale    = 1\n1.08.626.763 I llama_context: n_rs_seq      = 0\n1.08.626.763 I llama_context: n_outputs_max = 1\n1.08.626.764 I llama_context: n_ctx_seq (4096) < n_ctx_train (131072) -- the full capacity of the model will not be utilized\n1.08.628.847 I llama_context:  QPU0_Host  output buffer size =     1.00 MiB\n1.08.629.237 I llama_kv_cache_iswa: creating non-SWA KV cache, size = 4096 cells\n1.08.629.319 W llama_kv_cache: layer   3: sharing with layer 34. k = 0x7fff66fec040, v = 0x7fff673ec040\n1.08.629.687 I llama_kv_cache: size =    8.00 MiB (  4096 cells,   1 layers,  1/1 seqs), K (f16):    4.00 MiB, V (f16):    4.00 MiB\n1.08.629.697 I llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 512\n1.08.629.705 I llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 512\n1.08.629.715 I llama_kv_cache_iswa: creating     SWA KV cache, size = 1024 cells\n1.08.629.734 W llama_kv_cache: layer   0: sharing with layer 33. k = 0x55558bd4eac0, v = 0x55558bdceac0\n1.08.629.744 W llama_kv_cache: layer   1: sharing with layer 33. k = 0x55558bd4eac0, v = 0x55558bdceac0\n1.08.629.753 W llama_kv_cache: layer   2: sharing with layer 33. k = 0x55558bd4eac0, v = 0x55558bdceac0\n1.08.629.763 I llama_kv_cache: size =    3.00 MiB (  1024 cells,   3 layers,  1/1 seqs), K (f16):    1.50 MiB, V (f16):    1.50 MiB\n1.08.629.771 I llama_kv_cache: attn_rot_k = 0, n_embd_head_k_all = 256\n1.08.629.772 I llama_kv_cache: attn_rot_v = 0, n_embd_head_k_all = 256\n1.08.629.778 I sched_reserve: reserving ...\n1.08.630.081 I resolve_fused_ops: resolving fused Gated Delta Net support:\n1.08.630.256 I resolve_fused_ops: fused Gated Delta Net (autoregressive) enabled\n1.08.630.348 I resolve_fused_ops: fused Gated Delta Net (chunked) enabled\n1.08.630.349 I resolve_fused_ops: resolving fused Lightning Indexer support:\n1.08.630.432 I resolve_fused_ops: Lightning Indexer enabled\n1.08.630.432 I resolve_fused_ops: resolving fused DeepSeek V4 HC support:\n1.08.630.514 I resolve_fused_ops: fused DeepSeek V4 HC pre enabled\n1.08.630.595 I resolve_fused_ops: fused DeepSeek V4 HC comb enabled\n1.08.630.676 I resolve_fused_ops: fused DeepSeek V4 HC post enabled\n1.08.642.041 I sched_reserve:  QPU0_Host compute buffer size =    20.00 MiB\n1.08.642.074 I sched_reserve: graph nodes  = 126\n1.08.642.082 I sched_reserve: graph splits = 1\n1.08.642.090 I sched_reserve: reserve took 12.31 ms, sched copies = 1\n1.09.294.637 I srv    load_model: initializing, n_slots = 1, n_ctx_slot = 4096, kv_unified = 'false'\n1.09.294.750 I spec common_specu: adding speculative implementation 'draft-mtp'\n1.09.294.754 I spec common_specu: - n_max=2, n_min=0, p_min=0.00, n_embd=1536, backend_sampling=1\n1.09.294.759 I spec common_specu: - gpu_layers=-2, cache_k=f16, cache_v=f16, ctx_tgt=yes, ctx_dft=yes, devices=[QPU0]\n1.09.300.247 W llama_sampler_backend_support: device 'QPU0' does not have support for op RESHAPE needed for sampler 'top-k'\n1.09.300.315 I sched_reserve: reserving ...\n1.09.309.966 I sched_reserve:  QPU0_Host compute buffer size =    20.00 MiB\n1.09.309.973 I sched_reserve: graph nodes  = 128\n1.09.309.974 I sched_reserve: graph splits = 1\n1.09.309.975 I sched_reserve: reserve took 9.66 ms, sched copies = 1\n1.09.333.092 I srv    load_model: speculative decoding context initialized\n1.09.333.097 I slot   load_model: id  0 | task -1 | new slot, n_ctx = 4096\n1.09.333.187 I srv    load_model: prompt cache is enabled, size limit: 8192 MiB\n1.09.333.188 I srv    load_model: use `--cache-ram 0` to disable the prompt cache\n1.09.333.189 I srv    load_model: for more info see https://github.com/ggml-org/llama.cpp/pull/16391\n1.09.333.189 I srv    load_model: context checkpoints enabled, max = 32, min spacing = 8192\n1.09.337.624 I srv          init: idle slots will be saved to prompt cache upon starting a new task\n1.09.592.606 I srv          init: init: chat template, example_format: '<|turn>system\nYou are a helpful assistant<turn|>\n<|turn>user\nHello<turn|>\n<|turn>model\nHi there<turn|>\n<|turn>user\nHow are you?<turn|>\n<|turn>model\n'\n1.09.594.308 I srv          init: init: chat template, thinking = 0\n1.09.594.376 I srv  llama_server: model loaded\n1.09.594.381 I srv  llama_server: listening on http://127.0.0.1:40805\n1.09.594.387 I srv  update_slots: all slots are idle\n1.09.679.018 I srv  server_strea: conv_id= (empty=1)\n1.09.679.373 I slot get_availabl: id  0 | task -1 | selected slot by LRU, t_last = -1\n1.09.679.375 I srv  get_availabl: updating prompt cache\n1.09.679.381 I srv          load:  - looking for better prompt, base f_keep = -1.000, sim = 0.000\n1.09.679.387 I srv        update:  - cache state: 0 prompts, 0.000 MiB (limits: 8192.000 MiB, 4096 tokens, 8589934592 est)\n1.09.679.389 I srv  get_availabl: prompt cache update took 0.01 ms\n1.09.679.421 I slot launch_slot_: id  0 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist \n1.09.679.432 I slot launch_slot_: id  0 | task -1 | sampler params: \n\trepeat_last_n = 64, repeat_penalty = 1.000, frequency_penalty = 0.000, presence_penalty = 0.000\n\tdry_multiplier = 0.000, dry_base = 1.750, dry_allowed_length = 2, dry_penalty_last_n = 4096\n\ttop_k = 64, top_p = 0.950, min_p = 0.050, xtc_probability = 0.000, xtc_threshold = 0.100, typical_p = 1.000, top_n_sigma = -1.000, temp = 0.000\n\tmirostat = 0, mirostat_lr = 0.100, mirostat_ent = 5.000, adaptive_target = -1.000, adaptive_decay = 0.900\n1.09.679.434 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0\n1.09.679.455 I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 4096, n_keep = 0, task.n_tokens = 13\n1.09.679.458 I slot   operator(): id  0 | task 0 | cached n_tokens = 0, memory_seq_rm [0, end)\n1.10.348.813 I slot   operator(): id  0 | task 0 | cached n_tokens = 9, memory_seq_rm [9, end)\n1.10.348.847 I slot init_sampler: id  0 | task 0 | init sampler, took 0.01 ms, tokens: text = 13, total = 13\n1.10.348.926 I slot create_check: id  0 | task 0 | created context checkpoint 1 of 32 (pos_min = 0, pos_max = 8, n_tokens = 9, size = 0.106 MiB)\n1.32.128.617 I slot print_timing: id  0 | task 0 | prompt eval time =    1086.56 ms /    13 tokens (   83.58 ms per token,    11.96 tokens per second)\n1.32.128.625 I slot print_timing: id  0 | task 0 |        eval time =   21362.58 ms /    64 tokens (  333.79 ms per token,     3.00 tokens per second)\n1.32.128.626 I slot print_timing: id  0 | task 0 |       total time =   22449.14 ms /    77 tokens\n1.32.128.631 I slot print_timing: id  0 | task 0 |    graphs reused =         38\n1.32.128.636 I slot print_timing: id  0 | task 0 | draft acceptance = 0.31579 (   24 accepted /    76 generated), mean len =  1.63\n1.32.128.637 I slot print_timing: id  0 | task 0 |      acc per pos = (0.421, 0.211)\n1.32.128.663 I spec common_specu: statistics        draft-mtp: #calls(b,g,a) =    1     38     38, #gen drafts =     38, #acc drafts =    16, #gen tokens =     76, #acc tokens =    24, #mean acc len = 1.63, #acc rate/pos = (0.421, 0.211), dur(b,g,a) = 0.005, 2155.648, 0.073 ms\n1.32.128.698 I slot      release: id  0 | task 0 | stop processing: n_tokens = 76, truncated = 0\n1.32.128.710 I srv  update_slots: all slots are idle\n1.32.147.377 I srv    operator(): operator(): cleaning up before exit...\n1.32.147.741 I common_memory_breakdown_print: | memory breakdown [MiB]                   | total   free    self   model   context   compute    unaccounted |\n1.32.147.742 I common_memory_breakdown_print: |   - QPU0 (VideoCore VII QPU via DRM/V3D) |  8062 =  138 + (   0 =     0 +       0 +       0) +        7924 |\n1.32.147.742 I common_memory_breakdown_print: |   - Host                                 |                 2634 =  2483 +      36 +     114                |\n1.32.147.743 I common_memory_breakdown_print: |   - CPU_REPACK                           |                 1222 =  1222 +       0 +       0                |\n",
+          "started_utc": "2026-08-25T07:25:33+00:00",
+          "startup_ns": 69966930848,
+          "surface": "llama-server-/completion",
+          "tool_call_validation": null
+        }
+      ],
+      "workload_semantics_sha256": "654830a049708e6f439a296ba6f4fdda41e9e4c2ee10789940dc30bc0d408a7b"
+    }
+  ],
+  "schema_version": 1,
+  "session_id": "mtp-qpu-small-validation",
+  "validation": {
+    "rejection_reasons": [
+      "one or more cases lacked valid exact candidate execution telemetry"
+    ],
+    "retained": false
+  }
+}

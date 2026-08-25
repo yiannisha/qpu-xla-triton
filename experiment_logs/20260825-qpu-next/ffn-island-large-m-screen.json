@@ -1,0 +1,3373 @@
+{
+  "created_utc": "2026-08-25T07:17:06+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-25T07:17:06+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400023808\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  1976320000  1326333952   317177856  5628198912  6478282752\nSwap:              0           0           0\n"
+      },
+      "process_affinity": {
+        "command": [
+          "taskset",
+          "--pid",
+          "--cpu-list",
+          "961596"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "pid 961596's current affinity list: 0-3\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_configuration": {
+        "command": [
+          "swapon",
+          "--show=NAME,TYPE,SIZE,PRIO",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_used_bytes": {
+        "command": [
+          "swapon",
+          "--show=USED",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": " 03:17:06 up 5 days,  6:50,  6 users,  load average: 3.84, 1.71, 0.91\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "temp=77.4'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "throttled=0xe0000\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960009536\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:17:06+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:17:06+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "performance",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 73800,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-25T07:15:23+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400023808\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  2535260160   271679488   317177856  6123520000  5919342592\nSwap:              0           0           0\n"
+      },
+      "process_affinity": {
+        "command": [
+          "taskset",
+          "--pid",
+          "--cpu-list",
+          "961596"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "pid 961596's current affinity list: 0-3\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_configuration": {
+        "command": [
+          "swapon",
+          "--show=NAME,TYPE,SIZE,PRIO",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "swap_used_bytes": {
+        "command": [
+          "swapon",
+          "--show=USED",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": ""
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": " 03:15:23 up 5 days,  6:48,  6 users,  load average: 0.63, 0.42, 0.43\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "temp=62.0'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "throttled=0xe0000\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960006208\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T07:15:23+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T07:15:23+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "performance",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 61700,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "kind": "llama-cpp-qpu-concurrent-ffn-island",
+  "manifest": {
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-base-gguf-manifest.json",
+    "sha256": "0f58529990c48d18d32b9eb775da601b2ce6acc2b931a28031f41fe41ff4cab1"
+  },
+  "measurement_contract": {
+    "candidate": "CPU_REPACK computes the intermediate prefix while four resident QPU stages compute the suffix gate/up/GEGLU-Q8/down partial; final outputs are added",
+    "cpu": "pinned llama.cpp four-thread CPU_REPACK gate/up/GEGLU/down graph",
+    "intermediate_host_access": false,
+    "promotion_gate": "correct and median full-FFN speedup >= 1.10",
+    "timing_includes": [
+      "QPU input staging",
+      "four QPU dispatches and waits",
+      "final QPU output access",
+      "concurrent CPU complement",
+      "final partial-output addition"
+    ]
+  },
+  "model": {
+    "path": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+    "sha256": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889"
+  },
+  "records": [
+    {
+      "candidate_wall_ns": [
+        120890415,
+        158034263,
+        117416708,
+        120029978,
+        118772083
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 1257895.0,
+        "median_ns": 120029978.0,
+        "p05_ns": 117687783.0,
+        "p95_ns": 150605493.4
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 787968,
+        "inf_count": 0,
+        "max_absolute": 0.0031633377075195312,
+        "max_relative": 1932.3376228775692,
+        "mean_absolute": 0.00016710325852741228,
+        "nan_count": 0,
+        "p99_absolute": 0.0006995151191949841,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 0.9429184794425964,
+        "worst_index": [
+          86,
+          675
+        ],
+        "worst_reference": 0.946081817150116
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f768-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f768-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f768-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "5376",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f768-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        116409459,
+        148976780,
+        115406266,
+        118543401,
+        117231654
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 1311747.0,
+        "median_ns": 117231654.0,
+        "p05_ns": 115606904.6,
+        "p95_ns": 142890104.2
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m513.f32.bin"
+      ],
+      "cpu_full_ns": [
+        129678511,
+        138321831,
+        141545799,
+        132465835,
+        176878500
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 5855996.0,
+        "median_ns": 138321831.0,
+        "p05_ns": 130235975.8,
+        "p95_ns": 169811959.79999998
+      },
+      "cpu_intermediate_columns": 5376,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        4136199,
+        2440902,
+        1636780,
+        1150099,
+        1431948
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 486681.0,
+        "median_ns": 1636780.0,
+        "p05_ns": 1206468.8,
+        "p95_ns": 3797139.5999999996
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 528,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.125,
+      "qpu_intermediate_columns": 768,
+      "qpu_island_ns": [
+        70079277,
+        69997834,
+        86214540,
+        69114231,
+        74208661
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 965046.0,
+        "median_ns": 70079277.0,
+        "p05_ns": 69290951.6,
+        "p95_ns": 83813364.2
+      },
+      "resident_weight_bytes": 3760128,
+      "rows": 513,
+      "speedup_vs_cpu": 1.1523940377627995
+    },
+    {
+      "candidate_wall_ns": [
+        94332348,
+        98528714,
+        98289864,
+        95223543,
+        99888700
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 1598836.0,
+        "median_ns": 98289864.0,
+        "p05_ns": 94510587.0,
+        "p95_ns": 99616702.8
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 787968,
+        "inf_count": 0,
+        "max_absolute": 0.0044792890548706055,
+        "max_relative": 2523.173726541555,
+        "mean_absolute": 0.0002115347844671153,
+        "nan_count": 0,
+        "p99_absolute": 0.0008410289138555517,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 1.1566647291183472,
+        "worst_index": [
+          86,
+          688
+        ],
+        "worst_reference": 1.1611440181732178
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1152-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1152-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1152-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "4992",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1152-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        89927133,
+        97222782,
+        92594958,
+        94146924,
+        98774803
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 3075858.0,
+        "median_ns": 94146924.0,
+        "p05_ns": 90460698.0,
+        "p95_ns": 98464398.8
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m513.f32.bin"
+      ],
+      "cpu_full_ns": [
+        129678511,
+        138321831,
+        141545799,
+        132465835,
+        176878500
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 5855996.0,
+        "median_ns": 138321831.0,
+        "p05_ns": 130235975.8,
+        "p95_ns": 169811959.79999998
+      },
+      "cpu_intermediate_columns": 4992,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        1019953,
+        959935,
+        1379764,
+        993545,
+        1018564
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 25019.0,
+        "median_ns": 1018564.0,
+        "p05_ns": 966657.0,
+        "p95_ns": 1307801.7999999998
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 528,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.1875,
+      "qpu_intermediate_columns": 1152,
+      "qpu_island_ns": [
+        93239600,
+        94111628,
+        96846156,
+        94119813,
+        94395070
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 275257.0,
+        "median_ns": 94119813.0,
+        "p05_ns": 93414005.6,
+        "p95_ns": 96355938.8
+      },
+      "resident_weight_bytes": 5640192,
+      "rows": 513,
+      "speedup_vs_cpu": 1.407284793882714
+    },
+    {
+      "candidate_wall_ns": [
+        212637622,
+        160521627,
+        131223051,
+        121806387,
+        179790878
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 29298576.0,
+        "median_ns": 160521627.0,
+        "p05_ns": 123689719.8,
+        "p95_ns": 206068273.2
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 787968,
+        "inf_count": 0,
+        "max_absolute": 0.00457000732421875,
+        "max_relative": 2729.8268096514744,
+        "mean_absolute": 0.00024667912185809265,
+        "nan_count": 0,
+        "p99_absolute": 0.0009429230913519855,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -1.513303279876709,
+        "worst_index": [
+          8,
+          1244
+        ],
+        "worst_reference": -1.5087332725524902
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1536-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1536-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1536-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "4608",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m513-f1536-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        140743197,
+        139494690,
+        93489320,
+        92937473,
+        126356712
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 14386485.0,
+        "median_ns": 126356712.0,
+        "p05_ns": 93047842.4,
+        "p95_ns": 140493495.6
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m513.f32.bin"
+      ],
+      "cpu_full_ns": [
+        129678511,
+        138321831,
+        141545799,
+        132465835,
+        176878500
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 5855996.0,
+        "median_ns": 138321831.0,
+        "p05_ns": 130235975.8,
+        "p95_ns": 169811959.79999998
+      },
+      "cpu_intermediate_columns": 4608,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        4718805,
+        1712094,
+        1414152,
+        1089841,
+        1106692
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 307460.0,
+        "median_ns": 1414152.0,
+        "p05_ns": 1093211.2,
+        "p95_ns": 4117462.7999999993
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 528,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.25,
+      "qpu_intermediate_columns": 1536,
+      "qpu_island_ns": [
+        207841393,
+        158674905,
+        129709326,
+        120630398,
+        178623112
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 28965579.0,
+        "median_ns": 158674905.0,
+        "p05_ns": 122446183.6,
+        "p95_ns": 201997736.79999998
+      },
+      "resident_weight_bytes": 7520256,
+      "rows": 513,
+      "speedup_vs_cpu": 0.8617021493309435
+    },
+    {
+      "candidate_wall_ns": [
+        183465508,
+        185467432,
+        183734579,
+        188155239,
+        184348647
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 883139.0,
+        "median_ns": 184348647.0,
+        "p05_ns": 183519322.2,
+        "p95_ns": 187617677.6
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 1574400,
+        "inf_count": 0,
+        "max_absolute": 0.005010843276977539,
+        "max_relative": 426.70631927487506,
+        "mean_absolute": 0.0001643859993716185,
+        "nan_count": 0,
+        "p99_absolute": 0.0007063747942447664,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 0.4177677631378174,
+        "worst_index": [
+          845,
+          431
+        ],
+        "worst_reference": 0.4227786064147949
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f768-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f768-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f768-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "5376",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f768-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        180883237,
+        183236954,
+        181663396,
+        186085611,
+        182505035
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 841639.0,
+        "median_ns": 182505035.0,
+        "p05_ns": 181039268.8,
+        "p95_ns": 185515879.6
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m1025.f32.bin"
+      ],
+      "cpu_full_ns": [
+        197871715,
+        197053445,
+        195629478,
+        195933790,
+        195377203
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 556587.0,
+        "median_ns": 195933790.0,
+        "p05_ns": 195427658.0,
+        "p95_ns": 197708061.0
+      },
+      "cpu_intermediate_columns": 5376,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        1869629,
+        1716780,
+        1730409,
+        1728446,
+        1740649
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 10240.0,
+        "median_ns": 1730409.0,
+        "p05_ns": 1719113.2,
+        "p95_ns": 1843833.0
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 1040,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.125,
+      "qpu_intermediate_columns": 768,
+      "qpu_island_ns": [
+        137008123,
+        135361232,
+        137927483,
+        132131968,
+        142202866
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 1646891.0,
+        "median_ns": 137008123.0,
+        "p05_ns": 132777820.8,
+        "p95_ns": 141347789.4
+      },
+      "resident_weight_bytes": 3760128,
+      "rows": 1025,
+      "speedup_vs_cpu": 1.0628436562379544
+    },
+    {
+      "candidate_wall_ns": [
+        187749946,
+        188449365,
+        183302195,
+        187615706,
+        185723152
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 833659.0,
+        "median_ns": 187615706.0,
+        "p05_ns": 183786386.4,
+        "p95_ns": 188309481.2
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 1574400,
+        "inf_count": 0,
+        "max_absolute": 0.006200611591339111,
+        "max_relative": 729.400068971463,
+        "mean_absolute": 0.00020926808082052278,
+        "nan_count": 0,
+        "p99_absolute": 0.0008415506035089493,
+        "passed": false,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 1,
+        "worst_actual": -0.5466097593307495,
+        "worst_index": [
+          552,
+          688
+        ],
+        "worst_reference": -0.5528103709220886
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1152-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1152-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1152-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "4992",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1152-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        162230573,
+        170839431,
+        161991520,
+        161983816,
+        161639968
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 239053.0,
+        "median_ns": 161991520.0,
+        "p05_ns": 161708737.6,
+        "p95_ns": 169117659.4
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m1025.f32.bin"
+      ],
+      "cpu_full_ns": [
+        197871715,
+        197053445,
+        195629478,
+        195933790,
+        195377203
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 556587.0,
+        "median_ns": 195933790.0,
+        "p05_ns": 195427658.0,
+        "p95_ns": 197708061.0
+      },
+      "cpu_intermediate_columns": 4992,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        2389179,
+        1751649,
+        1747483,
+        1782593,
+        1799242
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 30944.0,
+        "median_ns": 1782593.0,
+        "p05_ns": 1748316.2,
+        "p95_ns": 2271191.6
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 1040,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.1875,
+      "qpu_intermediate_columns": 1152,
+      "qpu_island_ns": [
+        185255230,
+        186327034,
+        181491805,
+        185769077,
+        183847059
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 1071804.0,
+        "median_ns": 185255230.0,
+        "p05_ns": 181962855.8,
+        "p95_ns": 186215442.6
+      },
+      "resident_weight_bytes": 5640192,
+      "rows": 1025,
+      "speedup_vs_cpu": 1.0443357551312895
+    },
+    {
+      "candidate_wall_ns": [
+        228630961,
+        244723855,
+        232990676,
+        226636111,
+        230675940
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 2314736.0,
+        "median_ns": 230675940.0,
+        "p05_ns": 227035081.0,
+        "p95_ns": 242377219.2
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 1574400,
+        "inf_count": 0,
+        "max_absolute": 0.006049990653991699,
+        "max_relative": 675.0571773428744,
+        "mean_absolute": 0.00024576616074703793,
+        "nan_count": 0,
+        "p99_absolute": 0.0009508134424686433,
+        "passed": false,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 1,
+        "worst_actual": -0.5467603802680969,
+        "worst_index": [
+          552,
+          688
+        ],
+        "worst_reference": -0.5528103709220886
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1536-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1536-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1536-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "4608",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m1025-f1536-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        154578965,
+        178339800,
+        151437033,
+        149883364,
+        173510682
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 4695601.0,
+        "median_ns": 154578965.0,
+        "p05_ns": 150194097.8,
+        "p95_ns": 177373976.4
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m1025.f32.bin"
+      ],
+      "cpu_full_ns": [
+        197871715,
+        197053445,
+        195629478,
+        195933790,
+        195377203
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 556587.0,
+        "median_ns": 195933790.0,
+        "p05_ns": 195427658.0,
+        "p95_ns": 197708061.0
+      },
+      "cpu_intermediate_columns": 4608,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        2005480,
+        2004239,
+        2003165,
+        1997480,
+        2167756
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 1241.0,
+        "median_ns": 2004239.0,
+        "p05_ns": 1998617.0,
+        "p95_ns": 2135300.8
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 1040,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.25,
+      "qpu_intermediate_columns": 1536,
+      "qpu_island_ns": [
+        226562723,
+        242657265,
+        230924901,
+        224577076,
+        228447315
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 2477586.0,
+        "median_ns": 228447315.0,
+        "p05_ns": 224974205.4,
+        "p95_ns": 240310792.2
+      },
+      "resident_weight_bytes": 7520256,
+      "rows": 1025,
+      "speedup_vs_cpu": 0.8493897976529325
+    },
+    {
+      "candidate_wall_ns": [
+        374638493,
+        436322355,
+        419965853,
+        513988463,
+        491193118
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 54870763.0,
+        "median_ns": 436322355.0,
+        "p05_ns": 383703965.0,
+        "p95_ns": 509429394.0
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 3147264,
+        "inf_count": 0,
+        "max_absolute": 0.0038449764251708984,
+        "max_relative": 845.949189716096,
+        "mean_absolute": 0.00016615521987790844,
+        "nan_count": 0,
+        "p99_absolute": 0.0007043508440256127,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 2.343961238861084,
+        "worst_index": [
+          1136,
+          688
+        ],
+        "worst_reference": 2.347806215286255
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f768-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f768-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f768-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "5376",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f768-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        368257188,
+        431768031,
+        415338640,
+        508785386,
+        484714609
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 52946578.0,
+        "median_ns": 431768031.0,
+        "p05_ns": 377673478.4,
+        "p95_ns": 503971230.6
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m2049.f32.bin"
+      ],
+      "cpu_full_ns": [
+        391009996,
+        400042757,
+        396581773,
+        391886820,
+        398322885
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 3460984.0,
+        "median_ns": 396581773.0,
+        "p05_ns": 391185360.8,
+        "p95_ns": 399698782.6
+      },
+      "cpu_intermediate_columns": 5376,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        6038921,
+        4442882,
+        4519862,
+        5090653,
+        6313677
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 647771.0,
+        "median_ns": 5090653.0,
+        "p05_ns": 4458278.0,
+        "p95_ns": 6258725.8
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 2064,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.125,
+      "qpu_intermediate_columns": 768,
+      "qpu_island_ns": [
+        266227176,
+        268086416,
+        244984075,
+        255174620,
+        244086824
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 11052556.0,
+        "median_ns": 255174620.0,
+        "p05_ns": 244266274.2,
+        "p95_ns": 267714568.0
+      },
+      "resident_weight_bytes": 3760128,
+      "rows": 2049,
+      "speedup_vs_cpu": 0.9089192163899097
+    },
+    {
+      "candidate_wall_ns": [
+        353025211,
+        349764151,
+        398354033,
+        352390606,
+        357312853
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 3261060.0,
+        "median_ns": 353025211.0,
+        "p05_ns": 350289442.0,
+        "p95_ns": 390145797.0
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 3147264,
+        "inf_count": 0,
+        "max_absolute": 0.0059593915939331055,
+        "max_relative": 1465.403041825095,
+        "mean_absolute": 0.00020923882131199153,
+        "nan_count": 0,
+        "p99_absolute": 0.0008345409110188488,
+        "passed": false,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 1,
+        "worst_actual": -1.063931941986084,
+        "worst_index": [
+          385,
+          1244
+        ],
+        "worst_reference": -1.0579725503921509
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1152-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1152-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1152-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "4992",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1152-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        327520745,
+        330759231,
+        394636441,
+        325681189,
+        330168070
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 2647325.0,
+        "median_ns": 330168070.0,
+        "p05_ns": 326049100.2,
+        "p95_ns": 381860999.0
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m2049.f32.bin"
+      ],
+      "cpu_full_ns": [
+        391009996,
+        400042757,
+        396581773,
+        391886820,
+        398322885
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 3460984.0,
+        "median_ns": 396581773.0,
+        "p05_ns": 391185360.8,
+        "p95_ns": 399698782.6
+      },
+      "cpu_intermediate_columns": 4992,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        3602853,
+        3597187,
+        3608538,
+        3636833,
+        3587242
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 5685.0,
+        "median_ns": 3602853.0,
+        "p05_ns": 3589231.0,
+        "p95_ns": 3631174.0
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 2064,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.1875,
+      "qpu_intermediate_columns": 1152,
+      "qpu_island_ns": [
+        349361674,
+        346104577,
+        361645827,
+        348687681,
+        353660704
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 3257097.0,
+        "median_ns": 349361674.0,
+        "p05_ns": 346621197.8,
+        "p95_ns": 360048802.4
+      },
+      "resident_weight_bytes": 5640192,
+      "rows": 2049,
+      "speedup_vs_cpu": 1.1233808822792546
+    },
+    {
+      "candidate_wall_ns": [
+        461990375,
+        447850647,
+        514111666,
+        599981229,
+        667332756
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 66261019.0,
+        "median_ns": 514111666.0,
+        "p05_ns": 450678592.6,
+        "p95_ns": 653862450.6
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 3147264,
+        "inf_count": 0,
+        "max_absolute": 0.0062819719314575195,
+        "max_relative": 1538.0086415485655,
+        "mean_absolute": 0.00024356386983685657,
+        "nan_count": 0,
+        "p99_absolute": 0.00093542590737343,
+        "passed": false,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 1,
+        "worst_actual": -1.0642545223236084,
+        "worst_index": [
+          385,
+          1244
+        ],
+        "worst_reference": -1.0579725503921509
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1536-of-6144/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1536-of-6144/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1536-of-6144/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "4608",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/m2049-f1536-of-6144/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        353069989,
+        386185729,
+        396927362,
+        572791539,
+        500571598
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 43857373.0,
+        "median_ns": 396927362.0,
+        "p05_ns": 359693137.0,
+        "p95_ns": 558347550.8
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "6144",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-0/full-output-m2049.f32.bin"
+      ],
+      "cpu_full_ns": [
+        391009996,
+        400042757,
+        396581773,
+        391886820,
+        398322885
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 3460984.0,
+        "median_ns": 396581773.0,
+        "p05_ns": 391185360.8,
+        "p95_ns": 399698782.6
+      },
+      "cpu_intermediate_columns": 4608,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 6144,
+      "join_add_ns": [
+        3898572,
+        3676055,
+        5086023,
+        4117440,
+        9129001
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 441385.0,
+        "median_ns": 4117440.0,
+        "p05_ns": 3720558.4,
+        "p95_ns": 8320405.399999999
+      },
+      "layer": 0,
+      "output_columns": 1536,
+      "padded_rows": 2064,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.25,
+      "qpu_intermediate_columns": 1536,
+      "qpu_island_ns": [
+        458033063,
+        444110536,
+        508947848,
+        595487607,
+        657721815
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 64837312.0,
+        "median_ns": 508947848.0,
+        "p05_ns": 446895041.4,
+        "p95_ns": 645274973.4
+      },
+      "resident_weight_bytes": 7520256,
+      "rows": 2049,
+      "speedup_vs_cpu": 0.7713922854261782
+    },
+    {
+      "candidate_wall_ns": [
+        210380885,
+        257614540,
+        257027102,
+        176144618,
+        175771159
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 34609726.0,
+        "median_ns": 210380885.0,
+        "p05_ns": 175845850.8,
+        "p95_ns": 257497052.4
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 787968,
+        "inf_count": 0,
+        "max_absolute": 0.0029476583003997803,
+        "max_relative": 143.7990740253591,
+        "mean_absolute": 0.00017999750989268238,
+        "nan_count": 0,
+        "p99_absolute": 0.00071940794587135,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -0.4258072078227997,
+        "worst_index": [
+          321,
+          1427
+        ],
+        "worst_reference": -0.42875486612319946
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f1536-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f1536-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f1536-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "10752",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f1536-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        209084528,
+        255314175,
+        255402970,
+        174887076,
+        174214212
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 34870316.0,
+        "median_ns": 209084528.0,
+        "p05_ns": 174348784.8,
+        "p95_ns": 255385211.0
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m513.f32.bin"
+      ],
+      "cpu_full_ns": [
+        195180723,
+        224991961,
+        231775615,
+        204927940,
+        200840685
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 9747217.0,
+        "median_ns": 204927940.0,
+        "p05_ns": 196312715.4,
+        "p95_ns": 230418884.2
+      },
+      "cpu_intermediate_columns": 10752,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        1202524,
+        2177312,
+        1268932,
+        1158322,
+        1219469
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 49463.0,
+        "median_ns": 1219469.0,
+        "p05_ns": 1167162.4,
+        "p95_ns": 1995635.9999999998
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 528,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.125,
+      "qpu_intermediate_columns": 1536,
+      "qpu_island_ns": [
+        142316996,
+        146480583,
+        180447704,
+        133863859,
+        122039828
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 8453137.0,
+        "median_ns": 142316996.0,
+        "p05_ns": 124404634.2,
+        "p95_ns": 173654279.79999998
+      },
+      "resident_weight_bytes": 7520256,
+      "rows": 513,
+      "speedup_vs_cpu": 0.9740806062299814
+    },
+    {
+      "candidate_wall_ns": [
+        186006797,
+        224199025,
+        257152582,
+        179227940,
+        184729810
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 6778857.0,
+        "median_ns": 186006797.0,
+        "p05_ns": 180328314.0,
+        "p95_ns": 250561870.6
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 787968,
+        "inf_count": 0,
+        "max_absolute": 0.0028395652770996094,
+        "max_relative": 214.7205148410822,
+        "mean_absolute": 0.00022103052036763385,
+        "nan_count": 0,
+        "p99_absolute": 0.0008488297462463379,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 5.195713996887207,
+        "worst_index": [
+          231,
+          221
+        ],
+        "worst_reference": 5.198553562164307
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f2304-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f2304-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f2304-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "9984",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f2304-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        159935152,
+        221083371,
+        255674652,
+        168793859,
+        158681183
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 10112676.0,
+        "median_ns": 168793859.0,
+        "p05_ns": 158931976.8,
+        "p95_ns": 248756395.79999998
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m513.f32.bin"
+      ],
+      "cpu_full_ns": [
+        195180723,
+        224991961,
+        231775615,
+        204927940,
+        200840685
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 9747217.0,
+        "median_ns": 204927940.0,
+        "p05_ns": 196312715.4,
+        "p95_ns": 230418884.2
+      },
+      "cpu_intermediate_columns": 9984,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        1314153,
+        3015118,
+        1328338,
+        1311431,
+        1419171
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 16907.0,
+        "median_ns": 1328338.0,
+        "p05_ns": 1311975.4,
+        "p95_ns": 2695928.5999999996
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 528,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.1875,
+      "qpu_intermediate_columns": 2304,
+      "qpu_island_ns": [
+        184630145,
+        215632684,
+        238649065,
+        177854769,
+        183229103
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 6775376.0,
+        "median_ns": 184630145.0,
+        "p05_ns": 178929635.8,
+        "p95_ns": 234045788.79999998
+      },
+      "resident_weight_bytes": 11280384,
+      "rows": 513,
+      "speedup_vs_cpu": 1.1017228580093232
+    },
+    {
+      "candidate_wall_ns": [
+        229977429,
+        229927171,
+        233706743,
+        232361257,
+        231012048
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 1084877.0,
+        "median_ns": 231012048.0,
+        "p05_ns": 229937222.6,
+        "p95_ns": 233437645.8
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 787968,
+        "inf_count": 0,
+        "max_absolute": 0.004124641418457031,
+        "max_relative": 345.37667454688733,
+        "mean_absolute": 0.00025569565271828313,
+        "nan_count": 0,
+        "p99_absolute": 0.0009599451348185528,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 5.208188056945801,
+        "worst_index": [
+          34,
+          221
+        ],
+        "worst_reference": 5.204063415527344
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f3072-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f3072-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f3072-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "9216",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m513-f3072-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        147615572,
+        153421217,
+        146448713,
+        147046226,
+        157006089
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 1166859.0,
+        "median_ns": 147615572.0,
+        "p05_ns": 146568215.6,
+        "p95_ns": 156289114.6
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m513.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "513",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m513.f32.bin"
+      ],
+      "cpu_full_ns": [
+        195180723,
+        224991961,
+        231775615,
+        204927940,
+        200840685
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 9747217.0,
+        "median_ns": 204927940.0,
+        "p05_ns": 196312715.4,
+        "p95_ns": 230418884.2
+      },
+      "cpu_intermediate_columns": 9216,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        1367079,
+        1055508,
+        1092471,
+        1105341,
+        1052044
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 36963.0,
+        "median_ns": 1092471.0,
+        "p05_ns": 1052736.8,
+        "p95_ns": 1314731.4
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 528,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.25,
+      "qpu_intermediate_columns": 3072,
+      "qpu_island_ns": [
+        228544629,
+        228811163,
+        232552737,
+        231197417,
+        229904263
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 1293154.0,
+        "median_ns": 229904263.0,
+        "p05_ns": 228597935.8,
+        "p95_ns": 232281673.0
+      },
+      "resident_weight_bytes": 15040512,
+      "rows": 513,
+      "speedup_vs_cpu": 0.8870876725875354
+    },
+    {
+      "candidate_wall_ns": [
+        362100769,
+        357165096,
+        370315537,
+        418942808,
+        410013268
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 13150441.0,
+        "median_ns": 370315537.0,
+        "p05_ns": 358152230.6,
+        "p95_ns": 417156900.0
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 1574400,
+        "inf_count": 0,
+        "max_absolute": 0.003067493438720703,
+        "max_relative": 394.7680229613372,
+        "mean_absolute": 0.00017705759863529202,
+        "nan_count": 0,
+        "p99_absolute": 0.0007205009460449219,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -4.535660266876221,
+        "worst_index": [
+          800,
+          1427
+        ],
+        "worst_reference": -4.5325927734375
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f1536-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f1536-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f1536-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "10752",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f1536-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        360059937,
+        355405262,
+        368514370,
+        417090123,
+        408120824
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 13109108.0,
+        "median_ns": 368514370.0,
+        "p05_ns": 356336197.0,
+        "p95_ns": 415296263.2
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m1025.f32.bin"
+      ],
+      "cpu_full_ns": [
+        391200198,
+        514622605,
+        444278886,
+        390453354,
+        393676580
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 3223226.0,
+        "median_ns": 393676580.0,
+        "p05_ns": 390602722.8,
+        "p95_ns": 500553861.2
+      },
+      "cpu_intermediate_columns": 10752,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        1697946,
+        1655354,
+        1693520,
+        1745761,
+        1786389
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 42592.0,
+        "median_ns": 1697946.0,
+        "p05_ns": 1662987.2,
+        "p95_ns": 1778263.4
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 1040,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.125,
+      "qpu_intermediate_columns": 1536,
+      "qpu_island_ns": [
+        246463208,
+        255289897,
+        246607632,
+        249918988,
+        225205218
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 3311356.0,
+        "median_ns": 246607632.0,
+        "p05_ns": 229456816.0,
+        "p95_ns": 254215715.2
+      },
+      "resident_weight_bytes": 7520256,
+      "rows": 1025,
+      "speedup_vs_cpu": 1.0630841557155621
+    },
+    {
+      "candidate_wall_ns": [
+        352487124,
+        345941301,
+        349017104,
+        437879692,
+        373048343
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 6545823.0,
+        "median_ns": 352487124.0,
+        "p05_ns": 346556461.6,
+        "p95_ns": 424913422.2
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 1574400,
+        "inf_count": 0,
+        "max_absolute": 0.004155397415161133,
+        "max_relative": 422.9503889307094,
+        "mean_absolute": 0.00021810978857670268,
+        "nan_count": 0,
+        "p99_absolute": 0.0008377730846405029,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -3.138181209564209,
+        "worst_index": [
+          451,
+          1427
+        ],
+        "worst_reference": -3.134025812149048
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f2304-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f2304-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f2304-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "9984",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f2304-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        326604995,
+        323464397,
+        332422104,
+        436020063,
+        362280118
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 8957707.0,
+        "median_ns": 332422104.0,
+        "p05_ns": 324092516.6,
+        "p95_ns": 421272074.0
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m1025.f32.bin"
+      ],
+      "cpu_full_ns": [
+        391200198,
+        514622605,
+        444278886,
+        390453354,
+        393676580
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 3223226.0,
+        "median_ns": 393676580.0,
+        "p05_ns": 390602722.8,
+        "p95_ns": 500553861.2
+      },
+      "cpu_intermediate_columns": 9984,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        1819629,
+        1747834,
+        1758815,
+        1749909,
+        1794130
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 10981.0,
+        "median_ns": 1758815.0,
+        "p05_ns": 1748249.0,
+        "p95_ns": 1814529.2
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 1040,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.1875,
+      "qpu_intermediate_columns": 2304,
+      "qpu_island_ns": [
+        350606124,
+        344133560,
+        341586660,
+        422995342,
+        371191085
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 9019464.0,
+        "median_ns": 350606124.0,
+        "p05_ns": 342096040.0,
+        "p95_ns": 412634490.59999996
+      },
+      "resident_weight_bytes": 11280384,
+      "rows": 1025,
+      "speedup_vs_cpu": 1.1168537889627992
+    },
+    {
+      "candidate_wall_ns": [
+        476449749,
+        453222353,
+        462495927,
+        449780628,
+        435241645
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 9273574.0,
+        "median_ns": 453222353.0,
+        "p05_ns": 438149441.6,
+        "p95_ns": 473658984.6
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 1574400,
+        "inf_count": 0,
+        "max_absolute": 0.004110097885131836,
+        "max_relative": 410.00218661504823,
+        "mean_absolute": 0.00025200092860775216,
+        "nan_count": 0,
+        "p99_absolute": 0.0009492039680480957,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": -3.1381359100341797,
+        "worst_index": [
+          451,
+          1427
+        ],
+        "worst_reference": -3.134025812149048
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f3072-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f3072-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f3072-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "9216",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m1025-f3072-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        364029527,
+        328618679,
+        334554990,
+        318931221,
+        300324611
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 9687458.0,
+        "median_ns": 328618679.0,
+        "p05_ns": 304045933.0,
+        "p95_ns": 358134619.6
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m1025.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "1025",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m1025.f32.bin"
+      ],
+      "cpu_full_ns": [
+        391200198,
+        514622605,
+        444278886,
+        390453354,
+        393676580
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 3223226.0,
+        "median_ns": 393676580.0,
+        "p05_ns": 390602722.8,
+        "p95_ns": 500553861.2
+      },
+      "cpu_intermediate_columns": 9216,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        2581844,
+        2419438,
+        2696658,
+        2784250,
+        2513179
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 114814.0,
+        "median_ns": 2581844.0,
+        "p05_ns": 2438186.2,
+        "p95_ns": 2766731.6
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 1040,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.25,
+      "qpu_intermediate_columns": 3072,
+      "qpu_island_ns": [
+        473798757,
+        450727211,
+        459733342,
+        446927730,
+        432661170
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 9006131.0,
+        "median_ns": 450727211.0,
+        "p05_ns": 435514482.0,
+        "p95_ns": 470985674.0
+      },
+      "resident_weight_bytes": 15040512,
+      "rows": 1025,
+      "speedup_vs_cpu": 0.8686168663000609
+    },
+    {
+      "candidate_wall_ns": [
+        732018626,
+        760722374,
+        780869023,
+        800008331,
+        973269572
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 20146649.0,
+        "median_ns": 780869023.0,
+        "p05_ns": 737759375.6,
+        "p95_ns": 938617323.8
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 3147264,
+        "inf_count": 0,
+        "max_absolute": 0.004832267761230469,
+        "max_relative": 1498.4615369862488,
+        "mean_absolute": 0.00017840876922881865,
+        "nan_count": 0,
+        "p99_absolute": 0.0007280707359313965,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 5.752483367919922,
+        "worst_index": [
+          409,
+          221
+        ],
+        "worst_reference": 5.757315635681152
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f1536-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f1536-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f1536-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "10752",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f1536-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        727695966,
+        756912209,
+        776822249,
+        795575542,
+        969631164
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 19910040.0,
+        "median_ns": 776822249.0,
+        "p05_ns": 733539214.6,
+        "p95_ns": 934820039.6
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m2049.f32.bin"
+      ],
+      "cpu_full_ns": [
+        828811023,
+        794728680,
+        896549435,
+        975317014,
+        875684682
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 46873659.0,
+        "median_ns": 875684682.0,
+        "p05_ns": 801545148.6,
+        "p95_ns": 959563498.1999999
+      },
+      "cpu_intermediate_columns": 10752,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        3467577,
+        3462150,
+        3691555,
+        4313290,
+        3520668
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 58518.0,
+        "median_ns": 3520668.0,
+        "p05_ns": 3463235.4,
+        "p95_ns": 4188943.0
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 2064,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.125,
+      "qpu_intermediate_columns": 1536,
+      "qpu_island_ns": [
+        431856827,
+        435944101,
+        483877619,
+        486825997,
+        489253972
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 5376353.0,
+        "median_ns": 483877619.0,
+        "p05_ns": 432674281.8,
+        "p95_ns": 488768377.0
+      },
+      "resident_weight_bytes": 7520256,
+      "rows": 2049,
+      "speedup_vs_cpu": 1.1214232556386092
+    },
+    {
+      "candidate_wall_ns": [
+        892726178,
+        716066248,
+        755348021,
+        1139756973,
+        831732272
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 76384251.0,
+        "median_ns": 831732272.0,
+        "p05_ns": 723922602.6,
+        "p95_ns": 1090350814.0
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 3147264,
+        "inf_count": 0,
+        "max_absolute": 0.004773616790771484,
+        "max_relative": 1619.8112617709671,
+        "mean_absolute": 0.00022199234582814649,
+        "nan_count": 0,
+        "p99_absolute": 0.0008635520935058594,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 5.752542018890381,
+        "worst_index": [
+          409,
+          221
+        ],
+        "worst_reference": 5.757315635681152
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f2304-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f2304-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f2304-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "9984",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f2304-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        818071076,
+        711565776,
+        751022379,
+        1049637731,
+        827946143
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 67048697.0,
+        "median_ns": 818071076.0,
+        "p05_ns": 719457096.6,
+        "p95_ns": 1005299413.4
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m2049.f32.bin"
+      ],
+      "cpu_full_ns": [
+        828811023,
+        794728680,
+        896549435,
+        975317014,
+        875684682
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 46873659.0,
+        "median_ns": 875684682.0,
+        "p05_ns": 801545148.6,
+        "p95_ns": 959563498.1999999
+      },
+      "cpu_intermediate_columns": 9984,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        3731499,
+        4140199,
+        4210921,
+        7249279,
+        3578094
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 408700.0,
+        "median_ns": 4140199.0,
+        "p05_ns": 3608775.0,
+        "p95_ns": 6641607.399999999
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 2064,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.1875,
+      "qpu_intermediate_columns": 2304,
+      "qpu_island_ns": [
+        882979887,
+        706737176,
+        730203310,
+        1132413603,
+        697004329
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 33198981.0,
+        "median_ns": 730203310.0,
+        "p05_ns": 698950898.4,
+        "p95_ns": 1082526859.8
+      },
+      "resident_weight_bytes": 11280384,
+      "rows": 2049,
+      "speedup_vs_cpu": 1.0528444205901872
+    },
+    {
+      "candidate_wall_ns": [
+        948168158,
+        955872302,
+        915971019,
+        1012457789,
+        945311057
+      ],
+      "candidate_wall_summary": {
+        "count": 5,
+        "mad_ns": 7704144.0,
+        "median_ns": 948168158.0,
+        "p05_ns": 921839026.6,
+        "p95_ns": 1001140691.6
+      },
+      "correctness": {
+        "atol": 0.005,
+        "elements": 3147264,
+        "inf_count": 0,
+        "max_absolute": 0.004421234130859375,
+        "max_relative": 1145.881571124451,
+        "mean_absolute": 0.0002564540867262261,
+        "nan_count": 0,
+        "p99_absolute": 0.0009709824249148381,
+        "passed": true,
+        "rtol": 0.0005,
+        "tolerance_violation_count": 0,
+        "worst_actual": 5.752894401550293,
+        "worst_index": [
+          409,
+          221
+        ],
+        "worst_reference": 5.757315635681152
+      },
+      "cpu_complement_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f3072-of-12288/cpu-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f3072-of-12288/cpu-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f3072-of-12288/cpu-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "9216",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/m2049-f3072-of-12288/cpu-output.f32.bin",
+        "--serve"
+      ],
+      "cpu_complement_ns": [
+        694746482,
+        716105027,
+        699340010,
+        748866975,
+        720946941
+      ],
+      "cpu_complement_summary": {
+        "count": 5,
+        "mad_ns": 16765017.0,
+        "median_ns": 716105027.0,
+        "p05_ns": 695665187.6,
+        "p95_ns": 743282968.2
+      },
+      "cpu_full_command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_ffn_bench",
+        "--gate",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-gate.q4_0.bin",
+        "--up",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-up.q4_0.bin",
+        "--down",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-down.q4_0.bin",
+        "--activation-f32",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/input-m2049.f32.bin",
+        "--input-columns",
+        "1536",
+        "--intermediate-columns",
+        "12288",
+        "--output-columns",
+        "1536",
+        "--rows",
+        "2049",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "2",
+        "--samples",
+        "5",
+        "--output-bin",
+        "/tmp/llama-qpu-ffn-island-tpl3l15p/layer-15/full-output-m2049.f32.bin"
+      ],
+      "cpu_full_ns": [
+        828811023,
+        794728680,
+        896549435,
+        975317014,
+        875684682
+      ],
+      "cpu_full_summary": {
+        "count": 5,
+        "mad_ns": 46873659.0,
+        "median_ns": 875684682.0,
+        "p05_ns": 801545148.6,
+        "p95_ns": 959563498.1999999
+      },
+      "cpu_intermediate_columns": 9216,
+      "cpu_threads": 4,
+      "input_columns": 1536,
+      "intermediate_columns": 12288,
+      "join_add_ns": [
+        4168106,
+        4090144,
+        4346141,
+        4497140,
+        4132347
+      ],
+      "join_add_summary": {
+        "count": 5,
+        "mad_ns": 77962.0,
+        "median_ns": 4168106.0,
+        "p05_ns": 4098584.6,
+        "p95_ns": 4466940.2
+      },
+      "layer": 15,
+      "output_columns": 1536,
+      "padded_rows": 2064,
+      "programs": [
+        "ggml-q4-0-q8-wordscale-mx",
+        "ggml-geglu-q8-0-split"
+      ],
+      "qpu_fraction": 0.25,
+      "qpu_intermediate_columns": 3072,
+      "qpu_island_ns": [
+        943919941,
+        951708067,
+        911552099,
+        1007881243,
+        941104692
+      ],
+      "qpu_island_summary": {
+        "count": 5,
+        "mad_ns": 7788126.0,
+        "median_ns": 943919941.0,
+        "p05_ns": 917462617.6,
+        "p95_ns": 996646607.8
+      },
+      "resident_weight_bytes": 15040512,
+      "rows": 2049,
+      "speedup_vs_cpu": 0.9235541972292218
+    }
+  ],
+  "samples": 5,
+  "schema_version": 1,
+  "seed": 7331,
+  "warmups": 2
+}

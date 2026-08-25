@@ -1,10 +1,10 @@
 # Native llama.cpp QPU integration
 
 This directory owns the native VideoCore VII runtime used by the llama.cpp
-acceleration work. The runtime and preload libraries build out of tree. One
-narrow, reproducible patch adds opt-in weak registration, asynchronous launch,
-and join hooks to the pinned `llama.cpp` CPU backend; it is stored under
-`patches/`.
+acceleration work. The runtime and preload libraries build out of tree. Two
+narrow, reproducible patches add opt-in weak registration, asynchronous
+launch, and join hooks to the pinned `llama.cpp` CPU backend; they are stored
+under `patches/`.
 
 The runtime currently provides:
 
@@ -26,10 +26,10 @@ There are two GGML integration boundaries:
   correctness and partition experiments. Per-layer scheduler splits make its
   GEGLU path slower end to end, so it is not the retained placement.
 - `libggml-qpu-inline.so` is a small preload library with no `libggml-cpu`
-  dependency. It supports the earlier exact GEGLU experiment and the retained
-  arbitrary-M experiment: register Q4_0 `ffn_up` weights before CPU_REPACK,
-  launch a QPU-owned output-column suffix while CPU computes the prefix and
-  independent `ffn_gate`, then join at the split-F32 GEGLU input. The graph and
+  dependency. It supports the earlier exact GEGLU experiment, the arbitrary-M
+  `ffn_up` experiment, and an opt-in M=1 drafting experiment. The M=1 hook runs
+  selected Q4_0 projections directly inside CPU_REPACK after llama.cpp creates
+  the native Q8_0x4 activation, avoiding scheduler graph splits. The graph and
   model-visible tensors remain CPU-owned.
 
 The arbitrary-M path supports an exact Q4_0 program plus research-only
@@ -50,9 +50,11 @@ without a score matrix. Their current exact subset (256-wide heads, one KV
 head, no ALiBi/softcap/sinks) is correctness-tested on hardware but is
 substantially slower than the pinned GGML CPU node, so it is exported for
 reproducibility and never selected automatically. A separate fused GEGLU
-program can emit byte-exact GGML Q8_0 directly into resident memory for a
-down-projection consumer; that producer is locally faster at M=257, although
-the current QPU down projection makes the complete chain slower.
+program emits GGML-compatible Q8_0 directly into resident memory for a
+down-projection consumer. It is locally faster at M=257, but a deterministic
+rounding-boundary differential found two value bytes off by one code, and the
+current QPU down projection makes the complete chain slower. The producer is
+therefore approximate, quarantined, and never selected automatically.
 
 Build and test:
 
@@ -114,7 +116,8 @@ Apply the inline hooks to a clean pinned checkout with:
 
 ```sh
 git -C /home/yiannis/side/llama.cpp apply \
-  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch \
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0002-ggml-cpu-inline-m1-q4-hook.patch
 cmake --build /home/yiannis/side/llama.cpp/build --target llama-server
 ```
 
@@ -176,6 +179,68 @@ No size meets the 1.05x gate. The M=129 median is only about 1.1%, is bounded
 by a confidence interval that crosses 1.0, and cannot support an acceleration
 claim. See `UP_OVERLAP_RESULTS.md` for the timing/Amdahl analysis and concrete
 kernel target.
+
+## Channel-partitioned FFN island
+
+The full-island experiment partitions the FFN intermediate-channel dimension,
+not one projection's output in isolation. CPU and QPU concurrently compute
+disjoint `gate`, `up`, GEGLU, and `down` paths, and only their final hidden-size
+F32 results are added. The QPU path keeps its GEGLU-to-Q8_0 intermediate on the
+device, so staging, four dispatches, synchronization, final readback, and the
+join are all charged to the candidate wall time. The CPU reference is a
+persistent real GGML CPU_REPACK graph using the extracted Gemma Q4_0 weights.
+
+Screening found useful local headroom once M is large enough. The best measured
+fractions produced 1.10-1.19x weighted FFN-region estimates across the real
+15 narrow plus 20 wide layer mix at M=257-2049. These are isolated-layer,
+five-sample screens, not a full-model or promotion result; the implementation
+therefore remains a benchmark boundary and is not selected by llama.cpp.
+
+The island benchmark prepares the QPU-side Q8 input before its timed QPU chain,
+so it is an optimistic component boundary unless an integration reuses the Q8
+activation already owned by CPU_REPACK. A follow-up persistent-kernel probe
+successfully ran two exact tiled Q4 projections plus a global barrier in one
+CSD, with bitwise-identical results, but improved the exact M=513 narrow/wide
+suffixes by only 1.036-1.037x. It remains an unexported experiment rather than a
+production selection.
+
+Reproduce the persistent-kernel screen with:
+
+```sh
+PYTHONPATH=. .venv/bin/python examples/benchmark_llama_cpp_qpu_persistent_q4.py \
+  --rows 513 --phases 2 --baseline-wgs 192 --warmups 2 --samples 5 \
+  --output experiment_logs/20260825-qpu-next/persistent-q4-two-phase-m513-screen.json
+```
+
+Reproduce the large-M screen with:
+
+```sh
+PYTHONPATH=. .venv/bin/python examples/benchmark_llama_cpp_qpu_ffn_island.py \
+  experiment_logs/20260819-llama-cpp-qpu/gemma-base-gguf-manifest.json \
+  --layer 0 --layer 15 --rows 513 --rows 1025 --rows 2049 \
+  --fraction 0.125 --fraction 0.1875 --fraction 0.25 \
+  --cpu-threads 4 --warmups 2 --samples 5 \
+  --output experiment_logs/20260825-qpu-next/ffn-island-large-m-screen.json
+```
+
+## M=1 MTP drafting experiment
+
+`GGML_QPU_M1_INLINE=1` enables exact M=1 Q4_0 execution only for tensor-name
+substrings explicitly listed in `GGML_QPU_M1_TENSORS`. Registration happens
+when CPU_REPACK receives the weight; each selected node reuses persistent QPU
+weights and the already-quantized activation. Failure completes the submitted
+work on CPU, and leaving the flag unset preserves native llama.cpp behavior.
+The dynamic backend also supports `GGML_QPU_MAX_M`, which was used to prove
+that the earlier device-backend MTP experiment executed only M=1 nodes.
+
+The direct hook removes graph-split overhead and is correctness-tested, but it
+does not change the throughput conclusion: a representative MTP
+`ffn_gate` (K=256, N=2048) takes about 0.35 ms on QPU while the actual
+one-thread CPU_REPACK drafter node takes about 0.025 ms. The QPU is roughly 14x
+slower at this granularity. The earlier dynamic-backend server validation was
+also 0.442x (50.845 s versus 22.476 s) and is retained as rejection evidence.
+Accordingly the M=1 placement is implemented for reproducibility, disabled by
+default, and not a viable speculative-decoding acceleration with this kernel.
 
 ## End-to-end evaluation
 
