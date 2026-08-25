@@ -138,8 +138,11 @@ def collect_environment() -> dict[str, Any]:
         ),
         "memory": run_capture(["free", "--bytes"]),
         "swap": run_capture(["swapon", "--show", "--bytes", "--output-all"]),
+        "swap_configuration": run_capture(
+            ["swapon", "--show=NAME,TYPE,SIZE,PRIO", "--bytes", "--noheadings"]
+        ),
         "swap_used_bytes": run_capture(
-            ["swapon", "--show", "--bytes", "--noheadings", "--output", "USED"]
+            ["swapon", "--show=USED", "--bytes", "--noheadings"]
         ),
         "kernel": run_capture(["uname", "-a"]),
         "firmware": run_capture(["vcgencmd", "version"]),

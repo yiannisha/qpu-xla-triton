@@ -1,0 +1,310 @@
+diff --git a/ggml/src/ggml-cpu/ops.cpp b/ggml/src/ggml-cpu/ops.cpp
+index 42ec809ce..cac75c529 100644
+--- a/ggml/src/ggml-cpu/ops.cpp
++++ b/ggml/src/ggml-cpu/ops.cpp
+@@ -10,8 +10,117 @@
+
+ #include <algorithm>
+ #include <cfloat>
+ #include <cmath>
++#include <cstdint>
++#include <cstdlib>
++#include <cstring>
++
++#if defined(__GNUC__) && !defined(_WIN32)
++extern "C" int ggml_qpu_geglu_f32(
++    const float * gate,
++    const float * up,
++    float * destination,
++    uint64_t rows,
++    uint64_t columns) __attribute__((weak));
++
++extern "C" int ggml_qpu_geglu_f32_hybrid_begin(
++    const float * gate,
++    const float * up,
++    float * destination,
++    uint64_t rows,
++    uint64_t columns,
++    uint64_t qpu_rows,
++    uint64_t cpu_threads) __attribute__((weak));
++
++extern "C" int ggml_qpu_geglu_f32_hybrid_wait() __attribute__((weak));
++extern "C" int ggml_qpu_up_pending() __attribute__((weak));
++extern "C" int ggml_qpu_up_wait() __attribute__((weak));
++
++static bool ggml_qpu_up_hybrid_enabled() {
++    const char * value = std::getenv("GGML_QPU_UP_HYBRID");
++    return value != nullptr &&
++        (std::strcmp(value, "1") == 0 ||
++         std::strcmp(value, "true") == 0 ||
++         std::strcmp(value, "on") == 0);
++}
++
++static bool ggml_qpu_cpu_inline_geglu_enabled() {
++    const char * value = std::getenv("GGML_QPU_CPU_INLINE_GEGLU");
++    return value != nullptr &&
++        (std::strcmp(value, "1") == 0 ||
++         std::strcmp(value, "true") == 0 ||
++         std::strcmp(value, "on") == 0);
++}
++
++static bool ggml_qpu_cpu_inline_geglu_row_enabled(uint64_t rows) {
++    const char * value = std::getenv("GGML_QPU_CPU_INLINE_ROWS");
++    if (value == nullptr || value[0] == '\0') {
++        return true;
++    }
++    while (*value != '\0') {
++        char * end = nullptr;
++        const unsigned long long candidate = std::strtoull(value, &end, 10);
++        if (end == value) {
++            return false;
++        }
++        if (candidate == rows) {
++            return true;
++        }
++        if (*end == '\0') {
++            return false;
++        }
++        if (*end != ',') {
++            return false;
++        }
++        value = end + 1;
++    }
++    return false;
++}
++
++static bool ggml_qpu_cpu_inline_geglu_force_multithread() {
++    const char * value = std::getenv("GGML_QPU_CPU_INLINE_FORCE_MULTITHREAD");
++    return value != nullptr && std::strcmp(value, "1") == 0;
++}
++
++static bool ggml_qpu_cpu_inline_geglu_hybrid_enabled() {
++    const char * value = std::getenv("GGML_QPU_CPU_INLINE_HYBRID");
++    return value != nullptr &&
++        (std::strcmp(value, "1") == 0 ||
++         std::strcmp(value, "true") == 0 ||
++         std::strcmp(value, "on") == 0);
++}
++
++static uint64_t ggml_qpu_cpu_inline_geglu_qpu_rows(uint64_t rows) {
++    const char * value = std::getenv("GGML_QPU_CPU_INLINE_PARTITIONS");
++    if (value == nullptr || value[0] == '\0') {
++        return 0;
++    }
++    while (*value != '\0') {
++        char * total_end = nullptr;
++        const unsigned long long total = std::strtoull(value, &total_end, 10);
++        if (total_end == value || *total_end != ':') {
++            return 0;
++        }
++        char * qpu_end = nullptr;
++        const unsigned long long qpu = std::strtoull(total_end + 1, &qpu_end, 10);
++        if (qpu_end == total_end + 1 || qpu == 0 || qpu >= total) {
++            return 0;
++        }
++        if (total == rows) {
++            return static_cast<uint64_t>(qpu);
++        }
++        if (*qpu_end == '\0') {
++            return 0;
++        }
++        if (*qpu_end != ',') {
++            return 0;
++        }
++        value = qpu_end + 1;
++    }
++    return 0;
++}
++#endif
+
+ // ggml_compute_forward_dup
+
+ static void ggml_compute_forward_dup_same_cont(
+@@ -3063,8 +3172,83 @@ static void ggml_compute_forward_geglu_f32(
+
+     GGML_ASSERT(dst->ne[0] == nc);
+     GGML_ASSERT(ggml_nrows(dst) == nr);
+
++#if defined(__GNUC__) && !defined(_WIN32)
++    // Every worker must make the same barrier decision.  Testing the mutable
++    // pending flag on each worker races with thread 0 clearing it in wait().
++    if (ggml_qpu_up_pending != nullptr && ggml_qpu_up_wait != nullptr &&
++        ggml_qpu_up_hybrid_enabled()) {
++        if (ith == 0 && ggml_qpu_up_pending() == 1) {
++            const int handled = ggml_qpu_up_wait();
++            GGML_ASSERT(handled == 1);
++        }
++        ggml_barrier(params->threadpool);
++    }
++
++    const uint64_t qpu_elements =
++        static_cast<uint64_t>(nc) * static_cast<uint64_t>(nr);
++    const uint64_t hybrid_qpu_rows =
++        ggml_qpu_cpu_inline_geglu_qpu_rows(static_cast<uint64_t>(nr));
++    if (src1 != nullptr && ggml_qpu_geglu_f32_hybrid_begin != nullptr &&
++        ggml_qpu_geglu_f32_hybrid_wait != nullptr &&
++        ggml_qpu_cpu_inline_geglu_enabled() &&
++        ggml_qpu_cpu_inline_geglu_hybrid_enabled() && nth > 1 &&
++        hybrid_qpu_rows > 0 && hybrid_qpu_rows < static_cast<uint64_t>(nr) &&
++        hybrid_qpu_rows * static_cast<uint64_t>(nc) % 768 == 0 &&
++        ggml_is_contiguous(src0) && ggml_is_contiguous(src1) &&
++        ggml_is_contiguous(dst)) {
++        if (ith == 0) {
++            const int handled = ggml_qpu_geglu_f32_hybrid_begin(
++                static_cast<const float *>(src0->data),
++                static_cast<const float *>(src1->data),
++                static_cast<float *>(dst->data),
++                static_cast<uint64_t>(nr),
++                static_cast<uint64_t>(nc),
++                hybrid_qpu_rows,
++                static_cast<uint64_t>(nth));
++            GGML_ASSERT(handled == 1);
++        }
++        const int cpu_rows = nr - static_cast<int>(hybrid_qpu_rows);
++        const int cpu_dr = (cpu_rows + nth - 1) / nth;
++        const int cpu_ir0 = static_cast<int>(hybrid_qpu_rows) + cpu_dr * ith;
++        const int cpu_ir1 = MIN(cpu_ir0 + cpu_dr, nr);
++        for (int i1 = cpu_ir0; i1 < cpu_ir1; i1++) {
++            const float * src0_p = (const float *) (src0_d + i1*src0_o);
++            const float * src1_p = (const float *) (src1_d + i1*src1_o);
++            ggml_vec_geglu_f32(
++                nc,
++                (float *) ((char *) dst->data + i1*dst->nb[1]),
++                src0_p,
++                src1_p);
++        }
++        if (ith == 0) {
++            const int handled = ggml_qpu_geglu_f32_hybrid_wait();
++            GGML_ASSERT(handled == 1);
++        }
++        ggml_barrier(params->threadpool);
++        return;
++    }
++    if (src1 != nullptr && ggml_qpu_geglu_f32 != nullptr &&
++        ggml_qpu_cpu_inline_geglu_enabled() &&
++        (nth == 1 || ggml_qpu_cpu_inline_geglu_force_multithread()) &&
++        ggml_qpu_cpu_inline_geglu_row_enabled(static_cast<uint64_t>(nr)) &&
++        qpu_elements % 768 == 0 &&
++        ggml_is_contiguous(src0) && ggml_is_contiguous(src1) &&
++        ggml_is_contiguous(dst)) {
++        if (ith == 0) {
++            const int handled = ggml_qpu_geglu_f32(
++                static_cast<const float *>(src0->data),
++                static_cast<const float *>(src1->data),
++                static_cast<float *>(dst->data),
++                static_cast<uint64_t>(nr),
++                static_cast<uint64_t>(nc));
++            GGML_ASSERT(handled == 1);
++        }
++        return;
++    }
++#endif
++
+     const int32_t swapped = ggml_get_op_params_i32(dst, 1);
+
+     // rows per thread
+     const int dr = (nr + nth - 1)/nth;
+diff --git a/ggml/src/ggml-cpu/repack.cpp b/ggml/src/ggml-cpu/repack.cpp
+index f18758f16..31bff96dc 100644
+--- a/ggml/src/ggml-cpu/repack.cpp
++++ b/ggml/src/ggml-cpu/repack.cpp
+@@ -11,14 +11,40 @@
+
+ #include "arch-fallback.h"
+
+ #include <cmath>
++#include <cstddef>
++#include <cstdint>
+ #include <cstring>
+ #include <cassert>
+ #include <cstdio>  // for GGML_ASSERT
+
+ #include "repack.h"
+
++#if defined(__GNUC__) && !defined(_WIN32)
++extern "C" int ggml_qpu_up_register_q4_0(
++    const char * name,
++    const void * weights,
++    size_t weight_size,
++    uint64_t input_columns,
++    uint64_t output_columns) __attribute__((weak));
++
++extern "C" int ggml_qpu_up_begin(
++    const char * name,
++    const void * activation_q8_0,
++    size_t activation_size,
++    float * destination,
++    uint64_t rows,
++    uint64_t input_columns,
++    uint64_t output_columns,
++    uint64_t activation_interleave) __attribute__((weak));
++
++extern "C" int ggml_qpu_up_weight_registered(
++    const char * name) __attribute__((weak));
++extern "C" uint64_t ggml_qpu_up_cpu_columns_for(
++    const char * name) __attribute__((weak));
++#endif
++
+ #if defined(__GNUC__)
+ #pragma GCC diagnostic ignored "-Woverlength-strings"
+ #endif
+
+@@ -4307,13 +4333,39 @@ template <typename BLOC_TYPE, int64_t INTER_SIZE, int64_t NB_COLS, ggml_type PAR
+                 from_float((float *) (data_ptr + i11 * nb11), (void *) (wdata_ptr + i11 * nbw1), ne10);
+             }
+         }
+
++        int64_t qpu_cpu_columns = 0;
++#if defined(__GNUC__) && !defined(_WIN32)
++        const bool qpu_up_candidate = src0->type == GGML_TYPE_Q4_0 &&
++            ne02 == 1 && ne12 == 1 && ne03 == 1 && ne13 == 1 &&
++            ne11 >= 64 && std::strstr(src0->name, ".ffn_up.weight") != nullptr &&
++            ggml_qpu_up_begin != nullptr &&
++            ggml_qpu_up_weight_registered != nullptr &&
++            ggml_qpu_up_cpu_columns_for != nullptr &&
++            ggml_qpu_up_weight_registered(src0->name) == 1;
++        if (qpu_up_candidate) {
++            ggml_barrier(params->threadpool);
++            if (ith == 0) {
++                (void) ggml_qpu_up_begin(src0->name, params->wdata,
++                    nbw2, static_cast<float *>(dst->data),
++                    static_cast<uint64_t>(ne11),
++                    static_cast<uint64_t>(ne00),
++                    static_cast<uint64_t>(ne01),
++                    static_cast<uint64_t>(INTER_SIZE));
++            }
++            ggml_barrier(params->threadpool);
++            qpu_cpu_columns = static_cast<int64_t>(
++                ggml_qpu_up_cpu_columns_for(src0->name));
++        }
++#endif
++
+         // disable for NUMA
+         const bool disable_chunking = ggml_is_numa();
+
+         // 4x chunks per thread
+-        const int64_t nr0 = ggml_nrows(op->src[0]);
++        const int64_t nr0 = qpu_cpu_columns > 0
++            ? qpu_cpu_columns : ggml_nrows(op->src[0]);
+
+         int     nth_scaled  = nth * 4;
+         int64_t chunk_size0 = (nr0 + nth_scaled - 1) / nth_scaled;
+         int64_t nchunk0     = (nr0 + chunk_size0 - 1) / chunk_size0;
+@@ -4734,8 +4786,17 @@ static void ggml_backend_cpu_repack_buffer_set_tensor(ggml_backend_buffer_t buff
+                                                        const void * data, size_t offset, size_t size) {
+     GGML_ASSERT(offset == 0);
+     GGML_ASSERT(size == ggml_nbytes(tensor));
+
++#if defined(__GNUC__) && !defined(_WIN32)
++    if (tensor->type == GGML_TYPE_Q4_0 && ggml_n_dims(tensor) == 2 &&
++        ggml_qpu_up_register_q4_0 != nullptr) {
++        (void) ggml_qpu_up_register_q4_0(tensor->name, data, size,
++            static_cast<uint64_t>(tensor->ne[0]),
++            static_cast<uint64_t>(tensor->ne[1]));
++    }
++#endif
++
+     auto tensor_traits = (ggml::cpu::repack::tensor_traits_base *) tensor->extra;
+     auto OK            = tensor_traits->repack(tensor, data, size);
+
+     GGML_ASSERT(OK == 0);
