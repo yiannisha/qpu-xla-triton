@@ -79,6 +79,33 @@ PROGRAMS = {
             "quantization for direct consumption by a down projection."
         ),
     ),
+    "ggml-geglu-q8-0-split": ProgramSpec(
+        name="ggml-geglu-q8-0-split",
+        symbol="qpu_ggml_geglu_q8_0_split",
+        function=qpu_ggml_geglu_q8_0,
+        assembly_kwargs={"split_output": True},
+        uniforms=(
+            {"name": "blocks_per_row", "type": "uint32"},
+            {"name": "gate_address", "type": "gpu_address"},
+            {"name": "up_address", "type": "gpu_address"},
+            {"name": "q8_0_scale_word_address", "type": "gpu_address"},
+            {"name": "q8_0_value_address", "type": "gpu_address"},
+            {"name": "ggml_gelu_fp16_table_address", "type": "gpu_address"},
+            {"name": "inverse_127", "type": "float32"},
+            {"name": "minimum_maximum", "type": "float32"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["columns / 32", "rows", 1],
+            "wgs_per_sg": 24,
+            "thread": "rows * columns / 32",
+            "constraint": "columns % 32 == 0",
+        },
+        description=(
+            "Exact lookup-table GGML GEGLU fused with split Q8_0 scales/values "
+            "for a zero-host-access tiled down projection."
+        ),
+    ),
     "ggml-geglu-split-fp32": ProgramSpec(
         name="ggml-geglu-split-fp32",
         symbol="qpu_ggml_geglu_split_fp32",
@@ -338,6 +365,35 @@ PROGRAMS = {
         description=(
             "Native GGML Q4_0 by Q8_0 arbitrary-row 16x16 tiled linear with "
             "padded rows, persistent weights, and FP32 output."
+        ),
+    ),
+    "ggml-q4-0-q8-wordscale-mx": ProgramSpec(
+        name="ggml-q4-0-q8-wordscale-mx",
+        symbol="qpu_ggml_q4_0_q8_wordscale_mx",
+        function=qpu_ggml_q4_0_q8_0_tiled_gemm,
+        assembly_kwargs={"activation_scale_word": True},
+        uniforms=(
+            {"name": "activation_q_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_q_address", "type": "gpu_address"},
+            {"name": "weight_q_row_stride_bytes", "type": "uint32"},
+            {"name": "weight_q_address", "type": "gpu_address"},
+            {"name": "output_row_stride_bytes", "type": "uint32"},
+            {"name": "output_address", "type": "gpu_address"},
+            {"name": "reduction_blocks", "type": "uint32"},
+            {"name": "activation_scale_row_stride_bytes", "type": "uint32"},
+            {"name": "activation_scale_word_address", "type": "gpu_address"},
+            {"name": "weight_scale_block_stride_bytes", "type": "uint32"},
+            {"name": "weight_scale_address", "type": "gpu_address"},
+        ),
+        launch={
+            "local_invocation": [16, 1, 1],
+            "workgroup": ["output_columns / 16", "rows / 16", 1],
+            "wgs_per_sg": 24,
+            "thread": "workgroup_x * workgroup_y",
+        },
+        description=(
+            "Exact tiled Q4_0 down projection consuming low-F16 scale words and "
+            "dense Q8 values emitted directly by the fused GEGLU producer."
         ),
     ),
     "ggml-column-w8-q8-0-mx": ProgramSpec(

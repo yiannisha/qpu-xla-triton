@@ -212,9 +212,13 @@ int main(int argc, char ** argv) {
     mean_absolute_error /= static_cast<double>(elements);
 
     std::vector<uint64_t> cpu_samples(config.samples);
+    std::vector<uint64_t> cpu_quantize_samples(config.samples);
+    std::vector<uint64_t> cpu_geglu_quantize_samples(config.samples);
     std::vector<uint64_t> qpu_compute_samples(config.samples);
     std::vector<uint64_t> qpu_complete_samples(config.samples);
     const int iterations = config.warmups + config.samples;
+    const size_t q8_row_bytes = ggml_row_size(GGML_TYPE_Q8_0, config.columns);
+    std::vector<uint8_t> q8_output(static_cast<size_t>(config.rows) * q8_row_bytes);
     for (int iteration = 0; iteration < iterations; ++iteration) {
         uint64_t start = monotonic_ns();
         const ggml_status cpu_status = ggml_backend_graph_compute(cpu, cpu_graph.graph);
@@ -224,6 +228,22 @@ int main(int argc, char ** argv) {
         }
         if (iteration >= config.warmups) {
             cpu_samples[iteration - config.warmups] = end - start;
+        }
+
+        start = monotonic_ns();
+        const size_t quantized = ggml_quantize_chunk(
+            GGML_TYPE_Q8_0,
+            static_cast<const float *>(cpu_graph.output->data),
+            q8_output.data(), 0, config.rows, config.columns, nullptr);
+        end = monotonic_ns();
+        if (quantized != q8_output.size()) {
+            std::fprintf(stderr, "Q8_0 quantization returned an unexpected byte count\n");
+            return 1;
+        }
+        if (iteration >= config.warmups) {
+            cpu_quantize_samples[iteration - config.warmups] = end - start;
+            cpu_geglu_quantize_samples[iteration - config.warmups] =
+                cpu_samples[iteration - config.warmups] + end - start;
         }
 
         start = monotonic_ns();
@@ -260,6 +280,10 @@ int main(int argc, char ** argv) {
         elements, config.cpu_threads, config.warmups, config.samples,
         maximum_absolute_error, mean_absolute_error, tolerance_violations);
     print_samples(cpu_samples);
+    std::printf(",\"cpu_q8_0_quantize_ns\":");
+    print_samples(cpu_quantize_samples);
+    std::printf(",\"cpu_geglu_q8_0_ns\":");
+    print_samples(cpu_geglu_quantize_samples);
     std::printf(",\"qpu_compute_ns\":");
     print_samples(qpu_compute_samples);
     std::printf(",\"qpu_complete_with_two_input_copies_ns\":");

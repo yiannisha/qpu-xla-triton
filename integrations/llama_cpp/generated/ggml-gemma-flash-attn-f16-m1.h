@@ -687,7 +687,7 @@ static const uint64_t qpu_ggml_gemma_flash_attn_f16_m1[] = {
     UINT64_C(0x38003186bb03f000),
 };
 static const size_t qpu_ggml_gemma_flash_attn_f16_m1_instruction_count = 680;
-static const char qpu_ggml_gemma_flash_attn_f16_m1_source_hash[] = "860813591dfaaf46c6f9e4dd66a2ee439fa0e4bfbdaa930b2494c71da2fc4cca";
+static const char qpu_ggml_gemma_flash_attn_f16_m1_source_hash[] = "bd1cde60ce6ac52955f390a4b9b82ac4a2098ff475808962e80aed0666ff4a37";
 static const char qpu_ggml_gemma_flash_attn_f16_m1_binary_hash[] = "edde1082af4eb7274a9db5512e0ba50be4914dd272da284deded9030cf57a8ea";
 
 #endif

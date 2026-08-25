@@ -96,12 +96,14 @@ def main() -> None:
     rng = np.random.default_rng(args.seed)
     scale = float(GEMMA_HEAD_DIM**-0.5)
     records: list[dict[str, Any]] = []
-    largest = max(contexts)
-    largest_query = max(query_rows_values)
     data_bytes = (
-        largest_query * args.heads * GEMMA_HEAD_DIM * 8
-        + largest * GEMMA_HEAD_DIM * 4
-        + largest_query * largest * 2
+        sum(
+            query_rows * args.heads * GEMMA_HEAD_DIM * 8
+            + context * GEMMA_HEAD_DIM * 4
+            + query_rows * context * 2
+            for context in contexts
+            for query_rows in query_rows_values
+        )
         + (4 << 20)
     )
     with (

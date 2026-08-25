@@ -1,0 +1,1220 @@
+{
+  "configuration": {
+    "bootstrap_resamples": 500,
+    "cpu_threads": [
+      4
+    ],
+    "qpu_wgs_per_sg": 24,
+    "quick": true,
+    "rows": [
+      16
+    ],
+    "samples": 3,
+    "seed": 4400,
+    "tensor_names": [
+      "blk.0.ffn_up.weight"
+    ],
+    "warmups": 1
+  },
+  "cpu_repack_benchmark": {
+    "path": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_repack_bench",
+    "sha256": "fa9fbd2b0849aca0871a49289e64cad9eed0d9e56c35b514588ebe81a02ad2c3"
+  },
+  "created_utc": "2026-08-25T03:47:08+00:00",
+  "environment_after": {
+    "captured_utc": "2026-08-25T03:47:08+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400020480\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "19824 /home/yiannis/side/llama.cpp/build/bin/llama-server --model /home/yiannis/side/models/Qwen3.5-4B-MTP-GGUF/Qwen3.5-4B-UD-Q4_K_XL.gguf --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-n-min 0 --threads 4 --ctx-size 8192 --parallel 1 --flash-attn on --kv-unified --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 --reasoning off --reasoning-budget 0 --jinja --host 0.0.0.0 --port 8081 --alias Qwen3.5-4B-n3-t4\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  4723851264   374554624   296812544  3840720896  3730751488\nSwap:     2147467264  2147352576      114688\n"
+      },
+      "process_affinity": {
+        "command": [
+          "taskset",
+          "--pid",
+          "--cpu-list",
+          "893505"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "pid 893505's current affinity list: 0-3\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2147352576  100      \n"
+      },
+      "swap_used_bytes": {
+        "command": [
+          "swapon",
+          "--show=USED",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "2147352576\n"
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": " 23:47:08 up 5 days,  3:20,  5 users,  load average: 0.13, 0.14, 0.20\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "temp=59.3'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960006208\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 58400,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "environment_before": {
+    "captured_utc": "2026-08-25T03:47:08+00:00",
+    "commands": {
+      "cpu_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "arm"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=2400020480\n"
+      },
+      "firmware": {
+        "command": [
+          "vcgencmd",
+          "version"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)\n"
+      },
+      "kernel": {
+        "command": [
+          "uname",
+          "-a"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "Linux yiannis 6.12.75+rpt-rpi-2712 #1 SMP PREEMPT Debian 1:6.12.75-1+rpt1 (2026-03-11) aarch64 GNU/Linux\n"
+      },
+      "llama_servers": {
+        "command": [
+          "pgrep",
+          "-a",
+          "-x",
+          "llama-server"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "19824 /home/yiannis/side/llama.cpp/build/bin/llama-server --model /home/yiannis/side/models/Qwen3.5-4B-MTP-GGUF/Qwen3.5-4B-UD-Q4_K_XL.gguf --spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-n-min 0 --threads 4 --ctx-size 8192 --parallel 1 --flash-attn on --kv-unified --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0 --reasoning off --reasoning-budget 0 --jinja --host 0.0.0.0 --port 8081 --alias Qwen3.5-4B-n3-t4\n"
+      },
+      "lscpu": {
+        "command": [
+          "lscpu"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "Architecture:                            aarch64\nCPU op-mode(s):                          32-bit, 64-bit\nByte Order:                              Little Endian\nCPU(s):                                  4\nOn-line CPU(s) list:                     0-3\nVendor ID:                               ARM\nModel name:                              Cortex-A76\nModel:                                   1\nThread(s) per core:                      1\nCore(s) per cluster:                     4\nSocket(s):                               -\nCluster(s):                              1\nStepping:                                r4p1\nCPU(s) scaling MHz:                      100%\nCPU max MHz:                             2400.0000\nCPU min MHz:                             1500.0000\nBogoMIPS:                                108.00\nFlags:                                   fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp\nL1d cache:                               256 KiB (4 instances)\nL1i cache:                               256 KiB (4 instances)\nL2 cache:                                2 MiB (4 instances)\nL3 cache:                                2 MiB (1 instance)\nNUMA node(s):                            8\nNUMA node0 CPU(s):                       0-3\nNUMA node1 CPU(s):                       0-3\nNUMA node2 CPU(s):                       0-3\nNUMA node3 CPU(s):                       0-3\nNUMA node4 CPU(s):                       0-3\nNUMA node5 CPU(s):                       0-3\nNUMA node6 CPU(s):                       0-3\nNUMA node7 CPU(s):                       0-3\nVulnerability Gather data sampling:      Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Not affected\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; CSV2, BHB\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n"
+      },
+      "memory": {
+        "command": [
+          "free",
+          "--bytes"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "               total        used        free      shared  buff/cache   available\nMem:      8454602752  4696506368   407306240   296812544  3835314176  3758096384\nSwap:     2147467264  2147352576      114688\n"
+      },
+      "process_affinity": {
+        "command": [
+          "taskset",
+          "--pid",
+          "--cpu-list",
+          "893505"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "pid 893505's current affinity list: 0-3\n"
+      },
+      "swap": {
+        "command": [
+          "swapon",
+          "--show",
+          "--bytes",
+          "--output-all"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "NAME       TYPE            SIZE       USED PRIO UUID LABEL\n/dev/zram0 partition 2147467264 2147352576  100      \n"
+      },
+      "swap_used_bytes": {
+        "command": [
+          "swapon",
+          "--show=USED",
+          "--bytes",
+          "--noheadings"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "2147352576\n"
+      },
+      "system_load": {
+        "command": [
+          "uptime"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": " 23:47:08 up 5 days,  3:20,  5 users,  load average: 0.13, 0.14, 0.20\n"
+      },
+      "temperature": {
+        "command": [
+          "vcgencmd",
+          "measure_temp"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "temp=58.7'C\n"
+      },
+      "throttling": {
+        "command": [
+          "vcgencmd",
+          "get_throttled"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "throttled=0x0\n"
+      },
+      "v3d_clock": {
+        "command": [
+          "vcgencmd",
+          "measure_clock",
+          "v3d"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 0,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "",
+        "stdout": "frequency(0)=960012800\n"
+      },
+      "zram": {
+        "command": [
+          "zramctl",
+          "--json"
+        ],
+        "cwd": null,
+        "finished_utc": "2026-08-25T03:47:08+00:00",
+        "returncode": 1,
+        "started_utc": "2026-08-25T03:47:08+00:00",
+        "stderr": "zramctl: unrecognized option '--json'\nTry 'zramctl --help' for more information.\n",
+        "stdout": ""
+      }
+    },
+    "cpu_frequency": [
+      {
+        "current_khz": "2400000",
+        "governor": "ondemand",
+        "maximum_khz": "2400000",
+        "minimum_khz": "1500000",
+        "policy": "policy0"
+      }
+    ],
+    "machine": "aarch64",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "thermal_zones": [
+      {
+        "millidegrees_c": 58400,
+        "type": "cpu-thermal",
+        "zone": "thermal_zone0"
+      }
+    ]
+  },
+  "fixtures": [
+    {
+      "activation_f32": {
+        "bytes": 98304,
+        "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+        "sha256": "553f58f9c2372b6ecec67eb014b671e6955f75c7cf6b438b2aeb7182363a8ca0"
+      },
+      "input_columns": 1536,
+      "output_columns": 6144,
+      "rows": 16,
+      "seed": 4416,
+      "tensor_name": "blk.0.ffn_up.weight",
+      "weight": {
+        "bytes": 5308416,
+        "model_file_offset": 1585875904,
+        "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+        "sha256": "ed170e866ef94d4f6448f3754629d91c27308ab63f833bda82e91cec3f2bded4"
+      },
+      "weight_type": "Q4_0",
+      "weight_type_cli": "q4_0"
+    }
+  ],
+  "kind": "llama-cpp-qpu-native-operator-session",
+  "manifest": {
+    "model_sha256": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889",
+    "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260819-llama-cpp-qpu/gemma-base-gguf-manifest.json",
+    "sha256": "0f58529990c48d18d32b9eb775da601b2ce6acc2b931a28031f41fe41ff4cab1"
+  },
+  "measurement_contract": {
+    "correctness_reference": "every emitted CPU, QPU, and hybrid tensor is compared directly with the fastest exact pinned llama.cpp CPU_REPACK output",
+    "cpu_only": "exact pinned llama.cpp CPU_REPACK MUL_MAT graph node for the native weight type",
+    "hybrid_cpu_side": "exported direct GGML native block-dot prefix; diagnostic only because it is not the production CPU_REPACK scheduling path",
+    "hybrid_cpu_side_exact": false,
+    "promotion_rule": "hybrid rows cannot be promoted until their CPU prefix uses CPU_REPACK",
+    "qpu_only": "native Q4_0/Q8_0, Q4_K/Q8_K, Q6_K/Q8_K, or Q8_0/Q8_0 persistent QPU operator"
+  },
+  "native_benchmark": {
+    "path": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+    "sha256": "76228ab4a21dfd5e309960f33e32ffafa0b8cd0cf2131da5b2ce78b640f26b56"
+  },
+  "raw_commands": [
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_cpu_repack_bench",
+        "--weights",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+        "--output-bin",
+        "/tmp/llama-cpu-repack-output-dmkqtgp2/output.f32.bin",
+        "--weight-type",
+        "q4_0",
+        "--input-columns",
+        "1536",
+        "--output-columns",
+        "6144",
+        "--rows",
+        "16",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "1",
+        "--samples",
+        "3"
+      ],
+      "output": {
+        "bytes": 393216,
+        "retained": false,
+        "sha256": "30cd9e43e98c7e50a5eeb344a07a9ef6ef9168d5c091c4912b7b79f4579427b9"
+      },
+      "returncode": 0,
+      "stderr": "repack: repack tensor fixture.weight with q4_0_4x4\n",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-cpu-repack-native-node-samples\",\"mode\":\"cpu-repack\",\"weight_type\":\"q4_0\",\"input_columns\":1536,\"output_columns\":6144,\"rows\":16,\"cpu_threads\":4,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":5059912,\"weight_buffer_type\":\"CPU_REPACK\",\"weight_buffer_bytes\":5308416,\"output_bin_written\":true,\"complete_ns\":[939398,912695,912565]}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+        "--mode",
+        "qpu",
+        "--weight-type",
+        "q4_0",
+        "--input-columns",
+        "1536",
+        "--output-columns",
+        "6144",
+        "--rows",
+        "16",
+        "--qpu-column-start",
+        "0",
+        "--qpu-column-count",
+        "6144",
+        "--qpu-wgs-per-sg",
+        "24",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "1",
+        "--samples",
+        "3",
+        "--output-bin",
+        "/tmp/llama-native-output-2o8j2d9z/output.f32.bin"
+      ],
+      "output": {
+        "bytes": 393216,
+        "retained": false,
+        "sha256": "bb31af8217045986c6c6d4d801487c79d957accd4d9f75552883943f5f7895e0"
+      },
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-native-operator-samples\",\"mode\":\"qpu\",\"weight_type\":\"q4_0\",\"input_columns\":1536,\"output_columns\":6144,\"rows\":16,\"cpu_threads\":4,\"qpu_column_start\":0,\"qpu_column_count\":6144,\"qpu_wgs_per_sg\":24,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":75080465,\"resident_bytes\":10544656,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[4189902,4189439,4167291],\"quantize_ns\":[26000,25888,25796],\"qpu_input_copy_ns\":[5352,5426,4926],\"qpu_submit_wait_ns\":[4061348,4069255,4049330],\"qpu_output_copy_ns\":[96610,88295,86962],\"correctness\":{\"max_absolute\":9.5367431640625e-07,\"max_relative\":0.012385670731707318,\"mean_absolute\":9.0136469547511907e-08,\"p99_absolute\":3.5762786865234375e-07,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":1,\"worst_column\":2825,\"worst_reference\":2.6828711,\"worst_actual\":2.68287206}}\n"
+    },
+    {
+      "command": [
+        "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+        "--weights",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+        "--activation-f32",
+        "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+        "--mode",
+        "hybrid",
+        "--weight-type",
+        "q4_0",
+        "--input-columns",
+        "1536",
+        "--output-columns",
+        "6144",
+        "--rows",
+        "16",
+        "--qpu-column-start",
+        "3072",
+        "--qpu-column-count",
+        "3072",
+        "--qpu-wgs-per-sg",
+        "24",
+        "--cpu-threads",
+        "4",
+        "--warmups",
+        "1",
+        "--samples",
+        "3",
+        "--output-bin",
+        "/tmp/llama-native-output-p_udwp2f/output.f32.bin"
+      ],
+      "output": {
+        "bytes": 393216,
+        "retained": false,
+        "sha256": "d9364870abfc74796752ad6ad304c26a6e8b5505395bb2634cb17de3713c43d7"
+      },
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "{\"schema_version\":1,\"kind\":\"llama-qpu-native-operator-samples\",\"mode\":\"hybrid\",\"weight_type\":\"q4_0\",\"input_columns\":1536,\"output_columns\":6144,\"rows\":16,\"cpu_threads\":4,\"qpu_column_start\":3072,\"qpu_column_count\":3072,\"qpu_wgs_per_sg\":24,\"warmups\":1,\"retained_samples\":3,\"prepare_ns\":22195369,\"resident_bytes\":5285392,\"output_bin_requested\":true,\"output_bin_written\":true,\"activation_contract\":\"native-q8-0-from-f32-each-sample\",\"cpu_kernel\":\"ggml_vec_dot_q4_0_q8_0\",\"complete_ns\":[4397845,4328734,4329512],\"quantize_ns\":[26685,27074,26407],\"qpu_input_copy_ns\":[29722,16111,18926],\"qpu_submit_wait_ns\":[4291050,4245365,4244976],\"qpu_output_copy_ns\":[43092,33463,33055],\"correctness\":{\"max_absolute\":8.3446502685546875e-07,\"max_relative\":0.001779781680113906,\"mean_absolute\":4.5117225511148717e-08,\"p99_absolute\":3.2782554626464844e-07,\"atol\":0.0002,\"rtol\":0.00002,\"tolerance_violation_count\":0,\"nan_count\":0,\"inf_count\":0,\"worst_row\":8,\"worst_column\":5225,\"worst_reference\":-1.41770685,\"worst_actual\":-1.41770601}}\n"
+    }
+  ],
+  "records": [
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 98304,
+          "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+          "sha256": "553f58f9c2372b6ecec67eb014b671e6955f75c7cf6b438b2aeb7182363a8ca0"
+        },
+        "input_columns": 1536,
+        "output_columns": 6144,
+        "rows": 16,
+        "seed": 4416,
+        "tensor_name": "blk.0.ffn_up.weight",
+        "weight": {
+          "bytes": 5308416,
+          "model_file_offset": 1585875904,
+          "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+          "sha256": "ed170e866ef94d4f6448f3754629d91c27308ab63f833bda82e91cec3f2bded4"
+        },
+        "weight_type": "Q4_0",
+        "weight_type_cli": "q4_0"
+      },
+      "result": {
+        "activation_contract": "FP32 graph input; activation quantization is inside complete_ns",
+        "complete_ns": [
+          939398,
+          912695,
+          912565
+        ],
+        "correctness": {
+          "atol": 0.0,
+          "inf_count": 0,
+          "max_absolute": 0.0,
+          "max_relative": 0.0,
+          "mean_absolute": 0.0,
+          "nan_count": 0,
+          "p99_absolute": 0.0,
+          "reference": "production CPU baseline",
+          "rtol": 0.0,
+          "tolerance_violation_count": 0
+        },
+        "cpu_kernel": "pinned llama.cpp CPU_REPACK Q4_0 MUL_MAT graph node",
+        "cpu_threads": 4,
+        "cpu_weight_buffer_bytes": 5308416,
+        "exact_cpu_repack_correctness": {
+          "argmax_identical": true,
+          "atol": 0.0002,
+          "bitwise_equal_count": 98304,
+          "candidate_argmax": [
+            3397,
+            2825,
+            5482,
+            65,
+            4970,
+            3017,
+            4499,
+            623,
+            4676,
+            3293,
+            3247,
+            901,
+            2399,
+            943,
+            5228,
+            979
+          ],
+          "element_count": 98304,
+          "finite_count": 98304,
+          "inf_count": 0,
+          "max_absolute": 0.0,
+          "max_relative": 0.0,
+          "mean_absolute": 0.0,
+          "nan_count": 0,
+          "p99_absolute": 0.0,
+          "reference": "exact pinned llama.cpp CPU_REPACK MUL_MAT graph output",
+          "reference_argmax": [
+            3397,
+            2825,
+            5482,
+            65,
+            4970,
+            3017,
+            4499,
+            623,
+            4676,
+            3293,
+            3247,
+            901,
+            2399,
+            943,
+            5228,
+            979
+          ],
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0
+        },
+        "input_columns": 1536,
+        "kind": "llama-cpu-repack-native-node-samples",
+        "mode": "cpu",
+        "output_bin_written": true,
+        "output_columns": 6144,
+        "prepare_ns": 5059912,
+        "qpu_column_count": 0,
+        "qpu_column_start": 6144,
+        "qpu_input_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_output_copy_ns": [
+          0,
+          0,
+          0
+        ],
+        "qpu_submit_wait_ns": [
+          0,
+          0,
+          0
+        ],
+        "quantize_ns": [
+          0,
+          0,
+          0
+        ],
+        "resident_bytes": 0,
+        "retained_samples": 3,
+        "rows": 16,
+        "schema_version": 1,
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 130.0,
+            "median_ns": 912695.0,
+            "p05_ns": 912578.0,
+            "p95_ns": 936727.7,
+            "throughput_per_second": 1095.6562707147514
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 0.0,
+            "median_ns": 0.0,
+            "p05_ns": 0.0,
+            "p95_ns": 0.0,
+            "throughput_per_second": null
+          }
+        },
+        "warmups": 1,
+        "weight_buffer_type": "CPU_REPACK",
+        "weight_type": "q4_0"
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 5308416,
+        "data_relative_offset": 1570060288,
+        "elements": 9437184,
+        "file_offset": 1585875904,
+        "ggml_nb_bytes": [
+          18,
+          864
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 9437184,
+        "name": "blk.0.ffn_up.weight",
+        "owner": {
+          "component": "base",
+          "layer": 0,
+          "operator": "ffn_up"
+        },
+        "required_alignment": 32,
+        "shape": [
+          1536,
+          6144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 98304,
+          "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+          "sha256": "553f58f9c2372b6ecec67eb014b671e6955f75c7cf6b438b2aeb7182363a8ca0"
+        },
+        "input_columns": 1536,
+        "output_columns": 6144,
+        "rows": 16,
+        "seed": 4416,
+        "tensor_name": "blk.0.ffn_up.weight",
+        "weight": {
+          "bytes": 5308416,
+          "model_file_offset": 1585875904,
+          "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+          "sha256": "ed170e866ef94d4f6448f3754629d91c27308ab63f833bda82e91cec3f2bded4"
+        },
+        "weight_type": "Q4_0",
+        "weight_type_cli": "q4_0"
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          4189902,
+          4189439,
+          4167291
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 9.5367431640625e-07,
+          "max_relative": 0.012385670731707318,
+          "mean_absolute": 9.013646954751191e-08,
+          "nan_count": 0,
+          "p99_absolute": 3.5762786865234375e-07,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": 2.68287206,
+          "worst_column": 2825,
+          "worst_reference": 2.6828711,
+          "worst_row": 1
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 4,
+        "exact_cpu_repack_correctness": {
+          "argmax_identical": true,
+          "atol": 0.0002,
+          "bitwise_equal_count": 29875,
+          "candidate_argmax": [
+            3397,
+            2825,
+            5482,
+            65,
+            4970,
+            3017,
+            4499,
+            623,
+            4676,
+            3293,
+            3247,
+            901,
+            2399,
+            943,
+            5228,
+            979
+          ],
+          "element_count": 98304,
+          "finite_count": 98304,
+          "inf_count": 0,
+          "max_absolute": 7.152557373046875e-07,
+          "max_relative": 0.008207220456378386,
+          "mean_absolute": 5.5001467972696595e-08,
+          "nan_count": 0,
+          "p99_absolute": 2.384185791015625e-07,
+          "reference": "exact pinned llama.cpp CPU_REPACK MUL_MAT graph output",
+          "reference_argmax": [
+            3397,
+            2825,
+            5482,
+            65,
+            4970,
+            3017,
+            4499,
+            623,
+            4676,
+            3293,
+            3247,
+            901,
+            2399,
+            943,
+            5228,
+            979
+          ],
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0
+        },
+        "input_columns": 1536,
+        "kind": "llama-qpu-native-operator-samples",
+        "mode": "qpu",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 6144,
+        "prepare_ns": 75080465,
+        "qpu_column_count": 6144,
+        "qpu_column_start": 0,
+        "qpu_input_copy_ns": [
+          5352,
+          5426,
+          4926
+        ],
+        "qpu_output_copy_ns": [
+          96610,
+          88295,
+          86962
+        ],
+        "qpu_submit_wait_ns": [
+          4061348,
+          4069255,
+          4049330
+        ],
+        "qpu_wgs_per_sg": 24,
+        "quantize_ns": [
+          26000,
+          25888,
+          25796
+        ],
+        "resident_bytes": 10544656,
+        "retained_samples": 3,
+        "rows": 16,
+        "schema_version": 1,
+        "speedup_vs_fastest_cpu": {
+          "bootstrap_95_high": 0.22542174280605795,
+          "bootstrap_95_low": 0.21780103687389346,
+          "median_speedup": 0.2178561377788291,
+          "resamples": 500,
+          "seed": 14416
+        },
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 463.0,
+            "median_ns": 4189439.0,
+            "p05_ns": 4169505.8,
+            "p95_ns": 4189855.7,
+            "throughput_per_second": 238.69544347107094
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 74.0,
+            "median_ns": 5352.0,
+            "p05_ns": 4968.6,
+            "p95_ns": 5418.6,
+            "throughput_per_second": 186846.03886397608
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 1333.0,
+            "median_ns": 88295.0,
+            "p05_ns": 87095.3,
+            "p95_ns": 95778.5,
+            "throughput_per_second": 11325.669630216886
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 7907.0,
+            "median_ns": 4061348.0,
+            "p05_ns": 4050531.8,
+            "p95_ns": 4068464.3,
+            "throughput_per_second": 246.22366760986748
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 92.0,
+            "median_ns": 25888.0,
+            "p05_ns": 25805.2,
+            "p95_ns": 25988.8,
+            "throughput_per_second": 38627.935723114955
+          }
+        },
+        "warmups": 1,
+        "weight_type": "q4_0"
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 5308416,
+        "data_relative_offset": 1570060288,
+        "elements": 9437184,
+        "file_offset": 1585875904,
+        "ggml_nb_bytes": [
+          18,
+          864
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 9437184,
+        "name": "blk.0.ffn_up.weight",
+        "owner": {
+          "component": "base",
+          "layer": 0,
+          "operator": "ffn_up"
+        },
+        "required_alignment": 32,
+        "shape": [
+          1536,
+          6144
+        ]
+      }
+    },
+    {
+      "fixture": {
+        "activation_f32": {
+          "bytes": 98304,
+          "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.m16.f32.bin",
+          "sha256": "553f58f9c2372b6ecec67eb014b671e6955f75c7cf6b438b2aeb7182363a8ca0"
+        },
+        "input_columns": 1536,
+        "output_columns": 6144,
+        "rows": 16,
+        "seed": 4416,
+        "tensor_name": "blk.0.ffn_up.weight",
+        "weight": {
+          "bytes": 5308416,
+          "model_file_offset": 1585875904,
+          "path": "/home/yiannis/side/py-videocore7/experiment_logs/20260824-qpu-agentic-prefill/fixtures-outer16/blk-0-ffn_up-weight.q4_0.bin",
+          "sha256": "ed170e866ef94d4f6448f3754629d91c27308ab63f833bda82e91cec3f2bded4"
+        },
+        "weight_type": "Q4_0",
+        "weight_type_cli": "q4_0"
+      },
+      "result": {
+        "activation_contract": "native-q8-0-from-f32-each-sample",
+        "complete_ns": [
+          4397845,
+          4328734,
+          4329512
+        ],
+        "correctness": {
+          "atol": 0.0002,
+          "inf_count": 0,
+          "max_absolute": 8.344650268554688e-07,
+          "max_relative": 0.001779781680113906,
+          "mean_absolute": 4.511722551114872e-08,
+          "nan_count": 0,
+          "p99_absolute": 3.2782554626464844e-07,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -1.41770601,
+          "worst_column": 5225,
+          "worst_reference": -1.41770685,
+          "worst_row": 8
+        },
+        "cpu_kernel": "ggml_vec_dot_q4_0_q8_0",
+        "cpu_threads": 4,
+        "exact_cpu_repack_correctness": {
+          "argmax_identical": true,
+          "atol": 0.0002,
+          "bitwise_equal_count": 22793,
+          "candidate_argmax": [
+            3397,
+            2825,
+            5482,
+            65,
+            4970,
+            3017,
+            4499,
+            623,
+            4676,
+            3293,
+            3247,
+            901,
+            2399,
+            943,
+            5228,
+            979
+          ],
+          "element_count": 98304,
+          "finite_count": 98304,
+          "inf_count": 0,
+          "max_absolute": 9.5367431640625e-07,
+          "max_relative": 0.006135195726582466,
+          "mean_absolute": 7.136782394686254e-08,
+          "nan_count": 0,
+          "p99_absolute": 3.5762786865234375e-07,
+          "reference": "exact pinned llama.cpp CPU_REPACK MUL_MAT graph output",
+          "reference_argmax": [
+            3397,
+            2825,
+            5482,
+            65,
+            4970,
+            3017,
+            4499,
+            623,
+            4676,
+            3293,
+            3247,
+            901,
+            2399,
+            943,
+            5228,
+            979
+          ],
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0
+        },
+        "input_columns": 1536,
+        "kind": "llama-qpu-native-operator-samples",
+        "mode": "hybrid",
+        "output_bin_requested": true,
+        "output_bin_written": true,
+        "output_columns": 6144,
+        "partition": {
+          "actual_qpu_fraction": 0.5,
+          "qpu_column_count": 3072,
+          "qpu_column_start": 3072,
+          "requested_denominator": 12,
+          "requested_numerator": 6
+        },
+        "prepare_ns": 22195369,
+        "qpu_column_count": 3072,
+        "qpu_column_start": 3072,
+        "qpu_input_copy_ns": [
+          29722,
+          16111,
+          18926
+        ],
+        "qpu_output_copy_ns": [
+          43092,
+          33463,
+          33055
+        ],
+        "qpu_submit_wait_ns": [
+          4291050,
+          4245365,
+          4244976
+        ],
+        "qpu_wgs_per_sg": 24,
+        "quantize_ns": [
+          26685,
+          27074,
+          26407
+        ],
+        "resident_bytes": 5285392,
+        "retained_samples": 3,
+        "rows": 16,
+        "schema_version": 1,
+        "speedup_vs_fastest_cpu": {
+          "bootstrap_95_high": 0.217014489686823,
+          "bootstrap_95_low": 0.20750276555904085,
+          "median_speedup": 0.21080782314496416,
+          "resamples": 500,
+          "seed": 26048
+        },
+        "summaries": {
+          "complete_ns": {
+            "count": 3,
+            "mad_ns": 778.0,
+            "median_ns": 4329512.0,
+            "p05_ns": 4328811.8,
+            "p95_ns": 4391011.7,
+            "throughput_per_second": 230.97291334450625
+          },
+          "qpu_input_copy_ns": {
+            "count": 3,
+            "mad_ns": 2815.0,
+            "median_ns": 18926.0,
+            "p05_ns": 16392.5,
+            "p95_ns": 28642.399999999998,
+            "throughput_per_second": 52837.36658564937
+          },
+          "qpu_output_copy_ns": {
+            "count": 3,
+            "mad_ns": 408.0,
+            "median_ns": 33463.0,
+            "p05_ns": 33095.8,
+            "p95_ns": 42129.1,
+            "throughput_per_second": 29883.752203926724
+          },
+          "qpu_submit_wait_ns": {
+            "count": 3,
+            "mad_ns": 389.0,
+            "median_ns": 4245365.0,
+            "p05_ns": 4245014.9,
+            "p95_ns": 4286481.5,
+            "throughput_per_second": 235.55100680389083
+          },
+          "quantize_ns": {
+            "count": 3,
+            "mad_ns": 278.0,
+            "median_ns": 26685.0,
+            "p05_ns": 26434.8,
+            "p95_ns": 27035.1,
+            "throughput_per_second": 37474.236462432076
+          }
+        },
+        "warmups": 1,
+        "weight_type": "q4_0"
+      },
+      "tensor": {
+        "block_bytes": 18,
+        "block_elements": 32,
+        "bytes": 5308416,
+        "data_relative_offset": 1570060288,
+        "elements": 9437184,
+        "file_offset": 1585875904,
+        "ggml_nb_bytes": [
+          18,
+          864
+        ],
+        "ggml_type": "Q4_0",
+        "is_aligned": true,
+        "matrix_macs_per_activation_row": 9437184,
+        "name": "blk.0.ffn_up.weight",
+        "owner": {
+          "component": "base",
+          "layer": 0,
+          "operator": "ffn_up"
+        },
+        "required_alignment": 32,
+        "shape": [
+          1536,
+          6144
+        ]
+      }
+    }
+  ],
+  "schema_version": 1,
+  "session_id": "session-1",
+  "validation": {
+    "rejection_reasons": [
+      "swap was in use before/after the session (2147352576/2147352576 bytes)",
+      "CPU governors were ['ondemand']",
+      "one or more pre-existing llama-server processes were active",
+      "only 1 warmups were run; retained sessions require at least 5",
+      "only 3 samples were run; retained sessions require at least 31"
+    ],
+    "retained": false
+  }
+}

@@ -9,6 +9,7 @@ than NumPy's usual row-major convention.  Arrays therefore use
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import dataclass
 from threading import Lock
 from typing import Any
@@ -25,6 +26,15 @@ from videocore7.assembler import *
 from videocore7.assembler import Assembly, Register, qpu
 
 GEMMA_HEAD_DIM = 256
+
+
+def _workgroups_per_supergroup() -> int:
+    value = os.environ.get("QPU_GGML_ATTN_WGS", "48")
+    try:
+        parsed = int(value)
+    except ValueError:
+        return 48
+    return parsed if 1 <= parsed <= 255 else 48
 
 
 def _require_rank_four(name: str, value: npt.NDArray[Any]) -> None:
@@ -461,7 +471,7 @@ def _execute_ggml_gemma_flash_attn_f16_m1(
             local_invocation=(16, 1, 1),
             uniforms=state.uniforms.addresses()[0],
             workgroup=grid,
-            wgs_per_sg=48,
+            wgs_per_sg=_workgroups_per_supergroup(),
             thread=query.shape[0],
         )
 
@@ -553,7 +563,7 @@ def _execute_ggml_gemma_flash_attn_f16_mx(
             local_invocation=(16, 1, 1),
             uniforms=state.uniforms.addresses()[0],
             workgroup=grid,
-            wgs_per_sg=48,
+            wgs_per_sg=_workgroups_per_supergroup(),
             thread=query.shape[0] * query.shape[1],
         )
 
