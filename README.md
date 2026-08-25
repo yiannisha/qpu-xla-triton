@@ -14,6 +14,10 @@ video preprocessing, and TinyLlama-oriented runtime building blocks.
 For the current architecture, supported operators, runtime semantics, and
 known limitations, read [QPU-XLA.md](QPU-XLA.md).
 
+The end-to-end vision-language-action baseline, native checkpoint format,
+real CPU/QPU hybrid stages, upstream Torch comparison, and Raspberry Pi memory
+decision are documented in [SMOLVLA-QPU.md](SMOLVLA-QPU.md).
+
 ## Current status
 
 The repository is a systems prototype, not a finished XLA implementation.
@@ -32,7 +36,9 @@ Implemented runtime pieces include:
 - native GGML Q4_0×Q8_0 M=1/M=4 QPU kernels and an out-of-tree C runtime for
   pinned `llama.cpp` evaluation;
 - a constrained QPU-XLA DSL, differential candidate runner, video contracts,
-  and TinyLlama model/runtime scaffolding.
+  and TinyLlama model/runtime scaffolding;
+- a complete SmolVLA RGB-to-action runtime with native FP32 and dynamic-W8A8
+  CPU, QPU, concurrent hybrid, and evidence-gated AUTO modes.
 
 The runtime is not yet a general XLA compiler. Hybrid partitioning is explicit,
 not automatically selected by the scheduler. The native Q4_0 candidates are
