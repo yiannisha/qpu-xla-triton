@@ -354,6 +354,13 @@ def test_candidate_execution_requires_exact_positive_dispatch_telemetry() -> Non
     assert validation["valid"] is True
     assert validation["dispatch_count"] == 12
 
+    fallback = validate_candidate_execution(
+        case,
+        f"qpu_llama_candidate_json: {json.dumps(dict(event, fallback=True))}",
+    )
+    assert fallback["valid"] is False
+    assert any("fallback" in error for error in fallback["errors"])
+
     assert validate_candidate_execution(case, "no telemetry")["valid"] is False
     wrong = dict(event, binary_sha256="c" * 64, dispatch_count=0)
     invalid = validate_candidate_execution(

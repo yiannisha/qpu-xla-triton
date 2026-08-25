@@ -84,6 +84,7 @@ struct qpu_device_context {
     qpu_llama_context * runtime = nullptr;
     ggml_backend_buffer_type buffer_type = {};
     uint32_t minimum_rows = 16;
+    uint32_t maximum_rows = UINT32_MAX;
     uint64_t minimum_geglu_elements = 768;
     bool enable_q4_0 = false;
     bool enable_geglu = false;
@@ -630,7 +631,8 @@ static enum ggml_status qpu_backend_graph_compute(
         }
         const bool q4_0_enabled = context->device->enable_q4_0 &&
             supports_q4_0_mul_mat(operation) &&
-            operation->src[1]->ne[1] >= context->device->minimum_rows;
+            operation->src[1]->ne[1] >= context->device->minimum_rows &&
+            operation->src[1]->ne[1] <= context->device->maximum_rows;
         const bool geglu_enabled = context->device->enable_geglu &&
             supports_geglu_split(operation) &&
             static_cast<uint64_t>(ggml_nelements(operation)) >=
@@ -729,7 +731,8 @@ static bool qpu_device_supports_op(
     auto * context = static_cast<qpu_device_context *>(device->context);
     if (supports_q4_0_mul_mat(operation)) {
         return context->enable_q4_0 &&
-            operation->src[1]->ne[1] >= context->minimum_rows;
+            operation->src[1]->ne[1] >= context->minimum_rows &&
+            operation->src[1]->ne[1] <= context->maximum_rows;
     }
     return context->enable_geglu && supports_geglu_split(operation) &&
         static_cast<uint64_t>(ggml_nelements(operation)) >=
@@ -813,6 +816,13 @@ static ggml_backend_reg_t qpu_backend_registry() {
                 device_context->minimum_rows = static_cast<uint32_t>(parsed);
             }
         }
+        if (const char * value = std::getenv("GGML_QPU_MAX_M")) {
+            char * end = nullptr;
+            const unsigned long parsed = std::strtoul(value, &end, 10);
+            if (end != value && *end == '\0' && parsed > 0 && parsed <= UINT32_MAX) {
+                device_context->maximum_rows = static_cast<uint32_t>(parsed);
+            }
+        }
         if (const char * value = std::getenv("GGML_QPU_MIN_GEGLU_ELEMENTS")) {
             char * end = nullptr;
             const unsigned long long parsed = std::strtoull(value, &end, 10);
@@ -839,9 +849,10 @@ static ggml_backend_reg_t qpu_backend_registry() {
             });
             context.device_context->buffer_type.device = context.device.get();
             std::fprintf(stderr,
-                "QPU: registered VideoCore VII backend (minimum matmul M=%u, "
+                "QPU: registered VideoCore VII backend (matmul M=%u..%u, "
                 "minimum GEGLU elements=%llu, Q4_0=%s, GEGLU=%s)\n",
                 context.device_context->minimum_rows,
+                context.device_context->maximum_rows,
                 static_cast<unsigned long long>(
                     context.device_context->minimum_geglu_elements),
                 context.device_context->enable_q4_0 ? "enabled" : "disabled",

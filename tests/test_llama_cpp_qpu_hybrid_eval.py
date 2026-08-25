@@ -4,7 +4,10 @@ import argparse
 
 import pytest
 
-from scripts.generate_llama_cpp_qpu_agentic_cases import fraction_map
+from scripts.generate_llama_cpp_qpu_agentic_cases import (
+    fraction_map,
+    server_batch_arguments,
+)
 from scripts.run_llama_cpp_qpu_hybrid_eval import (
     bootstrap_session_speedup,
     choose_partition,
@@ -20,11 +23,15 @@ def test_agentic_fraction_parser_requires_exact_suffix_mapping() -> None:
         fraction_map("64:0")
 
 
+def test_agentic_cases_apply_optional_physical_batch_size() -> None:
+    assert server_batch_arguments(None) == {}
+    assert server_batch_arguments(1024) == {"server_extra_arguments": ["--ubatch-size", "1024"]}
+    with pytest.raises(ValueError, match="ubatch size"):
+        server_batch_arguments(0)
+
+
 def test_parse_hybrid_record_ignores_unstructured_output() -> None:
-    parsed = parse_benchmark_stdout(
-        "diagnostic\n"
-        '{"kind":"qpu-ggml-inline-samples","m":17,"passed":true}\n'
-    )
+    parsed = parse_benchmark_stdout('diagnostic\n{"kind":"qpu-ggml-inline-samples","m":17,"passed":true}\n')
     assert parsed["m"] == 17
 
 
@@ -76,6 +83,4 @@ def test_retention_rejects_nonperformance_governor() -> None:
             "throttling": {"stdout": "throttled=0x0"},
         },
     }
-    assert environment_rejection_reasons(environment) == [
-        "CPU governors were ['ondemand']"
-    ]
+    assert environment_rejection_reasons(environment) == ["CPU governors were ['ondemand']"]

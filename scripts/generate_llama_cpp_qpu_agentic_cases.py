@@ -15,10 +15,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.llama_cpp_common import sha256_file, utc_now, write_json_atomic  # noqa: E402
 
-DEFAULT_MODEL = Path(
-    "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/"
-    "gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"
-)
+DEFAULT_MODEL = Path("/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf")
 
 
 def integer_list(value: str) -> tuple[int, ...]:
@@ -46,12 +43,19 @@ def fraction_map(value: str) -> dict[int, float]:
                 raise ValueError
             result[suffix] = fraction
     except ValueError as exc:
-        raise argparse.ArgumentTypeError(
-            "fractions must be unique suffix_tokens:fraction entries in (0, 1]"
-        ) from exc
+        raise argparse.ArgumentTypeError("fractions must be unique suffix_tokens:fraction entries in (0, 1]") from exc
     if not result:
         raise argparse.ArgumentTypeError("at least one fraction is required")
     return result
+
+
+def server_batch_arguments(ubatch_size: int | None) -> dict[str, list[str]]:
+    """Return the optional llama-server physical-batch override for a case."""
+    if ubatch_size is None:
+        return {}
+    if ubatch_size <= 0:
+        raise ValueError("ubatch size must be positive")
+    return {"server_extra_arguments": ["--ubatch-size", str(ubatch_size)]}
 
 
 def main() -> None:
@@ -73,6 +77,11 @@ def main() -> None:
     parser.add_argument("--suffixes", type=integer_list, default=integer_list("64,128,256"))
     parser.add_argument("--threads", type=integer_list, default=integer_list("4"))
     parser.add_argument(
+        "--ubatch-size",
+        type=int,
+        help="optional llama-server physical batch size for exact large-M screens",
+    )
+    parser.add_argument(
         "--fractions",
         type=fraction_map,
         default=fraction_map("64:0.125,128:0.125,256:0.125"),
@@ -80,6 +89,8 @@ def main() -> None:
     )
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if args.ubatch_size is not None and args.ubatch_size <= 0:
+        parser.error("ubatch size must be positive")
     if any(threads < 2 for threads in args.threads):
         parser.error("hybrid execution requires at least two GGML batch threads")
     unsupported_suffixes = [suffix for suffix in args.suffixes if suffix not in args.fractions]
@@ -93,11 +104,7 @@ def main() -> None:
             parser.error(f"required artifact not found: {path}")
 
     manifest = json.loads(args.program_manifest.read_text(encoding="utf-8"))
-    entries = [
-        item
-        for item in manifest.get("programs", [])
-        if item.get("name") == "ggml-q4-0-q8-0-mx"
-    ]
+    entries = [item for item in manifest.get("programs", []) if item.get("name") == "ggml-q4-0-q8-0-mx"]
     if len(entries) != 1:
         parser.error("program manifest does not contain one ggml-q4-0-q8-0-mx entry")
     program = entries[0]
@@ -130,12 +137,8 @@ def main() -> None:
                     "surface": "server",
                     "base_model": str(args.model.resolve()),
                     "prompt": "Use the newly returned tool evidence to answer with one short token.",
-                    "context_filler": (
-                        "A stable cached agent transcript records deterministic prior reasoning. "
-                    ),
-                    "suffix_filler": (
-                        "Tool result: deterministic JSON evidence was returned successfully. "
-                    ),
+                    "context_filler": ("A stable cached agent transcript records deterministic prior reasoning. "),
+                    "suffix_filler": ("Tool result: deterministic JSON evidence was returned successfully. "),
                     "workload": "decode",
                     "request_surface": "completion",
                     "predict_tokens": 1,
@@ -147,6 +150,7 @@ def main() -> None:
                     "flash_attention": True,
                     "seed": 1234,
                     "temperature": 0.0,
+                    **server_batch_arguments(args.ubatch_size),
                 }
                 workload = f"p{prefix}-s{suffix}-tb{batch_threads}"
                 cpu_case = {

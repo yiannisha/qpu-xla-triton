@@ -192,6 +192,24 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
         add_test(NAME qpu_llama_cpu_repack_bench_help COMMAND qpu_llama_cpu_repack_bench --help)
     endif()
 
+    add_executable(qpu_llama_cpu_ffn_bench bench/qpu_llama_cpu_ffn_bench.cpp)
+    target_include_directories(qpu_llama_cpu_ffn_bench PRIVATE
+        "${LLAMA_CPP_ROOT}/ggml/include"
+        "${LLAMA_CPP_ROOT}/ggml/src"
+        "${LLAMA_CPP_ROOT}/ggml/src/ggml-cpu")
+    target_link_libraries(qpu_llama_cpu_ffn_bench PRIVATE
+        "${GGML_CPU_LIBRARY}"
+        "${GGML_LIBRARY_FOR_BENCH}"
+        "${GGML_BASE_LIBRARY_FOR_BENCH}")
+    set_target_properties(qpu_llama_cpu_ffn_bench PROPERTIES
+        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+    target_compile_features(qpu_llama_cpu_ffn_bench PRIVATE cxx_std_17)
+    target_compile_options(qpu_llama_cpu_ffn_bench PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    if(BUILD_TESTING)
+        add_test(NAME qpu_llama_cpu_ffn_bench_help COMMAND qpu_llama_cpu_ffn_bench --help)
+    endif()
+
     add_executable(qpu_llama_cpu_flash_attn_bench bench/qpu_llama_cpu_flash_attn_bench.cpp)
     target_include_directories(qpu_llama_cpu_flash_attn_bench PRIVATE
         "${LLAMA_CPP_ROOT}/ggml/include"

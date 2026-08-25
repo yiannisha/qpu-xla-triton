@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from pathlib import Path
 
 import pytest
 
@@ -11,6 +12,7 @@ from scripts.run_llama_cpp_qpu_agentic_eval import (
     qpu_execution_summary,
     summarize_pairs,
     token_outputs_identical,
+    write_calibration_failure_record,
 )
 
 
@@ -114,3 +116,35 @@ def test_summary_bootstraps_paired_processes_and_selects_best_fraction() -> None
         }
     )
     assert selected == 0.125
+
+
+def test_calibration_selection_failure_is_written_atomically(tmp_path: Path) -> None:
+    output = tmp_path / "failure.json"
+    args = argparse.Namespace(
+        calibration_prefix=32,
+        suffixes=(512,),
+        fractions=(0.1875,),
+        calibration_sessions=1,
+        weight_mode="column-w8",
+        wgs=24,
+        seed=9,
+    )
+    summaries = {512: {0.1875: {"all_correct": False}}}
+    pairs = {512: {0.1875: [{"retained": False}]}}
+    write_calibration_failure_record(
+        output,
+        args=args,
+        suffix=512,
+        error=ValueError("no usable calibration"),
+        selected={},
+        calibration_summaries=summaries,
+        calibration_pairs=pairs,
+    )
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    assert payload["kind"] == "llama-cpp-qpu-agentic-prefill-calibration-failure"
+    assert payload["failure"] == {
+        "stage": "calibration-selection",
+        "suffix_tokens": 512,
+        "message": "no usable calibration",
+    }
+    assert payload["calibration_pairs"] == {"512": {"0.1875": [{"retained": False}]}}
