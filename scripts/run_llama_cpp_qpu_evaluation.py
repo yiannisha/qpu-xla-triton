@@ -463,6 +463,8 @@ def validate_candidate_execution(case: dict[str, Any], server_log: str) -> dict[
             errors.append("QPU telemetry placement did not match the case")
         if event.get("partition") != case.get("partition"):
             errors.append("QPU telemetry partition did not match the case")
+        if event.get("fallback") is True:
+            errors.append("QPU telemetry reported a CPU fallback")
         value = event.get("dispatch_count")
         if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
             errors.append("QPU telemetry dispatch_count was not a positive integer")

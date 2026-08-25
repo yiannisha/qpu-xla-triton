@@ -1,0 +1,76 @@
+diff --git a/ggml/src/ggml-cpu/repack.cpp b/ggml/src/ggml-cpu/repack.cpp
+--- a/ggml/src/ggml-cpu/repack.cpp
++++ b/ggml/src/ggml-cpu/repack.cpp
+@@ -41,6 +41,28 @@ extern "C" int ggml_qpu_up_weight_registered(
+     const char * name) __attribute__((weak));
+ extern "C" uint64_t ggml_qpu_up_cpu_columns_for(
+     const char * name) __attribute__((weak));
++
++extern "C" int ggml_qpu_m1_register_q4_0(
++    const char * name,
++    const void * weights,
++    size_t weight_size,
++    uint64_t input_columns,
++    uint64_t output_columns) __attribute__((weak));
++
++extern "C" int ggml_qpu_m1_execute(
++    const char * name,
++    const void * activation_q8_0,
++    size_t activation_size,
++    float * destination,
++    uint64_t rows,
++    uint64_t input_columns,
++    uint64_t output_columns,
++    uint64_t activation_interleave) __attribute__((weak));
++
++extern "C" int ggml_qpu_m1_weight_registered(
++    const char * name) __attribute__((weak));
++extern "C" uint64_t ggml_qpu_m1_cpu_columns_for(
++    const char * name) __attribute__((weak));
+ #endif
+ 
+ #if defined(__GNUC__)
+@@ -4336,6 +4358,28 @@ template <typename BLOC_TYPE, int64_t INTER_SIZE, int64_t NB_COLS, ggml_type PAR
+ 
+         int64_t qpu_cpu_columns = 0;
+ #if defined(__GNUC__) && !defined(_WIN32)
++        const bool qpu_m1_candidate = src0->type == GGML_TYPE_Q4_0 &&
++            ne02 == 1 && ne12 == 1 && ne03 == 1 && ne13 == 1 && ne11 == 1 &&
++            ggml_qpu_m1_execute != nullptr &&
++            ggml_qpu_m1_weight_registered != nullptr &&
++            ggml_qpu_m1_cpu_columns_for != nullptr &&
++            ggml_qpu_m1_weight_registered(src0->name) == 1;
++        if (qpu_m1_candidate) {
++            ggml_barrier(params->threadpool);
++            if (ith == 0) {
++                (void) ggml_qpu_m1_execute(src0->name, params->wdata,
++                    nbw2, static_cast<float *>(dst->data), 1,
++                    static_cast<uint64_t>(ne00),
++                    static_cast<uint64_t>(ne01),
++                    static_cast<uint64_t>(INTER_SIZE));
++            }
++            ggml_barrier(params->threadpool);
++            qpu_cpu_columns = static_cast<int64_t>(
++                ggml_qpu_m1_cpu_columns_for(src0->name));
++            if (qpu_cpu_columns == 0) {
++                return;
++            }
++        }
+         const bool qpu_up_candidate = src0->type == GGML_TYPE_Q4_0 &&
+             ne02 == 1 && ne12 == 1 && ne03 == 1 && ne13 == 1 &&
+             ne11 >= 64 && std::strstr(src0->name, ".ffn_up.weight") != nullptr &&
+@@ -4794,8 +4838,14 @@ static void ggml_backend_cpu_repack_buffer_set_tensor(ggml_backend_buffer_t buff
+             static_cast<uint64_t>(tensor->ne[0]),
+             static_cast<uint64_t>(tensor->ne[1]));
+     }
++    if (tensor->type == GGML_TYPE_Q4_0 && ggml_n_dims(tensor) == 2 &&
++        ggml_qpu_m1_register_q4_0 != nullptr) {
++        (void) ggml_qpu_m1_register_q4_0(tensor->name, data, size,
++            static_cast<uint64_t>(tensor->ne[0]),
++            static_cast<uint64_t>(tensor->ne[1]));
++    }
+ #endif
+ 
+     auto tensor_traits = (ggml::cpu::repack::tensor_traits_base *) tensor->extra;
+     auto OK            = tensor_traits->repack(tensor, data, size);
+ 

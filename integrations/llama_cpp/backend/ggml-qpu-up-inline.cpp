@@ -1,4 +1,5 @@
 #include "qpu_llama_q4_0.h"
+#include "ggml-q4-0-q8-0-m1.h"
 #include "ggml-q4-0-q8-0-mx.h"
 #include "ggml-column-w8-q8-0-mx.h"
 #include "tiled-w8a8-gemm-dequantize.h"
@@ -59,8 +60,38 @@ struct up_context {
     }
 };
 
+struct m1_weight {
+    qpu_llama_q4_0_linear * linear = nullptr;
+    uint32_t input_columns = 0;
+    uint32_t output_columns = 0;
+
+    ~m1_weight() {
+        qpu_llama_q4_0_linear_destroy(linear);
+    }
+};
+
+struct m1_context {
+    std::mutex mutex;
+    qpu_llama_context * runtime = nullptr;
+    bool initialization_attempted = false;
+    std::unordered_map<std::string, std::unique_ptr<m1_weight>> weights;
+    std::string last_name;
+    std::atomic<uint32_t> cpu_columns = 0;
+    std::atomic<uint64_t> dispatch_count = 0;
+
+    ~m1_context() {
+        weights.clear();
+        qpu_llama_context_destroy(runtime);
+    }
+};
+
 up_context & get_up_context() {
     static up_context context;
+    return context;
+}
+
+m1_context & get_m1_context() {
+    static m1_context context;
     return context;
 }
 
@@ -74,6 +105,27 @@ bool flag_enabled(const char * name) {
     return value != nullptr &&
         (std::strcmp(value, "1") == 0 || std::strcmp(value, "true") == 0 ||
          std::strcmp(value, "on") == 0);
+}
+
+bool m1_tensor_selected(const char * name) {
+    const char * patterns = std::getenv("GGML_QPU_M1_TENSORS");
+    if (name == nullptr || patterns == nullptr || patterns[0] == '\0') {
+        return false;
+    }
+    while (*patterns != '\0') {
+        const char * end = std::strchr(patterns, ',');
+        const size_t size = end != nullptr
+            ? static_cast<size_t>(end - patterns) : std::strlen(patterns);
+        if (size > 0 && std::string(name).find(std::string(patterns, size)) !=
+                std::string::npos) {
+            return true;
+        }
+        if (end == nullptr) {
+            break;
+        }
+        patterns = end + 1;
+    }
+    return false;
 }
 
 uint32_t maximum_rows() {
@@ -179,6 +231,17 @@ qpu_llama_status initialize(up_context & context) {
     return qpu_llama_context_create(nullptr, &context.runtime);
 }
 
+qpu_llama_status initialize(m1_context & context) {
+    if (context.runtime != nullptr) {
+        return QPU_LLAMA_OK;
+    }
+    if (context.initialization_attempted) {
+        return QPU_LLAMA_INTERNAL_ERROR;
+    }
+    context.initialization_attempted = true;
+    return qpu_llama_context_create(nullptr, &context.runtime);
+}
+
 uint32_t aligned_columns(uint32_t columns, double fraction) {
     const double requested = std::floor(static_cast<double>(columns) * fraction);
     if (requested < 16.0) {
@@ -194,6 +257,185 @@ bool telemetry_enabled() {
 }
 
 } // namespace
+
+extern "C" __attribute__((visibility("default"))) int
+ggml_qpu_m1_register_q4_0(
+    const char * name,
+    const void * weights,
+    size_t weight_size,
+    uint64_t input_columns,
+    uint64_t output_columns) {
+    if (!flag_enabled("GGML_QPU_M1_INLINE") || !m1_tensor_selected(name) ||
+        weights == nullptr || input_columns == 0 || input_columns > UINT32_MAX ||
+        input_columns % 32 != 0 || output_columns == 0 ||
+        output_columns > UINT32_MAX || output_columns % 16 != 0) {
+        return 0;
+    }
+    m1_context & context = get_m1_context();
+    std::lock_guard<std::mutex> lock(context.mutex);
+    if (context.weights.find(name) != context.weights.end()) {
+        return 1;
+    }
+    qpu_llama_status status = initialize(context);
+    auto record = std::make_unique<m1_weight>();
+    record->input_columns = static_cast<uint32_t>(input_columns);
+    record->output_columns = static_cast<uint32_t>(output_columns);
+    const qpu_llama_q4_0_linear_desc description = {
+        /* .weights                = */ weights,
+        /* .weight_size            = */ weight_size,
+        /* .input_columns          = */ record->input_columns,
+        /* .output_columns         = */ record->output_columns,
+        /* .rows                   = */ 1,
+        /* .resident_column_start  = */ 0,
+        /* .resident_column_count  = */ record->output_columns,
+        /* .weight_mode            = */ QPU_LLAMA_Q4_0_WEIGHT_EXACT,
+        /* .workgroups_per_supergroup = */ selected_wgs_per_supergroup(),
+        /* .expected_source_hash   = */ qpu_ggml_q4_0_q8_0_m1_source_hash,
+    };
+    if (status == QPU_LLAMA_OK) {
+        status = qpu_llama_q4_0_linear_prepare(
+            context.runtime, &description, &record->linear);
+    }
+    if (status != QPU_LLAMA_OK) {
+        std::fprintf(stderr, "QPU: could not persist M=1 tensor %s: %s (%s)\n",
+            name, qpu_llama_status_string(status),
+            context.runtime != nullptr
+                ? qpu_llama_context_last_error(context.runtime) : "no context");
+        return 0;
+    }
+    if (telemetry_enabled()) {
+        std::fprintf(stderr,
+            "qpu_llama_weight_json:{\"schema_version\":1,"
+            "\"operation\":\"mul_mat_q4_0_q8_0_m1\",\"tensor\":\"%s\","
+            "\"k\":%u,\"n\":%u,\"resident_bytes\":%zu}\n",
+            name, record->input_columns, record->output_columns,
+            qpu_llama_q4_0_linear_resident_bytes(record->linear));
+    }
+    context.weights.emplace(name, std::move(record));
+    return 1;
+}
+
+extern "C" __attribute__((visibility("default"))) int
+ggml_qpu_m1_weight_registered(const char * name) {
+    if (name == nullptr) {
+        return 0;
+    }
+    m1_context & context = get_m1_context();
+    std::lock_guard<std::mutex> lock(context.mutex);
+    return context.weights.find(name) != context.weights.end() ? 1 : 0;
+}
+
+extern "C" __attribute__((visibility("default"))) int
+ggml_qpu_m1_execute(
+    const char * name,
+    const void * activation_q8_0,
+    size_t activation_size,
+    float * destination,
+    uint64_t rows,
+    uint64_t input_columns,
+    uint64_t output_columns,
+    uint64_t activation_interleave) {
+    if (name == nullptr || activation_q8_0 == nullptr || destination == nullptr || rows != 1 ||
+        input_columns > UINT32_MAX || output_columns > UINT32_MAX ||
+        activation_interleave > UINT32_MAX) {
+        return 0;
+    }
+    m1_context & context = get_m1_context();
+    std::lock_guard<std::mutex> lock(context.mutex);
+    const auto found = context.weights.find(name);
+    if (found == context.weights.end()) {
+        return 0;
+    }
+    m1_weight & weight = *found->second;
+    if (weight.input_columns != input_columns ||
+        weight.output_columns != output_columns) {
+        return 0;
+    }
+    context.last_name = name;
+    context.cpu_columns.store(weight.output_columns, std::memory_order_release);
+    if (!flag_enabled("GGML_QPU_M1_INLINE")) {
+        return 0;
+    }
+    const qpu_llama_q4_0_execution execution = {
+        /* .activation         = */ activation_q8_0,
+        /* .activation_size    = */ activation_size,
+        /* .activation_offset  = */ 0,
+        /* .destination        = */ destination,
+        /* .destination_size   = */ static_cast<size_t>(output_columns) * sizeof(float),
+        /* .destination_offset = */ 0,
+        /* .column_start       = */ 0,
+        /* .column_count       = */ weight.output_columns,
+        /* .rows               = */ 1,
+        /* .activation_interleave = */ static_cast<uint32_t>(activation_interleave),
+    };
+    qpu_llama_q4_0_submission * submission = nullptr;
+    qpu_llama_status status = qpu_llama_q4_0_linear_submit(
+        weight.linear, &execution, &submission);
+    qpu_llama_q4_0_timing timing = {};
+    bool used_fallback = false;
+    if (status == QPU_LLAMA_OK) {
+        status = qpu_llama_q4_0_submission_wait(submission, &timing);
+    }
+    if (status != QPU_LLAMA_OK && submission != nullptr) {
+        const qpu_llama_status fallback =
+            qpu_llama_q4_0_submission_cpu_fallback(submission);
+        used_fallback = fallback == QPU_LLAMA_OK;
+        status = fallback;
+    }
+    qpu_llama_q4_0_submission_destroy(submission);
+    if (status != QPU_LLAMA_OK) {
+        std::fprintf(stderr, "QPU: inline M=1 failed for %s: %s (%s)\n",
+            name, qpu_llama_status_string(status),
+            qpu_llama_context_last_error(context.runtime));
+        return 0;
+    }
+    context.cpu_columns.store(0, std::memory_order_release);
+    ++context.dispatch_count;
+    if (telemetry_enabled()) {
+        std::fprintf(stderr,
+            "qpu_llama_candidate_json:{\"schema_version\":1,"
+            "\"backend\":\"QPU0\",\"operation\":\"mul_mat_q4_0_q8_0\","
+            "\"program\":\"ggml-q4-0-q8-0-m1\",\"source_hash\":\"%s\","
+            "\"binary_sha256\":\"%s\",\"exact_shape\":{"
+            "\"operation\":\"q4_0-by-q8_0\",\"k_multiple\":32,"
+            "\"n_multiple\":16},\"placement\":\"hybrid\","
+            "\"partition\":{\"axis\":\"operators\","
+            "\"qpu\":[\"mul_mat_q4_0_q8_0\"],\"cpu\":\"all_other_ops\"},"
+            "\"integration_boundary\":\"cpu-repack-inline-m1\","
+            "\"tensor\":\"%s\",\"m\":1,\"k\":%u,\"n\":%u,"
+            "\"dispatch_count\":1,\"input_access_ns\":%llu,"
+            "\"input_pack_ns\":%llu,\"input_copy_ns\":%llu,"
+            "\"submit_wait_ns\":%llu,\"output_copy_ns\":%llu,"
+            "\"complete_ns\":%llu,\"fallback\":%s}\n",
+            qpu_ggml_q4_0_q8_0_m1_source_hash,
+            qpu_ggml_q4_0_q8_0_m1_binary_hash,
+            name, weight.input_columns, weight.output_columns,
+            static_cast<unsigned long long>(timing.input_access_ns),
+            static_cast<unsigned long long>(timing.input_pack_ns),
+            static_cast<unsigned long long>(timing.input_copy_ns),
+            static_cast<unsigned long long>(timing.submit_wait_ns),
+            static_cast<unsigned long long>(timing.output_copy_ns),
+            static_cast<unsigned long long>(timing.complete_ns),
+            used_fallback ? "true" : "false");
+    }
+    return 1;
+}
+
+extern "C" __attribute__((visibility("default"))) uint64_t
+ggml_qpu_m1_cpu_columns_for(const char * name) {
+    if (name == nullptr) {
+        return 0;
+    }
+    m1_context & context = get_m1_context();
+    std::lock_guard<std::mutex> lock(context.mutex);
+    return context.last_name == name
+        ? context.cpu_columns.load(std::memory_order_acquire) : 0;
+}
+
+extern "C" __attribute__((visibility("default"))) uint64_t
+ggml_qpu_m1_dispatch_count() {
+    return get_m1_context().dispatch_count.load();
+}
 
 extern "C" __attribute__((visibility("default"))) int
 ggml_qpu_up_register_q4_0(

@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+ggml_backend_buffer_type_t ggml_backend_cpu_repack_buffer_type(void);
+
 namespace {
 
 struct options {
@@ -35,6 +37,22 @@ struct resources {
         ggml_backend_buffer_free(buffer);
         ggml_free(context);
         ggml_backend_free(cpu);
+    }
+};
+
+struct m1_resources {
+    ggml_backend_t cpu = nullptr;
+    ggml_backend_buffer_t weight_buffer = nullptr;
+    ggml_backend_buffer_t graph_buffer = nullptr;
+    ggml_context * weight_context = nullptr;
+    ggml_context * graph_context = nullptr;
+
+    ~m1_resources() {
+        ggml_backend_buffer_free(graph_buffer);
+        ggml_backend_buffer_free(weight_buffer);
+        ggml_backend_free(cpu);
+        ggml_free(graph_context);
+        ggml_free(weight_context);
     }
 };
 
@@ -111,6 +129,116 @@ void print_samples(const std::vector<uint64_t> & values) {
         std::printf("%llu", static_cast<unsigned long long>(values[index]));
     }
     std::putchar(']');
+}
+
+bool run_m1_inline_smoke() {
+    using dispatch_count_fn = uint64_t (*)();
+    auto dispatch_count = reinterpret_cast<dispatch_count_fn>(
+        dlsym(RTLD_DEFAULT, "ggml_qpu_m1_dispatch_count"));
+    if (dispatch_count == nullptr) {
+        return false;
+    }
+    constexpr int64_t input_columns = 256;
+    constexpr int64_t output_columns = 2048;
+    constexpr size_t block_elements = 32;
+    constexpr size_t block_bytes = 18;
+    const size_t weight_bytes = static_cast<size_t>(output_columns) *
+        (input_columns / block_elements) * block_bytes;
+    std::vector<uint8_t> weight_values(weight_bytes);
+    for (size_t block = 0; block < weight_bytes / block_bytes; ++block) {
+        uint8_t * destination = weight_values.data() + block * block_bytes;
+        const ggml_fp16_t scale = ggml_fp32_to_fp16(
+            0.002F + 0.0001F * static_cast<float>(block % 17));
+        std::memcpy(destination, &scale, sizeof(scale));
+        for (size_t byte = sizeof(scale); byte < block_bytes; ++byte) {
+            const uint8_t low = static_cast<uint8_t>((block + byte) % 16);
+            const uint8_t high = static_cast<uint8_t>((3 * block + byte + 5) % 16);
+            destination[byte] = static_cast<uint8_t>(low | (high << 4));
+        }
+    }
+    std::vector<float> activation(static_cast<size_t>(input_columns));
+    for (size_t index = 0; index < activation.size(); ++index) {
+        activation[index] = 0.75F * std::sin(static_cast<float>(index) * 0.031F) -
+            0.2F * std::cos(static_cast<float>(index) * 0.007F);
+    }
+
+    setenv("GGML_QPU_M1_INLINE", "1", 1);
+    setenv("GGML_QPU_M1_TENSORS", "fixture.m1.weight", 1);
+    m1_resources state;
+    ggml_init_params weight_params = {};
+    weight_params.mem_size = 2 * ggml_tensor_overhead();
+    weight_params.no_alloc = true;
+    state.weight_context = ggml_init(weight_params);
+    if (state.weight_context == nullptr) {
+        return false;
+    }
+    ggml_tensor * weight = ggml_new_tensor_2d(
+        state.weight_context, GGML_TYPE_Q4_0, input_columns, output_columns);
+    ggml_set_name(weight, "fixture.m1.weight");
+    state.weight_buffer = ggml_backend_alloc_ctx_tensors_from_buft(
+        state.weight_context, ggml_backend_cpu_repack_buffer_type());
+    if (state.weight_buffer == nullptr) {
+        return false;
+    }
+    ggml_backend_buffer_set_usage(
+        state.weight_buffer, GGML_BACKEND_BUFFER_USAGE_WEIGHTS);
+    ggml_backend_tensor_set(weight, weight_values.data(), 0, weight_values.size());
+
+    state.cpu = ggml_backend_cpu_init();
+    if (state.cpu == nullptr) {
+        return false;
+    }
+    ggml_backend_cpu_set_n_threads(state.cpu, 1);
+    constexpr size_t graph_nodes = 4;
+    ggml_init_params graph_params = {};
+    graph_params.mem_size = 4 * ggml_tensor_overhead() +
+        ggml_graph_overhead_custom(graph_nodes, false);
+    graph_params.no_alloc = true;
+    state.graph_context = ggml_init(graph_params);
+    if (state.graph_context == nullptr) {
+        return false;
+    }
+    ggml_tensor * input = ggml_new_tensor_2d(
+        state.graph_context, GGML_TYPE_F32, input_columns, 1);
+    ggml_tensor * output = ggml_mul_mat(state.graph_context, weight, input);
+    ggml_set_input(input);
+    ggml_set_output(output);
+    ggml_cgraph * graph = ggml_new_graph_custom(
+        state.graph_context, graph_nodes, false);
+    ggml_build_forward_expand(graph, output);
+    state.graph_buffer = ggml_backend_alloc_ctx_tensors(state.graph_context, state.cpu);
+    if (state.graph_buffer == nullptr) {
+        return false;
+    }
+    ggml_backend_tensor_set(
+        input, activation.data(), 0, activation.size() * sizeof(float));
+
+    setenv("GGML_QPU_M1_INLINE", "0", 1);
+    if (ggml_backend_graph_compute(state.cpu, graph) != GGML_STATUS_SUCCESS) {
+        return false;
+    }
+    std::vector<float> expected(static_cast<size_t>(output_columns));
+    ggml_backend_tensor_get(
+        output, expected.data(), 0, expected.size() * sizeof(float));
+    const uint64_t before = dispatch_count();
+    setenv("GGML_QPU_M1_INLINE", "1", 1);
+    if (ggml_backend_graph_compute(state.cpu, graph) != GGML_STATUS_SUCCESS) {
+        return false;
+    }
+    std::vector<float> actual(static_cast<size_t>(output_columns));
+    ggml_backend_tensor_get(
+        output, actual.data(), 0, actual.size() * sizeof(float));
+    if (dispatch_count() != before + 1) {
+        return false;
+    }
+    for (size_t index = 0; index < actual.size(); ++index) {
+        const float tolerance = 2.0e-4F + 2.0e-5F * std::fabs(expected[index]);
+        if (!std::isfinite(actual[index]) ||
+            std::fabs(actual[index] - expected[index]) > tolerance) {
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace
@@ -244,13 +372,14 @@ int main(int argc, char ** argv) {
     const uint64_t expected_dispatches = after +
         static_cast<uint64_t>(config.warmups + config.samples);
     const bool dispatch_count_valid = final_dispatches == expected_dispatches;
+    const bool m1_passed = run_m1_inline_smoke();
     std::printf(
         "{\"schema_version\":1,\"kind\":\"qpu-ggml-inline-samples\","
         "\"m\":%lld,\"n\":%lld,\"qpu_rows\":%lld,\"cpu_threads\":%d,"
         "\"warmups\":%d,\"retained_samples\":%d,"
         "\"bitwise_exact\":%s,\"max_absolute_error\":%.9g,"
         "\"dispatches_before\":%llu,\"dispatches_after\":%llu,"
-        "\"dispatches_final\":%llu,\"cpu_complete_ns\":" ,
+        "\"dispatches_final\":%llu,\"m1_passed\":%s,\"cpu_complete_ns\":" ,
         static_cast<long long>(config.rows),
         static_cast<long long>(config.columns),
         static_cast<long long>(config.qpu_rows),
@@ -261,11 +390,12 @@ int main(int argc, char ** argv) {
         maximum_absolute_error,
         static_cast<unsigned long long>(before),
         static_cast<unsigned long long>(after),
-        static_cast<unsigned long long>(final_dispatches));
+        static_cast<unsigned long long>(final_dispatches),
+        m1_passed ? "true" : "false");
     print_samples(cpu_samples);
     std::printf(",\"qpu_inline_complete_ns\":");
     print_samples(qpu_samples);
     std::printf(",\"passed\":%s}\n",
-        exact && dispatched && dispatch_count_valid ? "true" : "false");
-    return exact && dispatched && dispatch_count_valid ? 0 : 1;
+        exact && dispatched && dispatch_count_valid && m1_passed ? "true" : "false");
+    return exact && dispatched && dispatch_count_valid && m1_passed ? 0 : 1;
 }

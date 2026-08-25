@@ -55,14 +55,8 @@ def fraction_list(value: str) -> tuple[float, ...]:
         result = tuple(float(item) for item in value.split(",") if item)
     except ValueError as exc:
         raise argparse.ArgumentTypeError(f"invalid fraction list {value!r}") from exc
-    if (
-        not result
-        or any(item < 0.0625 or item > 0.5 for item in result)
-        or len(set(result)) != len(result)
-    ):
-        raise argparse.ArgumentTypeError(
-            "fractions must be unique values in the closed interval [0.0625, 0.5]"
-        )
+    if not result or any(item < 0.0625 or item > 0.5 for item in result) or len(set(result)) != len(result):
+        raise argparse.ArgumentTypeError("fractions must be unique values in the closed interval [0.0625, 0.5]")
     return result
 
 
@@ -176,9 +170,7 @@ def wait_until_cool(maximum_c: float, timeout_seconds: float) -> dict[str, Any]:
     current = initial
     while current > maximum_c:
         if time.monotonic() - started >= timeout_seconds:
-            raise TimeoutError(
-                f"board remained at {current:.1f} C above {maximum_c:.1f} C"
-            )
+            raise TimeoutError(f"board remained at {current:.1f} C above {maximum_c:.1f} C")
         time.sleep(2.0)
         value = current_temperature_c()
         if value is None:
@@ -207,13 +199,9 @@ def qpu_execution_summary(sample: dict[str, Any], suffix_tokens: int) -> dict[st
         if isinstance(event, dict):
             weight_events.append(event)
     expected_m = suffix_tokens + 1
-    observed_counts = {
-        columns: sum(event.get("n") == columns for event in events)
-        for columns in EXPECTED_FFN_COLUMNS
-    }
+    observed_counts = {columns: sum(event.get("n") == columns for event in events) for columns in EXPECTED_FFN_COLUMNS}
     resident_counts = {
-        columns: sum(event.get("n") == columns for event in weight_events)
-        for columns in EXPECTED_FFN_COLUMNS
+        columns: sum(event.get("n") == columns for event in weight_events) for columns in EXPECTED_FFN_COLUMNS
     }
     fallbacks = sum(bool(event.get("fallback")) for event in events)
     valid = bool(
@@ -230,8 +218,7 @@ def qpu_execution_summary(sample: dict[str, Any], suffix_tokens: int) -> dict[st
             and int(event.get("max_m", -1)) >= expected_m
             and int(event.get("resident_column_start", -1)) >= 0
             and int(event.get("resident_columns", 0)) > 0
-            and int(event.get("resident_column_start", -1))
-            + int(event.get("resident_columns", 0))
+            and int(event.get("resident_column_start", -1)) + int(event.get("resident_columns", 0))
             == int(event.get("n", -2))
             and int(event.get("resident_bytes", 0)) > 0
             for event in weight_events
@@ -239,8 +226,7 @@ def qpu_execution_summary(sample: dict[str, Any], suffix_tokens: int) -> dict[st
         and {event.get("m") for event in events} == {expected_m}
         and fallbacks == 0
         and all(
-            int(event.get("qpu_columns", -1)) + int(event.get("cpu_columns", -1))
-            == int(event.get("n", -2))
+            int(event.get("qpu_columns", -1)) + int(event.get("cpu_columns", -1)) == int(event.get("n", -2))
             for event in events
         )
     )
@@ -251,10 +237,7 @@ def qpu_execution_summary(sample: dict[str, Any], suffix_tokens: int) -> dict[st
         "output_copy_ns",
         "complete_ns",
     )
-    timing_medians = {
-        key: int(median(int(event[key]) for event in events)) if events else None
-        for key in timing_keys
-    }
+    timing_medians = {key: int(median(int(event[key]) for event in events)) if events else None for key in timing_keys}
     return {
         "valid": valid,
         "expected_m": expected_m,
@@ -264,9 +247,7 @@ def qpu_execution_summary(sample: dict[str, Any], suffix_tokens: int) -> dict[st
         "fallback_count": fallbacks,
         "resident_weight_count": len(weight_events),
         "resident_weights_by_n": resident_counts,
-        "resident_dma_bytes": sum(
-            int(event.get("resident_bytes", 0)) for event in weight_events
-        ),
+        "resident_dma_bytes": sum(int(event.get("resident_bytes", 0)) for event in weight_events),
         "timing_medians_ns": timing_medians,
     }
 
@@ -342,12 +323,8 @@ def run_pair(
         "candidate_request_wall_ns": candidate_wall_ns,
         "cpu_prompt_ns": cpu_prompt_ns,
         "candidate_prompt_ns": candidate_prompt_ns,
-        "request_wall_speedup": (
-            float(cpu_wall_ns / candidate_wall_ns) if measurement_valid else None
-        ),
-        "prompt_speedup": (
-            float(cpu_prompt_ns / candidate_prompt_ns) if measurement_valid else None
-        ),
+        "request_wall_speedup": (float(cpu_wall_ns / candidate_wall_ns) if measurement_valid else None),
+        "prompt_speedup": (float(cpu_prompt_ns / candidate_prompt_ns) if measurement_valid else None),
         "peak_rss_delta_bytes": (
             int(candidate.get("process_memory", {}).get("peak_rss_bytes") or 0)
             - int(cpu.get("process_memory", {}).get("peak_rss_bytes") or 0)
@@ -370,9 +347,7 @@ def run_pair(
     }
 
 
-def summarize_pairs(
-    pairs: list[dict[str, Any]], *, seed: int, resamples: int
-) -> dict[str, Any]:
+def summarize_pairs(pairs: list[dict[str, Any]], *, seed: int, resamples: int) -> dict[str, Any]:
     """Bootstrap paired fresh-process request and llama prompt speedups."""
     usable = [pair for pair in pairs if pair["correct"]]
     if not usable:
@@ -404,17 +379,11 @@ def summarize_pairs(
         "all_retained": all(pair["retained"] for pair in usable) and len(usable) == len(pairs),
         "request_wall_speedup": wall,
         "prompt_speedup": prompt,
-        "peak_rss_delta_median_bytes": int(
-            median(pair["peak_rss_delta_bytes"] for pair in usable)
-        ),
-        "resident_dma_median_bytes": int(
-            median(pair["qpu_execution"]["resident_dma_bytes"] for pair in usable)
-        ),
+        "peak_rss_delta_median_bytes": int(median(pair["peak_rss_delta_bytes"] for pair in usable)),
+        "resident_dma_median_bytes": int(median(pair["qpu_execution"]["resident_dma_bytes"] for pair in usable)),
         "total_memory_overhead_median_bytes": int(
             median(
-                max(0, pair["peak_rss_delta_bytes"])
-                + pair["qpu_execution"]["resident_dma_bytes"]
-                for pair in usable
+                max(0, pair["peak_rss_delta_bytes"]) + pair["qpu_execution"]["resident_dma_bytes"] for pair in usable
             )
         ),
     }
@@ -435,6 +404,44 @@ def choose_fraction(calibration: dict[float, dict[str, Any]]) -> float:
             usable[fraction]["request_wall_speedup"]["median_speedup"],
             -fraction,
         ),
+    )
+
+
+def write_calibration_failure_record(
+    output: Path,
+    *,
+    args: argparse.Namespace,
+    suffix: int,
+    error: ValueError,
+    selected: dict[int, float],
+    calibration_summaries: dict[int, dict[float, dict[str, Any]]],
+    calibration_pairs: dict[int, dict[float, list[dict[str, Any]]]],
+) -> None:
+    """Persist completed calibration evidence before reporting selection failure."""
+    write_json_atomic(
+        output,
+        {
+            "schema_version": 1,
+            "kind": "llama-cpp-qpu-agentic-prefill-calibration-failure",
+            "created_utc": utc_now(),
+            "design": {
+                "calibration_prefix": args.calibration_prefix,
+                "suffixes": args.suffixes,
+                "fractions": args.fractions,
+                "calibration_sessions": args.calibration_sessions,
+                "weight_mode": args.weight_mode,
+                "wgs_per_supergroup": args.wgs,
+                "seed": args.seed,
+            },
+            "failure": {
+                "stage": "calibration-selection",
+                "suffix_tokens": suffix,
+                "message": str(error),
+            },
+            "selected_fraction_by_suffix": selected,
+            "calibration_summaries": calibration_summaries,
+            "calibration_pairs": calibration_pairs,
+        },
     )
 
 
@@ -503,9 +510,7 @@ def main() -> None:
             parser.error(f"required artifact not found: {path}")
     pairs = load_case_pairs(args.case_file)
     required_cells = {
-        (prefix, suffix)
-        for prefix in {args.calibration_prefix, *args.heldout_prefixes}
-        for suffix in args.suffixes
+        (prefix, suffix) for prefix in {args.calibration_prefix, *args.heldout_prefixes} for suffix in args.suffixes
     }
     missing = sorted(required_cells - pairs.keys())
     if missing:
@@ -520,9 +525,7 @@ def main() -> None:
         calibration_pairs[suffix] = {}
         calibration_summaries[suffix] = {}
         for fraction in args.fractions:
-            candidate = candidate_at_fraction(
-                base_candidate, fraction, weight_mode=args.weight_mode, wgs=args.wgs
-            )
+            candidate = candidate_at_fraction(base_candidate, fraction, weight_mode=args.weight_mode, wgs=args.wgs)
             observations = [
                 run_pair(
                     server=args.llama_server.resolve(),
@@ -545,7 +548,19 @@ def main() -> None:
                 seed=args.seed + suffix * 101 + round(fraction * 10_000),
                 resamples=args.bootstrap_resamples,
             )
-        selected[suffix] = choose_fraction(calibration_summaries[suffix])
+        try:
+            selected[suffix] = choose_fraction(calibration_summaries[suffix])
+        except ValueError as exc:
+            write_calibration_failure_record(
+                args.output,
+                args=args,
+                suffix=suffix,
+                error=exc,
+                selected=selected,
+                calibration_summaries=calibration_summaries,
+                calibration_pairs=calibration_pairs,
+            )
+            raise RuntimeError(f"{exc}; wrote calibration failure record to {args.output}") from exc
 
     heldout_pairs: dict[int, dict[int, list[dict[str, Any]]]] = {}
     heldout_summaries: dict[int, dict[int, dict[str, Any]]] = {}
@@ -555,9 +570,7 @@ def main() -> None:
         for suffix in args.suffixes:
             cpu_case, base_candidate = pairs[(prefix, suffix)]
             fraction = selected[suffix]
-            candidate = candidate_at_fraction(
-                base_candidate, fraction, weight_mode=args.weight_mode, wgs=args.wgs
-            )
+            candidate = candidate_at_fraction(base_candidate, fraction, weight_mode=args.weight_mode, wgs=args.wgs)
             observations = [
                 run_pair(
                     server=args.llama_server.resolve(),
@@ -590,8 +603,7 @@ def main() -> None:
                 and summary.get("all_retained")
                 and speedup.get("median_speedup", 0.0) >= 1.05
                 and speedup.get("bootstrap_95_low", 0.0) > 1.0
-                and summary.get("total_memory_overhead_median_bytes", 1 << 60)
-                <= 734_003_200
+                and summary.get("total_memory_overhead_median_bytes", 1 << 60) <= 734_003_200
             )
             promotion_cells.append(
                 {
@@ -603,9 +615,7 @@ def main() -> None:
                 }
             )
     model_path = Path(next(iter(pairs.values()))[0]["base_model"])
-    plugin_path = Path(
-        next(iter(pairs.values()))[1]["process_environment"]["LD_PRELOAD"]
-    )
+    plugin_path = Path(next(iter(pairs.values()))[1]["process_environment"]["LD_PRELOAD"])
     payload = {
         "schema_version": 1,
         "kind": "llama-cpp-qpu-agentic-prefill-calibration-heldout",
@@ -667,10 +677,7 @@ def main() -> None:
         ).hexdigest(),
     }
     write_json_atomic(args.output, payload)
-    print(
-        f"wrote {args.output}: selected={selected}, "
-        f"promotion={payload['promotion']['passed']}"
-    )
+    print(f"wrote {args.output}: selected={selected}, promotion={payload['promotion']['passed']}")
 
 
 if __name__ == "__main__":
