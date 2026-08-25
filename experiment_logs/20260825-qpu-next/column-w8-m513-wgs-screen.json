@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "kind": "llama-qpu-column-w8-launch-geometry-screen",
+  "created_utc": "2026-08-25T13:47:13+00:00",
+  "purpose": "Compare the manifest WGS setting with the best diagnostic setting at the exact M=513 full-model boundary.",
+  "runner": {
+    "path": "build/llama-qpu-runtime/qpu_llama_q4_0_bench",
+    "sha256": "4ee367763577435e9421b640d159c29c86c59e6b3b0b8ad63f422b4515cd4add"
+  },
+  "environment_after": {
+    "cpu_governor": "performance",
+    "cpu_clock_hz": 2400033792,
+    "v3d_clock_hz": 960009536,
+    "temperature_c": 59.3,
+    "swap_used_bytes": 0,
+    "throttling_raw": "0xe0000",
+    "current_throttling_bits": "0x0000",
+    "note": "The upper bits are historical under-voltage/frequency-cap flags; no current throttling bit was set during this screen."
+  },
+  "fixtures": {
+    "n6144_weight": {
+      "path": "fixtures/blk-0-ffn_up-weight.q4_0.bin",
+      "sha256": "ed170e866ef94d4f6448f3754629d91c27308ab63f833bda82e91cec3f2bded4"
+    },
+    "n6144_activation": {
+      "path": "fixtures/blk-0-ffn_up-weight.m513.f32.bin",
+      "sha256": "edee0b2d0121fc172441d21bb2e548c265fe1d066be225fb5dd4eeefe79c9896"
+    },
+    "n12288_weight": {
+      "path": "fixtures/blk-15-ffn_up-weight.q4_0.bin",
+      "sha256": "bb9570da4b5860faef5bb0f51cde2a9f68e2bf8da8cd3971fb06da6c2d9edf4d"
+    },
+    "n12288_activation": {
+      "path": "fixtures/blk-15-ffn_up-weight.m513.f32.bin",
+      "sha256": "45a54c7faec2de50263bf52f2ecacbbc0651b135770c14483e3bfd1c15256107"
+    }
+  },
+  "design": {
+    "mode": "qpu",
+    "weight_type": "q4_0",
+    "weight_mode": "column-w8",
+    "input_columns": 1536,
+    "rows": 513,
+    "qpu_output_fraction": 0.1875,
+    "warmups": 2,
+    "retained_samples": 5,
+    "wgs_per_supergroup": [24, 192]
+  },
+  "results": [
+    {
+      "output_columns": 6144,
+      "qpu_column_start": 4992,
+      "qpu_column_count": 1152,
+      "qpu_wgs_per_sg": 24,
+      "complete_ns": [24166635, 24133858, 24104154, 24153580, 24169321],
+      "quantize_ns": [839361, 837639, 837657, 839787, 839472],
+      "qpu_input_copy_ns": [219405, 218701, 212053, 234460, 233497],
+      "qpu_submit_wait_ns": [22329638, 22323989, 22272305, 22299341, 22321860],
+      "qpu_output_copy_ns": [686881, 661974, 690714, 690807, 682233],
+      "complete_median_ns": 24153580,
+      "submit_wait_median_ns": 22321860,
+      "correctness": {
+        "max_absolute": 0.06600038707256317,
+        "max_relative": 7029.2673841059604,
+        "mean_absolute": 0.0008613439078967648,
+        "p99_absolute": 0.011526882648468018,
+        "tolerance_violation_count": 572593,
+        "nan_count": 0,
+        "inf_count": 0
+      }
+    },
+    {
+      "output_columns": 6144,
+      "qpu_column_start": 4992,
+      "qpu_column_count": 1152,
+      "qpu_wgs_per_sg": 192,
+      "complete_ns": [23209294, 23206239, 23217165, 23144369, 23126924],
+      "quantize_ns": [839639, 839139, 838824, 838158, 858805],
+      "qpu_input_copy_ns": [225868, 222368, 222164, 223423, 226405],
+      "qpu_submit_wait_ns": [21368037, 21403499, 21353501, 21332222, 21326241],
+      "qpu_output_copy_ns": [679029, 648196, 706696, 657123, 628289],
+      "complete_median_ns": 23206239,
+      "submit_wait_median_ns": 21353501,
+      "complete_speedup_vs_wgs24": 1.040820960734651,
+      "correctness": {
+        "max_absolute": 0.06600038707256317,
+        "max_relative": 7029.2673841059604,
+        "mean_absolute": 0.0008613439078967648,
+        "p99_absolute": 0.011526882648468018,
+        "tolerance_violation_count": 572593,
+        "nan_count": 0,
+        "inf_count": 0
+      }
+    },
+    {
+      "output_columns": 12288,
+      "qpu_column_start": 9984,
+      "qpu_column_count": 2304,
+      "qpu_wgs_per_sg": 24,
+      "complete_ns": [47200283, 47150154, 47203802, 47147044, 47194709],
+      "quantize_ns": [862416, 843861, 879990, 843954, 846416],
+      "qpu_input_copy_ns": [244998, 242294, 241535, 238904, 235923],
+      "qpu_submit_wait_ns": [44496758, 44498444, 44481703, 44485999, 44516536],
+      "qpu_output_copy_ns": [1419336, 1394466, 1405521, 1403447, 1424188],
+      "complete_median_ns": 47194709,
+      "submit_wait_median_ns": 44496758,
+      "correctness": {
+        "max_absolute": 0.045178890228271484,
+        "max_relative": 36308.473958333336,
+        "mean_absolute": 0.000839905520080635,
+        "p99_absolute": 0.011192739009857178,
+        "tolerance_violation_count": 1144956,
+        "nan_count": 0,
+        "inf_count": 0
+      }
+    },
+    {
+      "output_columns": 12288,
+      "qpu_column_start": 9984,
+      "qpu_column_count": 2304,
+      "qpu_wgs_per_sg": 192,
+      "complete_ns": [45162029, 45081511, 44988623, 45011308, 45027975],
+      "quantize_ns": [845046, 832120, 837379, 831916, 843657],
+      "qpu_input_copy_ns": [220182, 230609, 211257, 209053, 213812],
+      "qpu_submit_wait_ns": [42679853, 42616983, 42581503, 42651613, 42643502],
+      "qpu_output_copy_ns": [1253134, 1231560, 1195912, 1160172, 1167190],
+      "complete_median_ns": 45027975,
+      "submit_wait_median_ns": 42643502,
+      "complete_speedup_vs_wgs24": 1.048119706910322,
+      "correctness": {
+        "max_absolute": 0.045178890228271484,
+        "max_relative": 36308.473958333336,
+        "mean_absolute": 0.000839905520080635,
+        "p99_absolute": 0.011192739009857178,
+        "tolerance_violation_count": 1144956,
+        "nan_count": 0,
+        "inf_count": 0
+      }
+    }
+  ],
+  "decision": {
+    "promote_wgs_192": false,
+    "reason": "The isolated suffix improves only 4.1-4.8%, the WGS=24 full-model M=513 screen is only 1.014x, and the candidate already finishes near the CPU complement. This launch-only change cannot plausibly meet the 1.05x complete-request gate."
+  }
+}
