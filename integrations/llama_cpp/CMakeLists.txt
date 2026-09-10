@@ -7,6 +7,12 @@ option(QPU_LLAMA_BUILD_BENCHMARK "Build the native llama.cpp Q4_0 operator bench
 option(QPU_LLAMA_BUILD_GRAPH_PROFILER "Build the serialized llama.cpp graph profiler" OFF)
 option(QPU_LLAMA_BUILD_GGML_BACKEND "Build the out-of-tree GGML QPU backend plugin" OFF)
 set(LLAMA_CPP_ROOT "" CACHE PATH "Path to the pinned llama.cpp source tree")
+set(LLAMA_CPP_BUILD_DIR "" CACHE PATH "Path to the pinned llama.cpp build tree")
+
+if(LLAMA_CPP_ROOT AND NOT LLAMA_CPP_BUILD_DIR)
+    set(LLAMA_CPP_BUILD_DIR "${LLAMA_CPP_ROOT}/build" CACHE PATH
+        "Path to the pinned llama.cpp build tree" FORCE)
+endif()
 
 add_library(qpu_llama_runtime STATIC
     src/qpu_llama_q4_0.c
@@ -27,11 +33,11 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
         message(FATAL_ERROR "LLAMA_CPP_ROOT must point to the pinned llama.cpp source tree")
     endif()
     find_library(GGML_BASE_LIBRARY_FOR_QPU_BACKEND NAMES ggml-base
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_CPU_LIBRARY_FOR_QPU_BACKEND NAMES ggml-cpu
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_LIBRARY_FOR_QPU_BACKEND NAMES ggml
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     add_library(ggml-qpu MODULE backend/ggml-qpu.cpp)
     target_include_directories(ggml-qpu PRIVATE
         include
@@ -50,7 +56,7 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
         GGML_BACKEND_DL)
     target_compile_options(ggml-qpu PRIVATE -Wall -Wextra -Wpedantic -Werror)
     set_target_properties(ggml-qpu PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin"
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin"
         LIBRARY_OUTPUT_NAME "ggml-qpu")
 
     add_library(ggml-qpu-inline SHARED
@@ -67,7 +73,7 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
     target_compile_options(ggml-qpu-inline PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
     set_target_properties(ggml-qpu-inline PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin"
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin"
         LIBRARY_OUTPUT_NAME "ggml-qpu-inline")
 
     add_executable(qpu_ggml_inline_smoke tests/qpu_ggml_inline_smoke.cpp)
@@ -82,7 +88,7 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
     target_compile_options(qpu_ggml_inline_smoke PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
     set_target_properties(qpu_ggml_inline_smoke PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     if(BUILD_TESTING AND QPU_LLAMA_BUILD_HARDWARE_TESTS)
         add_test(NAME qpu_ggml_inline_hardware
             COMMAND ${CMAKE_COMMAND} -E env
@@ -116,7 +122,7 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
     target_compile_options(qpu_ggml_backend_smoke PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
     set_target_properties(qpu_ggml_backend_smoke PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     if(BUILD_TESTING AND QPU_LLAMA_BUILD_HARDWARE_TESTS)
         add_test(NAME qpu_ggml_backend_hardware
             COMMAND qpu_ggml_backend_smoke $<TARGET_FILE:ggml-qpu>)
@@ -134,7 +140,7 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
     target_compile_options(qpu_ggml_geglu_bench PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
     set_target_properties(qpu_ggml_geglu_bench PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     if(BUILD_TESTING)
         add_test(NAME qpu_ggml_geglu_bench_help
             COMMAND qpu_ggml_geglu_bench --help)
@@ -158,11 +164,13 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
         message(FATAL_ERROR "LLAMA_CPP_ROOT must point to the pinned llama.cpp source tree")
     endif()
     find_library(GGML_CPU_LIBRARY NAMES ggml-cpu
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_LIBRARY_FOR_BENCH NAMES ggml
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_BASE_LIBRARY_FOR_BENCH NAMES ggml-base
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
+    find_library(GGML_BLAS_LIBRARY NAMES ggml-blas
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH)
     add_executable(qpu_llama_q4_0_bench bench/qpu_llama_q4_0_bench.c)
     target_include_directories(qpu_llama_q4_0_bench PRIVATE
         generated
@@ -171,7 +179,7 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
         "${LLAMA_CPP_ROOT}/ggml/src/ggml-cpu")
     target_link_libraries(qpu_llama_q4_0_bench PRIVATE qpu_llama_runtime "${GGML_CPU_LIBRARY}" m)
     set_target_properties(qpu_llama_q4_0_bench PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     target_compile_options(qpu_llama_q4_0_bench PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
     add_executable(qpu_llama_cpu_repack_bench bench/qpu_llama_cpu_repack_bench.cpp)
@@ -184,7 +192,7 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
         "${GGML_LIBRARY_FOR_BENCH}"
         "${GGML_BASE_LIBRARY_FOR_BENCH}")
     set_target_properties(qpu_llama_cpu_repack_bench PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     target_compile_features(qpu_llama_cpu_repack_bench PRIVATE cxx_std_17)
     target_compile_options(qpu_llama_cpu_repack_bench PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
@@ -201,8 +209,12 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
         "${GGML_CPU_LIBRARY}"
         "${GGML_LIBRARY_FOR_BENCH}"
         "${GGML_BASE_LIBRARY_FOR_BENCH}")
+    if(GGML_BLAS_LIBRARY)
+        target_link_libraries(qpu_llama_cpu_ffn_bench PRIVATE "${GGML_BLAS_LIBRARY}")
+        target_compile_definitions(qpu_llama_cpu_ffn_bench PRIVATE QPU_LLAMA_HAVE_BLAS=1)
+    endif()
     set_target_properties(qpu_llama_cpu_ffn_bench PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     target_compile_features(qpu_llama_cpu_ffn_bench PRIVATE cxx_std_17)
     target_compile_options(qpu_llama_cpu_ffn_bench PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
@@ -220,7 +232,7 @@ if(QPU_LLAMA_BUILD_BENCHMARK)
         "${GGML_LIBRARY_FOR_BENCH}"
         "${GGML_BASE_LIBRARY_FOR_BENCH}")
     set_target_properties(qpu_llama_cpu_flash_attn_bench PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     target_compile_features(qpu_llama_cpu_flash_attn_bench PRIVATE cxx_std_17)
     target_compile_options(qpu_llama_cpu_flash_attn_bench PRIVATE
         -Wall -Wextra -Wpedantic -Werror)
@@ -236,13 +248,13 @@ if(QPU_LLAMA_BUILD_GRAPH_PROFILER)
         message(FATAL_ERROR "LLAMA_CPP_ROOT must point to the pinned llama.cpp source tree")
     endif()
     find_library(LLAMA_LIBRARY NAMES llama
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_LIBRARY NAMES ggml
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_BASE_LIBRARY NAMES ggml-base
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_CPU_LIBRARY_FOR_PROFILE NAMES ggml-cpu
-        PATHS "${LLAMA_CPP_ROOT}/build/bin" NO_DEFAULT_PATH REQUIRED)
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     add_executable(qpu_llama_graph_profile tools/qpu_llama_graph_profile.cpp)
     target_include_directories(qpu_llama_graph_profile PRIVATE
         "${LLAMA_CPP_ROOT}/include"
@@ -255,7 +267,7 @@ if(QPU_LLAMA_BUILD_GRAPH_PROFILER)
         "${GGML_BASE_LIBRARY}"
         "${GGML_CPU_LIBRARY_FOR_PROFILE}")
     set_target_properties(qpu_llama_graph_profile PROPERTIES
-        BUILD_RPATH "${LLAMA_CPP_ROOT}/build/bin")
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
     target_compile_features(qpu_llama_graph_profile PRIVATE cxx_std_17)
     target_compile_options(qpu_llama_graph_profile PRIVATE -Wall -Wextra -Wpedantic -Werror)
     if(BUILD_TESTING)

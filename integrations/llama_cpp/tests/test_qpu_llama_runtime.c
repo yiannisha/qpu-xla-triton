@@ -13,7 +13,7 @@ static void test_program_validation(void) {
         .code_size = sizeof(code),
         .compiled_source_hash = source_hash,
         .expected_source_hash = source_hash,
-        .binary_sha256 = "1d4e65b8a6b941ab0ad349370f1f9ad95e81f7eef104e102450e7c08126b0559",
+        .binary_sha256 = "ce3172860f253e5bfdc1556198b48076f408dd224a83bbb75bd97a5f80374efd",
         .uniform_word_count = 1,
     };
     assert(qpu_llama_validate_program(&desc) == QPU_LLAMA_OK);

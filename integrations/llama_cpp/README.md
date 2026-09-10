@@ -216,12 +216,21 @@ Reproduce the large-M screen with:
 
 ```sh
 PYTHONPATH=. .venv/bin/python examples/benchmark_llama_cpp_qpu_ffn_island.py \
-  experiment_logs/20260819-llama-cpp-qpu/gemma-base-gguf-manifest.json \
+  --manifest experiment_logs/20260819-llama-cpp-qpu/gemma-base-gguf-manifest.json \
   --layer 0 --layer 15 --rows 513 --rows 1025 --rows 2049 \
   --fraction 0.125 --fraction 0.1875 --fraction 0.25 \
   --cpu-threads 4 --warmups 2 --samples 5 \
   --output experiment_logs/20260825-qpu-next/ffn-island-large-m-screen.json
 ```
+
+The same harness supports `--cpu-backend openblas` when it is built against a
+llama.cpp build containing `libggml-blas.so`. Configure the integration with
+`-DLLAMA_CPP_BUILD_DIR=/path/to/llama.cpp/build-openblas`; the output records
+and enforces OpenBLAS placement for gate/up/down and CPU placement for GEGLU.
+The September OpenBLAS rerun found no valid QPU win and showed that OpenBLAS is
+3.0-15.8x slower than CPU_REPACK for full-model prompt processing in the
+tested M=33-1025 range. See
+[`RESULTS.md`](../../experiment_logs/20260909-openblas/RESULTS.md).
 
 ## M=1 MTP drafting experiment
 

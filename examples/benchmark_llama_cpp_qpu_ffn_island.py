@@ -128,6 +128,7 @@ def cpu_command(
     intermediate_columns: int,
     output_columns: int,
     rows: int,
+    cpu_backend: str,
     cpu_threads: int,
     warmups: int,
     samples: int,
@@ -151,6 +152,8 @@ def cpu_command(
         str(output_columns),
         "--rows",
         str(rows),
+        "--backend",
+        cpu_backend,
         "--cpu-threads",
         str(cpu_threads),
         "--warmups",
@@ -236,6 +239,11 @@ def main() -> None:
     parser.add_argument("--rows", type=int, action="append", dest="row_values")
     parser.add_argument("--fraction", type=float, action="append", dest="fractions")
     parser.add_argument("--cpu-threads", type=int, default=4)
+    parser.add_argument(
+        "--cpu-backend",
+        choices=("cpu-repack", "openblas"),
+        default="cpu-repack",
+    )
     parser.add_argument("--warmups", type=int, default=3)
     parser.add_argument("--samples", type=int, default=11)
     parser.add_argument("--seed", type=int, default=7331)
@@ -315,6 +323,7 @@ def main() -> None:
                     intermediate_columns=intermediate_columns,
                     output_columns=output_columns,
                     rows=rows,
+                    cpu_backend=args.cpu_backend,
                     cpu_threads=args.cpu_threads,
                     warmups=args.warmups,
                     samples=args.samples,
@@ -358,6 +367,7 @@ def main() -> None:
                         intermediate_columns=cpu_columns,
                         output_columns=output_columns,
                         rows=rows,
+                        cpu_backend=args.cpu_backend,
                         cpu_threads=args.cpu_threads,
                         warmups=args.warmups,
                         samples=args.samples,
@@ -508,6 +518,8 @@ def main() -> None:
                                     "qpu_intermediate_columns": qpu_columns,
                                     "qpu_fraction": actual_fraction,
                                     "cpu_threads": args.cpu_threads,
+                                    "cpu_backend": args.cpu_backend,
+                                    "cpu_full_placements": full_cpu.get("placements"),
                                     "cpu_full_ns": full_samples,
                                     "cpu_complement_ns": cpu_samples,
                                     "qpu_island_ns": qpu_samples,
@@ -586,7 +598,11 @@ def main() -> None:
         "environment_before": before,
         "environment_after": after,
         "measurement_contract": {
-            "cpu": "pinned llama.cpp four-thread CPU_REPACK gate/up/GEGLU/down graph",
+            "cpu": (
+                "pinned llama.cpp scheduler with OpenBLAS gate/up/down and CPU GEGLU"
+                if args.cpu_backend == "openblas"
+                else "pinned llama.cpp CPU_REPACK gate/up/GEGLU/down graph"
+            ),
             "candidate": (
                 "CPU_REPACK computes the intermediate prefix while four resident QPU stages "
                 "compute the suffix gate/up/GEGLU-Q8/down partial; final outputs are added"

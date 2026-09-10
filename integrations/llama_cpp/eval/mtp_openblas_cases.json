@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "description": "OpenBLAS-offloaded target model with CPU_REPACK or QPU-inline M=1 MTP drafting.",
+  "cases": [
+    {
+      "name": "gemma-openblas-plain-t4-decode-32",
+      "model": "gemma-4-e2b",
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "mode": "plain",
+      "placement": "cpu-only",
+      "surface": "server",
+      "request_surface": "completion",
+      "workload": "decode",
+      "prompt": "Explain why compiler optimization preserves program semantics in one concise paragraph.",
+      "predict_tokens": 32,
+      "context_size": 4096,
+      "threads": 4,
+      "threads_batch": 4,
+      "flash_attention": true,
+      "temperature": 0.0,
+      "seed": 1234,
+      "server_extra_arguments": [
+        "--device",
+        "BLAS",
+        "--n-gpu-layers",
+        "all"
+      ],
+      "process_environment": {
+        "OPENBLAS_NUM_THREADS": "4",
+        "OMP_NUM_THREADS": "4"
+      }
+    },
+    {
+      "name": "gemma-openblas-mtp-n2-cpu-t4-decode-32",
+      "model": "gemma-4-e2b",
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "draft_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+      "mode": "mtp",
+      "placement": "cpu-only",
+      "surface": "server",
+      "request_surface": "completion",
+      "workload": "decode",
+      "prompt": "Explain why compiler optimization preserves program semantics in one concise paragraph.",
+      "predict_tokens": 32,
+      "context_size": 4096,
+      "threads": 4,
+      "threads_batch": 4,
+      "draft_threads": 1,
+      "draft_n_max": 2,
+      "draft_n_min": 0,
+      "flash_attention": true,
+      "temperature": 0.0,
+      "seed": 1234,
+      "server_extra_arguments": [
+        "--device",
+        "BLAS",
+        "--n-gpu-layers",
+        "all",
+        "--spec-draft-ngl",
+        "0"
+      ],
+      "process_environment": {
+        "OPENBLAS_NUM_THREADS": "4",
+        "OMP_NUM_THREADS": "4"
+      }
+    },
+    {
+      "name": "gemma-openblas-mtp-n2-qpu-m1-t4-decode-32",
+      "model": "gemma-4-e2b",
+      "base_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "draft_model": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/mtp-gemma-4-E2B-it.gguf",
+      "mode": "mtp",
+      "placement": "hybrid",
+      "partition": {
+        "axis": "operators",
+        "qpu": [
+          "mul_mat_q4_0_q8_0"
+        ],
+        "cpu": "all_other_ops"
+      },
+      "surface": "server",
+      "request_surface": "completion",
+      "workload": "decode",
+      "prompt": "Explain why compiler optimization preserves program semantics in one concise paragraph.",
+      "predict_tokens": 32,
+      "context_size": 4096,
+      "threads": 4,
+      "threads_batch": 4,
+      "draft_threads": 1,
+      "draft_n_max": 2,
+      "draft_n_min": 0,
+      "flash_attention": true,
+      "temperature": 0.0,
+      "seed": 1234,
+      "server_extra_arguments": [
+        "--device",
+        "BLAS",
+        "--n-gpu-layers",
+        "all",
+        "--spec-draft-ngl",
+        "0"
+      ],
+      "process_environment": {
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-openblas/libggml-qpu-inline.so",
+        "GGML_QPU_M1_INLINE": "1",
+        "GGML_QPU_M1_TENSORS": ".attn_q.weight,.attn_output.weight,.ffn_gate.weight,.ffn_up.weight,.ffn_down.weight,nextn.post_projection.weight,nextn.pre_projection.weight",
+        "GGML_QPU_TELEMETRY": "1",
+        "OPENBLAS_NUM_THREADS": "4",
+        "OMP_NUM_THREADS": "4"
+      },
+      "candidate_evidence": {
+        "program_manifest_path": "/home/yiannis/side/py-videocore7/integrations/llama_cpp/generated/manifest.json",
+        "program_manifest_sha256": "c91904d011eb217cbf5ed8c070bccf495bde156f6131d31164484e4a5a17fbbc",
+        "program": "ggml-q4-0-q8-0-m1",
+        "source_hash": "e35efa836cb40615f200a94f4bf1916e3003f9c273168826d0ed278d5cf9c730",
+        "binary_sha256": "642c515e0568710a6a93429b2bf5ccbbcbce8972f165126b300d5144a576792d",
+        "exact_shape": {
+          "operation": "q4_0-by-q8_0",
+          "k_multiple": 32,
+          "n_multiple": 16
+        }
+      }
+    }
+  ]
+}

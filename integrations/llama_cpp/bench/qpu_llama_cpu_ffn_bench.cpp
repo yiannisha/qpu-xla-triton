@@ -1,5 +1,8 @@
 #include "ggml-alloc.h"
 #include "ggml-backend.h"
+#if defined(QPU_LLAMA_HAVE_BLAS)
+#include "ggml-blas.h"
+#endif
 #include "ggml-cpu.h"
 #include "ggml.h"
 
@@ -35,6 +38,7 @@ struct options {
     uint32_t cpu_threads = 4;
     uint32_t warmups = 5;
     uint32_t samples = 31;
+    bool use_blas = false;
     bool serve = false;
 };
 
@@ -44,17 +48,24 @@ struct graph_owner {
     ggml_backend_buffer_t weight_buffer = nullptr;
     ggml_backend_buffer_t graph_buffer = nullptr;
     ggml_backend_t backend = nullptr;
+    ggml_backend_t blas_backend = nullptr;
+    ggml_backend_sched_t scheduler = nullptr;
     ggml_threadpool_t threadpool = nullptr;
     ggml_tensor * gate_weight = nullptr;
     ggml_tensor * up_weight = nullptr;
     ggml_tensor * down_weight = nullptr;
     ggml_tensor * input = nullptr;
+    ggml_tensor * gate = nullptr;
+    ggml_tensor * up = nullptr;
+    ggml_tensor * activated = nullptr;
     ggml_tensor * output = nullptr;
     ggml_cgraph * graph = nullptr;
 
     ~graph_owner() {
+        ggml_backend_sched_free(scheduler);
         ggml_backend_buffer_free(graph_buffer);
         ggml_backend_buffer_free(weight_buffer);
+        ggml_backend_free(blas_backend);
         ggml_backend_free(backend);
         ggml_threadpool_free(threadpool);
         ggml_free(graph_context);
@@ -83,7 +94,8 @@ void usage(const char * program) {
     std::fprintf(stderr,
         "usage: %s --gate FILE --up FILE --down FILE --activation-f32 FILE "
         "--input-columns N --intermediate-columns N --output-columns N --rows N "
-        "[--cpu-threads N] [--warmups N] [--samples N] [--output-bin FILE] [--serve]\n",
+        "[--backend cpu-repack|openblas] [--cpu-threads N] [--warmups N] "
+        "[--samples N] [--output-bin FILE] [--serve]\n",
         program);
 }
 
@@ -123,6 +135,14 @@ bool parse_options(int argc, char ** argv, options & result) {
             }
         } else if (name == "--rows") {
             if (!parse_u32(argument, value.rows)) {
+                return false;
+            }
+        } else if (name == "--backend") {
+            if (std::strcmp(argument, "cpu-repack") == 0) {
+                value.use_blas = false;
+            } else if (std::strcmp(argument, "openblas") == 0) {
+                value.use_blas = true;
+            } else {
                 return false;
             }
         } else if (name == "--cpu-threads") {
@@ -204,8 +224,11 @@ bool build_graph(graph_owner & owner, const options & config,
     ggml_set_name(owner.gate_weight, "fixture.ffn_gate.weight");
     ggml_set_name(owner.up_weight, "fixture.ffn_up.weight");
     ggml_set_name(owner.down_weight, "fixture.ffn_down.weight");
+    ggml_backend_buffer_type_t weight_buffer_type = config.use_blas
+        ? ggml_backend_cpu_buffer_type()
+        : ggml_backend_cpu_repack_buffer_type();
     owner.weight_buffer = ggml_backend_alloc_ctx_tensors_from_buft(
-        owner.weight_context, ggml_backend_cpu_repack_buffer_type());
+        owner.weight_context, weight_buffer_type);
     if (owner.weight_buffer == nullptr) {
         return false;
     }
@@ -240,24 +263,75 @@ bool build_graph(graph_owner & owner, const options & config,
         config.input_columns, config.rows);
     ggml_set_name(owner.input, "fixture.ffn_input");
     ggml_set_input(owner.input);
-    ggml_tensor * gate = ggml_mul_mat(owner.graph_context, owner.gate_weight, owner.input);
-    ggml_tensor * up = ggml_mul_mat(owner.graph_context, owner.up_weight, owner.input);
-    ggml_set_name(gate, "fixture.ffn_gate");
-    ggml_set_name(up, "fixture.ffn_up");
-    ggml_tensor * activated = ggml_geglu_split(owner.graph_context, gate, up);
-    ggml_set_name(activated, "fixture.ffn_geglu");
-    owner.output = ggml_mul_mat(owner.graph_context, owner.down_weight, activated);
+    owner.gate = ggml_mul_mat(owner.graph_context, owner.gate_weight, owner.input);
+    owner.up = ggml_mul_mat(owner.graph_context, owner.up_weight, owner.input);
+    ggml_set_name(owner.gate, "fixture.ffn_gate");
+    ggml_set_name(owner.up, "fixture.ffn_up");
+    owner.activated = ggml_geglu_split(owner.graph_context, owner.gate, owner.up);
+    ggml_set_name(owner.activated, "fixture.ffn_geglu");
+    owner.output = ggml_mul_mat(owner.graph_context, owner.down_weight, owner.activated);
     ggml_set_name(owner.output, "fixture.ffn_output");
     ggml_set_output(owner.output);
     owner.graph = ggml_new_graph_custom(owner.graph_context, graph_nodes, false);
     ggml_build_forward_expand(owner.graph, owner.output);
-    owner.graph_buffer = ggml_backend_alloc_ctx_tensors(owner.graph_context, owner.backend);
-    if (owner.graph_buffer == nullptr ||
-        !ggml_backend_supports_op(owner.backend, gate) ||
-        !ggml_backend_supports_op(owner.backend, up) ||
-        !ggml_backend_supports_op(owner.backend, activated) ||
+    if (!ggml_backend_supports_op(owner.backend, owner.gate) ||
+        !ggml_backend_supports_op(owner.backend, owner.up) ||
+        !ggml_backend_supports_op(owner.backend, owner.activated) ||
         !ggml_backend_supports_op(owner.backend, owner.output)) {
         return false;
+    }
+    if (config.use_blas) {
+#if defined(QPU_LLAMA_HAVE_BLAS)
+        owner.blas_backend = ggml_backend_blas_init();
+        if (owner.blas_backend == nullptr) {
+            return false;
+        }
+        ggml_backend_blas_set_n_threads(
+            owner.blas_backend, static_cast<int>(config.cpu_threads));
+        if (!ggml_backend_supports_op(owner.blas_backend, owner.gate) ||
+            !ggml_backend_supports_op(owner.blas_backend, owner.up) ||
+            !ggml_backend_supports_op(owner.blas_backend, owner.output) ||
+            ggml_backend_supports_op(owner.blas_backend, owner.activated)) {
+            std::fprintf(stderr, "OpenBLAS does not support the expected FFN placement\n");
+            return false;
+        }
+        ggml_backend_t backends[] = {owner.blas_backend, owner.backend};
+        owner.scheduler = ggml_backend_sched_new(
+            backends, nullptr, 2, graph_nodes, false, true);
+        if (owner.scheduler == nullptr ||
+            !ggml_backend_sched_alloc_graph(owner.scheduler, owner.graph)) {
+            return false;
+        }
+        if (ggml_backend_sched_get_tensor_backend(owner.scheduler, owner.gate) !=
+                owner.blas_backend ||
+            ggml_backend_sched_get_tensor_backend(owner.scheduler, owner.up) !=
+                owner.blas_backend ||
+            ggml_backend_sched_get_tensor_backend(owner.scheduler, owner.activated) !=
+                owner.backend ||
+            ggml_backend_sched_get_tensor_backend(owner.scheduler, owner.output) !=
+                owner.blas_backend) {
+            std::fprintf(stderr,
+                "scheduler placements: gate=%s up=%s geglu=%s down=%s\n",
+                ggml_backend_name(ggml_backend_sched_get_tensor_backend(
+                    owner.scheduler, owner.gate)),
+                ggml_backend_name(ggml_backend_sched_get_tensor_backend(
+                    owner.scheduler, owner.up)),
+                ggml_backend_name(ggml_backend_sched_get_tensor_backend(
+                    owner.scheduler, owner.activated)),
+                ggml_backend_name(ggml_backend_sched_get_tensor_backend(
+                    owner.scheduler, owner.output)));
+            return false;
+        }
+#else
+        std::fprintf(stderr, "this benchmark was built without a GGML BLAS backend\n");
+        return false;
+#endif
+    } else {
+        owner.graph_buffer = ggml_backend_alloc_ctx_tensors(
+            owner.graph_context, owner.backend);
+        if (owner.graph_buffer == nullptr) {
+            return false;
+        }
     }
     ggml_backend_tensor_set(owner.input, activation_data.data(), 0, activation_data.size());
     return true;
@@ -265,7 +339,9 @@ bool build_graph(graph_owner & owner, const options & config,
 
 bool compute(graph_owner & owner, uint64_t & elapsed_ns) {
     const uint64_t start = monotonic_ns();
-    const ggml_status status = ggml_backend_graph_compute(owner.backend, owner.graph);
+    const ggml_status status = owner.scheduler != nullptr
+        ? ggml_backend_sched_graph_compute(owner.scheduler, owner.graph)
+        : ggml_backend_graph_compute(owner.backend, owner.graph);
     elapsed_ns = monotonic_ns() - start;
     return status == GGML_STATUS_SUCCESS;
 }
@@ -362,9 +438,17 @@ int main(int argc, char ** argv) {
     }
     std::printf(
         "{\"schema_version\":1,\"kind\":\"llama-cpu-repack-ffn-samples\","
+        "\"backend\":\"%s\","
+        "\"placements\":{\"gate\":\"%s\",\"up\":\"%s\","
+        "\"geglu\":\"%s\",\"down\":\"%s\"},"
         "\"input_columns\":%u,\"intermediate_columns\":%u,"
         "\"output_columns\":%u,\"rows\":%u,\"cpu_threads\":%u,"
         "\"warmups\":%u,\"retained_samples\":%u,\"complete_ns\":",
+        config.use_blas ? "openblas" : "cpu-repack",
+        config.use_blas ? "OpenBLAS" : "CPU_REPACK",
+        config.use_blas ? "OpenBLAS" : "CPU_REPACK",
+        "CPU",
+        config.use_blas ? "OpenBLAS" : "CPU_REPACK",
         config.input_columns, config.intermediate_columns, config.output_columns,
         config.rows, config.cpu_threads, config.warmups, config.samples);
     print_samples(samples);
