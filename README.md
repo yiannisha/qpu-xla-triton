@@ -14,6 +14,10 @@ video preprocessing, and TinyLlama-oriented runtime building blocks.
 For the current architecture, supported operators, runtime semantics, and
 known limitations, read [QPU-XLA.md](QPU-XLA.md).
 
+For the project-wide technical retrospective and practical guidance on kernel
+design, efficient QPU use, workload fit, heterogeneous placement, correctness,
+and benchmarking, read [LESSONS_LEARNED.md](LESSONS_LEARNED.md).
+
 The end-to-end vision-language-action baseline, native checkpoint format,
 real CPU/QPU hybrid stages, upstream Torch comparison, and Raspberry Pi memory
 decision are documented in [SMOLVLA-QPU.md](SMOLVLA-QPU.md).
