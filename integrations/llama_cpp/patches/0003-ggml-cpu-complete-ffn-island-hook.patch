@@ -1,0 +1,260 @@
+diff --git a/ggml/src/ggml-cpu/ops.cpp b/ggml/src/ggml-cpu/ops.cpp
+--- a/ggml/src/ggml-cpu/ops.cpp
++++ b/ggml/src/ggml-cpu/ops.cpp
+@@ -35,6 +35,8 @@
+ extern "C" int ggml_qpu_geglu_f32_hybrid_wait() __attribute__((weak));
+ extern "C" int ggml_qpu_up_pending() __attribute__((weak));
+ extern "C" int ggml_qpu_up_wait() __attribute__((weak));
++extern "C" uint64_t ggml_qpu_ffn_island_cpu_intermediate_columns()
++    __attribute__((weak));
+ 
+ static bool ggml_qpu_up_hybrid_enabled() {
+     const char * value = std::getenv("GGML_QPU_UP_HYBRID");
+@@ -3185,6 +3187,26 @@
+         ggml_barrier(params->threadpool);
+     }
+ 
++    const uint64_t island_cpu_columns =
++        ggml_qpu_ffn_island_cpu_intermediate_columns != nullptr
++            ? ggml_qpu_ffn_island_cpu_intermediate_columns() : 0;
++    if (src1 != nullptr && island_cpu_columns > 0 &&
++        island_cpu_columns < static_cast<uint64_t>(nc)) {
++        const int dr = (nr + nth - 1) / nth;
++        const int ir0 = dr * ith;
++        const int ir1 = MIN(ir0 + dr, nr);
++        for (int i1 = ir0; i1 < ir1; ++i1) {
++            const float * src0_p = (const float *) (src0_d + i1 * src0_o);
++            const float * src1_p = (const float *) (src1_d + i1 * src1_o);
++            ggml_vec_geglu_f32(
++                static_cast<int>(island_cpu_columns),
++                (float *) ((char *) dst->data + i1 * dst->nb[1]),
++                src0_p,
++                src1_p);
++        }
++        return;
++    }
++
+     const uint64_t qpu_elements =
+         static_cast<uint64_t>(nc) * static_cast<uint64_t>(nr);
+     const uint64_t hybrid_qpu_rows =
+diff --git a/ggml/src/ggml-cpu/repack.cpp b/ggml/src/ggml-cpu/repack.cpp
+--- a/ggml/src/ggml-cpu/repack.cpp
++++ b/ggml/src/ggml-cpu/repack.cpp
+@@ -64,6 +64,39 @@
+     const char * name) __attribute__((weak));
+ extern "C" uint64_t ggml_qpu_m1_cpu_columns_for(
+     const char * name) __attribute__((weak));
++
++extern "C" int ggml_qpu_ffn_island_register_q4_0(
++    const char * name,
++    const void * weights,
++    size_t weight_size,
++    uint64_t input_columns,
++    uint64_t output_columns) __attribute__((weak));
++
++extern "C" int ggml_qpu_ffn_island_begin(
++    const char * name,
++    const void * activation_q8_0,
++    size_t activation_size,
++    uint64_t rows,
++    uint64_t input_columns,
++    uint64_t intermediate_columns,
++    uint64_t activation_interleave) __attribute__((weak));
++
++extern "C" uint64_t ggml_qpu_ffn_island_cpu_output_columns_for(
++    const char * name) __attribute__((weak));
++extern "C" uint64_t ggml_qpu_ffn_island_down_reduction_columns_for(
++    const char * name) __attribute__((weak));
++extern "C" int ggml_qpu_ffn_island_wait(
++    const char * name) __attribute__((weak));
++extern "C" int ggml_qpu_ffn_island_join(
++    const char * name,
++    float * destination,
++    size_t destination_size,
++    uint64_t rows,
++    uint64_t hidden_columns,
++    uint64_t thread_index,
++    uint64_t thread_count) __attribute__((weak));
++extern "C" int ggml_qpu_ffn_island_complete(
++    const char * name) __attribute__((weak));
+ #endif
+ 
+ #if defined(__GNUC__)
+@@ -4254,14 +4287,16 @@
+                                    int64_t               src0_start,
+                                    int64_t               src0_end,
+                                    int64_t               src1_start,
+-                                   int64_t               src1_end) {
++                                   int64_t               src1_end,
++                                   int64_t               reduction_columns) {
+         const ggml_tensor * src0 = op->src[0];
+         const ggml_tensor * src1 = op->src[1];
+         ggml_tensor *       dst  = op;
+ 
+         GGML_TENSOR_BINARY_OP_LOCALS
+ 
+-        const size_t src1_col_stride = ggml_row_size(PARAM_TYPE, ne10);
++        const int64_t effective_ne10 = reduction_columns > 0 ? reduction_columns : ne10;
++        const size_t src1_col_stride = ggml_row_size(PARAM_TYPE, effective_ne10);
+ 
+         GGML_ASSERT(ne03 == 1 && ne13 == 1);
+         GGML_ASSERT(ne12 % ne02 == 0);
+@@ -4285,16 +4320,28 @@
+ 
+         GGML_ASSERT(src1_ptr + src1_col_stride * nrows <= (const char *) params->wdata + params->wsize);
+ 
+-        // If there are more than three rows in src1, use gemm; otherwise, use gemv.
+-        if (nrows > 3) {
+-            gemm<BLOC_TYPE, INTER_SIZE, NB_COLS, PARAM_TYPE>(ne00, (float *) (dst_ptr) + src0_start, nb1 / nb0,
+-                                                             src0_ptr + src0_start * nb01, src1_ptr,
+-                                                             nrows - (nrows % 4), ncols);
+-        }
+-        for (int iter = nrows - (nrows % 4); iter < nrows; iter++) {
+-            gemv<BLOC_TYPE, INTER_SIZE, NB_COLS, PARAM_TYPE>(ne00, (float *) (dst_ptr + (iter * nb1)) + src0_start,
+-                                                             ne01, src0_ptr + src0_start * nb01,
+-                                                             src1_ptr + (src1_col_stride * iter), 1 /* nrows */, ncols);
++        // A channel-partitioned FFN down projection uses a compact Q8 input
++        // containing only the CPU prefix.  Repacked weights group NB_COLS
++        // output rows together, so process one group at a time: this preserves
++        // the original full-K stride between weight groups while passing the
++        // reduced K to each kernel.
++        const int64_t output_step = reduction_columns > 0 ? NB_COLS : ncols;
++        for (int64_t output_start = src0_start; output_start < src0_end;
++             output_start += output_step) {
++            const int64_t output_count = MIN(output_step, src0_end - output_start);
++            if (nrows > 3) {
++                gemm<BLOC_TYPE, INTER_SIZE, NB_COLS, PARAM_TYPE>(
++                    effective_ne10, (float *) dst_ptr + output_start, nb1 / nb0,
++                    src0_ptr + output_start * nb01, src1_ptr,
++                    nrows - (nrows % 4), output_count);
++            }
++            for (int iter = nrows - (nrows % 4); iter < nrows; iter++) {
++                gemv<BLOC_TYPE, INTER_SIZE, NB_COLS, PARAM_TYPE>(
++                    effective_ne10,
++                    (float *) (dst_ptr + iter * nb1) + output_start,
++                    ne01, src0_ptr + output_start * nb01,
++                    src1_ptr + src1_col_stride * iter, 1 /* nrows */, output_count);
++            }
+         }
+     }
+ 
+@@ -4330,8 +4377,22 @@
+         GGML_ASSERT(ggml_n_dims(op->src[0]) == 2);
+         // GGML_ASSERT(ggml_n_dims(op->src[1]) == 2);
+ 
++        int64_t qpu_down_reduction_columns = 0;
++#if defined(__GNUC__) && !defined(_WIN32)
++        if (src0->type == GGML_TYPE_Q4_0 && ggml_qpu_ffn_island_down_reduction_columns_for != nullptr) {
++            qpu_down_reduction_columns = static_cast<int64_t>(
++                ggml_qpu_ffn_island_down_reduction_columns_for(src0->name));
++            if (qpu_down_reduction_columns <= 0 || qpu_down_reduction_columns >= ne10 ||
++                qpu_down_reduction_columns % 32 != 0) {
++                qpu_down_reduction_columns = 0;
++            }
++        }
++#endif
++
++        const int64_t quantized_columns = qpu_down_reduction_columns > 0
++            ? qpu_down_reduction_columns : ne10;
+         char *       wdata = static_cast<char *>(params->wdata);
+-        const size_t nbw1  = ggml_row_size(PARAM_TYPE, ne10);
++        const size_t nbw1  = ggml_row_size(PARAM_TYPE, quantized_columns);
+         const size_t nbw2  = nbw1 * ne11;
+ 
+         assert(params->wsize >= nbw2 * ne12);
+@@ -4347,12 +4408,13 @@
+ 
+             for (int64_t i11 = ith * 4; i11 < ne11 - ne11 % 4; i11 += nth * 4) {
+                 ggml_quantize_mat_t<INTER_SIZE, PARAM_TYPE>((float *) (data_ptr + i11 * nb11),
+-                                                            (void *) (wdata_ptr + i11 * nbw1), 4, ne10);
++                                                            (void *) (wdata_ptr + i11 * nbw1), 4, quantized_columns);
+             }
+ 
+             const int64_t i11_processed = ne11 - ne11 % 4;
+             for (int64_t i11 = i11_processed + ith; i11 < ne11; i11 += nth) {
+-                from_float((float *) (data_ptr + i11 * nb11), (void *) (wdata_ptr + i11 * nbw1), ne10);
++                from_float((float *) (data_ptr + i11 * nb11),
++                    (void *) (wdata_ptr + i11 * nbw1), quantized_columns);
+             }
+         }
+ 
+@@ -4380,7 +4442,27 @@
+                 return;
+             }
+         }
+-        const bool qpu_up_candidate = src0->type == GGML_TYPE_Q4_0 &&
++        const bool qpu_island_projection = src0->type == GGML_TYPE_Q4_0 &&
++            ne02 == 1 && ne12 == 1 && ne03 == 1 && ne13 == 1 && ne11 >= 64 &&
++            (std::strstr(src0->name, ".ffn_gate.weight") != nullptr ||
++             std::strstr(src0->name, ".ffn_up.weight") != nullptr) &&
++            ggml_qpu_ffn_island_begin != nullptr &&
++            ggml_qpu_ffn_island_cpu_output_columns_for != nullptr;
++        if (qpu_island_projection) {
++            ggml_barrier(params->threadpool);
++            if (ith == 0) {
++                (void) ggml_qpu_ffn_island_begin(src0->name, params->wdata,
++                    nbw2, static_cast<uint64_t>(ne11),
++                    static_cast<uint64_t>(ne00),
++                    static_cast<uint64_t>(ne01),
++                    static_cast<uint64_t>(INTER_SIZE));
++            }
++            ggml_barrier(params->threadpool);
++            qpu_cpu_columns = static_cast<int64_t>(
++                ggml_qpu_ffn_island_cpu_output_columns_for(src0->name));
++        }
++        const bool qpu_up_candidate = qpu_cpu_columns == 0 &&
++            src0->type == GGML_TYPE_Q4_0 &&
+             ne02 == 1 && ne12 == 1 && ne03 == 1 && ne13 == 1 &&
+             ne11 >= 64 && std::strstr(src0->name, ".ffn_up.weight") != nullptr &&
+             ggml_qpu_up_begin != nullptr &&
+@@ -4473,10 +4555,36 @@
+                 continue;
+             }
+ 
+-            forward_mul_mat_one_chunk(params, dst, src0_start, src0_end, src1_start, src1_end);
++            forward_mul_mat_one_chunk(params, dst, src0_start, src0_end,
++                src1_start, src1_end, qpu_down_reduction_columns);
+ 
+             current_chunk = ggml_threadpool_chunk_add(params->threadpool, 1);
+         }
++
++#if defined(__GNUC__) && !defined(_WIN32)
++        if (qpu_down_reduction_columns > 0) {
++            ggml_barrier(params->threadpool);
++            if (ith == 0) {
++                const int handled = ggml_qpu_ffn_island_wait != nullptr
++                    ? ggml_qpu_ffn_island_wait(src0->name) : 0;
++                GGML_ASSERT(handled == 1);
++            }
++            ggml_barrier(params->threadpool);
++            const int joined = ggml_qpu_ffn_island_join != nullptr
++                ? ggml_qpu_ffn_island_join(
++                    src0->name, static_cast<float *>(dst->data), ggml_nbytes(dst),
++                    static_cast<uint64_t>(ne11), static_cast<uint64_t>(ne01),
++                    static_cast<uint64_t>(ith), static_cast<uint64_t>(nth)) : 0;
++            GGML_ASSERT(joined == 1);
++            ggml_barrier(params->threadpool);
++            if (ith == 0) {
++                const int completed = ggml_qpu_ffn_island_complete != nullptr
++                    ? ggml_qpu_ffn_island_complete(src0->name) : 0;
++                GGML_ASSERT(completed == 1);
++            }
++            ggml_barrier(params->threadpool);
++        }
++#endif
+     }
+ 
+     void forward_mul_mat_id(ggml_compute_params * params, ggml_tensor * op) {
+@@ -4833,6 +4941,12 @@
+ 
+ #if defined(__GNUC__) && !defined(_WIN32)
+     if (tensor->type == GGML_TYPE_Q4_0 && ggml_n_dims(tensor) == 2 &&
++        ggml_qpu_ffn_island_register_q4_0 != nullptr) {
++        (void) ggml_qpu_ffn_island_register_q4_0(tensor->name, data, size,
++            static_cast<uint64_t>(tensor->ne[0]),
++            static_cast<uint64_t>(tensor->ne[1]));
++    }
++    if (tensor->type == GGML_TYPE_Q4_0 && ggml_n_dims(tensor) == 2 &&
+         ggml_qpu_up_register_q4_0 != nullptr) {
+         (void) ggml_qpu_up_register_q4_0(tensor->name, data, size,
+             static_cast<uint64_t>(tensor->ne[0]),

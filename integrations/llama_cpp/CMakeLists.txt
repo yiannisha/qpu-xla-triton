@@ -61,6 +61,7 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
 
     add_library(ggml-qpu-inline SHARED
         backend/ggml-qpu-inline.cpp
+        backend/ggml-qpu-ffn-island.cpp
         backend/ggml-qpu-up-inline.cpp)
     target_include_directories(ggml-qpu-inline PRIVATE
         include
@@ -107,6 +108,17 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
                 --warmups 2
                 --samples 3)
         set_tests_properties(qpu_ggml_inline_hybrid_hardware PROPERTIES LABELS hardware)
+    endif()
+
+    add_executable(qpu_ffn_island_smoke tests/qpu_ffn_island_smoke.cpp)
+    target_include_directories(qpu_ffn_island_smoke PRIVATE include)
+    target_link_libraries(qpu_ffn_island_smoke PRIVATE ggml-qpu-inline)
+    target_compile_features(qpu_ffn_island_smoke PRIVATE cxx_std_17)
+    target_compile_options(qpu_ffn_island_smoke PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    if(BUILD_TESTING AND QPU_LLAMA_BUILD_HARDWARE_TESTS)
+        add_test(NAME qpu_ffn_island_hardware COMMAND qpu_ffn_island_smoke)
+        set_tests_properties(qpu_ffn_island_hardware PROPERTIES LABELS hardware)
     endif()
 
     add_executable(qpu_ggml_backend_smoke tests/qpu_ggml_backend_smoke.cpp)
