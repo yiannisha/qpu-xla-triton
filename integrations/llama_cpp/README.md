@@ -1,7 +1,7 @@
 # Native llama.cpp QPU integration
 
 This directory owns the native VideoCore VII runtime used by the llama.cpp
-acceleration work. The runtime and preload libraries build out of tree. Two
+acceleration work. The runtime and preload libraries build out of tree. Three
 narrow, reproducible patches add opt-in weak registration, asynchronous
 launch, and join hooks to the pinned `llama.cpp` CPU backend; they are stored
 under `patches/`.
@@ -26,8 +26,9 @@ There are two GGML integration boundaries:
   correctness and partition experiments. Per-layer scheduler splits make its
   GEGLU path slower end to end, so it is not the retained placement.
 - `libggml-qpu-inline.so` is a small preload library with no `libggml-cpu`
-  dependency. It supports the earlier exact GEGLU experiment, the arbitrary-M
-  `ffn_up` experiment, and an opt-in M=1 drafting experiment. The M=1 hook runs
+  dependency. It supports the earlier exact GEGLU and `ffn_up` experiments,
+  the complete channel-partitioned FFN island, and an opt-in M=1 drafting
+  experiment. The M=1 hook runs
   selected Q4_0 projections directly inside CPU_REPACK after llama.cpp creates
   the native Q8_0x4 activation, avoiding scheduler graph splits. The graph and
   model-visible tensors remain CPU-owned.
@@ -67,6 +68,7 @@ cmake -S integrations/llama_cpp -B build/llama-qpu-runtime \
 cmake --build build/llama-qpu-runtime --parallel 4
 ctest --test-dir build/llama-qpu-runtime --output-on-failure
 build/llama-qpu-runtime/qpu_llama_runtime_smoke
+build/llama-qpu-runtime/qpu_ffn_island_smoke
 ```
 
 The hardware suite includes a shared native-format safety matrix for Q4_0 M=1,
@@ -117,7 +119,8 @@ Apply the inline hooks to a clean pinned checkout with:
 ```sh
 git -C /home/yiannis/side/llama.cpp apply \
   /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch \
-  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0002-ggml-cpu-inline-m1-q4-hook.patch
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0002-ggml-cpu-inline-m1-q4-hook.patch \
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0003-ggml-cpu-complete-ffn-island-hook.patch
 cmake --build /home/yiannis/side/llama.cpp/build --target llama-server
 ```
 
@@ -182,27 +185,74 @@ kernel target.
 
 ## Channel-partitioned FFN island
 
-The full-island experiment partitions the FFN intermediate-channel dimension,
-not one projection's output in isolation. CPU and QPU concurrently compute
-disjoint `gate`, `up`, GEGLU, and `down` paths, and only their final hidden-size
-F32 results are added. The QPU path keeps its GEGLU-to-Q8_0 intermediate on the
-device, so staging, four dispatches, synchronization, final readback, and the
-join are all charged to the candidate wall time. The CPU reference is a
-persistent real GGML CPU_REPACK graph using the extracted Gemma Q4_0 weights.
+The complete island is now integrated into the real llama.cpp CPU_REPACK graph.
+It partitions the FFN intermediate-channel dimension, not one projection in
+isolation. The first `gate` or `up` projection launches a background worker for
+the QPU channel suffix. That worker executes gate, up, resident GEGLU-to-Q8_0,
+and down. Concurrently, CPU_REPACK computes only the complementary prefix
+through the same four stages. The paths join once by adding a hidden-size F32
+partial.
 
-Screening found useful local headroom once M is large enough. The best measured
-fractions produced 1.10-1.19x weighted FFN-region estimates across the real
-15 narrow plus 20 wide layer mix at M=257-2049. These are isolated-layer,
-five-sample screens, not a full-model or promotion result; the implementation
-therefore remains a benchmark boundary and is not selected by llama.cpp.
+The integration reuses the Q8_0x4 activation already created by llama.cpp, so
+it adds no graph backend split and no F32-to-Q8 conversion. For down, CPU_REPACK
+quantizes only its prefix and invokes each repacked output-row group with a
+reduced K while retaining the original full-K weight-group stride. Gate, up,
+GEGLU, and down restriction are attested separately in telemetry. QPU weights
+remain resident for all 35 Gemma layers. If a QPU stage fails, the worker
+recomputes the complete QPU-owned suffix on CPU before the join.
 
-The island benchmark prepares the QPU-side Q8 input before its timed QPU chain,
-so it is an optimistic component boundary unless an integration reuses the Q8
-activation already owned by CPU_REPACK. A follow-up persistent-kernel probe
-successfully ran two exact tiled Q4 projections plus a global barrier in one
-CSD, with bitwise-identical results, but improved the exact M=513 narrow/wide
-suffixes by only 1.036-1.037x. It remains an unexported experiment rather than a
-production selection.
+Enable the opt-in path with:
+
+```sh
+export LD_PRELOAD=$PWD/build/llama-qpu-runtime/libggml-qpu-inline.so
+export GGML_QPU_FFN_ISLAND=1
+export GGML_QPU_FFN_ISLAND_FRACTION=0.125
+export GGML_QPU_FFN_ISLAND_MIN_ROWS=64
+export GGML_QPU_FFN_ISLAND_MAX_ROWS=528
+export GGML_QPU_FFN_ISLAND_WGS=24
+```
+
+`GGML_QPU_FFN_ISLAND_VERIFY=1` compares every real QPU partial with a scalar
+Q4_0 x Q8_0 reference. `GGML_QPU_FFN_ISLAND_FAIL_STAGE` and
+`GGML_QPU_FFN_ISLAND_FAIL_LAYER` inject deterministic fallback failures.
+Leaving the main enable flag unset preserves native CPU_REPACK behavior.
+
+The final September 10 evaluation used four GGML threads and the full Gemma 4
+E2B Q4_K_XL model, whose selected FFN tensors are Q4_0. With a fixed 1/8 QPU
+fraction and five separately cooled,
+randomized processes per placement, full-model prompt processing improved by
+1.029x at M=129 (95% bootstrap interval 1.018-1.057) and 1.029x at M=257
+(1.015-1.055). In the target agentic workflow, five fresh CPU/QPU process pairs
+populated a cached 512-token transcript and then timed a 128-token tool result.
+Complete post-tool request wall time improved by 1.014x (1.0005-1.046). All
+five raw greedy token sequences matched CPU. Earlier M=65 evidence was
+inconclusive, and physical M=512 was neutral.
+
+Online verification over 70 real layer executions measured a maximum absolute
+error of 9.07e-4 and a maximum mean absolute error of 1.17e-6. The agentic gain
+is marginally statistically positive but remains below the project's
+conservative 1.05x automatic-promotion threshold, so the path remains opt-in.
+
+Run the retained full-model and cached-agent evaluations with:
+
+```sh
+python scripts/run_llama_cpp_qpu_ffn_island_eval.py \
+  --rows 129,257 --fractions 0.125 --repetitions 5 \
+  --skip-verification --skip-fallback \
+  --output experiment_logs/20260910-ffn-island/current-binary-independent-processes.json
+python scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py \
+  --prefix 512 --suffixes 128 --fraction 0.125 --samples 5 \
+  --output experiment_logs/20260910-ffn-island/agentic-current-binary-5.json
+```
+
+The outputs retain artifact, model, program, repository, and diff hashes;
+commands and environment; raw samples; per-layer events; resident-weight and
+fallback evidence; system state; and bootstrap intervals. See
+[`RESULTS.md`](../../experiment_logs/20260910-ffn-island/RESULTS.md).
+
+The earlier standalone island harness remains useful for shape and partition
+studies. It charges four dispatches and the final join, but its prepacked Q8
+input is an optimistic component boundary.
 
 Reproduce the persistent-kernel screen with:
 
@@ -322,14 +372,12 @@ Median speedup must be at least 1.05x, and the bootstrap 95% lower bound must
 exceed 1.0. Operator-only wins are labeled provisional and cannot enable a
 placement.
 
-The older native Q4_0, Q4_K, Q6_K, Q8_0, fused-attention, and GEGLU row-hybrid
-candidates remain slower than pinned `ggml-cpu`. The newer `ffn_up`
-column-suffix candidate reaches the complete llama.cpp request and hides most
-QPU time behind useful CPU work. A subsequent retained five-pair-per-cell
-column-W8 campaign measured 1.000x at M=129 and 1.016x at M=257, with both
-bootstrap intervals crossing 1.0; it also fails the 1.05x promotion gate.
-Every QPU placement remains disabled by default, and no end-to-end acceleration
-claim is made. See
+The older native Q4_0, Q4_K, Q6_K, Q8_0, fused-attention, GEGLU row-hybrid, and
+single-`ffn_up` candidates remain slower or inconclusive at complete-request
+scope. The complete FFN channel island is the first retained integration to
+show statistically positive full-model and post-tool request gains while
+executing real QPU work. It remains disabled by default because the confirmed
+agentic median is below the 1.05x automatic-promotion threshold. See
 [`IMPLEMENTATION_RESULTS.md`](eval/IMPLEMENTATION_RESULTS.md) for the five-path
 2026-08-25 follow-up and retained end-to-end result,
 [`UP_OVERLAP_RESULTS.md`](../../experiment_logs/20260824-qpu-agentic-prefill/UP_OVERLAP_RESULTS.md)
