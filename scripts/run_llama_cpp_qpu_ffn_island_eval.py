@@ -32,9 +32,11 @@ from scripts.llama_cpp_common import (  # noqa: E402
 
 ISLAND_PREFIX = "qpu_llama_candidate_json:"
 WEIGHT_PREFIX = "qpu_llama_weight_json:"
+MAX_BACKGROUND_SWAP_IN_BYTES = 1 << 20
 COMPETING_WORKLOAD_PATTERN = (
-    "llama-(server|bench|perplexity)|qpu-model-quality|qpu_.*(bench|smoke)|"
-    "record_smolvla|smolvla.*(benchmark|quality|replay)"
+    "llama-(server|bench|perplexity)( |$)|qpu-model-quality( |$)|"
+    "qpu_[^ ]*(bench|smoke)( |$)|record_smolvla_upstream\\.py( |$)|"
+    "(^|/)(pytest|mypy)( |$)"
 )
 ISLAND_ENVIRONMENT_KEYS = (
     "LD_PRELOAD",
@@ -505,13 +507,35 @@ def retention(before: dict[str, Any], after: dict[str, Any], runs: list[dict[str
             reasons.append(f"{label} competing accelerator/model workloads were active")
     before_swap_io = swap_io_pages(before)
     after_swap_io = swap_io_pages(after)
+    page_size = os.sysconf("SC_PAGE_SIZE")
+    swap_io_delta_pages = None
+    swap_io_delta_bytes = None
     if before_swap_io is None or after_swap_io is None:
         reasons.append("swap I/O counters were unavailable")
-    elif before_swap_io != after_swap_io:
-        reasons.append(
-            "swap I/O occurred during the campaign "
-            f"({before_swap_io} -> {after_swap_io})"
-        )
+    else:
+        swap_io_delta_pages = {
+            key: after_swap_io[key] - before_swap_io[key]
+            for key in ("pswpin", "pswpout")
+        }
+        swap_io_delta_bytes = {
+            key: value * page_size for key, value in swap_io_delta_pages.items()
+        }
+        if any(value < 0 for value in swap_io_delta_pages.values()):
+            reasons.append(
+                "swap I/O counters moved backwards during the campaign "
+                f"({before_swap_io} -> {after_swap_io})"
+            )
+        elif swap_io_delta_pages["pswpout"] != 0:
+            reasons.append(
+                "swap page-outs occurred during the campaign "
+                f"({swap_io_delta_pages['pswpout']} pages)"
+            )
+        elif swap_io_delta_bytes["pswpin"] > MAX_BACKGROUND_SWAP_IN_BYTES:
+            reasons.append(
+                "swap page-ins exceeded the background-cleanup tolerance "
+                f"({swap_io_delta_bytes['pswpin']} > "
+                f"{MAX_BACKGROUND_SWAP_IN_BYTES} bytes)"
+            )
     for label, environment in (("before", before), ("after", after)):
         text = environment["commands"]["throttling"].get("stdout", "")
         try:
@@ -529,6 +553,10 @@ def retention(before: dict[str, Any], after: dict[str, Any], runs: list[dict[str
         "swap_used_bytes_after": swap_used_bytes(after),
         "swap_io_pages_before": before_swap_io,
         "swap_io_pages_after": after_swap_io,
+        "swap_io_delta_pages": swap_io_delta_pages,
+        "swap_io_delta_bytes": swap_io_delta_bytes,
+        "swap_page_size_bytes": page_size,
+        "maximum_background_swap_in_bytes": MAX_BACKGROUND_SWAP_IN_BYTES,
     }
 
 

@@ -200,7 +200,7 @@ def agentic_retention(
         reasons.append("one or more paired greedy outputs differed")
     if not all(pair["all_qpu_executions_valid"] for pair in pair_results):
         reasons.append("one or more paired QPU executions were invalid")
-    return {"retained": not reasons, "rejection_reasons": reasons}
+    return {**result, "retained": not reasons, "rejection_reasons": reasons}
 
 
 def main() -> None:
