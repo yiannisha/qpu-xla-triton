@@ -743,11 +743,13 @@ class PreparedW8A8Linear:
                 raise ValueError("hybrid W8A8 qpu_rows must be aligned and leave a non-empty CPU tail")
             qpu_rows = qpu_units
             qpu_outputs = outputs
+            kernel_outputs = self.padded_outputs
         elif axis == "outputs":
             if qpu_units <= 0 or qpu_units >= outputs or qpu_units % 16:
                 raise ValueError("hybrid W8A8 qpu_outputs must be aligned and leave a non-empty CPU tail")
             qpu_rows = batch
             qpu_outputs = qpu_units
+            kernel_outputs = qpu_outputs
         else:
             raise ValueError("prepared W8A8 hybrid axis must be rows or outputs")
 
@@ -758,15 +760,15 @@ class PreparedW8A8Linear:
             if qpu_rows == 1
             else self._packed_source.slice((slice(0, active_padded_batch), slice(None)))
         )
-        kernel_weight = self._packed_weight.slice((slice(None), slice(0, qpu_outputs)))
+        kernel_weight = self._packed_weight.slice((slice(None), slice(0, kernel_outputs)))
         kernel_accumulator = (
-            self._gemv_accumulator.slice((slice(None), slice(0, qpu_outputs)))
+            self._gemv_accumulator.slice((slice(None), slice(0, kernel_outputs)))
             if qpu_rows == 1
-            else self._accumulator.slice((slice(0, active_padded_batch), slice(0, qpu_outputs)))
+            else self._accumulator.slice((slice(0, active_padded_batch), slice(0, kernel_outputs)))
         )
         qpu_destination = destination.slice((slice(0, qpu_rows), slice(0, qpu_outputs)))
         active_row_scales = self._row_scales.slice((slice(0, active_padded_batch),))
-        active_column_scales = self._column_scales.slice((slice(0, qpu_outputs),))
+        active_column_scales = self._column_scales.slice((slice(0, kernel_outputs),))
         fused_qpu = (
             self.qpu_dequantize
             and self.fuse_dequantize
@@ -789,7 +791,7 @@ class PreparedW8A8Linear:
                     active_column_scales,
                     qpu_destination,
                 ),
-                grid=(qpu_outputs // 16, active_padded_batch // 16, 1),
+                grid=(kernel_outputs // 16, active_padded_batch // 16, 1),
                 wait_for=wait_for,
                 buffers=(
                     kernel_source.access(AccessMode.READ),
@@ -803,7 +805,7 @@ class PreparedW8A8Linear:
             qpu_event = qpu_queue.submit(
                 kernel,
                 (kernel_source, kernel_weight, kernel_accumulator),
-                grid=(qpu_outputs // 16, 1 if qpu_rows == 1 else active_padded_batch // 16, 1),
+                grid=(kernel_outputs // 16, 1 if qpu_rows == 1 else active_padded_batch // 16, 1),
                 wait_for=wait_for,
                 buffers=(
                     kernel_source.access(AccessMode.READ),

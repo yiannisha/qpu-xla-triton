@@ -82,6 +82,7 @@ def test_conv2d_w8a8_plan_matches_dynamic_group_reference(groups: int) -> None:
 @pytest.mark.parametrize(
     ("channels", "outputs", "kernel", "stride", "groups", "size"),
     (
+        (16, 1, 1, 1, 1, 5),
         (4, 32, 1, 1, 1, 5),
         (4, 32, 3, 2, 1, 12),
         (4, 64, 3, 1, 2, 5),

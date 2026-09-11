@@ -6,6 +6,7 @@ from qpu_xla.ops.attention import attention_fp32, attention_int32
 from qpu_xla.ops.attention_plan import AttentionInt32Plan
 from qpu_xla.ops.bias_activation import bias_activation
 from qpu_xla.ops.conv2d import conv2d_fp32, conv2d_int32
+from qpu_xla.ops.conv2d_fp32_plan import Conv2dFP32Plan
 from qpu_xla.ops.conv2d_plan import Conv2dInt32Plan
 from qpu_xla.ops.conv2d_w8a8 import Conv2dW8A8Plan
 from qpu_xla.ops.elementwise import copy, maximum, minimum
@@ -47,6 +48,7 @@ __all__ = [
     "conv2d_int32",
     "conv2d_fp32",
     "Conv2dInt32Plan",
+    "Conv2dFP32Plan",
     "Conv2dW8A8Plan",
     "copy",
     "embedding_lookup_fp32",
