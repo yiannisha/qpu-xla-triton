@@ -10,7 +10,7 @@ The fixed qualification workloads are:
 
 - Gemma: 1,000 deterministically selected MMLU questions;
 - ResNet-18: 5,000 ImageNet validation images, five from every class;
-- YOLOv8n: all 5,000 COCO val2017 images;
+- YOLOv8n: a fixed seeded random 1,000-image COCO val2017 subset;
 - SmolVLA: 100 observations, ten from each of ten episodes.
 
 Install the optional evaluator dependencies with:
@@ -114,11 +114,15 @@ uv run qpu-model-quality yolov8n \
   --checkpoint-sha256 SHA256 \
   --images /datasets/coco/val2017 \
   --annotations /datasets/coco/annotations/instances_val2017.json \
+  --samples 1000 \
+  --sample-seed 20260911 \
   --mode hybrid_w8a8 \
   --resume \
   --output experiment_logs/model-quality/yolov8n-hybrid-w8a8
 ```
 
+The first run writes `sample_manifest.json` in the output directory. Resumed
+runs reload that exact ordered subset; `--manifest` can share it across modes.
 The report uses authoritative `pycocotools` bbox AP50:95/AP50/AP75,
 small/medium/large AP, and AR. It also contains per-category AP deltas,
 same-image/same-class box agreement at IoU 0.5, and a true paired image

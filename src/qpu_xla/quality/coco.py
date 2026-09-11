@@ -29,7 +29,10 @@ def save_coco_predictions(path: str | PathLike[str], predictions: list[dict[str,
 
 
 def coco_bbox_metrics(
-    annotation: str | PathLike[str], predictions: str | PathLike[str] | list[dict[str, Any]]
+    annotation: str | PathLike[str],
+    predictions: str | PathLike[str] | list[dict[str, Any]],
+    *,
+    image_ids: list[int] | None = None,
 ) -> dict[str, float]:
     """Calculate the standard twelve COCO bbox summary statistics."""
     try:
@@ -43,6 +46,8 @@ def coco_bbox_metrics(
     )
     detected = ground_truth.loadRes(values)
     evaluator = COCOeval(ground_truth, detected, "bbox")
+    if image_ids is not None:
+        evaluator.params.imgIds = sorted(image_ids)
     evaluator.evaluate()
     evaluator.accumulate()
     evaluator.summarize()
@@ -50,7 +55,10 @@ def coco_bbox_metrics(
 
 
 def coco_per_category_ap(
-    annotation: str | PathLike[str], predictions: str | PathLike[str] | list[dict[str, Any]]
+    annotation: str | PathLike[str],
+    predictions: str | PathLike[str] | list[dict[str, Any]],
+    *,
+    image_ids: list[int] | None = None,
 ) -> dict[str, float]:
     """Calculate AP50:95 for each COCO category from one shared evaluation."""
     try:
@@ -63,6 +71,8 @@ def coco_per_category_ap(
         json.loads(Path(predictions).read_text(encoding="utf-8")) if not isinstance(predictions, list) else predictions
     )
     evaluator = COCOeval(ground_truth, ground_truth.loadRes(values), "bbox")
+    if image_ids is not None:
+        evaluator.params.imgIds = sorted(image_ids)
     evaluator.evaluate()
     evaluator.accumulate()
     precision = evaluator.eval["precision"]
@@ -147,6 +157,7 @@ def paired_coco_bootstrap(
     baseline: list[dict[str, Any]],
     candidate: list[dict[str, Any]],
     *,
+    image_ids: list[int] | None = None,
     replicates: int = 10_000,
     seed: int = 20_260_910,
 ) -> dict[str, dict[str, float | int]]:
@@ -157,21 +168,29 @@ def paired_coco_bootstrap(
     except ImportError as exc:
         raise RuntimeError("COCO evaluation requires the optional pycocotools dependency") from exc
     dataset = json.loads(Path(annotation).read_text(encoding="utf-8"))
-    image_ids = np.asarray(sorted(int(item["id"]) for item in dataset["images"]), dtype=np.int64)
+    available_image_ids = {int(item["id"]) for item in dataset["images"]}
+    selected_image_ids = sorted(available_image_ids if image_ids is None else image_ids)
+    if not selected_image_ids or not set(selected_image_ids) <= available_image_ids:
+        raise ValueError("COCO bootstrap image IDs must be a non-empty subset of the annotation")
+    bootstrap_image_ids = np.asarray(selected_image_ids, dtype=np.int64)
     images = {int(item["id"]): item for item in dataset["images"]}
-    annotations: dict[int, list[dict[str, Any]]] = {int(value): [] for value in image_ids}
+    annotations: dict[int, list[dict[str, Any]]] = {int(value): [] for value in bootstrap_image_ids}
     for item in dataset["annotations"]:
-        annotations[int(item["image_id"])].append(item)
+        image_id = int(item["image_id"])
+        if image_id in annotations:
+            annotations[image_id].append(item)
     prediction_maps = []
     for prediction_set in (baseline, candidate):
-        mapping: dict[int, list[dict[str, Any]]] = {int(value): [] for value in image_ids}
+        mapping: dict[int, list[dict[str, Any]]] = {int(value): [] for value in bootstrap_image_ids}
         for item in prediction_set:
-            mapping[int(item["image_id"])].append(item)
+            image_id = int(item["image_id"])
+            if image_id in mapping:
+                mapping[image_id].append(item)
         prediction_maps.append(mapping)
     rng = np.random.default_rng(seed)
     deltas = np.empty((replicates, len(COCO_METRIC_NAMES)), dtype=np.float64)
     for replicate in range(replicates):
-        selected = rng.choice(image_ids, size=image_ids.size, replace=True)
+        selected = rng.choice(bootstrap_image_ids, size=bootstrap_image_ids.size, replace=True)
         sampled_dataset = {
             key: copy.deepcopy(value) for key, value in dataset.items() if key not in {"images", "annotations"}
         }

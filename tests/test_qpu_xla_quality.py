@@ -7,7 +7,7 @@ import numpy as np
 
 from qpu_xla.quality.cli import _load_coco_batches
 from qpu_xla.quality.coco import detection_agreement
-from qpu_xla.quality.manifest import SampleManifest, imagenet_stratified_manifest
+from qpu_xla.quality.manifest import SampleManifest, coco_random_manifest, imagenet_stratified_manifest
 from qpu_xla.quality.metrics import action_metrics, classification_metrics, paired_bootstrap_delta
 from qpu_xla.quality.mmlu import MMLURecord, compare_mmlu, load_mmlu_jsonl
 from qpu_xla.quality.report import QualityReport, RunIntegrity
@@ -97,6 +97,24 @@ def test_imagenet_manifest_selects_five_stable_samples_per_class(tmp_path: Path)
     location = tmp_path / "manifest.json"
     first.save(location)
     assert SampleManifest.load(location) == first
+
+
+def test_coco_manifest_selects_fixed_seeded_random_subset(tmp_path: Path) -> None:
+    annotation = tmp_path / "instances.json"
+    annotation.write_text(
+        json.dumps({"images": [{"id": value, "file_name": f"{value}.jpg"} for value in range(20)]}),
+        encoding="utf-8",
+    )
+    first = coco_random_manifest(annotation, samples=5, seed=7)
+    second = coco_random_manifest(annotation, samples=5, seed=7)
+    different = coco_random_manifest(annotation, samples=5, seed=8)
+    assert first == second
+    assert first != different
+    assert len(first.samples) == 5
+    assert len({record.sample_id for record in first.samples}) == 5
+    assert [int(record.sample_id) for record in first.samples] == sorted(
+        int(record.sample_id) for record in first.samples
+    )
 
 
 def test_quality_report_validates_execution_integrity_not_quality_delta(tmp_path: Path) -> None:

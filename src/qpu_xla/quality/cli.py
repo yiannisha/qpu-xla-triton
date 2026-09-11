@@ -33,7 +33,12 @@ from qpu_xla.quality.coco import (
     paired_coco_bootstrap,
     save_coco_predictions,
 )
-from qpu_xla.quality.manifest import SampleManifest, imagenet_stratified_manifest, sha256_file
+from qpu_xla.quality.manifest import (
+    SampleManifest,
+    coco_random_manifest,
+    imagenet_stratified_manifest,
+    sha256_file,
+)
 from qpu_xla.quality.metrics import classification_metrics
 from qpu_xla.quality.mmlu import compare_mmlu, load_mmlu_jsonl, run_llama_mmlu
 from qpu_xla.quality.report import QualityReport, RunIntegrity
@@ -350,16 +355,38 @@ def _coco(args: argparse.Namespace) -> None:
     except ImportError as exc:
         raise RuntimeError("COCO qualification requires the optional ultralytics dependency") from exc
     annotation_payload = json.loads(args.annotations.read_text(encoding="utf-8"))
-    images = sorted(annotation_payload["images"], key=lambda item: int(item["id"]))
-    if len(images) != 5_000:
-        raise ValueError(f"COCO val2017 qualification requires 5000 images, found {len(images)}")
+    all_images = sorted(annotation_payload["images"], key=lambda item: int(item["id"]))
+    if len(all_images) != 5_000:
+        raise ValueError(f"COCO val2017 qualification requires a 5000-image source, found {len(all_images)}")
     args.output.mkdir(parents=True, exist_ok=True)
+    manifest_path = args.manifest or args.output / "sample_manifest.json"
+    if manifest_path.exists():
+        manifest = SampleManifest.load(manifest_path)
+    else:
+        manifest = coco_random_manifest(args.annotations, samples=args.samples, seed=args.sample_seed)
+        manifest.save(manifest_path)
+    if manifest.task != "coco-object-detection" or len(manifest.samples) != args.samples:
+        raise ValueError("COCO sample manifest does not match the requested task and sample count")
+    image_by_id = {int(item["id"]): item for item in all_images}
+    images = []
+    for record in manifest.samples:
+        image_id = int(record.sample_id)
+        item = image_by_id.get(image_id)
+        if item is None or str(item["file_name"]) != record.relative_path:
+            raise ValueError("COCO sample manifest does not match the source annotation")
+        images.append(item)
+    image_ids = [int(item["id"]) for item in images]
+    selected_image_ids = set(image_ids)
     artifact = YoloV8Artifact.open(args.checkpoint, expected_sha256=args.checkpoint_sha256)
     mode = VisionMode(args.mode)
     baseline_predictions: list[dict[str, Any]]
     baseline_completed: int
     if args.baseline_predictions is not None:
-        baseline_predictions = json.loads(args.baseline_predictions.read_text(encoding="utf-8"))
+        baseline_predictions = [
+            item
+            for item in json.loads(args.baseline_predictions.read_text(encoding="utf-8"))
+            if int(item["image_id"]) in selected_image_ids
+        ]
         baseline_completed = len(images)
     else:
         baseline_predictions, baseline_completed = [], 0
@@ -427,10 +454,10 @@ def _coco(args: argparse.Namespace) -> None:
     after_path = args.output / "candidate_predictions.json"
     save_coco_predictions(before_path, baseline_predictions)
     save_coco_predictions(after_path, candidate_predictions)
-    baseline_metrics = coco_bbox_metrics(args.annotations, baseline_predictions)
-    candidate_metrics = coco_bbox_metrics(args.annotations, candidate_predictions)
-    baseline_categories = coco_per_category_ap(args.annotations, baseline_predictions)
-    candidate_categories = coco_per_category_ap(args.annotations, candidate_predictions)
+    baseline_metrics = coco_bbox_metrics(args.annotations, baseline_predictions, image_ids=image_ids)
+    candidate_metrics = coco_bbox_metrics(args.annotations, candidate_predictions, image_ids=image_ids)
+    baseline_categories = coco_per_category_ap(args.annotations, baseline_predictions, image_ids=image_ids)
+    candidate_categories = coco_per_category_ap(args.annotations, candidate_predictions, image_ids=image_ids)
     metrics: dict[str, Any] = {
         "baseline": baseline_metrics,
         "candidate": candidate_metrics,
@@ -445,15 +472,16 @@ def _coco(args: argparse.Namespace) -> None:
             args.annotations,
             baseline_predictions,
             candidate_predictions,
+            image_ids=image_ids,
             replicates=args.bootstrap_replicates,
         )
     report = QualityReport(
-        task="yolov8n-coco-val2017",
+        task=f"yolov8n-coco-val2017-{len(images)}",
         baseline="ultralytics_fp32",
         candidate=mode.value,
         metrics=metrics,
         integrity=RunIntegrity(
-            5_000,
+            len(images),
             len(images),
             True,
             qpu_dispatches=telemetry["qpu_dispatches"],
@@ -466,11 +494,17 @@ def _coco(args: argparse.Namespace) -> None:
             checkpoint_sha256=artifact.checkpoint_sha256,
             source_revision=artifact.source_revision,
             annotations_sha256=sha256_file(args.annotations),
+            sample_manifest_sha256=sha256_file(manifest_path),
+            sample_seed=manifest.seed,
             mode=mode.value,
             telemetry=telemetry,
             validation={"imgsz": 640, "conf": 0.001, "iou": 0.7, "max_det": 300},
         ),
-        artifacts={"baseline_predictions": before_path.name, "candidate_predictions": after_path.name},
+        artifacts={
+            "baseline_predictions": before_path.name,
+            "candidate_predictions": after_path.name,
+            "sample_manifest": str(manifest_path),
+        },
     )
     _save_report(report, args.output)
 
@@ -634,6 +668,9 @@ def _parser() -> argparse.ArgumentParser:
     coco.add_argument("--checkpoint-sha256")
     coco.add_argument("--images", type=Path, required=True)
     coco.add_argument("--annotations", type=Path, required=True)
+    coco.add_argument("--manifest", type=Path, help="fixed COCO sample manifest; created in output by default")
+    coco.add_argument("--samples", type=int, default=1_000)
+    coco.add_argument("--sample-seed", type=int, default=20_260_911)
     coco.add_argument("--baseline-predictions", type=Path, help="reuse a completed cpu_predictions.json")
     coco.add_argument("--bootstrap-replicates", type=int, default=10_000)
     coco.add_argument("--resume", action="store_true")

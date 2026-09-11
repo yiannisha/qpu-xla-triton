@@ -104,4 +104,39 @@ def imagenet_stratified_manifest(
     )
 
 
-__all__ = ["SampleManifest", "SampleRecord", "imagenet_stratified_manifest", "sha256_file"]
+def coco_random_manifest(
+    annotation: str | PathLike[str],
+    *,
+    samples: int = 1_000,
+    seed: int = 20_260_911,
+) -> SampleManifest:
+    """Select a fixed pseudo-random subset of images from a COCO annotation."""
+    payload = json.loads(Path(annotation).read_text(encoding="utf-8"))
+    images = payload.get("images") if isinstance(payload, dict) else None
+    if not isinstance(images, list) or not images:
+        raise ValueError("COCO annotation must contain a non-empty images list")
+    if not 0 < samples <= len(images):
+        raise ValueError(f"COCO sample count must lie in [1, {len(images)}], got {samples}")
+    ranked = sorted(
+        images,
+        key=lambda item: hashlib.sha256(f"{seed}:{int(item['id'])}:{str(item['file_name'])}".encode()).digest(),
+    )[:samples]
+    selected = sorted(ranked, key=lambda item: int(item["id"]))
+    records = tuple(
+        SampleRecord(sample_id=str(int(item["id"])), relative_path=str(item["file_name"])) for item in selected
+    )
+    return SampleManifest(
+        "coco-object-detection",
+        seed,
+        records,
+        {"source_images": len(images), "count": len(records), "selection": "sha256-seeded-rank"},
+    )
+
+
+__all__ = [
+    "SampleManifest",
+    "SampleRecord",
+    "coco_random_manifest",
+    "imagenet_stratified_manifest",
+    "sha256_file",
+]
