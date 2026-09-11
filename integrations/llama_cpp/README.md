@@ -1,10 +1,11 @@
 # Native llama.cpp QPU integration
 
 This directory owns the native VideoCore VII runtime used by the llama.cpp
-acceleration work. The runtime and preload libraries build out of tree. Three
-narrow, reproducible patches add opt-in weak registration, asynchronous
-launch, and join hooks to the pinned `llama.cpp` CPU backend; they are stored
-under `patches/`.
+acceleration work. The runtime and preload libraries build out of tree. Four
+narrow, reproducible integration patches add opt-in weak registration,
+asynchronous launch and join hooks, plus stride-aware prefix quantization to
+the pinned `llama.cpp` CPU backend; they are stored under `patches/`. Patch
+`0004` is separate evaluation-input support.
 
 The runtime currently provides:
 
@@ -235,47 +236,65 @@ next-token vocabulary logits for three deterministic real-model prompts at
 both shapes and verifies four QPU dispatches in every model layer. Both timing
 evaluators run all three checks before collecting samples.
 
-The following September 10 result is historical and invalidated. The evaluated
-binary used the shortened CPU-prefix width as the F32 source-row stride during
+The corrected, swap-disabled September 11 confirmation retains an end-to-end
+gain specifically at physical M=129:
+
+| Workload | CPU_REPACK median | QPU median | Speedup | Bootstrap 95% interval |
+|---|---:|---:|---:|---:|
+| Full-model prompt, M=129 | 2116.016 ms | 2045.965 ms | 1.0342x | 1.0090-1.1104 |
+| Full-model prompt, M=257 | 4451.305 ms | 4420.986 ms | 1.0069x | 0.9651-1.0168 |
+| Cached 512 + tool suffix 128, request wall | 3195.809 ms | 3079.077 ms | 1.0379x | 1.0241-1.0520 |
+
+The prompt result uses five independent CPU and five independent QPU processes
+per M with an independent two-sample bootstrap. The cached-agent result uses
+15 fresh CPU/QPU server pairs and a paired bootstrap; all 15 pairs favored the
+candidate and returned identical greedy output. The QPU executions covered all
+35 layers with zero fallback. Both retained campaigns recorded zero swap use,
+zero swap I/O, zero current throttling flags, and no competing workload.
+
+The complete real-model preflight compared all 262,144 next-token
+probabilities for three prompts at both M=129 and M=257. All six argmax IDs
+matched; maximum probability error was 1.438e-5, total variation 1.805e-5, and
+KL divergence 7.843e-7. The implementation is not raw-logit bitwise identical,
+so the JSON also retains the larger raw and shift-centered logit differences.
+
+The M=129 result is a 3.31-3.65% latency reduction after the correctness fix.
+M=257 remains inconclusive, and the positive M=129 median remains below the
+project's conservative 1.05x automatic-promotion threshold. The path therefore
+stays opt-in and shape-bounded.
+
+The earlier September 10 result is historical and invalidated. That binary
+used the shortened CPU-prefix width as the F32 source-row stride during
 down-projection quantization, corrupting rows two through four in each
-four-row group. The timing calculations remain reproducible, but they do not
-establish correctness-preserving acceleration. The stride-aware fourth patch,
-joined-FFN regression, full-vocabulary real-model regression, and corrected
-rerun are documented under
-`experiment_logs/20260910-ffn-island-stride-fix/`.
-
-The invalidated September 10 evaluation used four GGML threads and the full Gemma 4
-E2B Q4_K_XL model, whose selected FFN tensors are Q4_0. With a fixed 1/8 QPU
-fraction and five separately cooled,
-randomized processes per placement, full-model prompt processing improved by
-1.029x at M=129 (95% bootstrap interval 1.018-1.057) and 1.029x at M=257
-(1.015-1.055). In the target agentic workflow, five fresh CPU/QPU process pairs
-populated a cached 512-token transcript and then timed a 128-token tool result.
-Complete post-tool request wall time improved by 1.014x (1.0005-1.046). All
-five raw greedy token sequences matched CPU. Earlier M=65 evidence was
-inconclusive, and physical M=512 was neutral.
-
-Online verification over 70 real layer executions measured a maximum absolute
-error of 9.07e-4 and a maximum mean absolute error of 1.17e-6. The agentic gain
-is marginally statistically positive but remains below the project's
-conservative 1.05x automatic-promotion threshold, so the path remains opt-in.
+four-row group. Its reported 1.029x M=129/M=257 prompt results and 1.014x
+cached-request result do not establish correctness-preserving acceleration.
+The timing arithmetic is preserved under
+`experiment_logs/20260910-ffn-island/`; only the corrected September 11
+artifacts support the claim above.
 
 Run the retained full-model and cached-agent evaluations with:
 
 ```sh
+sudo swapoff /dev/zram0
+
 python scripts/run_llama_cpp_qpu_ffn_island_eval.py \
   --rows 129,257 --fractions 0.125 --repetitions 5 \
   --skip-verification --skip-fallback \
-  --output experiment_logs/20260910-ffn-island/current-binary-independent-processes.json
+  --output experiment_logs/20260910-ffn-island-stride-fix/corrected-independent-processes-v7.json
 python scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py \
-  --prefix 512 --suffixes 128 --fraction 0.125 --samples 5 \
-  --output experiment_logs/20260910-ffn-island/agentic-current-binary-5.json
+  --prefix 512 --suffixes 128 --fraction 0.125 --samples 15 \
+  --output experiment_logs/20260910-ffn-island-stride-fix/corrected-agentic-15-v2.json
+
+sudo swapon /dev/zram0
 ```
 
 The outputs retain artifact, model, program, repository, and diff hashes;
 commands and environment; raw samples; per-layer events; resident-weight and
-fallback evidence; system state; and bootstrap intervals. See
-[`RESULTS.md`](../../experiment_logs/20260910-ffn-island/RESULTS.md).
+fallback evidence; system state; and bootstrap intervals. See the corrected
+[`RESULTS.md`](../../experiment_logs/20260910-ffn-island-stride-fix/RESULTS.md).
+The original campaign's
+[`RESULTS.md`](../../experiment_logs/20260910-ffn-island/RESULTS.md) remains as
+an explicit correctness erratum and historical record.
 
 The earlier standalone island harness remains useful for shape and partition
 studies. It charges four dispatches and the final join, but its prepacked Q8

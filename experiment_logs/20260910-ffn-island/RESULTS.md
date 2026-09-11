@@ -19,6 +19,12 @@ width from the source-row stride. Corrected joined-FFN, full-logit, and timing
 results are retained separately under
 `experiment_logs/20260910-ffn-island-stride-fix/`.
 
+The corrected, swap-disabled confirmation retains 1.0342x full-prompt speedup
+at M=129 (95% interval 1.0090-1.1104) and 1.0379x complete cached-request
+speedup for a 128-token tool suffix (paired interval 1.0241-1.0520). M=257 is
+inconclusive at 1.0069x (0.9651-1.0168). See the corrected campaign's
+`RESULTS.md` for its full correctness and exclusion record.
+
 The cached-request confidence interval below also used independent resampling
 of CPU and candidate samples even though the processes were collected in
 pairs. The corrected evaluator uses a paired bootstrap for that workflow.
@@ -200,6 +206,6 @@ python scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py \
   --output experiment_logs/20260910-ffn-island/agentic-current-binary-5.json
 ```
 
-The historical three-patch stack under `integrations/llama_cpp/patches/` applies cleanly
-to the pinned commit and reproduces the modified `ops.cpp` and `repack.cpp`
-byte for byte.
+The corrected integration stack (`0001`, `0002`, `0003`, and `0005`) applies
+cleanly to the pinned commit. Patch `0004` is separate evaluation-input
+support.

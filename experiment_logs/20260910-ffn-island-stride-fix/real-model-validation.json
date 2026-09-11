@@ -1,0 +1,5823 @@
+{
+  "kind": "partial-ffn-island-evaluation",
+  "runs": [
+    {
+      "benchmark": {
+        "avg_ns": 5822317638,
+        "avg_ts": 22.156125,
+        "backends": "CPU",
+        "build_commit": "91d2fc387",
+        "build_number": 10073,
+        "cpu_info": "CPU",
+        "cpu_mask": "0x0",
+        "cpu_strict": false,
+        "devices": "auto",
+        "embeddings": false,
+        "fit_min_ctx": 0,
+        "fit_target": 0,
+        "flash_attn": -1,
+        "gpu_info": "",
+        "main_gpu": 0,
+        "model_filename": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "model_n_params": 4628569635,
+        "model_size": 2604554380,
+        "model_type": "gemma4 E2B Q4_0",
+        "n_batch": 2048,
+        "n_cpu_moe": 0,
+        "n_depth": 0,
+        "n_gen": 0,
+        "n_gpu_layers": -1,
+        "n_prompt": 129,
+        "n_threads": 4,
+        "n_ubatch": 512,
+        "no_host": false,
+        "no_kv_offload": false,
+        "no_op_offload": 0,
+        "poll": 50,
+        "samples_ns": [
+          5822317638
+        ],
+        "samples_ts": [
+          22.1561
+        ],
+        "split_mode": "layer",
+        "stddev_ns": 0,
+        "stddev_ts": 0.0,
+        "tensor_buft_overrides": "none",
+        "tensor_split": "0.00",
+        "test_time": "2026-09-11T01:03:42Z",
+        "type_k": "f16",
+        "type_v": "f16",
+        "use_direct_io": false,
+        "use_mmap": true
+      },
+      "candidate_events": [
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 0,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 50821045,
+            "down": 8700171,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 5973706,
+            "geglu": 3219747,
+            "input_access": 13492,
+            "input_pack_and_copy": 712274,
+            "input_sync": 19286,
+            "join": 345680,
+            "output_copy": 737484,
+            "qpu_complete": 28191629,
+            "up": 8725490,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 1,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 40417739,
+            "down": 5057962,
+            "exposed_wait": 19,
+            "fallback": 0,
+            "gate": 5529747,
+            "geglu": 2184024,
+            "input_access": 4044231,
+            "input_pack_and_copy": 4768954,
+            "input_sync": 18866,
+            "join": 251422,
+            "output_copy": 429609,
+            "qpu_complete": 24381124,
+            "up": 6356808,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 2,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 45200917,
+            "down": 5274668,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 11017391,
+            "geglu": 458110,
+            "input_access": 8153,
+            "input_pack_and_copy": 696607,
+            "input_sync": 17458,
+            "join": 3065288,
+            "output_copy": 405003,
+            "qpu_complete": 22832301,
+            "up": 4936227,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 3,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 47695337,
+            "down": 9484728,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 7518928,
+            "geglu": 5271834,
+            "input_access": 9360,
+            "input_pack_and_copy": 730518,
+            "input_sync": 18300,
+            "join": 517798,
+            "output_copy": 362572,
+            "qpu_complete": 28237570,
+            "up": 4821988,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 4,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 59070948,
+            "down": 4882535,
+            "exposed_wait": 92,
+            "fallback": 0,
+            "gate": 11035069,
+            "geglu": 5525267,
+            "input_access": 12266,
+            "input_pack_and_copy": 800279,
+            "input_sync": 25759,
+            "join": 556280,
+            "output_copy": 372553,
+            "qpu_complete": 27977044,
+            "up": 5300773,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 5,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 55048344,
+            "down": 5383953,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 10059198,
+            "geglu": 505494,
+            "input_access": 8482,
+            "input_pack_and_copy": 1535807,
+            "input_sync": 18117,
+            "join": 4448137,
+            "output_copy": 437544,
+            "qpu_complete": 23508871,
+            "up": 5520844,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 6,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 44966971,
+            "down": 6852577,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 11837469,
+            "geglu": 426446,
+            "input_access": 15886,
+            "input_pack_and_copy": 938943,
+            "input_sync": 23363,
+            "join": 406429,
+            "output_copy": 469005,
+            "qpu_complete": 28235870,
+            "up": 6606128,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 7,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 29812371,
+            "down": 8298129,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 5371613,
+            "geglu": 872472,
+            "input_access": 7952,
+            "input_pack_and_copy": 4364408,
+            "input_sync": 24625,
+            "join": 227784,
+            "output_copy": 703096,
+            "qpu_complete": 24719217,
+            "up": 5059279,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 8,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 44880501,
+            "down": 5177028,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 10190969,
+            "geglu": 445660,
+            "input_access": 8848,
+            "input_pack_and_copy": 693060,
+            "input_sync": 18592,
+            "join": 269576,
+            "output_copy": 385551,
+            "qpu_complete": 21728681,
+            "up": 4791458,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 9,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 47042014,
+            "down": 5998565,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 6675202,
+            "geglu": 604606,
+            "input_access": 8716,
+            "input_pack_and_copy": 764853,
+            "input_sync": 19683,
+            "join": 670411,
+            "output_copy": 353891,
+            "qpu_complete": 30194304,
+            "up": 8513646,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 10,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 48042459,
+            "down": 5403223,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9657126,
+            "geglu": 744932,
+            "input_access": 13384,
+            "input_pack_and_copy": 731547,
+            "input_sync": 17559,
+            "join": 1378797,
+            "output_copy": 407374,
+            "qpu_complete": 22248443,
+            "up": 5243270,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 11,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 37691045,
+            "down": 5039207,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 5618418,
+            "geglu": 585362,
+            "input_access": 7928,
+            "input_pack_and_copy": 692292,
+            "input_sync": 17632,
+            "join": 2060944,
+            "output_copy": 440935,
+            "qpu_complete": 17362983,
+            "up": 4940921,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 12,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 34732374,
+            "down": 8500537,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 6915352,
+            "geglu": 472190,
+            "input_access": 8239,
+            "input_pack_and_copy": 743247,
+            "input_sync": 19628,
+            "join": 188206,
+            "output_copy": 362991,
+            "qpu_complete": 21886752,
+            "up": 4849208,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 13,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 31500100,
+            "down": 5742119,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 5346866,
+            "geglu": 460966,
+            "input_access": 8733,
+            "input_pack_and_copy": 694800,
+            "input_sync": 18419,
+            "join": 3703987,
+            "output_copy": 507106,
+            "qpu_complete": 17664581,
+            "up": 4869019,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 14,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 44106761,
+            "down": 6241425,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 5202914,
+            "geglu": 556158,
+            "input_access": 10711,
+            "input_pack_and_copy": 715820,
+            "input_sync": 18547,
+            "join": 2579458,
+            "output_copy": 342703,
+            "qpu_complete": 17827007,
+            "up": 4723291,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 15,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 101679533,
+            "down": 9592017,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9748143,
+            "geglu": 7137541,
+            "input_access": 9155,
+            "input_pack_and_copy": 747935,
+            "input_sync": 18346,
+            "join": 319395,
+            "output_copy": 406037,
+            "qpu_complete": 47238478,
+            "up": 15661843,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 16,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 93847997,
+            "down": 10547785,
+            "exposed_wait": 92,
+            "fallback": 0,
+            "gate": 16255005,
+            "geglu": 1191617,
+            "input_access": 9833,
+            "input_pack_and_copy": 790542,
+            "input_sync": 18859,
+            "join": 735410,
+            "output_copy": 385750,
+            "qpu_complete": 42139380,
+            "up": 11704448,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 17,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 87395663,
+            "down": 9642845,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 15846863,
+            "geglu": 865044,
+            "input_access": 8405,
+            "input_pack_and_copy": 735630,
+            "input_sync": 19464,
+            "join": 658949,
+            "output_copy": 486563,
+            "qpu_complete": 37321188,
+            "up": 9701125,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 18,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 96373802,
+            "down": 12595982,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 10696113,
+            "geglu": 4272164,
+            "input_access": 8294,
+            "input_pack_and_copy": 723345,
+            "input_sync": 17706,
+            "join": 864370,
+            "output_copy": 549453,
+            "qpu_complete": 41389683,
+            "up": 12504875,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 19,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 85617943,
+            "down": 10219257,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 9763053,
+            "geglu": 1037248,
+            "input_access": 8178,
+            "input_pack_and_copy": 773687,
+            "input_sync": 17748,
+            "join": 711220,
+            "output_copy": 440160,
+            "qpu_complete": 31550120,
+            "up": 9274782,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 20,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 101672251,
+            "down": 11664103,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9905386,
+            "geglu": 2643000,
+            "input_access": 38998,
+            "input_pack_and_copy": 826289,
+            "input_sync": 18060,
+            "join": 2465813,
+            "output_copy": 467186,
+            "qpu_complete": 40692049,
+            "up": 14088407,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 21,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 87287500,
+            "down": 13439560,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 12022473,
+            "geglu": 4340388,
+            "input_access": 10450,
+            "input_pack_and_copy": 746496,
+            "input_sync": 18445,
+            "join": 420580,
+            "output_copy": 918604,
+            "qpu_complete": 48377765,
+            "up": 15670709,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 22,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 107784869,
+            "down": 11312444,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 14963429,
+            "geglu": 932502,
+            "input_access": 9754,
+            "input_pack_and_copy": 757040,
+            "input_sync": 21598,
+            "join": 1316393,
+            "output_copy": 329547,
+            "qpu_complete": 38153448,
+            "up": 9388788,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 23,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 94516609,
+            "down": 15752390,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 10094379,
+            "geglu": 4839055,
+            "input_access": 8856,
+            "input_pack_and_copy": 777244,
+            "input_sync": 19637,
+            "join": 311928,
+            "output_copy": 441353,
+            "qpu_complete": 43984885,
+            "up": 12032301,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 24,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 82762592,
+            "down": 11041293,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 9405821,
+            "geglu": 968310,
+            "input_access": 10047,
+            "input_pack_and_copy": 776199,
+            "input_sync": 23266,
+            "join": 283473,
+            "output_copy": 425878,
+            "qpu_complete": 39828852,
+            "up": 17149474,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 25,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 91837137,
+            "down": 9462980,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 10965334,
+            "geglu": 1045917,
+            "input_access": 10763,
+            "input_pack_and_copy": 739805,
+            "input_sync": 20461,
+            "join": 254660,
+            "output_copy": 278432,
+            "qpu_complete": 32591917,
+            "up": 10057364,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 26,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 98116601,
+            "down": 16492861,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 15813211,
+            "geglu": 7218182,
+            "input_access": 7581,
+            "input_pack_and_copy": 693234,
+            "input_sync": 17549,
+            "join": 4122871,
+            "output_copy": 380237,
+            "qpu_complete": 50574227,
+            "up": 9928996,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 27,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 91367336,
+            "down": 11121398,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 14572531,
+            "geglu": 1088687,
+            "input_access": 9619,
+            "input_pack_and_copy": 737895,
+            "input_sync": 3497575,
+            "join": 262755,
+            "output_copy": 370563,
+            "qpu_complete": 44583122,
+            "up": 13164643,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 28,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 97192350,
+            "down": 22411365,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 15767338,
+            "geglu": 1262505,
+            "input_access": 27112,
+            "input_pack_and_copy": 928802,
+            "input_sync": 151001,
+            "join": 7226662,
+            "output_copy": 403018,
+            "qpu_complete": 51703279,
+            "up": 10643652,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 29,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 109856907,
+            "down": 11836347,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 18929668,
+            "geglu": 5400466,
+            "input_access": 19917,
+            "input_pack_and_copy": 819820,
+            "input_sync": 27333,
+            "join": 8743607,
+            "output_copy": 423172,
+            "qpu_complete": 54301955,
+            "up": 16815550,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 30,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 102901645,
+            "down": 20996060,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 9827503,
+            "geglu": 3221530,
+            "input_access": 10739,
+            "input_pack_and_copy": 716381,
+            "input_sync": 18265,
+            "join": 3521052,
+            "output_copy": 1274327,
+            "qpu_complete": 52094163,
+            "up": 16002815,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 31,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 50012462,
+            "down": 14557553,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 13776722,
+            "geglu": 877827,
+            "input_access": 9417,
+            "input_pack_and_copy": 703568,
+            "input_sync": 17788,
+            "join": 228649,
+            "output_copy": 397859,
+            "qpu_complete": 43364948,
+            "up": 13011421,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 32,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 79971889,
+            "down": 12542173,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9857718,
+            "geglu": 1440600,
+            "input_access": 8701,
+            "input_pack_and_copy": 5172330,
+            "input_sync": 46442,
+            "join": 264333,
+            "output_copy": 634437,
+            "qpu_complete": 39818269,
+            "up": 9588447,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 33,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 76276652,
+            "down": 11606727,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9396271,
+            "geglu": 1551286,
+            "input_access": 10382,
+            "input_pack_and_copy": 1041162,
+            "input_sync": 18633,
+            "join": 665527,
+            "output_copy": 399982,
+            "qpu_complete": 34203807,
+            "up": 10156543,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 34,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 75688246,
+            "down": 9354300,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 15790777,
+            "geglu": 888387,
+            "input_access": 10584,
+            "input_pack_and_copy": 713855,
+            "input_sync": 18375,
+            "join": 2189930,
+            "output_copy": 942815,
+            "qpu_complete": 39393241,
+            "up": 9626370,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 0,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 24837688,
+            "down": 6433813,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 8491654,
+            "geglu": 525339,
+            "input_access": 10833,
+            "input_pack_and_copy": 738359,
+            "input_sync": 73165,
+            "join": 647299,
+            "output_copy": 279967,
+            "qpu_complete": 21319902,
+            "up": 4757078,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 1,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 24450732,
+            "down": 5680758,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 4935520,
+            "geglu": 439613,
+            "input_access": 8497,
+            "input_pack_and_copy": 727416,
+            "input_sync": 18834,
+            "join": 196430,
+            "output_copy": 774225,
+            "qpu_complete": 17486044,
+            "up": 4869786,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 2,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 59410111,
+            "down": 6316837,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 5791186,
+            "geglu": 701004,
+            "input_access": 11421,
+            "input_pack_and_copy": 2282651,
+            "input_sync": 20470,
+            "join": 2522504,
+            "output_copy": 489879,
+            "qpu_complete": 20879903,
+            "up": 5235738,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 3,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 65937871,
+            "down": 7897620,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 4703869,
+            "geglu": 6816612,
+            "input_access": 8203,
+            "input_pack_and_copy": 727692,
+            "input_sync": 20360,
+            "join": 2183535,
+            "output_copy": 7360215,
+            "qpu_complete": 32217178,
+            "up": 4657502,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 4,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 62555545,
+            "down": 5632754,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 5572961,
+            "geglu": 713180,
+            "input_access": 8074,
+            "input_pack_and_copy": 746654,
+            "input_sync": 22751,
+            "join": 2722742,
+            "output_copy": 353757,
+            "qpu_complete": 20310955,
+            "up": 6158811,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 5,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 66974683,
+            "down": 15716355,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 4660279,
+            "geglu": 1214757,
+            "input_access": 10355,
+            "input_pack_and_copy": 747905,
+            "input_sync": 24848,
+            "join": 947829,
+            "output_copy": 425378,
+            "qpu_complete": 37316721,
+            "up": 12945315,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 6,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 55958140,
+            "down": 5914919,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 6181285,
+            "geglu": 11677684,
+            "input_access": 10013,
+            "input_pack_and_copy": 768876,
+            "input_sync": 20284,
+            "join": 319249,
+            "output_copy": 263974,
+            "qpu_complete": 40743085,
+            "up": 15634235,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 7,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 101534921,
+            "down": 40029909,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 11387519,
+            "geglu": 8018830,
+            "input_access": 9535,
+            "input_pack_and_copy": 759875,
+            "input_sync": 20615,
+            "join": 262354,
+            "output_copy": 1323974,
+            "qpu_complete": 73608982,
+            "up": 12026551,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 8,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 62453686,
+            "down": 5001567,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 13394627,
+            "geglu": 482353,
+            "input_access": 8541,
+            "input_pack_and_copy": 779386,
+            "input_sync": 19419,
+            "join": 3282838,
+            "output_copy": 434495,
+            "qpu_complete": 24869947,
+            "up": 4731665,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 9,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 47229190,
+            "down": 7539624,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 7194549,
+            "geglu": 1285466,
+            "input_access": 8467,
+            "input_pack_and_copy": 1205764,
+            "input_sync": 17892,
+            "join": 1135542,
+            "output_copy": 385699,
+            "qpu_complete": 22950657,
+            "up": 5291439,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 10,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 46905172,
+            "down": 5116555,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9076215,
+            "geglu": 3956513,
+            "input_access": 14524,
+            "input_pack_and_copy": 764937,
+            "input_sync": 22916,
+            "join": 3955133,
+            "output_copy": 357039,
+            "qpu_complete": 24293332,
+            "up": 4966170,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 11,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 44746040,
+            "down": 5532919,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 5202828,
+            "geglu": 723852,
+            "input_access": 8596,
+            "input_pack_and_copy": 707581,
+            "input_sync": 18020,
+            "join": 1958313,
+            "output_copy": 381354,
+            "qpu_complete": 20219474,
+            "up": 7630940,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 12,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 44787198,
+            "down": 15393436,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 5284094,
+            "geglu": 587807,
+            "input_access": 42079,
+            "input_pack_and_copy": 4478036,
+            "input_sync": 197470,
+            "join": 283136,
+            "output_copy": 383693,
+            "qpu_complete": 32149499,
+            "up": 5735911,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 13,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 52240309,
+            "down": 6657545,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 6337100,
+            "geglu": 444785,
+            "input_access": 8744,
+            "input_pack_and_copy": 747910,
+            "input_sync": 19880,
+            "join": 802745,
+            "output_copy": 361789,
+            "qpu_complete": 19855937,
+            "up": 5004420,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 6144,
+          "k": 1536,
+          "layer": 14,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 5376,
+            "fraction": 0.125,
+            "qpu_columns": 768
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 3760128,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 47932452,
+            "down": 5281780,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 6800854,
+            "geglu": 934616,
+            "input_access": 34371,
+            "input_pack_and_copy": 3610062,
+            "input_sync": 32676,
+            "join": 202764,
+            "output_copy": 303299,
+            "qpu_complete": 27408742,
+            "up": 10413458,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 15,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 86019048,
+            "down": 12243679,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 10183544,
+            "geglu": 889083,
+            "input_access": 10021,
+            "input_pack_and_copy": 4418337,
+            "input_sync": 20317,
+            "join": 262113,
+            "output_copy": 374749,
+            "qpu_complete": 38925836,
+            "up": 10769714,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 16,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 77783574,
+            "down": 9804097,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 10024766,
+            "geglu": 890446,
+            "input_access": 7810,
+            "input_pack_and_copy": 703209,
+            "input_sync": 17628,
+            "join": 774420,
+            "output_copy": 382394,
+            "qpu_complete": 33907992,
+            "up": 12059168,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 17,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 98371937,
+            "down": 12358507,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 10644165,
+            "geglu": 7878629,
+            "input_access": 10794,
+            "input_pack_and_copy": 793153,
+            "input_sync": 22196,
+            "join": 1162745,
+            "output_copy": 440692,
+            "qpu_complete": 47691613,
+            "up": 12355818,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 18,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 92428520,
+            "down": 13492111,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 12521742,
+            "geglu": 788862,
+            "input_access": 8639,
+            "input_pack_and_copy": 720597,
+            "input_sync": 18236,
+            "join": 2902082,
+            "output_copy": 3091087,
+            "qpu_complete": 41516606,
+            "up": 10861518,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 19,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 125438773,
+            "down": 11914941,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 13044309,
+            "geglu": 3656738,
+            "input_access": 8491,
+            "input_pack_and_copy": 700943,
+            "input_sync": 18439,
+            "join": 1367277,
+            "output_copy": 394809,
+            "qpu_complete": 39238123,
+            "up": 9483262,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 20,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 87899923,
+            "down": 9678309,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 10375532,
+            "geglu": 906784,
+            "input_access": 9192,
+            "input_pack_and_copy": 725792,
+            "input_sync": 19120,
+            "join": 1032628,
+            "output_copy": 387330,
+            "qpu_complete": 33585831,
+            "up": 11212690,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 21,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 89807724,
+            "down": 9749041,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 13195333,
+            "geglu": 1058987,
+            "input_access": 9744,
+            "input_pack_and_copy": 776446,
+            "input_sync": 19323,
+            "join": 525815,
+            "output_copy": 461912,
+            "qpu_complete": 37936826,
+            "up": 12052684,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 22,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 96438833,
+            "down": 16824730,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 19864614,
+            "geglu": 793949,
+            "input_access": 9381,
+            "input_pack_and_copy": 725311,
+            "input_sync": 19445,
+            "join": 722584,
+            "output_copy": 496252,
+            "qpu_complete": 48478767,
+            "up": 9471940,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 23,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 91825042,
+            "down": 9387729,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 11071042,
+            "geglu": 829593,
+            "input_access": 12127,
+            "input_pack_and_copy": 1372089,
+            "input_sync": 18745,
+            "join": 1450789,
+            "output_copy": 346575,
+            "qpu_complete": 33461410,
+            "up": 10133554,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 24,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 102790383,
+            "down": 16467852,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 9522625,
+            "geglu": 832709,
+            "input_access": 9749,
+            "input_pack_and_copy": 745217,
+            "input_sync": 21288,
+            "join": 278289,
+            "output_copy": 530220,
+            "qpu_complete": 40733620,
+            "up": 12577935,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 25,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 101079055,
+            "down": 23906918,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 12946663,
+            "geglu": 23632703,
+            "input_access": 9216,
+            "input_pack_and_copy": 723266,
+            "input_sync": 27554,
+            "join": 3427817,
+            "output_copy": 486373,
+            "qpu_complete": 73371960,
+            "up": 10898418,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 26,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 120965620,
+            "down": 16436152,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 27939030,
+            "geglu": 2849659,
+            "input_access": 10561,
+            "input_pack_and_copy": 743835,
+            "input_sync": 22559,
+            "join": 3014320,
+            "output_copy": 396633,
+            "qpu_complete": 70664533,
+            "up": 22244781,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 27,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 84280497,
+            "down": 9485560,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 26895195,
+            "geglu": 870879,
+            "input_access": 11427,
+            "input_pack_and_copy": 772734,
+            "input_sync": 22431,
+            "join": 2178497,
+            "output_copy": 372138,
+            "qpu_complete": 49369478,
+            "up": 10921623,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 28,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 85024276,
+            "down": 13920537,
+            "exposed_wait": 37,
+            "fallback": 0,
+            "gate": 22274065,
+            "geglu": 1814105,
+            "input_access": 24839,
+            "input_pack_and_copy": 4257645,
+            "input_sync": 150034,
+            "join": 927733,
+            "output_copy": 333906,
+            "qpu_complete": 53368706,
+            "up": 10569547,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 29,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 115081111,
+            "down": 13047867,
+            "exposed_wait": 129,
+            "fallback": 0,
+            "gate": 11985719,
+            "geglu": 1695199,
+            "input_access": 20525,
+            "input_pack_and_copy": 792987,
+            "input_sync": 27071,
+            "join": 776096,
+            "output_copy": 681403,
+            "qpu_complete": 39595068,
+            "up": 9710690,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 30,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 92876512,
+            "down": 11235201,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 11105287,
+            "geglu": 1617157,
+            "input_access": 8538,
+            "input_pack_and_copy": 709524,
+            "input_sync": 17648,
+            "join": 894891,
+            "output_copy": 348013,
+            "qpu_complete": 34861910,
+            "up": 9795979,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 31,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 75803297,
+            "down": 29838755,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 14106641,
+            "geglu": 17862569,
+            "input_access": 8815,
+            "input_pack_and_copy": 2929342,
+            "input_sync": 18884,
+            "join": 222911,
+            "output_copy": 365956,
+            "qpu_complete": 74605463,
+            "up": 9455821,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 32,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 117222998,
+            "down": 32539876,
+            "exposed_wait": 56,
+            "fallback": 0,
+            "gate": 9971571,
+            "geglu": 3443432,
+            "input_access": 16689,
+            "input_pack_and_copy": 751404,
+            "input_sync": 20266,
+            "join": 1604213,
+            "output_copy": 570482,
+            "qpu_complete": 63959350,
+            "up": 16616420,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 33,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 104265657,
+            "down": 9259041,
+            "exposed_wait": 36,
+            "fallback": 0,
+            "gate": 20959519,
+            "geglu": 17866497,
+            "input_access": 13499,
+            "input_pack_and_copy": 814101,
+            "input_sync": 21373,
+            "join": 249724,
+            "output_copy": 309251,
+            "qpu_complete": 60535759,
+            "up": 11271862,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        },
+        {
+          "backend": "QPU0",
+          "cpu_path": {
+            "down_restricted": true,
+            "gate_restricted": true,
+            "geglu_restricted": true,
+            "up_restricted": true
+          },
+          "dispatch_count": 4,
+          "failure_detail": "",
+          "failure_stage": "",
+          "fallback": false,
+          "hidden_columns": 1536,
+          "integration_boundary": "cpu-repack-first-projection-through-down-join",
+          "intermediate_columns": 12288,
+          "k": 1536,
+          "layer": 34,
+          "m": 129,
+          "operation": "ffn_island",
+          "padded_m": 144,
+          "partition": {
+            "axis": "intermediate_columns",
+            "cpu_columns": 10752,
+            "fraction": 0.125,
+            "qpu_columns": 1536
+          },
+          "programs": [
+            {
+              "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+              "name": "ggml-q4-0-q8-wordscale-mx",
+              "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b"
+            },
+            {
+              "binary_sha256": "3834e2a607d2983d3442ccb2410af1af79cb90bafd55ef2de02ab759f1c746c7",
+              "name": "ggml-geglu-q8-0-split",
+              "source_hash": "b203ce08414e0f15558f8b6dd01fecacc5f9880dd8a3744f1fc2ffe87e408d1e"
+            }
+          ],
+          "resident_weight_bytes": 7520256,
+          "schema_version": 1,
+          "strategy": "complete_channel_partition",
+          "timing_ns": {
+            "cpu_overlap_before_wait": 83968196,
+            "down": 11792370,
+            "exposed_wait": 55,
+            "fallback": 0,
+            "gate": 16474297,
+            "geglu": 819093,
+            "input_access": 8117,
+            "input_pack_and_copy": 787286,
+            "input_sync": 17545,
+            "join": 10750170,
+            "output_copy": 508130,
+            "qpu_complete": 41654584,
+            "up": 11229888,
+            "verification": 0
+          },
+          "verification": {
+            "enabled": false,
+            "max_absolute_error": 0,
+            "mean_absolute_error": 0
+          }
+        }
+      ],
+      "candidate_validation": {
+        "all_cpu_paths_restricted": true,
+        "dispatch_count": 280,
+        "errors": [],
+        "event_count": 70,
+        "fallback_count": 0,
+        "layers": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34
+        ],
+        "logical_rows": 129,
+        "median_timing_ns": {
+          "cpu_overlap_before_wait": 81367240,
+          "down": 9713675,
+          "exposed_wait": 55,
+          "gate": 10138961,
+          "geglu": 1041582,
+          "input_pack_and_copy": 749669,
+          "join": 789420,
+          "qpu_complete": 37318954,
+          "up": 9753334
+        },
+        "observed_physical_rows": [
+          129
+        ],
+        "passes": 2,
+        "resident_weight_bytes": 206807040,
+        "resident_weight_count": 105,
+        "valid": true
+      },
+      "command": [
+        "/home/yiannis/side/llama.cpp/build/bin/llama-bench",
+        "-m",
+        "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "-p",
+        "129",
+        "-n",
+        "0",
+        "-t",
+        "4",
+        "-r",
+        "1",
+        "-o",
+        "json"
+      ],
+      "cooldown": {
+        "initial_c": 72.7,
+        "maximum_start_c": 75.0,
+        "ready_c": 72.7,
+        "wait_seconds": 0.0004287029998977232
+      },
+      "fail_layer": null,
+      "finished_utc": "2026-09-11T01:03:53+00:00",
+      "fraction": 0.125,
+      "kind": "candidate",
+      "process_environment": {
+        "GGML_QPU_FFN_ISLAND": "1",
+        "GGML_QPU_FFN_ISLAND_FRACTION": "0.125",
+        "GGML_QPU_FFN_ISLAND_MAX_ROWS": "528",
+        "GGML_QPU_FFN_ISLAND_MIN_ROWS": "64",
+        "GGML_QPU_FFN_ISLAND_WGS": "24",
+        "GGML_QPU_TELEMETRY": "1",
+        "LD_PRELOAD": "/home/yiannis/side/py-videocore7/build/llama-qpu-runtime/libggml-qpu-inline.so"
+      },
+      "process_index": 0,
+      "returncode": 0,
+      "rows": 129,
+      "samples_ns": [
+        5822317638
+      ],
+      "started_utc": "2026-09-11T01:02:47+00:00",
+      "stderr_nontelemetry": "",
+      "verify": false,
+      "wall_ns": 65962789244,
+      "weight_events": [
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 0,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 0,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 0,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 1,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 1,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 1,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 2,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 2,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 2,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 3,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 3,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 3,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 4,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 4,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 4,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 5,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 5,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 5,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 6,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 6,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 6,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 7,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 7,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 7,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 8,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 8,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 8,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 9,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 9,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 9,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 10,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 10,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 10,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 11,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 11,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 11,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 12,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 12,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 12,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 13,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 13,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 13,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 14,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 1536,
+          "layer": 14,
+          "n": 768,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 5376,
+          "k": 768,
+          "layer": 14,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 768,
+          "resident_bytes": 1253376,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 15,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 15,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 15,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 16,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 16,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 16,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 17,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 17,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 17,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 18,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 18,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 18,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 19,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 19,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 19,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 20,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 20,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 20,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 21,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 21,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 21,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 22,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 22,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 22,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 23,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 23,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 23,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 24,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 24,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 24,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 25,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 25,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 25,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 26,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 26,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 26,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 27,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 27,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 27,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 28,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 28,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 28,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 29,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 29,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 29,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 30,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 30,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 30,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 31,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 31,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 31,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 32,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 32,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 32,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 33,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 33,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 33,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 34,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "gate",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 34,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "up",
+          "schema_version": 1
+        },
+        {
+          "cpu_intermediate_columns": 10752,
+          "k": 1536,
+          "layer": 34,
+          "n": 1536,
+          "operation": "ffn_island",
+          "qpu_intermediate_columns": 1536,
+          "resident_bytes": 2506752,
+          "role": "down",
+          "schema_version": 1
+        }
+      ]
+    },
+    {
+      "benchmark": {
+        "avg_ns": 5099637561,
+        "avg_ts": 25.295915,
+        "backends": "CPU",
+        "build_commit": "91d2fc387",
+        "build_number": 10073,
+        "cpu_info": "CPU",
+        "cpu_mask": "0x0",
+        "cpu_strict": false,
+        "devices": "auto",
+        "embeddings": false,
+        "fit_min_ctx": 0,
+        "fit_target": 0,
+        "flash_attn": -1,
+        "gpu_info": "",
+        "main_gpu": 0,
+        "model_filename": "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "model_n_params": 4628569635,
+        "model_size": 2604554380,
+        "model_type": "gemma4 E2B Q4_0",
+        "n_batch": 2048,
+        "n_cpu_moe": 0,
+        "n_depth": 0,
+        "n_gen": 0,
+        "n_gpu_layers": -1,
+        "n_prompt": 129,
+        "n_threads": 4,
+        "n_ubatch": 512,
+        "no_host": false,
+        "no_kv_offload": false,
+        "no_op_offload": 0,
+        "poll": 50,
+        "samples_ns": [
+          5099637561
+        ],
+        "samples_ts": [
+          25.2959
+        ],
+        "split_mode": "layer",
+        "stddev_ns": 0,
+        "stddev_ts": 0.0,
+        "tensor_buft_overrides": "none",
+        "tensor_split": "0.00",
+        "test_time": "2026-09-11T01:04:57Z",
+        "type_k": "f16",
+        "type_v": "f16",
+        "use_direct_io": false,
+        "use_mmap": true
+      },
+      "candidate_events": [],
+      "candidate_validation": null,
+      "command": [
+        "/home/yiannis/side/llama.cpp/build/bin/llama-bench",
+        "-m",
+        "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "-p",
+        "129",
+        "-n",
+        "0",
+        "-t",
+        "4",
+        "-r",
+        "1",
+        "-o",
+        "json"
+      ],
+      "cooldown": {
+        "initial_c": 74.35,
+        "maximum_start_c": 75.0,
+        "ready_c": 74.35,
+        "wait_seconds": 0.001967301999911797
+      },
+      "fail_layer": null,
+      "finished_utc": "2026-09-11T01:05:08+00:00",
+      "fraction": null,
+      "kind": "cpu-repack",
+      "process_environment": {},
+      "process_index": 0,
+      "returncode": 0,
+      "rows": 129,
+      "samples_ns": [
+        5099637561
+      ],
+      "started_utc": "2026-09-11T01:03:53+00:00",
+      "stderr_nontelemetry": "",
+      "verify": false,
+      "wall_ns": 74378644769,
+      "weight_events": []
+    }
+  ],
+  "schema_version": 1
+}
