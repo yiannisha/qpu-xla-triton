@@ -290,8 +290,8 @@ sudo swapon /dev/zram0
 
 The outputs retain artifact, model, program, repository, and diff hashes;
 commands and environment; raw samples; per-layer events; resident-weight and
-fallback evidence; system state; and bootstrap intervals. See the corrected
-[`RESULTS.md`](../../experiment_logs/20260910-ffn-island-stride-fix/RESULTS.md).
+fallback evidence; system state; and bootstrap intervals. See
+[`BUG_FIX_RESULTS.md`](../../BUG_FIX_RESULTS.md) for the corrected report.
 The original campaign's
 [`RESULTS.md`](../../experiment_logs/20260910-ffn-island/RESULTS.md) remains as
 an explicit correctness erratum and historical record.

@@ -2,6 +2,8 @@
 
 Date: 2026-09-11
 
+Canonical report: `BUG_FIX_RESULTS.md`
+
 ## Verdict
 
 The source-row-stride bug in the CPU half of the channel-partitioned FFN has

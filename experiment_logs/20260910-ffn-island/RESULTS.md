@@ -22,8 +22,8 @@ results are retained separately under
 The corrected, swap-disabled confirmation retains 1.0342x full-prompt speedup
 at M=129 (95% interval 1.0090-1.1104) and 1.0379x complete cached-request
 speedup for a 128-token tool suffix (paired interval 1.0241-1.0520). M=257 is
-inconclusive at 1.0069x (0.9651-1.0168). See the corrected campaign's
-`RESULTS.md` for its full correctness and exclusion record.
+inconclusive at 1.0069x (0.9651-1.0168). See the repository-root
+`BUG_FIX_RESULTS.md` for its full correctness and exclusion record.
 
 The cached-request confidence interval below also used independent resampling
 of CPU and candidate samples even though the processes were collected in
