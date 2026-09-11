@@ -13,6 +13,17 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+evaluation = [
+    "pillow==11.3.0",
+    "pycocotools==2.0.10",
+    "torchvision==0.26.0",
+    "ultralytics==8.4.146",
+]
+
+[project.scripts]
+qpu-model-quality = "qpu_xla.quality.cli:main"
+
 [build-system]
 requires = ["setuptools", "setuptools_scm"]
 build-backend = "setuptools.build_meta"

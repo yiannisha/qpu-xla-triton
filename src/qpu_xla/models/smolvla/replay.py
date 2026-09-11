@@ -26,6 +26,8 @@ class SmolVLAReplay:
     upstream_actions: npt.NDArray[np.float32] | None = None
     model_revision: str = UPSTREAM_SMOLVLA_REVISION
     lerobot_revision: str = UPSTREAM_LEROBOT_REVISION
+    episode_ids: tuple[str, ...] | None = None
+    instruction_ids: tuple[str, ...] | None = None
 
     def validate(self: Self, config: SmolVLAConfig) -> None:
         """Validate all sessions against one native model configuration."""
@@ -39,6 +41,9 @@ class SmolVLAReplay:
             # Validation only needs the topology, so use a small protocol
             # object instead of requiring a second checkpoint instance.
             observation.validate(_ConfigCheckpoint(config))
+        for name, values in (("episode_ids", self.episode_ids), ("instruction_ids", self.instruction_ids)):
+            if values is not None and (len(values) != len(self.observations) or any(not value for value in values)):
+                raise ValueError(f"SmolVLA replay {name} must identify every observation")
         if self.upstream_actions is not None and (
             self.upstream_actions.dtype != np.dtype(np.float32)
             or self.upstream_actions.shape != (len(self.observations), config.chunk_size, config.action_dim)
@@ -79,6 +84,16 @@ class SmolVLAReplay:
             )
             model_revision = str(archive["model_revision"].item())
             lerobot_revision = str(archive["lerobot_revision"].item())
+            episode_ids = (
+                tuple(str(value) for value in archive["episode_ids"].tolist())
+                if "episode_ids" in archive.files
+                else None
+            )
+            instruction_ids = (
+                tuple(str(value) for value in archive["instruction_ids"].tolist())
+                if "instruction_ids" in archive.files
+                else None
+            )
         if images.ndim != 5:
             raise ValueError("SmolVLA replay images must be sessions by cameras by HWC")
         sessions = images.shape[0]
@@ -96,7 +111,7 @@ class SmolVLAReplay:
             )
             for index in range(sessions)
         )
-        replay = cls(observations, upstream, model_revision, lerobot_revision)
+        replay = cls(observations, upstream, model_revision, lerobot_revision, episode_ids, instruction_ids)
         replay.validate(config)
         return replay
 
@@ -115,6 +130,10 @@ class SmolVLAReplay:
         }
         if self.upstream_actions is not None:
             payload["upstream_actions"] = self.upstream_actions
+        if self.episode_ids is not None:
+            payload["episode_ids"] = np.asarray(self.episode_ids)
+        if self.instruction_ids is not None:
+            payload["instruction_ids"] = np.asarray(self.instruction_ids)
         np.savez_compressed(Path(path), **payload)
 
 

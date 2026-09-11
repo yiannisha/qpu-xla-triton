@@ -1,0 +1,102 @@
+diff --git a/common/arg.cpp b/common/arg.cpp
+index 000000000..000000000 100644
+--- a/common/arg.cpp
++++ b/common/arg.cpp
+@@ -2290,6 +2290,13 @@ common_params_context common_params_parser_init(common_params & params, llama_e
+             params.multiple_choice_tasks = value;
+         }
+     ).set_examples({LLAMA_EXAMPLE_PERPLEXITY}));
++    add_opt(common_arg(
++        {"--multiple-choice-jsonl"}, "FNAME",
++        "write one stable JSON record per scored multiple-choice task",
++        [](common_params & params, const std::string & value) {
++            params.multiple_choice_jsonl = value;
++        }
++    ).set_examples({LLAMA_EXAMPLE_PERPLEXITY}));
+     add_opt(common_arg(
+         {"--kl-divergence"},
+         "computes KL-divergence to logits provided via --kl-divergence-base",
+diff --git a/common/common.h b/common/common.h
+index 000000000..000000000 100644
+--- a/common/common.h
++++ b/common/common.h
+@@ -547,6 +547,7 @@ struct common_params {
+ 
+     bool   multiple_choice  = false;  // compute TruthfulQA score over random tasks from datafile supplied in prompt
+     size_t multiple_choice_tasks = 0; // number of tasks to use when computing the TruthfulQA score. If 0, all tasks will be computed
++    std::string multiple_choice_jsonl; // optional stable per-task output used by paired quality evaluation
+ 
+     bool   kl_divergence    = false; // compute KL divergence
+ 
+diff --git a/tools/perplexity/perplexity.cpp b/tools/perplexity/perplexity.cpp
+index 000000000..000000000 100644
+--- a/tools/perplexity/perplexity.cpp
++++ b/tools/perplexity/perplexity.cpp
+@@ -1335,6 +1335,7 @@ struct multiple_choice_task {
+     }
+ 
+     // For evaluation
++    uint32_t source_index;    // stable task index in the source binary
+     size_t i_logits;        // starting index of logits in the llama_batch
+     size_t common_prefix;   // max number of initial tokens that are the same in all sentences
+     size_t required_tokens; // needed number of tokens to evaluate all answers
+@@ -1434,6 +1435,7 @@ static void multiple_choice_score(llama_context * ctx, const common_params & par
+         int i = 0;
+         for (auto& task : tasks) {
+             ++i;
++            task.source_index = i - 1;
+             if (!task.deserialize(strstream)) {
+                 LOG_ERR("%s: failed to read task %d of %u\n", __func__, i, n_task);
+                 return;
+@@ -1457,6 +1459,7 @@ static void multiple_choice_score(llama_context * ctx, const common_params & par
+             int idx = aux[j];
+             aux[j] = aux.back();
+             aux.pop_back();
++            task.source_index = idx;
+             strstream.seekg(task_pos[idx], std::ios::beg);
+             if (!task.deserialize(strstream)) {
+                 LOG_ERR("%s: failed to read task %d at position %u\n", __func__, idx, task_pos[idx]);
+@@ -1512,6 +1515,16 @@ static void multiple_choice_score(llama_context * ctx, const common_params & par
+ 
+     LOG("\ntask\tacc_norm\n");
+ 
++    std::ofstream per_task_output;
++    if (!params.multiple_choice_jsonl.empty()) {
++        per_task_output.open(params.multiple_choice_jsonl, std::ios::out | std::ios::trunc);
++        if (!per_task_output) {
++            LOG_ERR("%s: failed to open per-task output %s\n", __func__, params.multiple_choice_jsonl.c_str());
++            return;
++        }
++        per_task_output.precision(9);
++    }
++
+     const int n_ctx   = llama_n_ctx(ctx);
+     const int n_batch = params.n_batch;
+ 
+@@ -1651,6 +1664,26 @@ static void multiple_choice_score(llama_context * ctx, const common_params & par
+                 }
+             }
+ 
++            if (per_task_output) {
++                size_t correct_index = cur_task.mc1.labels.size();
++                for (size_t s = 0; s < cur_task.mc1.labels.size(); ++s) {
++                    if (cur_task.mc1.labels[s] == 1) {
++                        correct_index = s;
++                        break;
++                    }
++                }
++                per_task_output
++                    << "{\"task_id\":" << cur_task.source_index
++                    << ",\"correct_index\":" << correct_index
++                    << ",\"predicted_index\":" << logprob_max_idx
++                    << ",\"log_probs\":[";
++                for (size_t s = 0; s < cur_task.log_probs.size(); ++s) {
++                    if (s != 0) per_task_output << ',';
++                    per_task_output << cur_task.log_probs[s];
++                }
++                per_task_output << "]}\n";
++            }
++
+             n_tot_answers += cur_task.log_probs.size();
+             if (cur_task.mc1.labels[logprob_max_idx] == 1) {
+                 ++n_correct;

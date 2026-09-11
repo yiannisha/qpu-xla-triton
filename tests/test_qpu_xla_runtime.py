@@ -141,6 +141,17 @@ def test_queue_exports_chrome_trace_for_delay_work_and_dependencies(tmp_path) ->
         assert '"traceEvents"' in trace_path.read_text(encoding="utf-8")
 
 
+def test_queue_can_count_and_release_completed_profiling_events() -> None:
+    with Device.fake() as device, device.queue() as queue:
+        queue.host_task(lambda: None)
+        second = queue.host_task(lambda: None)
+        second.wait()
+
+        assert queue.consume_completed_event_counts() == {"host": 2}
+        assert queue.consume_completed_event_counts() == {}
+        assert queue.chrome_trace() == {"traceEvents": []}
+
+
 def test_queue_propagates_host_task_failures_and_cancellation() -> None:
     with Device.fake() as device, device.queue() as queue:
         failed = queue.host_task(lambda: (_ for _ in ()).throw(ValueError("boom")))

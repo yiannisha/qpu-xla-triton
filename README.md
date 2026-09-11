@@ -96,6 +96,10 @@ and one-layer regressions for standalone deployment winners.
 
 ## Running tests
 
+Full-model CPU/QPU output comparisons for Gemma MMLU, ResNet-18 ImageNet,
+YOLOv8n COCO, and SmolVLA replay are documented in
+[MODEL-QUALITY.md](MODEL-QUALITY.md).
+
 Run the full test suite on a development host:
 
 ```console

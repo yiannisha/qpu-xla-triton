@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import numpy as np
@@ -24,6 +25,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--upstream-cache", type=Path)
     parser.add_argument("--cpu-threads", type=int, default=4)
     parser.add_argument("--skip-checksums", action="store_true")
+    parser.add_argument("--resume", action="store_true")
     return parser.parse_args()
 
 
@@ -34,6 +36,17 @@ def main() -> None:
     artifact = SmolVLAArtifact.open(args.artifact, verify=not args.skip_checksums)
     config = artifact.checkpoint.config
     replay = SmolVLAReplay.load(args.input, config)
+    partial_path = args.output.with_suffix(".partial.npy")
+    progress_path = args.output.with_suffix(".progress.json")
+    processed = 0
+    expected_shape = (len(replay.observations), config.chunk_size, config.action_dim)
+    if args.resume and partial_path.exists() and progress_path.exists():
+        actions = np.lib.format.open_memmap(partial_path, mode="r+")
+        processed = int(json.loads(progress_path.read_text(encoding="utf-8"))["processed_observations"])
+        if actions.shape != expected_shape or not 0 <= processed <= len(replay.observations):
+            raise ValueError("SmolVLA upstream-action checkpoint has incompatible shape or progress")
+    else:
+        actions = np.lib.format.open_memmap(partial_path, mode="w+", dtype=np.float32, shape=expected_shape)
     oracle = UpstreamTorchSmolVLAOracle.open(
         config,
         lerobot_checkout=args.lerobot_checkout,
@@ -41,15 +54,20 @@ def main() -> None:
         cache_directory=args.upstream_cache,
         cpu_threads=args.cpu_threads,
     )
-    actions = np.ascontiguousarray(
-        np.stack([oracle.predict_action_chunk(observation) for observation in replay.observations]),
-        dtype=np.float32,
-    )
+    for index in range(processed, len(replay.observations)):
+        actions[index] = oracle.predict_action_chunk(replay.observations[index])
+        actions.flush()
+        temporary = progress_path.with_suffix(".json.tmp")
+        temporary.write_text(json.dumps({"processed_observations": index + 1}) + "\n", encoding="utf-8")
+        temporary.replace(progress_path)
+        print(f"SmolVLA upstream: {index + 1}/{len(replay.observations)}", flush=True)
     recorded = SmolVLAReplay(
         replay.observations,
-        actions,
+        np.ascontiguousarray(actions),
         replay.model_revision,
         replay.lerobot_revision,
+        replay.episode_ids,
+        replay.instruction_ids,
     )
     recorded.save(args.output, config)
     print(f"recorded {len(replay.observations)} upstream action chunks in {args.output}")

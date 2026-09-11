@@ -346,6 +346,28 @@ class Queue:
                 )
         return {"traceEvents": trace_events}
 
+    def consume_completed_event_counts(self: Self) -> dict[str, int]:
+        """Count and release completed profiling events by execution category.
+
+        Long-running model qualification can submit millions of small kernels.
+        Callers that need aggregate dispatch coverage rather than a full Chrome
+        trace can consume completed events at safe synchronization boundaries
+        to keep profiling memory bounded.
+        """
+        with self._lock:
+            completed: list[Event] = []
+            retained: list[Event] = []
+            for event in self._events:
+                (completed if event.done else retained).append(event)
+            self._events = retained
+            self._live_accesses = [
+                (access, event) for access, event in self._live_accesses if not event.done
+            ]
+        counts: dict[str, int] = {}
+        for event in completed:
+            counts[event._category] = counts.get(event._category, 0) + 1
+        return counts
+
     def write_chrome_trace(self: Self, path: str | PathLike[str]) -> None:
         """Serialize :meth:`chrome_trace` to a Chrome Trace Event JSON file."""
         with open(path, "w", encoding="utf-8") as trace_file:

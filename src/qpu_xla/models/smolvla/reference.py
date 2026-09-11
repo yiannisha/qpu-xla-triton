@@ -402,8 +402,16 @@ class SmolVLAReferenceRuntime:
         masks: list[npt.NDArray[np.bool_]] = []
         scale = np.float32(np.sqrt(config.vlm_hidden_size))
         for image, present in zip(observation.images, observation.image_masks, strict=True):
-            image_embedding = self._vision_image(image)
-            image_embedding = self._scale(image_embedding, scale)
+            if present:
+                image_embedding = self._scale(self._vision_image(image), scale)
+            else:
+                # Every later attention mask excludes this entire token block.
+                # Avoid executing the vision tower for an absent camera while
+                # preserving the fixed prefix shape expected by the VLM.
+                image_embedding = np.zeros(
+                    (config.image_token_count, config.vlm_hidden_size),
+                    dtype=np.float32,
+                )
             pieces.append(image_embedding)
             masks.append(np.full((config.image_token_count,), present, dtype=np.bool_))
         embedding = self.checkpoint.fp32(f"{self._root}vlm_with_expert.vlm.model.text_model.embed_tokens.weight")
