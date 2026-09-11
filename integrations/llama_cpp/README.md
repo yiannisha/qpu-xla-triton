@@ -120,7 +120,8 @@ Apply the inline hooks to a clean pinned checkout with:
 git -C /home/yiannis/side/llama.cpp apply \
   /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch \
   /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0002-ggml-cpu-inline-m1-q4-hook.patch \
-  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0003-ggml-cpu-complete-ffn-island-hook.patch
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0003-ggml-cpu-complete-ffn-island-hook.patch \
+  /home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0005-ggml-cpu-stride-aware-repack-quantizer.patch
 cmake --build /home/yiannis/side/llama.cpp/build --target llama-server
 ```
 
@@ -217,7 +218,33 @@ Q4_0 x Q8_0 reference. `GGML_QPU_FFN_ISLAND_FAIL_STAGE` and
 `GGML_QPU_FFN_ISLAND_FAIL_LAYER` inject deterministic fallback failures.
 Leaving the main enable flag unset preserves native CPU_REPACK behavior.
 
-The final September 10 evaluation used four GGML threads and the full Gemma 4
+The corrected path has three complementary regressions:
+
+```sh
+build/llama-qpu-runtime/qpu_repack_stride_smoke
+build/llama-qpu-runtime/qpu_ffn_island_graph_smoke
+build/llama-qpu-runtime/qpu_ffn_island_model_smoke \
+  /home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf
+```
+
+The first compares strided and compact Q8_0x4 quantization byte for byte and
+also proves that the old shortened-stride call fails. The second compares the
+complete joined CPU/QPU FFN output with native CPU_REPACK for M=129 and M=257,
+including deterministic QPU failure recovery. The third compares the complete
+next-token vocabulary logits for three deterministic real-model prompts at
+both shapes and verifies four QPU dispatches in every model layer. Both timing
+evaluators run all three checks before collecting samples.
+
+The following September 10 result is historical and invalidated. The evaluated
+binary used the shortened CPU-prefix width as the F32 source-row stride during
+down-projection quantization, corrupting rows two through four in each
+four-row group. The timing calculations remain reproducible, but they do not
+establish correctness-preserving acceleration. The stride-aware fourth patch,
+joined-FFN regression, full-vocabulary real-model regression, and corrected
+rerun are documented under
+`experiment_logs/20260910-ffn-island-stride-fix/`.
+
+The invalidated September 10 evaluation used four GGML threads and the full Gemma 4
 E2B Q4_K_XL model, whose selected FFN tensors are Q4_0. With a fixed 1/8 QPU
 fraction and five separately cooled,
 randomized processes per placement, full-model prompt processing improved by
@@ -374,10 +401,10 @@ placement.
 
 The older native Q4_0, Q4_K, Q6_K, Q8_0, fused-attention, GEGLU row-hybrid, and
 single-`ffn_up` candidates remain slower or inconclusive at complete-request
-scope. The complete FFN channel island is the first retained integration to
-show statistically positive full-model and post-tool request gains while
-executing real QPU work. It remains disabled by default because the confirmed
-agentic median is below the 1.05x automatic-promotion threshold. See
+scope. The complete FFN channel island's original positive result is
+invalidated by the stride bug described above; its corrected end-to-end
+verdict must come from the stride-fix rerun. It remains disabled by default.
+See
 [`IMPLEMENTATION_RESULTS.md`](eval/IMPLEMENTATION_RESULTS.md) for the five-path
 2026-08-25 follow-up and retained end-to-end result,
 [`UP_OVERLAP_RESULTS.md`](../../experiment_logs/20260824-qpu-agentic-prefill/UP_OVERLAP_RESULTS.md)

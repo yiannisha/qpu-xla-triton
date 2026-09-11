@@ -150,8 +150,18 @@ def collect_environment() -> dict[str, Any]:
         "temperature": run_capture(["vcgencmd", "measure_temp"]),
         "cpu_clock": run_capture(["vcgencmd", "measure_clock", "arm"]),
         "v3d_clock": run_capture(["vcgencmd", "measure_clock", "v3d"]),
-        "zram": run_capture(["zramctl", "--json"]),
+        "zram": run_capture(["zramctl", "--output-all", "--bytes"]),
+        "vmstat": run_capture(["cat", "/proc/vmstat"]),
         "llama_servers": run_capture(["pgrep", "-a", "-x", "llama-server"]),
+        "accelerator_workloads": run_capture(
+            [
+                "pgrep",
+                "-af",
+                "llama-(server|bench|perplexity)|qpu-model-quality|"
+                "qpu_.*(bench|smoke)|record_smolvla|"
+                "smolvla.*(benchmark|quality|replay)",
+            ]
+        ),
         "system_load": run_capture(["uptime"]),
     }
     return {
@@ -180,3 +190,20 @@ def swap_used_bytes(environment: dict[str, Any]) -> int | None:
         return sum(int(value) for value in values)
     except ValueError:
         return None
+
+
+def swap_io_pages(environment: dict[str, Any]) -> dict[str, int] | None:
+    """Return cumulative kernel swap-I/O counters from a retained environment probe."""
+    record = environment.get("commands", {}).get("vmstat", {})
+    if record.get("returncode") != 0:
+        return None
+    counters: dict[str, int] = {}
+    for line in str(record.get("stdout", "")).splitlines():
+        fields = line.split()
+        if len(fields) != 2 or fields[0] not in {"pswpin", "pswpout"}:
+            continue
+        try:
+            counters[fields[0]] = int(fields[1])
+        except ValueError:
+            return None
+    return counters if set(counters) == {"pswpin", "pswpout"} else None

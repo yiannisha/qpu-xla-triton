@@ -23,9 +23,11 @@ from scripts.run_llama_cpp_qpu_ffn_island_eval import (  # noqa: E402
     git_record,
     integer_list,
     manifest_programs,
+    paired_speedup_interval,
     parse_prefixed_json,
+    require_no_competing_workloads,
     retention,
-    speedup_interval,
+    run_correctness_preflight,
     validate_candidate,
     wait_until_cool,
 )
@@ -137,7 +139,9 @@ def execute(
     minimum_rows: int,
     maximum_rows: int,
 ) -> dict[str, Any]:
+    require_no_competing_workloads("before agentic cooldown")
     cooldown = wait_until_cool(cooldown_c, 600.0)
+    require_no_competing_workloads("before agentic server launch")
     sample = run_server_case(
         server,
         case,
@@ -145,6 +149,7 @@ def execute(
         startup_timeout=180.0,
         request_timeout=300.0,
     )
+    require_no_competing_workloads("after agentic server completion")
     sample["cooldown"] = cooldown
     if sample["returncode"] != 0:
         raise RuntimeError(f"server case failed: {sample.get('error')}\n{sample.get('server_log', '')}")
@@ -204,6 +209,21 @@ def main() -> None:
     parser.add_argument("--model", type=Path, default=Path("/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"))
     parser.add_argument("--plugin", type=Path, default=ROOT / "build/llama-qpu-runtime/libggml-qpu-inline.so")
     parser.add_argument("--program-manifest", type=Path, default=ROOT / "integrations/llama_cpp/generated/manifest.json")
+    parser.add_argument(
+        "--stride-smoke",
+        type=Path,
+        default=ROOT / "build/llama-qpu-runtime/qpu_repack_stride_smoke",
+    )
+    parser.add_argument(
+        "--graph-smoke",
+        type=Path,
+        default=ROOT / "build/llama-qpu-runtime/qpu_ffn_island_graph_smoke",
+    )
+    parser.add_argument(
+        "--model-smoke",
+        type=Path,
+        default=ROOT / "build/llama-qpu-runtime/qpu_ffn_island_model_smoke",
+    )
     parser.add_argument("--prefix", type=int, default=512)
     parser.add_argument("--suffixes", type=integer_list, default=integer_list("64,128"))
     parser.add_argument("--fraction", type=float, default=0.125)
@@ -223,11 +243,26 @@ def main() -> None:
         args.bootstrap_resamples = 500
     if args.samples <= 0 or args.prefix <= args.maximum_rows or args.maximum_rows < max(args.suffixes) + 1:
         parser.error("samples must be positive; prefix must exceed max rows; max rows must cover suffix+1")
-    for path in (args.server, args.model, args.plugin, args.program_manifest):
+    for path in (
+        args.server,
+        args.model,
+        args.plugin,
+        args.program_manifest,
+        args.stride_smoke,
+        args.graph_smoke,
+        args.model_smoke,
+    ):
         if not path.is_file():
             parser.error(f"required artifact not found: {path}")
 
     programs = manifest_programs(args.program_manifest)
+    correctness_preflight = run_correctness_preflight(
+        (
+            (args.stride_smoke,),
+            (args.graph_smoke,),
+            (args.model_smoke, args.model),
+        )
+    )
     before = collect_environment()
     samples: list[dict[str, Any]] = []
     pair_results: list[dict[str, Any]] = []
@@ -279,13 +314,13 @@ def main() -> None:
             semantic_identity(cpu["response_semantics"], qpu["response_semantics"])
             for cpu, qpu in zip(cpu_samples, qpu_samples, strict=True)
         ]
-        prompt_interval = speedup_interval(
+        prompt_interval = paired_speedup_interval(
             [prompt_ns(item) for item in cpu_samples],
             [prompt_ns(item) for item in qpu_samples],
             seed=args.seed + suffix * 17,
             resamples=args.bootstrap_resamples,
         )
-        request_interval = speedup_interval(
+        request_interval = paired_speedup_interval(
             [int(item["request_wall_ns"]) for item in cpu_samples],
             [int(item["request_wall_ns"]) for item in qpu_samples],
             seed=args.seed + suffix * 19,
@@ -313,7 +348,11 @@ def main() -> None:
             "timed_boundary": "post-tool server request through the first greedy generated token",
             "baseline": "llama.cpp CPU_REPACK",
             "candidate": "complete QPU FFN channel island at the uncached suffix only",
-            "correctness": "exact raw greedy token IDs, bytes, stop reason, and tool-call structure",
+            "correctness": (
+                "preflight stride, joined-FFN, and full-vocabulary differentials "
+                "plus exact raw greedy token IDs, bytes, stop reason, and "
+                "tool-call structure"
+            ),
         },
         "configuration": {
             "prefix_tokens": args.prefix,
@@ -342,6 +381,7 @@ def main() -> None:
             "py_videocore7": git_record(ROOT),
             "llama_cpp": git_record(Path("/home/yiannis/side/llama.cpp")),
         },
+        "correctness_preflight": correctness_preflight,
         "samples": samples,
         "pair_results": pair_results,
         "environment_before": before,

@@ -2,7 +2,28 @@
 
 Date: 2026-09-10
 
-## Outcome
+## Correctness erratum
+
+Do not use this campaign to claim acceleration. The evaluated implementation
+quantized only the 5,376-channel CPU prefix before the down projection but
+also used 5,376 as the spacing between source rows. The actual F32 rows remain
+6,144 values apart, so rows two through four of every four-row group read the
+wrong channels. The original online check covered only the QPU suffix, and the
+one-token response comparisons did not expose the corrupted CPU prefix.
+
+The timing arithmetic and recorded QPU dispatch evidence below remain valid
+descriptions of that faulty binary, but the speedups are invalid as
+correctness-preserving acceleration evidence. Patch
+`0005-ggml-cpu-stride-aware-repack-quantizer.patch` separates the quantized
+width from the source-row stride. Corrected joined-FFN, full-logit, and timing
+results are retained separately under
+`experiment_logs/20260910-ffn-island-stride-fix/`.
+
+The cached-request confidence interval below also used independent resampling
+of CPU and candidate samples even though the processes were collected in
+pairs. The corrected evaluator uses a paired bootstrap for that workflow.
+
+## Historical outcome (invalidated by the erratum above)
 
 The complete channel-partitioned FFN island is now integrated into the actual
 llama.cpp CPU_REPACK graph. The final current-binary campaign produces a
@@ -179,6 +200,6 @@ python scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py \
   --output experiment_logs/20260910-ffn-island/agentic-current-binary-5.json
 ```
 
-The three-patch stack under `integrations/llama_cpp/patches/` applies cleanly
+The historical three-patch stack under `integrations/llama_cpp/patches/` applies cleanly
 to the pinned commit and reproduces the modified `ops.cpp` and `repack.cpp`
 byte for byte.

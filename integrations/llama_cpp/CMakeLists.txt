@@ -38,6 +38,8 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
         PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     find_library(GGML_LIBRARY_FOR_QPU_BACKEND NAMES ggml
         PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
+    find_library(LLAMA_LIBRARY_FOR_QPU_BACKEND NAMES llama
+        PATHS "${LLAMA_CPP_BUILD_DIR}/bin" NO_DEFAULT_PATH REQUIRED)
     add_library(ggml-qpu MODULE backend/ggml-qpu.cpp)
     target_include_directories(ggml-qpu PRIVATE
         include
@@ -120,6 +122,66 @@ if(QPU_LLAMA_BUILD_GGML_BACKEND)
         add_test(NAME qpu_ffn_island_hardware COMMAND qpu_ffn_island_smoke)
         set_tests_properties(qpu_ffn_island_hardware PROPERTIES LABELS hardware)
     endif()
+
+    add_executable(qpu_ffn_island_graph_smoke
+        tests/qpu_ffn_island_graph_smoke.cpp)
+    target_include_directories(qpu_ffn_island_graph_smoke PRIVATE
+        include
+        "${LLAMA_CPP_ROOT}/ggml/include"
+        "${LLAMA_CPP_ROOT}/ggml/src"
+        "${LLAMA_CPP_ROOT}/ggml/src/ggml-cpu")
+    target_link_libraries(qpu_ffn_island_graph_smoke PRIVATE
+        ggml-qpu-inline
+        "${GGML_CPU_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_BASE_LIBRARY_FOR_QPU_BACKEND}")
+    target_compile_features(qpu_ffn_island_graph_smoke PRIVATE cxx_std_17)
+    target_compile_options(qpu_ffn_island_graph_smoke PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    set_target_properties(qpu_ffn_island_graph_smoke PROPERTIES
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
+    if(BUILD_TESTING AND QPU_LLAMA_BUILD_HARDWARE_TESTS)
+        add_test(NAME qpu_ffn_island_graph_hardware
+            COMMAND qpu_ffn_island_graph_smoke)
+        set_tests_properties(qpu_ffn_island_graph_hardware PROPERTIES LABELS hardware)
+    endif()
+
+    add_executable(qpu_repack_stride_smoke tests/qpu_repack_stride_smoke.cpp)
+    target_include_directories(qpu_repack_stride_smoke PRIVATE
+        "${LLAMA_CPP_ROOT}/ggml/include"
+        "${LLAMA_CPP_ROOT}/ggml/src"
+        "${LLAMA_CPP_ROOT}/ggml/src/ggml-cpu")
+    target_link_libraries(qpu_repack_stride_smoke PRIVATE
+        "${GGML_CPU_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_BASE_LIBRARY_FOR_QPU_BACKEND}")
+    target_compile_features(qpu_repack_stride_smoke PRIVATE cxx_std_17)
+    target_compile_options(qpu_repack_stride_smoke PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    set_target_properties(qpu_repack_stride_smoke PROPERTIES
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
+    if(BUILD_TESTING)
+        add_test(NAME qpu_repack_stride COMMAND qpu_repack_stride_smoke)
+    endif()
+
+    add_executable(qpu_ffn_island_model_smoke
+        tests/qpu_ffn_island_model_smoke.cpp)
+    target_include_directories(qpu_ffn_island_model_smoke PRIVATE
+        include
+        "${LLAMA_CPP_ROOT}/include"
+        "${LLAMA_CPP_ROOT}/ggml/include"
+        "${LLAMA_CPP_ROOT}/vendor")
+    target_link_libraries(qpu_ffn_island_model_smoke PRIVATE
+        ggml-qpu-inline
+        "${LLAMA_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_CPU_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_LIBRARY_FOR_QPU_BACKEND}"
+        "${GGML_BASE_LIBRARY_FOR_QPU_BACKEND}")
+    target_compile_features(qpu_ffn_island_model_smoke PRIVATE cxx_std_17)
+    target_compile_options(qpu_ffn_island_model_smoke PRIVATE
+        -Wall -Wextra -Wpedantic -Werror)
+    set_target_properties(qpu_ffn_island_model_smoke PROPERTIES
+        BUILD_RPATH "${LLAMA_CPP_BUILD_DIR}/bin")
 
     add_executable(qpu_ggml_backend_smoke tests/qpu_ggml_backend_smoke.cpp)
     target_include_directories(qpu_ggml_backend_smoke PRIVATE

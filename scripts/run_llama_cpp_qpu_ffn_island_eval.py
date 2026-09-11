@@ -24,6 +24,7 @@ if str(ROOT) not in sys.path:
 from scripts.llama_cpp_common import (  # noqa: E402
     collect_environment,
     sha256_file,
+    swap_io_pages,
     swap_used_bytes,
     utc_now,
     write_json_atomic,
@@ -31,6 +32,10 @@ from scripts.llama_cpp_common import (  # noqa: E402
 
 ISLAND_PREFIX = "qpu_llama_candidate_json:"
 WEIGHT_PREFIX = "qpu_llama_weight_json:"
+COMPETING_WORKLOAD_PATTERN = (
+    "llama-(server|bench|perplexity)|qpu-model-quality|qpu_.*(bench|smoke)|"
+    "record_smolvla|smolvla.*(benchmark|quality|replay)"
+)
 ISLAND_ENVIRONMENT_KEYS = (
     "LD_PRELOAD",
     "GGML_QPU_FFN_ISLAND",
@@ -92,6 +97,23 @@ def wait_until_cool(maximum_c: float, timeout_seconds: float) -> dict[str, Any]:
     }
 
 
+def require_no_competing_workloads(boundary: str) -> None:
+    completed = subprocess.run(
+        ["pgrep", "-af", COMPETING_WORKLOAD_PATTERN],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode not in (0, 1):
+        raise RuntimeError(
+            f"failed to inspect competing workloads at {boundary}: {completed.stderr}"
+        )
+    if completed.stdout.strip():
+        raise RuntimeError(
+            f"competing accelerator/model workload at {boundary}:\n{completed.stdout}"
+        )
+
+
 def parse_prefixed_json(stderr: str, prefix: str) -> list[dict[str, Any]]:
     result: list[dict[str, Any]] = []
     for line in stderr.splitlines():
@@ -115,6 +137,43 @@ def manifest_programs(path: Path) -> dict[str, dict[str, Any]]:
         if sha256_file(binary) != entry["binary_sha256"]:
             raise ValueError(f"binary hash mismatch: {binary}")
     return result
+
+
+def run_correctness_preflight(
+    commands: tuple[tuple[Path, ...], ...]
+) -> list[dict[str, Any]]:
+    """Run and retain every mandatory correctness executable."""
+    results: list[dict[str, Any]] = []
+    for command_paths in commands:
+        executable = command_paths[0]
+        command = [str(path.resolve()) for path in command_paths]
+        require_no_competing_workloads(
+            f"before correctness preflight {executable.name}"
+        )
+        started_utc = utc_now()
+        completed = subprocess.run(
+            command, text=True, capture_output=True, check=False
+        )
+        require_no_competing_workloads(
+            f"after correctness preflight {executable.name}"
+        )
+        result = {
+            "executable": str(executable.resolve()),
+            "sha256": sha256_file(executable),
+            "command": command,
+            "started_utc": started_utc,
+            "finished_utc": utc_now(),
+            "returncode": completed.returncode,
+            "stdout": completed.stdout,
+            "stderr": completed.stderr,
+        }
+        results.append(result)
+        if completed.returncode != 0:
+            raise RuntimeError(
+                f"correctness preflight failed: {executable}\n"
+                f"{completed.stdout}{completed.stderr}"
+            )
+    return results
 
 
 def validate_candidate(
@@ -233,7 +292,9 @@ def run_benchmark(
     verify: bool = False,
     fail_layer: int | None = None,
 ) -> dict[str, Any]:
+    require_no_competing_workloads("before cooldown")
     cooldown = wait_until_cool(cooldown_c, 600.0)
+    require_no_competing_workloads("before benchmark launch")
     command = [
         str(binary.resolve()), "-m", str(model.resolve()), "-p", str(rows), "-n", "0",
         "-t", str(threads), "-r", str(repetitions), "-o", "json",
@@ -266,6 +327,7 @@ def run_benchmark(
     started_ns = time.monotonic_ns()
     completed = subprocess.run(command, text=True, capture_output=True, check=False, env=environment)
     wall_ns = time.monotonic_ns() - started_ns
+    require_no_competing_workloads("after benchmark completion")
     try:
         benchmark = json.loads(completed.stdout)
     except json.JSONDecodeError as exc:
@@ -324,9 +386,40 @@ def speedup_interval(
             rng.choice(right, right.size, replace=True)
         )
     return {
+        "resampling_scheme": "independent-two-sample-bootstrap",
         "baseline_median_ns": int(median(baseline)),
         "candidate_median_ns": int(median(candidate)),
         "median_speedup": float(median(baseline) / median(candidate)),
+        "bootstrap_95_low": float(np.quantile(ratios, 0.025)),
+        "bootstrap_95_high": float(np.quantile(ratios, 0.975)),
+        "resamples": resamples,
+        "seed": seed,
+    }
+
+
+def paired_speedup_interval(
+    baseline: list[int], candidate: list[int], *, seed: int, resamples: int
+) -> dict[str, float | int | list[float] | str]:
+    """Bootstrap a median ratio while preserving CPU/candidate process pairs."""
+    if not baseline or len(baseline) != len(candidate):
+        raise ValueError("paired samples must be nonempty and equal length")
+    rng = np.random.default_rng(seed)
+    left = np.asarray(baseline, dtype=np.float64)
+    right = np.asarray(candidate, dtype=np.float64)
+    ratios = np.empty(resamples, dtype=np.float64)
+    for index in range(resamples):
+        selection = rng.integers(0, left.size, size=left.size)
+        ratios[index] = np.median(left[selection]) / np.median(right[selection])
+    return {
+        "resampling_scheme": "paired-bootstrap",
+        "pair_count": len(baseline),
+        "baseline_median_ns": int(median(baseline)),
+        "candidate_median_ns": int(median(candidate)),
+        "median_speedup": float(median(baseline) / median(candidate)),
+        "pair_speedups": [
+            float(left_value / right_value)
+            for left_value, right_value in zip(baseline, candidate, strict=True)
+        ],
         "bootstrap_95_low": float(np.quantile(ratios, 0.025)),
         "bootstrap_95_high": float(np.quantile(ratios, 0.975)),
         "resamples": resamples,
@@ -406,8 +499,19 @@ def retention(before: dict[str, Any], after: dict[str, Any], runs: list[dict[str
         reasons.append(f"CPU governors were {sorted(str(item) for item in governors)}")
     if before["commands"]["llama_servers"].get("stdout", "").strip():
         reasons.append("a pre-existing llama-server process was active")
-    if swap_used_bytes(before) != 0 or swap_used_bytes(after) != 0:
-        reasons.append("swap use was unavailable or nonzero")
+    for label, environment in (("before", before), ("after", after)):
+        workloads = environment["commands"].get("accelerator_workloads", {})
+        if workloads.get("stdout", "").strip():
+            reasons.append(f"{label} competing accelerator/model workloads were active")
+    before_swap_io = swap_io_pages(before)
+    after_swap_io = swap_io_pages(after)
+    if before_swap_io is None or after_swap_io is None:
+        reasons.append("swap I/O counters were unavailable")
+    elif before_swap_io != after_swap_io:
+        reasons.append(
+            "swap I/O occurred during the campaign "
+            f"({before_swap_io} -> {after_swap_io})"
+        )
     for label, environment in (("before", before), ("after", after)):
         text = environment["commands"]["throttling"].get("stdout", "")
         try:
@@ -418,7 +522,14 @@ def retention(before: dict[str, Any], after: dict[str, Any], runs: list[dict[str
             reasons.append(f"{label} current throttling flags were {current_flags}")
     if any(run["returncode"] != 0 for run in runs):
         reasons.append("one or more benchmark processes failed")
-    return {"retained": not reasons, "rejection_reasons": reasons}
+    return {
+        "retained": not reasons,
+        "rejection_reasons": reasons,
+        "swap_used_bytes_before": swap_used_bytes(before),
+        "swap_used_bytes_after": swap_used_bytes(after),
+        "swap_io_pages_before": before_swap_io,
+        "swap_io_pages_after": after_swap_io,
+    }
 
 
 def main() -> None:
@@ -427,6 +538,21 @@ def main() -> None:
     parser.add_argument("--model", type=Path, default=Path("/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"))
     parser.add_argument("--plugin", type=Path, default=ROOT / "build/llama-qpu-runtime/libggml-qpu-inline.so")
     parser.add_argument("--program-manifest", type=Path, default=ROOT / "integrations/llama_cpp/generated/manifest.json")
+    parser.add_argument(
+        "--stride-smoke",
+        type=Path,
+        default=ROOT / "build/llama-qpu-runtime/qpu_repack_stride_smoke",
+    )
+    parser.add_argument(
+        "--graph-smoke",
+        type=Path,
+        default=ROOT / "build/llama-qpu-runtime/qpu_ffn_island_graph_smoke",
+    )
+    parser.add_argument(
+        "--model-smoke",
+        type=Path,
+        default=ROOT / "build/llama-qpu-runtime/qpu_ffn_island_model_smoke",
+    )
     parser.add_argument("--rows", type=integer_list, default=integer_list("65,129,257,513"))
     parser.add_argument("--fractions", type=fraction_list, default=fraction_list("0.125,0.1875,0.25"))
     parser.add_argument("--threads", type=int, default=4)
@@ -454,11 +580,26 @@ def main() -> None:
         args.bootstrap_resamples = 500
     if args.repetitions <= 0 or args.threads <= 0 or args.minimum_rows <= 0:
         parser.error("repetitions/threads/minimum-rows must be positive")
-    for path in (args.llama_bench, args.model, args.plugin, args.program_manifest):
+    for path in (
+        args.llama_bench,
+        args.model,
+        args.plugin,
+        args.program_manifest,
+        args.stride_smoke,
+        args.graph_smoke,
+        args.model_smoke,
+    ):
         if not path.is_file():
             parser.error(f"required artifact not found: {path}")
 
     programs = manifest_programs(args.program_manifest)
+    correctness_preflight = run_correctness_preflight(
+        (
+            (args.stride_smoke,),
+            (args.graph_smoke,),
+            (args.model_smoke, args.model),
+        )
+    )
     before = collect_environment()
     configurations = [(row, None, process_index) for row in args.rows for process_index in range(args.repetitions)] + [
         (row, fraction, process_index)
@@ -579,7 +720,11 @@ def main() -> None:
             "candidate": "concurrent CPU prefix plus QPU gate/up/GEGLU-to-Q8/down suffix and hidden-size F32 join",
             "partition_axis": "intermediate channels",
             "timed_boundary": "llama-bench prompt processing; model loading and resident packing excluded",
-            "correctness": "online QPU suffix compared with scalar Q4_0 x Q8_0 reference on real activations",
+            "correctness": (
+                "exact stride regression, complete joined-FFN differential, "
+                "and three full-vocabulary next-token comparisons at M=129/257"
+            ),
+            "online_suffix_verification": "QPU suffix compared with scalar Q4_0 x Q8_0 reference on real activations",
         },
         "artifacts": {
             "llama_bench": str(args.llama_bench.resolve()),
@@ -597,6 +742,7 @@ def main() -> None:
             "py_videocore7": git_record(ROOT),
             "llama_cpp": git_record(Path("/home/yiannis/side/llama.cpp")),
         },
+        "correctness_preflight": correctness_preflight,
         "configuration": {
             "rows": args.rows,
             "fractions": args.fractions,

@@ -1,0 +1,368 @@
+diff --git a/ggml/src/ggml-cpu/arch/arm/repack.cpp b/ggml/src/ggml-cpu/arch/arm/repack.cpp
+--- a/ggml/src/ggml-cpu/arch/arm/repack.cpp
++++ b/ggml/src/ggml-cpu/arch/arm/repack.cpp
+@@ -48,9 +48,11 @@ static inline void decode_q_Kx8_6bit_scales(const uint8_t * scales_in, int16x8_t
+ }
+ #endif
+ 
+-void ggml_quantize_mat_q8_0_4x4(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x4(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+     block_q8_0x4 * GGML_RESTRICT y = (block_q8_0x4 *) vy;
+@@ -64,7 +66,9 @@ void ggml_quantize_mat_q8_0_4x4(const float * GGML_RESTRICT x, void * GGML_RESTR
+         float32x4_t amaxv[8];
+ 
+         for (int row_iter = 0; row_iter < 4; row_iter++) {
+-            for (int j = 0; j < 8; j++) srcv[row_iter][j] = vld1q_f32(x + row_iter * k + i * 32 + 4 * j);
++            for (int j = 0; j < 8; j++) {
++                srcv[row_iter][j] = vld1q_f32(x + row_iter * row_stride + i * 32 + 4 * j);
++            }
+             for (int j = 0; j < 8; j++) asrcv[j] = vabsq_f32(srcv[row_iter][j]);
+ 
+             for (int j = 0; j < 4; j++) amaxv[2 * j] = vmaxq_f32(asrcv[2 * j], asrcv[2 * j + 1]);
+@@ -112,13 +116,15 @@ void ggml_quantize_mat_q8_0_4x4(const float * GGML_RESTRICT x, void * GGML_RESTR
+ #else
+     UNUSED(nb);
+     UNUSED(y);
+-    ggml_quantize_mat_q8_0_4x4_generic(x, vy, k);
++    ggml_quantize_mat_q8_0_4x4_generic(x, vy, k, row_stride);
+ #endif
+ }
+ 
+-void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x8(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+     block_q8_0x4 * GGML_RESTRICT y = (block_q8_0x4 *) vy;
+@@ -132,7 +138,9 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+         float32x4_t amaxv[8];
+ 
+         for (int row_iter = 0; row_iter < 4; row_iter++) {
+-            for (int j = 0; j < 8; j++) srcv[row_iter][j] = vld1q_f32(x + row_iter * k + i * 32 + 4 * j);
++            for (int j = 0; j < 8; j++) {
++                srcv[row_iter][j] = vld1q_f32(x + row_iter * row_stride + i * 32 + 4 * j);
++            }
+             for (int j = 0; j < 8; j++) asrcv[j] = vabsq_f32(srcv[row_iter][j]);
+ 
+             for (int j = 0; j < 4; j++) amaxv[2 * j] = vmaxq_f32(asrcv[2 * j], asrcv[2 * j + 1]);
+@@ -205,7 +213,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+ #else
+     UNUSED(nb);
+     UNUSED(y);
+-    ggml_quantize_mat_q8_0_4x8_generic(x, vy, k);
++    ggml_quantize_mat_q8_0_4x8_generic(x, vy, k, row_stride);
+ #endif
+ }
+ 
+diff --git a/ggml/src/ggml-cpu/arch/riscv/repack.cpp b/ggml/src/ggml-cpu/arch/riscv/repack.cpp
+--- a/ggml/src/ggml-cpu/arch/riscv/repack.cpp
++++ b/ggml/src/ggml-cpu/arch/riscv/repack.cpp
+@@ -24,9 +24,11 @@
+ 
+ #define UNUSED GGML_UNUSED
+ 
+-void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x8(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+ #if defined(__riscv_v_intrinsic)
+@@ -39,7 +41,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+         const float *x_block_base = x + i * QK8_0;
+         vint8m2_t q_r0, q_r1, q_r2, q_r3;
+         {
+-            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 0 * k, vl_calc);
++            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 0 * row_stride, vl_calc);
+             vfloat32m8_t v_abs = __riscv_vfabs_v_f32m8(v_src, vl_calc);
+             vfloat32m1_t v_max = __riscv_vfredmax_vs_f32m8_f32m1(v_abs, v_scalar_zero, vl_calc);
+             float amax = __riscv_vfmv_f_s_f32m1_f32(v_max);
+@@ -55,7 +57,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+         asm volatile ("" ::: "memory");
+ 
+         {
+-            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 1 * k, vl_calc);
++            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 1 * row_stride, vl_calc);
+             vfloat32m8_t v_abs = __riscv_vfabs_v_f32m8(v_src, vl_calc);
+             vfloat32m1_t v_max = __riscv_vfredmax_vs_f32m8_f32m1(v_abs, v_scalar_zero, vl_calc);
+             float amax = __riscv_vfmv_f_s_f32m1_f32(v_max);
+@@ -70,7 +72,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+         }
+         asm volatile ("" ::: "memory");
+         {
+-            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 2 * k, vl_calc);
++            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 2 * row_stride, vl_calc);
+             vfloat32m8_t v_abs = __riscv_vfabs_v_f32m8(v_src, vl_calc);
+             vfloat32m1_t v_max = __riscv_vfredmax_vs_f32m8_f32m1(v_abs, v_scalar_zero, vl_calc);
+             float amax = __riscv_vfmv_f_s_f32m1_f32(v_max);
+@@ -85,7 +87,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+         }
+         asm volatile ("" ::: "memory");
+         {
+-            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 3 * k, vl_calc);
++            vfloat32m8_t v_src = __riscv_vle32_v_f32m8(x_block_base + 3 * row_stride, vl_calc);
+             vfloat32m8_t v_abs = __riscv_vfabs_v_f32m8(v_src, vl_calc);
+             vfloat32m1_t v_max = __riscv_vfredmax_vs_f32m8_f32m1(v_abs, v_scalar_zero, vl_calc);
+             float amax = __riscv_vfmv_f_s_f32m1_f32(v_max);
+@@ -107,7 +109,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+     }
+ #else
+     UNUSED(nb);
+-    ggml_quantize_mat_q8_0_4x8_generic(x, vy, k);
++    ggml_quantize_mat_q8_0_4x8_generic(x, vy, k, row_stride);
+ #endif
+ }
+ 
+diff --git a/ggml/src/ggml-cpu/arch/x86/repack.cpp b/ggml/src/ggml-cpu/arch/x86/repack.cpp
+--- a/ggml/src/ggml-cpu/arch/x86/repack.cpp
++++ b/ggml/src/ggml-cpu/arch/x86/repack.cpp
+@@ -175,9 +175,11 @@ static inline __m256i mul_sum_i8_pairs_acc_int32x8(const __m256i acc, const __m2
+ }
+ #endif
+ 
+-void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x8(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+     block_q8_0x4 * GGML_RESTRICT y = (block_q8_0x4 *) vy;
+@@ -190,10 +192,10 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+     for (int i = 0; i < nb; i++) {
+         for (int row_iter = 0; row_iter < 4; row_iter++) {
+             // Load elements into 4 AVX vectors
+-            __m256 v0 = _mm256_loadu_ps( x + row_iter * k + i * 32 );
+-            __m256 v1 = _mm256_loadu_ps( x + row_iter * k + i * 32 + 8 );
+-            __m256 v2 = _mm256_loadu_ps( x + row_iter * k + i * 32 + 16 );
+-            __m256 v3 = _mm256_loadu_ps( x + row_iter * k + i * 32 + 24 );
++            __m256 v0 = _mm256_loadu_ps( x + row_iter * row_stride + i * 32 );
++            __m256 v1 = _mm256_loadu_ps( x + row_iter * row_stride + i * 32 + 8 );
++            __m256 v2 = _mm256_loadu_ps( x + row_iter * row_stride + i * 32 + 16 );
++            __m256 v3 = _mm256_loadu_ps( x + row_iter * row_stride + i * 32 + 24 );
+ 
+             // Compute max(abs(e)) for the block
+             const __m256 signBit = _mm256_set1_ps( -0.0f );
+@@ -283,7 +285,7 @@ void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTR
+ #else
+     UNUSED(nb);
+     UNUSED(y);
+-    ggml_quantize_mat_q8_0_4x8_generic(x, vy, k);
++    ggml_quantize_mat_q8_0_4x8_generic(x, vy, k, row_stride);
+ #endif
+ }
+ 
+diff --git a/ggml/src/ggml-cpu/repack.cpp b/ggml/src/ggml-cpu/repack.cpp
+--- a/ggml/src/ggml-cpu/repack.cpp
++++ b/ggml/src/ggml-cpu/repack.cpp
+@@ -130,9 +130,11 @@ static inline int nearest_int(float fval) {
+ extern "C" {
+ 
+ #if defined __riscv_zvfh
+-void ggml_quantize_mat_q8_0_4x1_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x1_generic(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+     block_q8_0x4 * GGML_RESTRICT y = (block_q8_0x4 *) vy;
+@@ -147,7 +149,7 @@ void ggml_quantize_mat_q8_0_4x1_generic(const float * GGML_RESTRICT x, void * GG
+             float amax = 0.0f; // absolute max
+ 
+             for (int j = 0; j < QK8_0; j++) {
+-                srcv[row_iter][j] = x[row_iter * k + i * QK8_0 + j];
++                srcv[row_iter][j] = x[row_iter * row_stride + i * QK8_0 + j];
+                 amax = MAX(amax, fabsf(srcv[row_iter][j]));
+             }
+ 
+@@ -213,9 +215,11 @@ void ggml_quantize_mat_q8_K_4x1_generic(const float * GGML_RESTRICT x, void * GG
+ }
+ #endif
+ 
+-void ggml_quantize_mat_q8_0_4x4_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x4_generic(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+     block_q8_0x4 * GGML_RESTRICT y = (block_q8_0x4 *) vy;
+@@ -230,7 +234,7 @@ void ggml_quantize_mat_q8_0_4x4_generic(const float * GGML_RESTRICT x, void * GG
+             float amax = 0.0f; // absolute max
+ 
+             for (int j = 0; j < QK8_0; j++) {
+-                srcv[row_iter][j] = x[row_iter * k + i * QK8_0 + j];
++                srcv[row_iter][j] = x[row_iter * row_stride + i * QK8_0 + j];
+                 amax = MAX(amax, fabsf(srcv[row_iter][j]));
+             }
+ 
+@@ -251,9 +255,11 @@ void ggml_quantize_mat_q8_0_4x4_generic(const float * GGML_RESTRICT x, void * GG
+     }
+ }
+ 
+-void ggml_quantize_mat_q8_0_4x8_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k) {
++void ggml_quantize_mat_q8_0_4x8_generic(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride) {
+     assert(QK8_0 == 32);
+     assert(k % QK8_0 == 0);
++    assert(row_stride >= k);
+     const int nb = k / QK8_0;
+ 
+     block_q8_0x4 * GGML_RESTRICT y = (block_q8_0x4 *) vy;
+@@ -268,7 +274,7 @@ void ggml_quantize_mat_q8_0_4x8_generic(const float * GGML_RESTRICT x, void * GG
+             float amax = 0.0f; // absolute max
+ 
+             for (int j = 0; j < QK8_0; j++) {
+-                srcv[row_iter][j] = x[row_iter * k + i * QK8_0 + j];
++                srcv[row_iter][j] = x[row_iter * row_stride + i * QK8_0 + j];
+                 amax = MAX(amax, fabsf(srcv[row_iter][j]));
+             }
+ 
+@@ -394,42 +400,59 @@ void ggml_quantize_mat_q8_K_4x8_generic(const float * GGML_RESTRICT x, void * GG
+ } // extern "C"
+ 
+ template <int64_t INTER_SIZE, ggml_type PARAM_TYPE>
+-void ggml_quantize_mat_t(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row);
++void ggml_quantize_mat_t(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride);
+ 
+-template <> void ggml_quantize_mat_t<4, GGML_TYPE_Q8_0>(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row) {
++template <> void ggml_quantize_mat_t<4, GGML_TYPE_Q8_0>(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride) {
+     assert(nrow == 4);
+     UNUSED(nrow);
+-    ggml_quantize_mat_q8_0_4x4(x, vy, n_per_row);
++    ggml_quantize_mat_q8_0_4x4(x, vy, n_per_row, source_row_stride);
+ }
+ 
+-template <> void ggml_quantize_mat_t<8, GGML_TYPE_Q8_0>(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row) {
++template <> void ggml_quantize_mat_t<8, GGML_TYPE_Q8_0>(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride) {
+     assert(nrow == 4);
+     UNUSED(nrow);
+-    ggml_quantize_mat_q8_0_4x8(x, vy, n_per_row);
++    ggml_quantize_mat_q8_0_4x8(x, vy, n_per_row, source_row_stride);
+ }
+ 
+-template <> void ggml_quantize_mat_t<4, GGML_TYPE_Q8_K>(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row) {
++template <> void ggml_quantize_mat_t<4, GGML_TYPE_Q8_K>(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride) {
+     assert(nrow == 4);
+     UNUSED(nrow);
++    UNUSED(source_row_stride);
+     ggml_quantize_mat_q8_K_4x4(x, vy, n_per_row);
+ }
+ 
+-template <> void ggml_quantize_mat_t<8, GGML_TYPE_Q8_K>(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row) {
++template <> void ggml_quantize_mat_t<8, GGML_TYPE_Q8_K>(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride) {
+     assert(nrow == 4);
+     UNUSED(nrow);
++    UNUSED(source_row_stride);
+     ggml_quantize_mat_q8_K_4x8(x, vy, n_per_row);
+ }
+ 
+ #if defined __riscv_zvfh
+-template <> void ggml_quantize_mat_t<1, GGML_TYPE_Q8_0>(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row) {
++template <> void ggml_quantize_mat_t<1, GGML_TYPE_Q8_0>(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride) {
+     assert(nrow == 4);
+     UNUSED(nrow);
+-    ggml_quantize_mat_q8_0_4x1(x, vy, n_per_row);
++    ggml_quantize_mat_q8_0_4x1(x, vy, n_per_row, source_row_stride);
+ }
+ 
+-template <> void ggml_quantize_mat_t<1, GGML_TYPE_Q8_K>(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t nrow, int64_t n_per_row) {
++template <> void ggml_quantize_mat_t<1, GGML_TYPE_Q8_K>(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy,
++        int64_t nrow, int64_t n_per_row, int64_t source_row_stride) {
+     assert(nrow == 4);
+     UNUSED(nrow);
++    UNUSED(source_row_stride);
+     ggml_quantize_mat_q8_K_4x1(x, vy, n_per_row);
+ }
+ #endif
+@@ -4407,8 +4430,11 @@ template <typename BLOC_TYPE, int64_t INTER_SIZE, int64_t NB_COLS, ggml_type PAR
+             char * wdata_ptr = wdata + i12 * nbw2;
+ 
+             for (int64_t i11 = ith * 4; i11 < ne11 - ne11 % 4; i11 += nth * 4) {
+-                ggml_quantize_mat_t<INTER_SIZE, PARAM_TYPE>((float *) (data_ptr + i11 * nb11),
+-                                                            (void *) (wdata_ptr + i11 * nbw1), 4, quantized_columns);
++                assert(nb11 % sizeof(float) == 0);
++                ggml_quantize_mat_t<INTER_SIZE, PARAM_TYPE>(
++                    (float *) (data_ptr + i11 * nb11),
++                    (void *) (wdata_ptr + i11 * nbw1), 4, quantized_columns,
++                    static_cast<int64_t>(nb11 / sizeof(float)));
+             }
+ 
+             const int64_t i11_processed = ne11 - ne11 % 4;
+diff --git a/ggml/src/ggml-cpu/repack.h b/ggml/src/ggml-cpu/repack.h
+--- a/ggml/src/ggml-cpu/repack.h
++++ b/ggml/src/ggml-cpu/repack.h
+@@ -137,8 +137,10 @@ static_assert(sizeof(block_mxfp4x8) == 8 + QK_MXFP4 * 4, "wrong mxfp4x8 block si
+ extern "C" {
+ #endif
+ 
+-void ggml_quantize_mat_q8_0_4x4(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+-void ggml_quantize_mat_q8_0_4x8(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
++void ggml_quantize_mat_q8_0_4x4(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride);
++void ggml_quantize_mat_q8_0_4x8(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride);
+ void ggml_quantize_mat_q8_K_4x4(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+ void ggml_quantize_mat_q8_K_4x8(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+ void ggml_gemv_q4_0_4x4_q8_0(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+@@ -174,7 +176,8 @@ void ggml_gemm_mxfp4_8x8_q8_0(int n, float * GGML_RESTRICT s, size_t bs, const v
+ void ggml_gemm_q8_0_4x4_q8_0(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+ void ggml_gemm_q8_0_4x8_q8_0(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+ #if defined __riscv_zvfh
+-void ggml_quantize_mat_q8_0_4x1(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
++void ggml_quantize_mat_q8_0_4x1(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride);
+ void ggml_quantize_mat_q8_K_4x1(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+ void ggml_gemv_q4_0_16x1_q8_0(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+ void ggml_gemv_q4_K_16x1_q8_K(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+@@ -189,8 +192,10 @@ void ggml_gemm_q2_K_16x1_q8_K(int n, float * GGML_RESTRICT s, size_t bs, const v
+ #endif
+ 
+ // Native implementations
+-void ggml_quantize_mat_q8_0_4x4_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+-void ggml_quantize_mat_q8_0_4x8_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
++void ggml_quantize_mat_q8_0_4x4_generic(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride);
++void ggml_quantize_mat_q8_0_4x8_generic(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride);
+ void ggml_quantize_mat_q8_K_4x4_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+ void ggml_quantize_mat_q8_K_4x8_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+ void ggml_gemv_q4_0_4x4_q8_0_generic(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+@@ -226,7 +231,8 @@ void ggml_gemm_mxfp4_8x8_q8_0_generic(int n, float * GGML_RESTRICT s, size_t bs,
+ void ggml_gemm_q8_0_4x4_q8_0_generic(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+ void ggml_gemm_q8_0_4x8_q8_0_generic(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+ #if defined __riscv_zvfh
+-void ggml_quantize_mat_q8_0_4x1_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
++void ggml_quantize_mat_q8_0_4x1_generic(
++        const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k, int64_t row_stride);
+ void ggml_quantize_mat_q8_K_4x1_generic(const float * GGML_RESTRICT x, void * GGML_RESTRICT vy, int64_t k);
+ void ggml_gemv_q4_0_16x1_q8_0_generic(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
+ void ggml_gemv_q4_K_16x1_q8_K_generic(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc);
