@@ -268,6 +268,9 @@ struct island_timing {
     uint64_t submit_start[4] = {};
     uint64_t submit_end[4] = {};
     uint64_t observed_end[4] = {};
+    uint64_t materialization_ns = 0;
+    size_t materialized_bytes = 0;
+    bool exact_restoration = true;
     uint32_t completed_dispatches = 0;
     bool verified = false;
     double verification_max_abs = 0.0;
@@ -946,6 +949,31 @@ qpu_llama_status copy_output(island_context & context, const layer_record & laye
     return status;
 }
 
+qpu_llama_status materialize_intermediate(island_context & context) {
+    const uint64_t start = monotonic_ns();
+    const size_t elements = static_cast<size_t>(context.padded_rows) * context.active_layer->qpu_columns;
+    qpu_llama_buffer * buffers[] = {context.scratch.intermediate_scales.value, context.scratch.intermediate_quants.value};
+    void * hosts[] = {context.scratch.host_intermediate_scales.data(), context.scratch.host_intermediate_quants.data()};
+    const size_t sizes[] = {elements / 32 * sizeof(uint32_t), elements};
+    for (unsigned index = 0; index < 2; ++index) {
+        qpu_llama_status status = qpu_llama_buffer_cpu_access_begin(buffers[index], QPU_LLAMA_CPU_ACCESS_READ);
+        if (status != QPU_LLAMA_OK) return status;
+        std::memcpy(hosts[index], qpu_llama_buffer_data(buffers[index]), sizes[index]);
+        status = qpu_llama_buffer_cpu_access_end(buffers[index], QPU_LLAMA_CPU_ACCESS_READ);
+        if (status != QPU_LLAMA_OK) return status;
+        status = qpu_llama_buffer_cpu_access_begin(buffers[index], QPU_LLAMA_CPU_ACCESS_WRITE);
+        if (status != QPU_LLAMA_OK) return status;
+        std::memcpy(qpu_llama_buffer_data(buffers[index]), hosts[index], sizes[index]);
+        context.timing.exact_restoration = context.timing.exact_restoration &&
+            std::memcmp(qpu_llama_buffer_data(buffers[index]), hosts[index], sizes[index]) == 0;
+        status = qpu_llama_buffer_cpu_access_end(buffers[index], QPU_LLAMA_CPU_ACCESS_WRITE);
+        if (status != QPU_LLAMA_OK) return status;
+        context.timing.materialized_bytes += sizes[index];
+    }
+    context.timing.materialization_ns = monotonic_ns() - start;
+    return QPU_LLAMA_OK;
+}
+
 void worker_loop(island_context * context) {
     std::unique_lock<std::mutex> lock(context->mutex);
     for (;;) {
@@ -974,6 +1002,12 @@ void worker_loop(island_context * context) {
             status = execute_stage(*context, "geglu", context->timing.geglu_ns, [&] {
                 return execute_geglu(*context, rows, layer->qpu_columns);
             });
+        }
+        if (status == QPU_LLAMA_OK) {
+            const char * ablation = std::getenv("GGML_QPU_FFN_ABLATION");
+            if (ablation && std::strcmp(ablation, "materialized") == 0) {
+                status = materialize_intermediate(*context);
+            }
         }
         if (status == QPU_LLAMA_OK) {
             status = execute_stage(*context, "down", context->timing.down_ns, [&] {
@@ -1186,7 +1220,7 @@ ggml_qpu_ffn_island_begin(
         return 0;
     }
     island_context & context = get_context();
-    std::lock_guard<std::mutex> lock(context.mutex);
+    std::unique_lock<std::mutex> lock(context.mutex);
     if (context.pending.load(std::memory_order_acquire)) {
         return 0;
     }
@@ -1228,6 +1262,10 @@ ggml_qpu_ffn_island_begin(
     context.pending.store(true, std::memory_order_release);
     context.work_ready = true;
     context.work_condition.notify_one();
+    const char * ablation = std::getenv("GGML_QPU_FFN_ABLATION");
+    if (ablation && std::strcmp(ablation, "serialized") == 0) {
+        context.done_condition.wait(lock, [&] { return context.done; });
+    }
     return 1;
 }
 
@@ -1330,6 +1368,15 @@ ggml_qpu_ffn_island_complete(const char * down_name) {
     std::lock_guard<std::mutex> lock(context.mutex);
     context.timing.join_ns = monotonic_ns() - context.timing.join_start;
     const layer_record & layer = *context.active_layer;
+    const char * ablation = std::getenv("GGML_QPU_FFN_ABLATION");
+    if (ablation && telemetry_enabled()) {
+        std::fprintf(stderr,
+            "qpu_ffn_ablation_json:{\"mode\":\"%s\",\"layer\":%d,\"m\":%u,"
+            "\"materialization_ns\":%llu,\"materialized_bytes\":%zu,\"exact_restoration\":%s}\n",
+            ablation, layer.layer, context.active_rows,
+            static_cast<unsigned long long>(context.timing.materialization_ns),
+            context.timing.materialized_bytes, context.timing.exact_restoration ? "true" : "false");
+    }
     if (flag_enabled("GGML_QPU_FFN_PROFILE")) {
         std::fprintf(stderr,
             "qpu_ffn_timeline_json:{\"layer\":%d,\"m\":%u,\"width\":%u,"

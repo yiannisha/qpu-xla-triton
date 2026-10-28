@@ -406,6 +406,8 @@ ggml_qpu_m1_execute(
             "\"dispatch_count\":1,\"input_access_ns\":%llu,"
             "\"input_pack_ns\":%llu,\"input_copy_ns\":%llu,"
             "\"submit_wait_ns\":%llu,\"output_copy_ns\":%llu,"
+            "\"input_sync_ns\":%llu,\"submit_ns\":%llu,"
+            "\"wait_ns\":%llu,\"output_sync_ns\":%llu,"
             "\"complete_ns\":%llu,\"fallback\":%s}\n",
             qpu_ggml_q4_0_q8_0_m1_source_hash,
             qpu_ggml_q4_0_q8_0_m1_binary_hash,
@@ -415,6 +417,10 @@ ggml_qpu_m1_execute(
             static_cast<unsigned long long>(timing.input_copy_ns),
             static_cast<unsigned long long>(timing.submit_wait_ns),
             static_cast<unsigned long long>(timing.output_copy_ns),
+            static_cast<unsigned long long>(timing.input_sync_ns),
+            static_cast<unsigned long long>(timing.submit_ns),
+            static_cast<unsigned long long>(timing.wait_ns),
+            static_cast<unsigned long long>(timing.output_sync_ns),
             static_cast<unsigned long long>(timing.complete_ns),
             used_fallback ? "true" : "false");
     }

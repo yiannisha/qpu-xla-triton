@@ -1,6 +1,6 @@
 # Course of action: rebuttal experiments 1 and 2
 
-This handoff covers **TODO 1: integrated FFN breakdown** and **TODO 2: integrated calibration and split selection** in the author response. Local attempts did not finish because the original Pi lost power under load. There are no new completed production measurements to claim. Run the following on another actively cooled Raspberry Pi 5 with reliable power and sufficient RAM for the same model.
+This handoff covers **TODO 1: integrated FFN breakdown** and **TODO 2: integrated calibration and split selection** in the author response. These experiments completed on 28 October after the power issue was fixed. Their retained results, subsequent TODO 3–9 diagnostics, failed attempts, and scope qualifications are in [the experiment report](experiment_logs/20261028-rebuttal/REPORT.md). Follow the commands below to generate new measurements on an actively cooled Raspberry Pi 5 with reliable power and sufficient RAM for the same model. Historical results are not placement evidence for a changed implementation.
 
 ## 1. Prepare the identical model and runtime
 
@@ -141,3 +141,160 @@ uv run ruff check scripts/*ffn*breakdown.py scripts/*ffn*split_screen.py \
   scripts/build_llama_cpp_ffn_profile.py scripts/audit_llama_cpp_ffn_calibration.py \
   tests/test_llama_cpp_ffn_breakdown.py
 ```
+
+## 7. Remaining rebuttal diagnostics (TODOs 3–9)
+
+Read [the completed report](experiment_logs/20261028-rebuttal/REPORT.md) first.
+The commands below produce new evidence; they do not reconstruct the exact
+historical numbers. Use empty output directories. Run hardware commands
+sequentially, without builds or other CPU-intensive work in parallel. The
+control wrapper records the exact command, environment and live kernel stream,
+restores governors/swap, and returns exit 2 for a failed process, new voltage
+event or GPU error. Check `retained_for_latency`, not just process completion.
+
+### Matched FFN ablations (TODO 3)
+
+Build separate libraries to preserve the retained baseline:
+
+```bash
+uv run scripts/build_llama_cpp_ffn_profile.py \
+  --llama-root "$LLAMA_ROOT" --output build/ffn-ablation-cpu
+
+cmake -S integrations/llama_cpp -B build/llama-qpu-ablation \
+  -DLLAMA_CPP_ROOT="$LLAMA_ROOT" \
+  -DLLAMA_CPP_BUILD_DIR="$LLAMA_ROOT/build" \
+  -DQPU_LLAMA_BUILD_GGML_BACKEND=ON \
+  -DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON -DQPU_LLAMA_BUILD_BENCHMARK=ON
+cmake --build build/llama-qpu-ablation --parallel 4 --target \
+  ggml-qpu-inline qpu_ffn_island_graph_smoke qpu_ffn_island_model_smoke \
+  qpu_llama_cpu_repack_bench
+
+export MORE_RESULTS=/absolute/path/to/new-remaining-results
+mkdir -p "$MORE_RESULTS"
+uv run scripts/run_llama_cpp_ffn_ablation.py \
+  --llama-root "$LLAMA_ROOT" --model "$GEMMA_MODEL" \
+  --rounds 5 --output "$MORE_RESULTS/todo3"
+```
+
+The four modes are `full`, `compact`, `materialized`, and `serialized`.
+`GGML_QPU_FFN_ABLATION` is an opt-in diagnostic switch, unset in ordinary
+execution. Every mode passes six full-model checks and must match the full
+mode's complete candidate-logit file hashes before any timing. Five randomized
+process blocks follow; fixed M=129, fraction=1/8, four threads and WGS=24.
+Compaction uses the correct slice and matching quantizer; materialization
+round-trips existing Q8 bytes and scales without re-quantization. The materialized
+variant includes an extra CPU-access handoff. Serialization waits for the same
+QPU branch before allowing the CPU branch. These are matched counterfactuals,
+not separately additive contributions.
+
+### Production MTP node (TODO 4)
+
+Supply the retained real Q4_0 MTP weight and F32 activation fixture for
+M=1, K=256, N=2048. Captured `.bin` payloads are external assets and are not
+committed. Synthetic matrices would define a different diagnostic. On the
+evaluation machine the inputs were in
+`experiment_logs/20260825-qpu-next/mtp-inline-fixture/`, named
+`blk-0-ffn_gate-weight.q4_0.bin` and `blk-0-ffn_gate-weight.m1.f32.bin`.
+
+```bash
+export MTP_WEIGHTS=/absolute/path/to/production.q4_0.bin
+export MTP_ACTIVATION=/absolute/path/to/production.m1.f32.bin
+uv run scripts/run_rebuttal_diagnostics.py \
+  --output "$MORE_RESULTS/todo4-control" --timeout 300 -- \
+  "$PWD/.venv/bin/python" scripts/benchmark_rebuttal_mtp.py \
+  --binary build/llama-qpu-ablation/qpu_llama_cpu_repack_bench \
+  --plugin build/llama-qpu-ablation/libggml-qpu-inline.so \
+  --weights "$MTP_WEIGHTS" --activation "$MTP_ACTIVATION" \
+  --pairs 5 --samples 31 --output "$MORE_RESULTS/todo4"
+```
+
+The CPU_REPACK benchmark uses one thread, persistent graph state and the actual
+inline M=1 hook on candidate runs. Its `mode` JSON field describes the enclosing
+CPU_REPACK graph, including when the hook executes; verify candidate telemetry.
+Separate submit/wait/sync fields come from existing host timestamps. Device
+unpacking, arithmetic and memory behavior remain unresolved.
+
+### Convolution, fused CPU control and ResNet (TODOs 5, 6(b), 7)
+
+The operator worker requires the existing optional Torch/Torchvision evaluation
+dependencies (`uv sync --locked --group dev --extra evaluation`). Each accepted
+convolution case runs in its own controlled process:
+
+```bash
+uv run scripts/run_rebuttal_diagnostics.py \
+  --output "$MORE_RESULTS/todo5-pointwise-control" -- \
+  "$PWD/.venv/bin/python" scripts/benchmark_rebuttal_operators.py conv \
+  --conv-case pointwise --warmup 3 --repeat 11 \
+  --output "$MORE_RESULTS/todo5-pointwise.json"
+
+uv run scripts/run_rebuttal_diagnostics.py \
+  --output "$MORE_RESULTS/todo5-dense-control" -- \
+  "$PWD/.venv/bin/python" scripts/benchmark_rebuttal_operators.py conv \
+  --conv-case dense-3x3 --warmup 3 --repeat 11 \
+  --output "$MORE_RESULTS/todo5-dense.json"
+
+uv run scripts/run_rebuttal_diagnostics.py \
+  --output "$MORE_RESULTS/todo6-control" -- \
+  "$PWD/.venv/bin/python" scripts/benchmark_rebuttal_operators.py epilogue \
+  --warmup 3 --repeat 31 --output "$MORE_RESULTS/todo6.json"
+```
+
+The depthwise case is implemented as `--conv-case depthwise-3x3`, but the
+completed campaign exposed GPU resets and a numerical failure. Its timings
+were rejected. Do not use an earlier completed attempt as accepted evidence
+or silently retry until one succeeds. The current depthwise reduction also
+differs from the historical general lowered path.
+
+ResNet requires an existing verified artifact and an actual image from the
+quality-study manifest. If those assets are unavailable, omit this experiment:
+
+```bash
+export RESNET_ARTIFACT=/absolute/path/to/resnet18-native
+export RESNET_IMAGE=/absolute/path/to/manifest-image.jpg
+uv run scripts/run_rebuttal_diagnostics.py \
+  --output "$MORE_RESULTS/todo7-control" -- \
+  "$PWD/.venv/bin/python" scripts/benchmark_rebuttal_operators.py resnet \
+  --artifact "$RESNET_ARTIFACT" --image "$RESNET_IMAGE" \
+  --warmup 2 --repeat 7 --output "$MORE_RESULTS/todo7.json"
+```
+
+The runtime receives V1-preprocessed 1x3x224x224 input, even when the source
+dataset images are 128 pixels. Timings exclude image preprocessing and include
+the complete inference graph to logits. This is one-input steady-state timing,
+not a new accuracy campaign. The available optimized fused CPU control is
+`aten::_add_relu.out`. No new optimized CPU W8A8 runtime is constructed for
+TODO 6(a).
+
+### Audits and documentation (TODOs 8–10)
+
+```bash
+uv run scripts/audit_rebuttal_fp32.py --output "$MORE_RESULTS/todo8-9.json"
+```
+
+This requires the retained FP32 suite logs and git history. It exports the
+documented 112-configuration grid and the selector evidence; it does not infer
+a denominator from the separate stage sweep. If historical logs are absent,
+use the archived completed audit for the historical result and explicitly
+report that recovery on the new clone was unavailable.
+
+The remaining-result summarizer takes the exact layout of the completed
+campaign, including its rejected-attempt records:
+
+```bash
+uv run scripts/summarize_rebuttal_remaining.py \
+  benchmark_runs/20261028-remaining --output /path/to/summary.json
+```
+
+Do not manufacture rejected-attempt records to satisfy that campaign-specific
+summarizer on a different run. Raw per-command records remain usable directly.
+The portable checks are:
+
+```bash
+uv run python -m pytest -q tests/test_llama_cpp_ffn_breakdown.py \
+  tests/test_llama_cpp_qpu_ffn_island_eval.py tests/test_llama_cpp_process_guards.py
+```
+
+[REBUTTAL_NOTES.md](REBUTTAL_NOTES.md) records prior-work attribution and claim
+corrections. Unavailable submission-specific and anonymous-upload tasks remain
+unclaimed. Preparing these repository files is distinct from uploading an
+anonymous artifact or replacing a submitted manuscript.

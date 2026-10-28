@@ -1,0 +1,296 @@
+{
+  "todo3": {
+    "scope": "five randomized independent-process blocks, full design versus matched variants; M=129",
+    "comparison": {
+      "full": {
+        "reference_median_ms": 2255.720158,
+        "candidate_median_ms": 2255.720158,
+        "ratio_reference_over_candidate": 1.0,
+        "paired_bootstrap_95_interval": [
+          1.0,
+          1.0
+        ],
+        "paired_marginal_candidate_minus_reference_ms": 0.0,
+        "reference_range_ms": [
+          2135.600811,
+          2291.802159
+        ],
+        "candidate_range_ms": [
+          2135.600811,
+          2291.802159
+        ]
+      },
+      "compact": {
+        "reference_median_ms": 2255.720158,
+        "candidate_median_ms": 2225.862399,
+        "ratio_reference_over_candidate": 1.0134140183209053,
+        "paired_bootstrap_95_interval": [
+          0.9594487116361949,
+          1.0457747615765498
+        ],
+        "paired_marginal_candidate_minus_reference_ms": -44.252683,
+        "reference_range_ms": [
+          2135.600811,
+          2291.802159
+        ],
+        "candidate_range_ms": [
+          2144.064581,
+          2247.549476
+        ]
+      },
+      "materialized": {
+        "reference_median_ms": 2255.720158,
+        "candidate_median_ms": 2253.956743,
+        "ratio_reference_over_candidate": 1.0007823641715736,
+        "paired_bootstrap_95_interval": [
+          0.9846208194012321,
+          1.0382259268173482
+        ],
+        "paired_marginal_candidate_minus_reference_ms": 11.748117,
+        "reference_range_ms": [
+          2135.600811,
+          2291.802159
+        ],
+        "candidate_range_ms": [
+          2143.402842,
+          2308.332409
+        ]
+      },
+      "serialized": {
+        "reference_median_ms": 2255.720158,
+        "candidate_median_ms": 2974.336991,
+        "ratio_reference_over_candidate": 0.758394279069772,
+        "paired_bootstrap_95_interval": [
+          0.7338373070573485,
+          0.7690407904394464
+        ],
+        "paired_marginal_candidate_minus_reference_ms": 718.616833,
+        "reference_range_ms": [
+          2135.600811,
+          2291.802159
+        ],
+        "candidate_range_ms": [
+          2910.182939,
+          3010.14178
+        ]
+      }
+    },
+    "bitwise_identical_model_logit_checks": 6,
+    "all_channel_numerical_preflights": 4,
+    "kernel_errors": 0,
+    "fallbacks": 0,
+    "qualification": "compaction and materialization intervals span parity; this screen does not establish separate positive gains from avoiding them; serialization is slower"
+  },
+  "todo4": {
+    "scope": "five process pairs; five warmups then 31 samples per process; median of process medians",
+    "comparison": {
+      "reference_median_ms": 0.025037,
+      "candidate_median_ms": 0.353534,
+      "ratio_reference_over_candidate": 0.07081921399356214,
+      "paired_bootstrap_95_interval": [
+        0.07047888086337263,
+        0.07154926045913934
+      ],
+      "paired_marginal_candidate_minus_reference_ms": 0.328498,
+      "reference_range_ms": [
+        0.024999,
+        0.025111
+      ],
+      "candidate_range_ms": [
+        0.350961,
+        0.354702
+      ]
+    },
+    "hook_component_median_us": {
+      "input_access_ns": 0.481,
+      "input_pack_ns": 0.093,
+      "input_sync_ns": 0.649,
+      "input_copy_ns": 1.222,
+      "submit_ns": 4.741,
+      "wait_ns": 337.387,
+      "submit_wait_ns": 342.146,
+      "output_sync_ns": 1.926,
+      "output_copy_ns": 1.056,
+      "complete_ns": 346.331
+    },
+    "max_abs_error": 3.5762786865234375e-07,
+    "unresolved": "device unpacking, memory access and arithmetic are not separated; wait includes device execution and observation",
+    "telemetry_dispatches_including_warmup": 180
+  },
+  "todo5": {
+    "scope": "one process per case, 11 samples after three warmups; within-process intervals only",
+    "valid_cases": [
+      {
+        "case": "pointwise",
+        "comparison": {
+          "reference_median_ms": 4.48218,
+          "candidate_median_ms": 21.209219,
+          "ratio_reference_over_candidate": 0.21133168552788295,
+          "paired_bootstrap_95_interval": [
+            0.2011201357860024,
+            0.27729493481113093
+          ],
+          "paired_marginal_candidate_minus_reference_ms": 16.297357,
+          "reference_range_ms": [
+            4.177995,
+            8.233363
+          ],
+          "candidate_range_ms": [
+            20.6595,
+            23.050301
+          ]
+        },
+        "layout_window_ms": 0.006667,
+        "prepare_total_ms": 14.756513,
+        "prepare_remainder_ms": 14.749846,
+        "qpu_event_ms": 2.535282,
+        "output_restore_ms": 3.282816,
+        "max_abs_error_matching_w8a8": 0.0,
+        "max_abs_error_fp32": 0.5241783857345581
+      },
+      {
+        "case": "dense-3x3",
+        "comparison": {
+          "reference_median_ms": 7.830291,
+          "candidate_median_ms": 48.823256,
+          "ratio_reference_over_candidate": 0.16038035234684062,
+          "paired_bootstrap_95_interval": [
+            0.12499486008678713,
+            0.2239888123809537
+          ],
+          "paired_marginal_candidate_minus_reference_ms": 41.244927,
+          "reference_range_ms": [
+            5.643266,
+            11.854418
+          ],
+          "candidate_range_ms": [
+            46.478657,
+            52.561068
+          ]
+        },
+        "layout_window_ms": 16.480967,
+        "prepare_total_ms": 38.102018,
+        "prepare_remainder_ms": 20.783778,
+        "qpu_event_ms": 6.68089,
+        "output_restore_ms": 4.367477,
+        "max_abs_error_matching_w8a8": 0.0,
+        "max_abs_error_fp32": 1.3213634490966797
+      }
+    ],
+    "depthwise_status": "unretained: first all-case attempt had two GPU resets; second had a reset and numerical failure",
+    "rejected_attempts": [
+      "todo5-control/process.json",
+      "todo5-clean-control/process.json"
+    ],
+    "qualification": "current depthwise specialized reduction differs from historical lowered implementation; no accepted depthwise latency"
+  },
+  "todo6": {
+    "scope": "one process; paired within-process bootstrap reflects sample variation only",
+    "boundary": "steady-state persistent source/bias and preallocated output; QPU submission and completion included",
+    "comparison": {
+      "reference_median_ms": 4.908323,
+      "candidate_median_ms": 5.731744,
+      "ratio_reference_over_candidate": 0.8563402343161174,
+      "paired_bootstrap_95_interval": [
+        0.8286853810376277,
+        0.8733500072994718
+      ],
+      "paired_marginal_candidate_minus_reference_ms": 0.898755,
+      "reference_range_ms": [
+        4.334919,
+        6.579388
+      ],
+      "candidate_range_ms": [
+        5.443913,
+        8.42647
+      ]
+    },
+    "samples": 31,
+    "max_abs_error": 0.0,
+    "cpu_implementation": "aten::_add_relu.out(Tensor self, Tensor other, *, Scalar alpha=1, Tensor(a!) out) -> Tensor(a!)",
+    "w8a8_control": "omitted: no suitable optimized same-contract CPU implementation"
+  },
+  "todo7": {
+    "scope": "one fixed image, seven repeated samples; full preprocessed-input-to-logits boundary",
+    "boundary": "preprocessed normalized FP32 input to complete 1000-class logits; excludes image decode/preprocessing and persistent-plan construction",
+    "comparison": {
+      "reference_median_ms": 87.046728,
+      "candidate_median_ms": 344.726005,
+      "ratio_reference_over_candidate": 0.2525098969542492,
+      "paired_bootstrap_95_interval": [
+        0.23638408422364307,
+        0.26392962959833216
+      ],
+      "paired_marginal_candidate_minus_reference_ms": 256.35956,
+      "reference_range_ms": [
+        81.346426,
+        95.032163
+      ],
+      "candidate_range_ms": [
+        328.120747,
+        365.601051
+      ]
+    },
+    "samples": 7,
+    "max_abs_error": 1.1920928955078125e-05,
+    "input_shape": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "timed_dispatches": 140,
+    "fallbacks": 0
+  },
+  "todo8": {
+    "scope": "README regeneration glob *-fp32-linear.json; separate per-role reruns excluded; roles counted separately",
+    "files": [
+      {
+        "path": "experiment_logs/20260819-qpu-xla-kernel-suite/decode-h2048-c512-fp32-linear.json",
+        "sha256": "35a6bb652435730199dffb06713254e7e85a23dc6f2cbc1f6fdafcb263d21f6e",
+        "count": 72
+      },
+      {
+        "path": "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h1024-t64-fp32-linear.json",
+        "sha256": "49098a60524416ca4c09648bffbce460554a2a04317998259c26a51b908d85de",
+        "count": 32
+      },
+      {
+        "path": "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h512-t16-fp32-linear.json",
+        "sha256": "cbe07e6f2340170ddf79c641340d9c5ff4bf465072684aceef0e9ef372a0ba79",
+        "count": 8
+      }
+    ],
+    "configurations": 112,
+    "statuses": {
+      "experimental-correct-slower": 102,
+      "supported-win": 10
+    },
+    "median_speedup_gt_1": 10,
+    "max_error_le_1e_minus_3": 112,
+    "rule": "max_abs_error <= 1e-3 and median whole-operation speedup >= 1.05 against faster NumPy/OpenBLAS or Torch; no confidence-interval classification"
+  },
+  "todo9": {
+    "path": "src/qpu_xla/kernels/minmax.py",
+    "sha256": "bd1f201c7e597e851a59d998d4ff0d3bcf70808d9885e75ef462ed6ffd1aee52",
+    "source_excerpt": "        raise KernelError(\n            \"word min/max requires equal contiguous float32 or int32 tensors with a multiple of 16 elements\"\n        )\n    if not isinstance(backend, PyVideoCore7Backend):\n        raise KernelError(\"word min/max requires PyVideoCore7Backend\")\n\n    vectors = destination.nbytes // (16 * 4)\n    vector_width: Literal[1, 4] = 1\n    work_items = vectors\n    num_qpus = next(candidate for candidate in range(min(work_items, 12), 0, -1) if work_items % candidate == 0)\n    if vectors % 4 == 0:\n        vector_work_items = vectors // 4\n        vector_qpus = next(\n            candidate\n            for candidate in range(min(vector_work_items, 12), 0, -1)\n            if vector_work_items % candidate == 0\n        )\n        if vector_qpus >= 6:\n            vector_width = 4\n            work_items = vector_work_items\n            num_qpus = vector_qpus\n    state = _program_state(backend, _dtype_name(destination.dtype), op, num_qpus, vector_width)\n    with backend.driver_session() as driver:\n        state.uniforms[:] = (work_items // num_qpus, left.address, right.address, destination.address)\n        driver.execute(\n            state.code,\n            local_invocation=(16, 1, 1),\n            uniforms=state.uniforms.addresses()[0],\n            thread=num_qpus,\n        )",
+    "introducing_commit": "0e7612c15d812c5d7d5edd7689d378cdd9d23dca",
+    "commit_subject": "feat: expand QPU acceleration operators",
+    "history_available": true,
+    "rationale": "Six is an implementation cutoff. No retained evidence establishes it as a hardware requirement or optimum.",
+    "examples": [
+      {
+        "elements": 4194048,
+        "64_value_stripes": 65532,
+        "largest_divisor_at_most_12": 12,
+        "vector_selected": true
+      },
+      {
+        "elements": 4194240,
+        "64_value_stripes": 65535,
+        "largest_divisor_at_most_12": 5,
+        "vector_selected": false
+      }
+    ]
+  }
+}

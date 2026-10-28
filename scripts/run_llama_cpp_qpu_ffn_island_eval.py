@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.llama_cpp_common import (  # noqa: E402
     collect_environment,
+    filter_competing_processes,
     sha256_file,
     swap_io_pages,
     swap_used_bytes,
@@ -110,9 +111,10 @@ def require_no_competing_workloads(boundary: str) -> None:
         raise RuntimeError(
             f"failed to inspect competing workloads at {boundary}: {completed.stderr}"
         )
-    if completed.stdout.strip():
+    competing = filter_competing_processes(completed.stdout)
+    if competing.strip():
         raise RuntimeError(
-            f"competing accelerator/model workload at {boundary}:\n{completed.stdout}"
+            f"competing accelerator/model workload at {boundary}:\n{competing}"
         )
 
 

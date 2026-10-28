@@ -85,6 +85,28 @@ def read_text(path: Path) -> str | None:
         return None
 
 
+def filter_competing_processes(stdout: str, *, exclude_pids: set[int] | None = None) -> str:
+    """Exclude this evaluator and its ancestors, keeping unrelated workload matches.
+
+    Full-command pgrep also matches smoke/benchmark paths passed as arguments to
+    the evaluator itself. Those paths are not additional running workloads.
+    """
+    if exclude_pids is None:
+        exclude_pids = set()
+        pid = os.getpid()
+        while pid > 1 and pid not in exclude_pids:
+            exclude_pids.add(pid)
+            status = read_text(Path(f"/proc/{pid}/status")) or ""
+            parent = next((line.split()[1] for line in status.splitlines() if line.startswith("PPid:")), "0")
+            pid = int(parent)
+    kept = []
+    for line in stdout.splitlines():
+        fields = line.split(maxsplit=1)
+        if not fields or not fields[0].isdigit() or int(fields[0]) not in exclude_pids:
+            kept.append(line)
+    return "\n".join(kept)
+
+
 def parse_cmake_cache(path: Path) -> dict[str, str]:
     """Parse user-facing CMake cache entries."""
     entries: dict[str, str] = {}
@@ -133,17 +155,11 @@ def collect_environment() -> dict[str, Any]:
     """Collect the environment fields required by retained benchmark sessions."""
     commands = {
         "lscpu": run_capture(["lscpu"]),
-        "process_affinity": run_capture(
-            ["taskset", "--pid", "--cpu-list", str(os.getpid())]
-        ),
+        "process_affinity": run_capture(["taskset", "--pid", "--cpu-list", str(os.getpid())]),
         "memory": run_capture(["free", "--bytes"]),
         "swap": run_capture(["swapon", "--show", "--bytes", "--output-all"]),
-        "swap_configuration": run_capture(
-            ["swapon", "--show=NAME,TYPE,SIZE,PRIO", "--bytes", "--noheadings"]
-        ),
-        "swap_used_bytes": run_capture(
-            ["swapon", "--show=USED", "--bytes", "--noheadings"]
-        ),
+        "swap_configuration": run_capture(["swapon", "--show=NAME,TYPE,SIZE,PRIO", "--bytes", "--noheadings"]),
+        "swap_used_bytes": run_capture(["swapon", "--show=USED", "--bytes", "--noheadings"]),
         "kernel": run_capture(["uname", "-a"]),
         "firmware": run_capture(["vcgencmd", "version"]),
         "throttling": run_capture(["vcgencmd", "get_throttled"]),
@@ -164,6 +180,10 @@ def collect_environment() -> dict[str, Any]:
         ),
         "system_load": run_capture(["uptime"]),
     }
+    for key in ("llama_servers", "accelerator_workloads"):
+        original = str(commands[key].get("stdout", ""))
+        commands[key]["stdout_unfiltered"] = original
+        commands[key]["stdout"] = filter_competing_processes(original)
     return {
         "captured_utc": utc_now(),
         "platform": platform.platform(),
@@ -207,3 +227,12 @@ def swap_io_pages(environment: dict[str, Any]) -> dict[str, int] | None:
         except ValueError:
             return None
     return counters if set(counters) == {"pswpin", "pswpout"} else None
+
+
+def gpu_error_lines(kernel_log: str) -> list[str]:
+    """Identify V3D errors even when a process returns successful outputs."""
+    return [
+        line
+        for line in kernel_log.splitlines()
+        if "v3d" in line.lower() and any(marker in line for marker in ("*ERROR*", "Resetting GPU", "MMU error"))
+    ]

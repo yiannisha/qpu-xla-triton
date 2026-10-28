@@ -114,6 +114,44 @@ def main() -> None:
         "                ggml_qpu_ffn_island_profile_cpu_started();\n            }",
     )
     repack_path, repack_obj = out / "repack-profile.cpp", out / "repack-profile.cpp.o"
+    # Matched counterfactual: copy the exact CPU-owned channels, then call the
+    # same quantizer with a compact physical stride. Scratch capacity is reused.
+    original_quantize = """                ggml_quantize_mat_t<INTER_SIZE, PARAM_TYPE>(
+                    (float *) (data_ptr + i11 * nb11),
+                    (void *) (wdata_ptr + i11 * nbw1), 4, quantized_columns,
+                    static_cast<int64_t>(nb11 / sizeof(float)));"""
+    compact_quantize = """                const float * quant_source = (float *) (data_ptr + i11 * nb11);
+                int64_t quant_stride = static_cast<int64_t>(nb11 / sizeof(float));
+                const char * ablation = std::getenv("GGML_QPU_FFN_ABLATION");
+                if (qpu_down_reduction_columns > 0 && ablation && std::strcmp(ablation, "compact") == 0) {
+                    static thread_local std::vector<float> compact_scratch;
+                    compact_scratch.resize(static_cast<size_t>(4 * quantized_columns));
+                    for (int row = 0; row < 4; ++row) {
+                        std::memcpy(compact_scratch.data() + row * quantized_columns,
+                            data_ptr + (i11 + row) * nb11, static_cast<size_t>(quantized_columns) * sizeof(float));
+                    }
+                    quant_source = compact_scratch.data();
+                    quant_stride = quantized_columns;
+                }
+                ggml_quantize_mat_t<INTER_SIZE, PARAM_TYPE>(
+                    quant_source, (void *) (wdata_ptr + i11 * nbw1), 4, quantized_columns, quant_stride);"""
+    assert repack.count(original_quantize) == 1
+    repack = repack.replace(original_quantize, compact_quantize)
+    tail = """                from_float((float *) (data_ptr + i11 * nb11),
+                    (void *) (wdata_ptr + i11 * nbw1), quantized_columns);"""
+    replacement = """                const float * tail_source = (float *) (data_ptr + i11 * nb11);
+                const char * tail_ablation = std::getenv("GGML_QPU_FFN_ABLATION");
+                if (qpu_down_reduction_columns > 0 && tail_ablation && std::strcmp(tail_ablation, "compact") == 0) {
+                    static thread_local std::vector<float> compact_tail;
+                    compact_tail.assign(tail_source, tail_source + quantized_columns);
+                    tail_source = compact_tail.data();
+                    from_float(tail_source, (void *) (wdata_ptr + i11 * nbw1), quantized_columns);
+                } else {
+                    from_float(tail_source, (void *) (wdata_ptr + i11 * nbw1), quantized_columns);
+                }"""
+    assert repack.count(tail) == 1
+    repack = repack.replace(tail, replacement)
+    repack = '#include <vector>\n#include <cstdlib>\n#include <cstring>\n' + repack
     repack_path.write_text(repack)
     repack_compile = [
         "/usr/bin/c++",

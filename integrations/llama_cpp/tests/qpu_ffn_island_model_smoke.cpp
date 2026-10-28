@@ -9,6 +9,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -249,6 +251,15 @@ int main(int argc, char ** argv) {
                 const std::vector<float> candidate = decode_last_logits(
                     context, tokens, vocabulary, true);
                 const metrics observed = compare(cpu, candidate);
+                if (const char * directory = std::getenv("GGML_QPU_FFN_DUMP_DIR")) {
+                    std::filesystem::create_directories(directory);
+                    const auto path = std::filesystem::path(directory) /
+                        ("m" + std::to_string(rows) + "-p" + std::to_string(prompt_index) + ".candidate.f32");
+                    std::ofstream output(path, std::ios::binary);
+                    output.write(reinterpret_cast<const char *>(candidate.data()),
+                        static_cast<std::streamsize>(candidate.size() * sizeof(float)));
+                    if (!output) throw std::runtime_error("failed to persist ablation logits");
+                }
                 const bool case_passed = passes(observed);
                 passed = passed && case_passed;
                 std::printf(

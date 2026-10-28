@@ -1,0 +1,69 @@
+diff --git a/scripts/llama_cpp_common.py b/scripts/llama_cpp_common.py
+index 11ba35d..4b5e712 100644
+--- a/scripts/llama_cpp_common.py
++++ b/scripts/llama_cpp_common.py
+@@ -85,6 +85,28 @@ def read_text(path: Path) -> str | None:
+         return None
+ 
+ 
++def filter_competing_processes(stdout: str, *, exclude_pids: set[int] | None = None) -> str:
++    """Exclude this evaluator and its ancestors, keeping unrelated workload matches.
++
++    Full-command pgrep also matches smoke/benchmark paths passed as arguments to
++    the evaluator itself. Those paths are not additional running workloads.
++    """
++    if exclude_pids is None:
++        exclude_pids = set()
++        pid = os.getpid()
++        while pid > 1 and pid not in exclude_pids:
++            exclude_pids.add(pid)
++            status = read_text(Path(f"/proc/{pid}/status")) or ""
++            parent = next((line.split()[1] for line in status.splitlines() if line.startswith("PPid:")), "0")
++            pid = int(parent)
++    kept = []
++    for line in stdout.splitlines():
++        fields = line.split(maxsplit=1)
++        if not fields or not fields[0].isdigit() or int(fields[0]) not in exclude_pids:
++            kept.append(line)
++    return "\n".join(kept)
++
++
+ def parse_cmake_cache(path: Path) -> dict[str, str]:
+     """Parse user-facing CMake cache entries."""
+     entries: dict[str, str] = {}
+@@ -164,6 +186,10 @@ def collect_environment() -> dict[str, Any]:
+         ),
+         "system_load": run_capture(["uptime"]),
+     }
++    for key in ("llama_servers", "accelerator_workloads"):
++        original = str(commands[key].get("stdout", ""))
++        commands[key]["stdout_unfiltered"] = original
++        commands[key]["stdout"] = filter_competing_processes(original)
+     return {
+         "captured_utc": utc_now(),
+         "platform": platform.platform(),
+diff --git a/scripts/run_llama_cpp_qpu_ffn_island_eval.py b/scripts/run_llama_cpp_qpu_ffn_island_eval.py
+index 041920c..e3c1107 100644
+--- a/scripts/run_llama_cpp_qpu_ffn_island_eval.py
++++ b/scripts/run_llama_cpp_qpu_ffn_island_eval.py
+@@ -23,6 +23,7 @@ if str(ROOT) not in sys.path:
+ 
+ from scripts.llama_cpp_common import (  # noqa: E402
+     collect_environment,
++    filter_competing_processes,
+     sha256_file,
+     swap_io_pages,
+     swap_used_bytes,
+@@ -110,9 +111,10 @@ def require_no_competing_workloads(boundary: str) -> None:
+         raise RuntimeError(
+             f"failed to inspect competing workloads at {boundary}: {completed.stderr}"
+         )
+-    if completed.stdout.strip():
++    competing = filter_competing_processes(completed.stdout)
++    if competing.strip():
+         raise RuntimeError(
+-            f"competing accelerator/model workload at {boundary}:\n{completed.stdout}"
++            f"competing accelerator/model workload at {boundary}:\n{competing}"
+         )
+ 
+ 
