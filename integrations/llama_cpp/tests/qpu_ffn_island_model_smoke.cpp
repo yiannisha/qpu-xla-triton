@@ -175,12 +175,19 @@ bool passes(const metrics & value) {
 ggml_backend_buffer_type_t ggml_backend_cpu_repack_buffer_type(void);
 
 int main(int argc, char ** argv) {
-    if (argc != 2 || std::strcmp(argv[1], "--help") == 0) {
-        std::fprintf(stderr, "usage: %s MODEL.gguf\n", argv[0]);
+    if ((argc != 2 && argc != 3) || std::strcmp(argv[1], "--help") == 0) {
+        std::fprintf(stderr, "usage: %s MODEL.gguf [QPU_FRACTION]\n", argv[0]);
         return argc == 2 ? 0 : 2;
     }
     try {
-        setenv("GGML_QPU_FFN_ISLAND_FRACTION", "0.125", 1);
+        const char * fraction = argc == 3 ? argv[2] : "0.125";
+        char * fraction_end = nullptr;
+        const double fraction_value = std::strtod(fraction, &fraction_end);
+        if (fraction_end == fraction || *fraction_end != '\0' ||
+            !std::isfinite(fraction_value) || fraction_value < 0.03125 || fraction_value > 0.5) {
+            throw std::runtime_error("QPU fraction must be in [0.03125,0.5]");
+        }
+        setenv("GGML_QPU_FFN_ISLAND_FRACTION", fraction, 1);
         // Registration occurs while model weights are loaded. Individual
         // reference decodes disable execution after the resident QPU copies exist.
         setenv("GGML_QPU_FFN_ISLAND", "1", 1);

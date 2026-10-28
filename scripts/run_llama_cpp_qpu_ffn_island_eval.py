@@ -563,6 +563,7 @@ def retention(before: dict[str, Any], after: dict[str, Any], runs: list[dict[str
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--llama-bench", type=Path, default=Path("/home/yiannis/side/llama.cpp/build/bin/llama-bench"))
+    parser.add_argument("--llama-root", type=Path, help="Source checkout for provenance; inferred from the benchmark path otherwise")
     parser.add_argument("--model", type=Path, default=Path("/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"))
     parser.add_argument("--plugin", type=Path, default=ROOT / "build/llama-qpu-runtime/libggml-qpu-inline.so")
     parser.add_argument("--program-manifest", type=Path, default=ROOT / "integrations/llama_cpp/generated/manifest.json")
@@ -768,7 +769,7 @@ def main() -> None:
         },
         "source": {
             "py_videocore7": git_record(ROOT),
-            "llama_cpp": git_record(Path("/home/yiannis/side/llama.cpp")),
+            "llama_cpp": git_record(args.llama_root or args.llama_bench.resolve().parents[2]),
         },
         "correctness_preflight": correctness_preflight,
         "configuration": {

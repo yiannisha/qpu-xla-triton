@@ -262,6 +262,12 @@ struct island_timing {
     uint64_t fallback_ns = 0;
     uint64_t join_start = 0;
     uint64_t join_ns = 0;
+    uint64_t worker_finish = 0;
+    uint64_t cpu_finish = 0;
+    uint64_t cpu_start = 0;
+    uint64_t submit_start[4] = {};
+    uint64_t submit_end[4] = {};
+    uint64_t observed_end[4] = {};
     uint32_t completed_dispatches = 0;
     bool verified = false;
     double verification_max_abs = 0.0;
@@ -690,6 +696,23 @@ qpu_llama_status buffer_address(qpu_llama_buffer * buffer, uint32_t & address) {
     return qpu_llama_buffer_gpu_address(buffer, 0, &address);
 }
 
+qpu_llama_status profile_execute(island_context & context, qpu_llama_program * program,
+    const qpu_llama_dispatch_desc * dispatch) {
+    if (!flag_enabled("GGML_QPU_FFN_PROFILE")) {
+        return qpu_llama_program_execute(program, dispatch);
+    }
+    const uint32_t index = context.timing.completed_dispatches;
+    if (index >= 4) return QPU_LLAMA_INTERNAL_ERROR;
+    qpu_llama_submission * submission = nullptr;
+    context.timing.submit_start[index] = monotonic_ns();
+    qpu_llama_status status = qpu_llama_program_submit(program, dispatch, &submission);
+    context.timing.submit_end[index] = monotonic_ns();
+    if (status == QPU_LLAMA_OK) status = qpu_llama_submission_wait(submission);
+    context.timing.observed_end[index] = monotonic_ns();
+    qpu_llama_submission_destroy(submission);
+    return status;
+}
+
 qpu_llama_status execute_linear(
     island_context & context,
     const packed_matrix & weight,
@@ -740,7 +763,7 @@ qpu_llama_status execute_linear(
         /* .threading = */ 0,
     };
     return status == QPU_LLAMA_OK
-        ? qpu_llama_program_execute(context.linear_program, &dispatch) : status;
+        ? profile_execute(context, context.linear_program, &dispatch) : status;
 }
 
 qpu_llama_status execute_geglu(island_context & context, uint32_t rows, uint32_t columns) {
@@ -778,7 +801,7 @@ qpu_llama_status execute_geglu(island_context & context, uint32_t rows, uint32_t
         /* .threading = */ 0,
     };
     return status == QPU_LLAMA_OK
-        ? qpu_llama_program_execute(context.geglu_program, &dispatch) : status;
+        ? profile_execute(context, context.geglu_program, &dispatch) : status;
 }
 
 bool injected(const island_context & context, const char * stage) {
@@ -1012,6 +1035,9 @@ void worker_loop(island_context * context) {
         lock.lock();
         context->success = status == QPU_LLAMA_OK;
         context->fallback = fallback;
+        if (flag_enabled("GGML_QPU_FFN_PROFILE")) {
+            context->timing.worker_finish = monotonic_ns();
+        }
         context->done = true;
         context->done_condition.notify_all();
     }
@@ -1205,6 +1231,14 @@ ggml_qpu_ffn_island_begin(
     return 1;
 }
 
+extern "C" __attribute__((visibility("default"))) void
+ggml_qpu_ffn_island_profile_cpu_started() {
+    island_context & context = get_context();
+    if (flag_enabled("GGML_QPU_FFN_PROFILE") && context.pending.load() && context.timing.cpu_start == 0) {
+        context.timing.cpu_start = monotonic_ns();
+    }
+}
+
 extern "C" __attribute__((visibility("default"))) uint64_t
 ggml_qpu_ffn_island_cpu_output_columns_for(const char * name) {
     island_context & context = get_context();
@@ -1252,6 +1286,7 @@ ggml_qpu_ffn_island_wait(const char * down_name) {
     std::unique_lock<std::mutex> lock(context.mutex);
     const uint64_t start = monotonic_ns();
     context.timing.overlap_before_wait_ns = start - context.timing.begin_end;
+    context.timing.cpu_finish = start;
     context.done_condition.wait(lock, [&] { return context.done; });
     context.timing.exposed_wait_ns = monotonic_ns() - start;
     context.timing.join_start = monotonic_ns();
@@ -1295,6 +1330,31 @@ ggml_qpu_ffn_island_complete(const char * down_name) {
     std::lock_guard<std::mutex> lock(context.mutex);
     context.timing.join_ns = monotonic_ns() - context.timing.join_start;
     const layer_record & layer = *context.active_layer;
+    if (flag_enabled("GGML_QPU_FFN_PROFILE")) {
+        std::fprintf(stderr,
+            "qpu_ffn_timeline_json:{\"layer\":%d,\"m\":%u,\"width\":%u,"
+            "\"clock\":\"CLOCK_MONOTONIC\",\"begin_ns\":%llu,"
+            "\"prepared_ns\":%llu,\"cpu_start_ns\":%llu,\"cpu_finish_ns\":%llu,"
+            "\"qpu_observed_finish_ns\":%llu,\"merge_begin_ns\":%llu,"
+            "\"merge_end_ns\":%llu}\n",
+            layer.layer, context.active_rows, layer.intermediate_columns,
+            static_cast<unsigned long long>(context.timing.begin_start),
+            static_cast<unsigned long long>(context.timing.begin_end),
+            static_cast<unsigned long long>(context.timing.cpu_start),
+            static_cast<unsigned long long>(context.timing.cpu_finish),
+            static_cast<unsigned long long>(context.timing.worker_finish),
+            static_cast<unsigned long long>(context.timing.join_start),
+            static_cast<unsigned long long>(context.timing.join_start + context.timing.join_ns));
+        for (uint32_t index = 0; index < context.timing.completed_dispatches; ++index) {
+            std::fprintf(stderr,
+                "qpu_ffn_dispatch_json:{\"layer\":%d,\"m\":%u,\"stage_index\":%u,"
+                "\"submit_begin_ns\":%llu,\"submit_end_ns\":%llu,\"observed_end_ns\":%llu}\n",
+                layer.layer, context.active_rows, index,
+                static_cast<unsigned long long>(context.timing.submit_start[index]),
+                static_cast<unsigned long long>(context.timing.submit_end[index]),
+                static_cast<unsigned long long>(context.timing.observed_end[index]));
+        }
+    }
     context.dispatch_count.fetch_add(context.timing.completed_dispatches,
         std::memory_order_relaxed);
     context.island_count.fetch_add(1, std::memory_order_relaxed);
