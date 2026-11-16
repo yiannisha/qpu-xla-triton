@@ -1,0 +1,172 @@
+{
+  "format": "artifact-claims-v1",
+  "paper_title": "Practical: Building and Evaluating a Native CPU-QPU Runtime for Edge AI Inference on Raspberry Pi 5",
+  "manuscript_alignment": "pending: exact accepted manuscript is not available locally",
+  "claims": [
+    {
+      "id": "headline-ffn",
+      "manuscript_location": null,
+      "statement": "Corrected opt-in FFN has a small M=129 gain; M=257 is inconclusive.",
+      "evidence": [
+        "BUG_FIX_RESULTS.md",
+        "experiment_logs/20260910-ffn-island-stride-fix/corrected-independent-processes-v7.json",
+        "experiment_logs/20260910-ffn-island-stride-fix/corrected-agentic-15-v2.json"
+      ],
+      "fresh_run": "paper:prompt,agentic",
+      "scope": "September uninstrumented campaigns. Model/policy fixed; below 1.05x automatic promotion gate. Original shortened-stride measurements are invalid."
+    },
+    {
+      "id": "rebuttal-todo1",
+      "manuscript_location": null,
+      "statement": "Measured complete FFN critical path is CPU dominated.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/TODO1-2-REPORT.md",
+        "experiment_logs/20261028-rebuttal/raw/todo1-2-todo1-breakdown.json.gz"
+      ],
+      "fresh_run": "rebuttal:todo1",
+      "scope": "Instrumented diagnostics; overlapping branch durations must not be added; does not replace historical headline timing. Two V3D MMU events are retained in campaign qualifications."
+    },
+    {
+      "id": "rebuttal-todo2",
+      "manuscript_location": null,
+      "statement": "Six-cell split screen contains no promoted policy. Consists of 4 inconclusive cases and 2 losses under its stated CI classification.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/todo2-grid.csv",
+        "experiment_logs/20261028-rebuttal/raw/todo1-2-todo2-screen-attempt.json.gz",
+        "experiment_logs/20261028-rebuttal/raw/todo1-2-todo2-screen.json.gz"
+      ],
+      "fresh_run": "rebuttal:todo2",
+      "scope": "Exploratory screen, not independent confirmation or proof that 1/8 is optimal."
+    },
+    {
+      "id": "rebuttal-todo3",
+      "manuscript_location": null,
+      "statement": "Serialization is slower; copy/materialization effects span parity.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/REPORT.md",
+        "experiment_logs/20261028-rebuttal/raw/todo3-ablation.json.gz"
+      ],
+      "fresh_run": "rebuttal:todo3",
+      "scope": "Five matched process blocks; all four variants have identical complete candidate logits; effects are not additive."
+    },
+    {
+      "id": "rebuttal-todo4",
+      "manuscript_location": null,
+      "statement": "Production MTP QPU hook is slower than CPU_REPACK.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/REPORT.md",
+        "experiment_logs/20261028-rebuttal/raw/todo4-mtp.json.gz",
+        "artifact/evidence/mtp/activation.f32"
+      ],
+      "fresh_run": "rebuttal:todo4",
+      "scope": "M=1 K=256 N=2048, real weights and activation; wait is observable host interval, not isolated device arithmetic."
+    },
+    {
+      "id": "rebuttal-todo5",
+      "manuscript_location": null,
+      "statement": "Host preparation dominates current pointwise and dense 3x3 W8A8 convolution.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/REPORT.md",
+        "experiment_logs/20261028-rebuttal/raw/20261028-remaining-todo5-pointwise.json.gz",
+        "experiment_logs/20261028-rebuttal/raw/20261028-remaining-todo5-dense.json.gz",
+        "experiment_logs/20261028-rebuttal/raw/todo5-control-process.json.gz",
+        "experiment_logs/20261028-rebuttal/raw/todo5-clean-control-process.json.gz"
+      ],
+      "fresh_run": "rebuttal:todo5-pointwise,todo5-dense",
+      "scope": "Prepared steady state; Torch FP32 baseline changes representation. Pointwise is GEMM-backed; dense 3x3 uses im2col. Depthwise attempts are rejected, not accepted timing evidence."
+    },
+    {
+      "id": "rebuttal-todo6",
+      "manuscript_location": null,
+      "statement": "Matched fused Torch bias+ReLU is faster than QPU. Optimized same-contract CPU W8A8 control unavailable.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/REPORT.md",
+        "experiment_logs/20261028-rebuttal/raw/20261028-remaining-todo6.json.gz"
+      ],
+      "fresh_run": "rebuttal:todo6",
+      "scope": "Historical 1.920x stage result compares against NumPy two passes; this control does not show a fused-CPU win for QPU. TODO6(a) remains omitted."
+    },
+    {
+      "id": "rebuttal-todo7",
+      "manuscript_location": null,
+      "statement": "One-input complete ResNet-18 QPU execution is slower; FP32 logit checks pass.",
+      "evidence": [
+        "coa.md",
+        "experiment_logs/20261028-rebuttal/REPORT.md",
+        "experiment_logs/20261028-rebuttal/raw/20261028-remaining-todo7.json.gz"
+      ],
+      "fresh_run": "rebuttal:todo7",
+      "scope": "Full preprocessed 1x3x224x224 input to logits; 128-pixel source derivative; no new task accuracy, VLA latency or energy result."
+    },
+    {
+      "id": "rebuttal-todo8-9",
+      "manuscript_location": null,
+      "statement": "Projection campaign has 112 configurations, ten median-rule wins. Six-worker min/max selector is an implementation cutoff.",
+      "evidence": [
+        "REBUTTAL_NOTES.md",
+        "experiment_logs/20261028-rebuttal/raw/20261028-remaining-todo8-9.json.gz",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/decode-h2048-c512-fp32-linear.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h1024-t64-fp32-linear.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h512-t16-fp32-linear.json"
+      ],
+      "fresh_run": "rebuttal:todo8-9",
+      "scope": "No historical confidence-interval classification or optimal-worker claim; separate role reruns and stage sweeps excluded."
+    },
+    {
+      "id": "model-quality",
+      "manuscript_location": null,
+      "statement": "MMLU/ResNet FP32/YOLO FP32 qualifications; ResNet W8A8 regression and SmolVLA gate/stability failures.",
+      "evidence": [
+        "MODEL-QUALITY.md",
+        "CORRECTNESS_REPORT.md",
+        "SMOLVLA-QPU.md",
+        "artifact/evidence/model-quality/smolvla-replay100-qpu-fp32/report.json",
+        "artifact/evidence/model-quality/gemma-mmlu-1000/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-qpu-fp32/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-hybrid-fp32/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-qpu-w8a8/report.json",
+        "artifact/evidence/model-quality/yolov8n-coco1000-random-seed20260911-qpu-fp32/report.json"
+      ],
+      "fresh_run": "quality:mmlu,resnet18-qpu_fp32,resnet18-hybrid_fp32,resnet18-qpu_w8a8,yolov8n; smolvla diagnostic explicitly selected",
+      "scope": "Reports valid_run attests execution only. SmolVLA 1.56% NRMSE/cosine 0.999881 misses FP32 gates; resets/resumes do not establish reliability. COCO bootstrap omitted in retained campaign."
+    },
+    {
+      "id": "rebuttal-todo10",
+      "manuscript_location": null,
+      "statement": "Attribution and scope corrections prepared; manuscript and publication unverified.",
+      "evidence": [
+        "REBUTTAL_NOTES.md",
+        "experiment_logs/20261028-rebuttal/REPORT.md",
+        "artifact/APPENDIX.md",
+        "artifact/CLARIFICATIONS.md"
+      ],
+      "fresh_run": "manual manuscript alignment",
+      "scope": "No submitted PDFs, final figure/table mapping, DOI, badge award or package upload is claimed."
+    },
+    {
+      "id": "artifact-clean-build-validation",
+      "manuscript_location": null,
+      "statement": "Clean native preparation and numerical/dispatch checks pass; one prompt campaign has an MMU-based latency rejection, and a separate two-pair cached-request stage has clean retention.",
+      "evidence": [
+        "artifact/evidence/clean-build/summary.json",
+        "artifact/evidence/clean-build/prompt.json.gz",
+        "artifact/evidence/clean-build/prompt-control.json.gz",
+        "artifact/evidence/clean-build/agentic.json.gz",
+        "artifact/evidence/clean-build/agentic-control.json.gz"
+      ],
+      "fresh_run": "profiles-functional.json:paper and separately --only agentic after the first campaign stops",
+      "scope": "Bounded author-run exercisability only, with unchanged gates. No retry-until-success, independent confirmation or new performance/stability claim. Kernel event cause unisolated."
+    }
+  ],
+  "manuscript_search": {
+    "local": "No accepted manuscript/source found in this repository or the adjacent prior checkout.",
+    "connected_drive": "Exact-title terms returned no files; QPU search found older progress/idea notes, not the manuscript. No unrelated document contents were read.",
+    "mapping_rule": "Stable evidence IDs are authoritative; manuscript figure/table numbers remain unverified and are not fabricated."
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "kind": "artifact-clean-build-follow-through-v1",
+  "scope": "Author-run exercisability only; reduced samples do not replace or independently confirm paper results. Prompt timings are rejected even though inner numerical/execution gates passed. No retry-until-success or gate relaxation.",
+  "native_build": {
+    "completed": true,
+    "elapsed_seconds": 443.68449604399984,
+    "upstream_checkout_and_build_bytes": 275664327,
+    "integration_and_profile_build_bytes": 13342043
+  },
+  "pi_smoke": {
+    "float32": 0.0,
+    "int16_conv_int32_accumulation": 0.0,
+    "int32": 0.0
+  },
+  "custom_workload": {
+    "cases": 21,
+    "maximum_absolute_error": 9.5367431640625e-06,
+    "elapsed_seconds": 2.9885395510000308
+  },
+  "prompt": {
+    "completed": true,
+    "numerical_preflights_passed": true,
+    "execution_contracts_passed": true,
+    "dispatches": 560,
+    "fallbacks": 0,
+    "retained_for_latency": false,
+    "kernel_error_lines": [
+      "2026-11-16T17:38:42,333593-05:00 v3d 1002000000.v3d: MMU error from client PTB (1) at 0x2bc9000, pte invalid"
+    ],
+    "elapsed_seconds": 126.27939628700005,
+    "qualification": "MMU event occurred within the real-model preflight interval. Cause unisolated; all campaign latency remains rejected, including the timed portion.",
+    "full_vocabulary_cases": 6,
+    "max_probability_error": 1.43794836e-05,
+    "max_raw_logit_absolute_error": 0.636106491,
+    "max_total_variation": 1.80486786e-05,
+    "max_kl_divergence": 7.84265677e-07,
+    "all_argmax_equal": true
+  },
+  "agentic": {
+    "completed": true,
+    "numerical_preflights_passed": true,
+    "pairs": 2,
+    "samples": 4,
+    "retained_for_latency": true,
+    "kernel_error_lines": [],
+    "all_greedy_outputs_identical": true,
+    "all_qpu_executions_valid": true,
+    "elapsed_seconds": 130.67415909600004,
+    "maximum_peak_rss_bytes": 4405149696,
+    "full_vocabulary_cases": 6,
+    "max_probability_error": 1.43794836e-05,
+    "max_raw_logit_absolute_error": 0.636106491,
+    "max_total_variation": 1.80486786e-05,
+    "max_kl_divergence": 7.84265677e-07,
+    "all_argmax_equal": true
+  }
+}

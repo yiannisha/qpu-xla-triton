@@ -37,6 +37,8 @@ def main():
     p.add_argument("--llama-root", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--rounds", type=int, default=5)
+    p.add_argument("--profile-build", type=Path, default=ROOT / "build/llama-qpu-ablation")
+    p.add_argument("--cpu-profile", type=Path, default=ROOT / "build/ffn-ablation-cpu")
     args = p.parse_args()
     if args.rounds < 1:
         p.error("rounds must be positive")
@@ -44,8 +46,8 @@ def main():
     if out.exists() and any(out.iterdir()):
         p.error("output must be empty")
     out.mkdir(parents=True, exist_ok=True)
-    build = ROOT / "build/llama-qpu-ablation"
-    cpu = ROOT / "build/ffn-ablation-cpu"
+    build = args.profile_build.resolve()
+    cpu = args.cpu_profile.resolve()
     modes = ["full", "compact", "materialized", "serialized"]
     common = {
         k: v

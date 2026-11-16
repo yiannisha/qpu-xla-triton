@@ -1,0 +1,286 @@
+{
+  "llama_base": "91d2fc387529940230555abd297a8b5e99737d3f",
+  "llama_root": "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+  "build_root": "/home/yiannis/side/py-videocore7/build/artifact-native-clean",
+  "started_utc": "2026-11-16T22:29:38.536926+00:00",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "--check",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0032527550001759664
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0001-ggml-cpu-inline-geglu-hook.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0037215580000520276
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "--check",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0002-ggml-cpu-inline-m1-q4-hook.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0020536799997898925
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0002-ggml-cpu-inline-m1-q4-hook.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0021000880001338373
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "--check",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0003-ggml-cpu-complete-ffn-island-hook.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0035359449998395576
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0003-ggml-cpu-complete-ffn-island-hook.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.0038130040002215537
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "--check",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0004-per-item-multiple-choice-jsonl.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.002401666999958252
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0004-per-item-multiple-choice-jsonl.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.002605928999855678
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "--check",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0005-ggml-cpu-stride-aware-repack-quantizer.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.006148929999653774
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "apply",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp/patches/0005-ggml-cpu-stride-aware-repack-quantizer.patch"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.006289377000030072
+    },
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "-B",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean/build",
+        "-G",
+        "Unix Makefiles",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DBUILD_SHARED_LIBS=ON",
+        "-DGGML_CPU_REPACK=ON",
+        "-DGGML_NATIVE=ON",
+        "-DGGML_OPENMP=ON",
+        "-DGGML_BLAS=OFF",
+        "-DGGML_BACKEND_DL=OFF",
+        "-DGGML_CPU_ALL_VARIANTS=OFF"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 5.09058357899994
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean/build",
+        "--parallel",
+        "4",
+        "--target",
+        "llama-bench",
+        "llama-server",
+        "llama-perplexity"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 396.71441950300004
+    },
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp",
+        "-B",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-runtime",
+        "-DLLAMA_CPP_ROOT=/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "-DLLAMA_CPP_BUILD_DIR=/home/yiannis/side/py-videocore7/build/artifact-llama-clean/build",
+        "-DQPU_LLAMA_BUILD_GGML_BACKEND=ON",
+        "-DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON",
+        "-DQPU_LLAMA_BUILD_BENCHMARK=ON"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.4706635760003337
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-runtime",
+        "--parallel",
+        "4",
+        "--target",
+        "ggml-qpu-inline",
+        "qpu_repack_stride_smoke",
+        "qpu_ffn_island_graph_smoke",
+        "qpu_ffn_island_model_smoke",
+        "qpu_llama_cpu_repack_bench"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 5.391174137000235
+    },
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp",
+        "-B",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-profile",
+        "-DLLAMA_CPP_ROOT=/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "-DLLAMA_CPP_BUILD_DIR=/home/yiannis/side/py-videocore7/build/artifact-llama-clean/build",
+        "-DQPU_LLAMA_BUILD_GGML_BACKEND=ON",
+        "-DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON",
+        "-DQPU_LLAMA_BUILD_BENCHMARK=ON"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.48026748899974336
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-profile",
+        "--parallel",
+        "4",
+        "--target",
+        "ggml-qpu-inline",
+        "qpu_repack_stride_smoke",
+        "qpu_ffn_island_graph_smoke",
+        "qpu_ffn_island_model_smoke",
+        "qpu_llama_cpu_repack_bench"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 5.330302455000037
+    },
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/home/yiannis/side/py-videocore7/integrations/llama_cpp",
+        "-B",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-ablation",
+        "-DLLAMA_CPP_ROOT=/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "-DLLAMA_CPP_BUILD_DIR=/home/yiannis/side/py-videocore7/build/artifact-llama-clean/build",
+        "-DQPU_LLAMA_BUILD_GGML_BACKEND=ON",
+        "-DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON",
+        "-DQPU_LLAMA_BUILD_BENCHMARK=ON"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 0.4754158410000855
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-ablation",
+        "--parallel",
+        "4",
+        "--target",
+        "ggml-qpu-inline",
+        "qpu_repack_stride_smoke",
+        "qpu_ffn_island_graph_smoke",
+        "qpu_ffn_island_model_smoke",
+        "qpu_llama_cpu_repack_bench"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 5.310088826000083
+    },
+    {
+      "argv": [
+        "/home/yiannis/side/py-videocore7/.venv/bin/python",
+        "scripts/build_llama_cpp_ffn_profile.py",
+        "--llama-root",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "--output",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/ffn-profile-cpu"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 11.97742236699969
+    },
+    {
+      "argv": [
+        "/home/yiannis/side/py-videocore7/.venv/bin/python",
+        "scripts/build_llama_cpp_ffn_profile.py",
+        "--llama-root",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean",
+        "--output",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/ffn-ablation-cpu"
+      ],
+      "returncode": 0,
+      "elapsed_seconds": 12.026122182999643
+    }
+  ],
+  "rebuttal": true,
+  "completed": true,
+  "elapsed_seconds": 443.68449604399984,
+  "finished_utc": "2026-11-16T22:37:02.221445+00:00"
+}

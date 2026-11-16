@@ -1,6 +1,6 @@
 [project]
 name = "py-videocore7"
-description = "Add your description here"
+description = "VideoCore VII QPU assembler, driver, and heterogeneous ML runtime for Raspberry Pi 5"
 readme = "README.md"
 authors = [
     { name = "notogawa", email = "n.ohkawa@gmail.com" }
@@ -12,6 +12,10 @@ dependencies = [
     "torch>=2.11.0",
 ]
 dynamic = ["version"]
+
+[project.urls]
+Repository = "https://github.com/yiannisha/qpu-xla-triton"
+Documentation = "https://github.com/yiannisha/qpu-xla-triton/blob/main/artifact/README.md"
 
 [project.optional-dependencies]
 evaluation = [
@@ -33,6 +37,7 @@ where = ["src"]
 
 [tool.setuptools_scm]
 version_file = "src/_videocore7/_version.py"
+fallback_version = "0.0.0"
 
 [tool.setuptools.dynamic]
 version = {attr = "_videocore7._version.__version__"} # refer genetated version by setuptools-scm
@@ -74,6 +79,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
+pythonpath = ["."]
 markers = [
     "hardware: requires a Raspberry Pi VideoCore VII render node",
 ]

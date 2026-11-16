@@ -1,0 +1,308 @@
+{
+  "metadata": {
+    "backend": "PyVideoCore7Backend",
+    "cpu_governor": "ondemand",
+    "cpu_reference": "fastest-of-torch-and-numpy-blas",
+    "hostname": "yiannis",
+    "numpy": "2.2.2",
+    "numpy_blas": "scipy-openblas",
+    "numpy_blas_configuration": "OpenBLAS 0.3.28  USE64BITINT DYNAMIC_ARCH NO_AFFINITY neoversen1 MAX_THREADS=64",
+    "numpy_blas_version": "0.3.28",
+    "omp_num_threads": "4",
+    "openblas_num_threads": "4",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "semantics": "steady-state-total",
+    "thermal_zone0_temp_millicelsius": "55100",
+    "timestamp_utc": "2026-11-16T22:37:56.700720+00:00",
+    "torch": "2.11.0+cu130",
+    "torch_interop_threads": "4",
+    "torch_threads": "4"
+  },
+  "results": [
+    {
+      "configuration": "numpy-openblas-0.3.28 matmul",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 84.32287229011844,
+      "max_abs_error": 0.0,
+      "median_seconds": 4.974100011168048e-05,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 1.0
+    },
+    {
+      "configuration": "torch.matmul",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 1.2130455707923513,
+      "max_abs_error": 0.0,
+      "median_seconds": 0.003457663999597571,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.014385724037231411
+    },
+    {
+      "configuration": "qpu_xla CPU",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 15.887334628276198,
+      "max_abs_error": 0.0,
+      "median_seconds": 0.0002640029997564852,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.18841073835358416
+    },
+    {
+      "configuration": "QPU only",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 8.435696054376255,
+      "max_abs_error": 9.5367431640625e-06,
+      "median_seconds": 0.0004972090000592289,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.10004042586870954
+    },
+    {
+      "configuration": "AUTO",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 14.394915105217748,
+      "max_abs_error": 0.0,
+      "median_seconds": 0.0002913740004260035,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.17071186872870137
+    },
+    {
+      "configuration": "CPU+QPU (16/128 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 8.532638949338361,
+      "max_abs_error": 7.62939453125e-06,
+      "median_seconds": 0.0004915599997730169,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.10119008897113052
+    },
+    {
+      "configuration": "CPU+QPU (32/128 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 8.78583308597025,
+      "max_abs_error": 9.5367431640625e-06,
+      "median_seconds": 0.0004773939999722643,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.10419276345025354
+    },
+    {
+      "configuration": "CPU+QPU (48/128 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 8.93700020904138,
+      "max_abs_error": 9.5367431640625e-06,
+      "median_seconds": 0.0004693189998761227,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.10598548135662454
+    },
+    {
+      "configuration": "CPU+QPU (64/128 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 9.349430245920205,
+      "max_abs_error": 9.5367431640625e-06,
+      "median_seconds": 0.0004486160000851669,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.1108765628114857
+    },
+    {
+      "configuration": "CPU+QPU (96/128 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 8.644003736130896,
+      "max_abs_error": 9.5367431640625e-06,
+      "median_seconds": 0.00048522699989916873,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.1025107838640817
+    },
+    {
+      "configuration": "CPU+QPU (112/128 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 matmul",
+      "gops": 8.038114079479673,
+      "max_abs_error": 9.5367431640625e-06,
+      "median_seconds": 0.0005218019996391376,
+      "operation": "matmul",
+      "shape": [
+        128,
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.09532543023231002
+    },
+    {
+      "configuration": "numpy-openblas-0.3.28 SDPA",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 26.541272362207422,
+      "max_abs_error": 0.0,
+      "median_seconds": 0.0003160589999424701,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 1.0
+    },
+    {
+      "configuration": "Torch native SDPA",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 7.816065565440932,
+      "max_abs_error": 4.76837158203125e-07,
+      "median_seconds": 0.0010732519999692158,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.2944872219679401
+    },
+    {
+      "configuration": "QPU GEMM core",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 2.0788735045003364,
+      "max_abs_error": 0.0,
+      "median_seconds": 0.0040351700004066515,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.07832606802454883
+    },
+    {
+      "configuration": "QPU-only staged SDPA",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 1.2496319379111203,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.006712863000302605,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.04708259351162428
+    },
+    {
+      "configuration": "CPU+QPU SDPA (16 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 1.3932197236475008,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.006021022999902925,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.05249257475807115
+    },
+    {
+      "configuration": "CPU+QPU SDPA (32 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 1.3573338123009377,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.0061802099999113125,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.051140495217315535
+    },
+    {
+      "configuration": "CPU+QPU SDPA (48 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 1.670503354881435,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.0050216050003655255,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.06293983694843859
+    },
+    {
+      "configuration": "CPU+QPU SDPA (64 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 1.9541524944462878,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.004292708999855677,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.07362693347093786
+    },
+    {
+      "configuration": "CPU+QPU SDPA (96 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 2.3804107641811436,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.0035240170000179205,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.08968713826887409
+    },
+    {
+      "configuration": "CPU+QPU SDPA (112 QPU rows)",
+      "cpu_reference": "numpy-openblas-0.3.28 SDPA",
+      "gops": 2.8636658616203317,
+      "max_abs_error": 2.384185791015625e-07,
+      "median_seconds": 0.0029293249999682303,
+      "operation": "scaled_dot_product_attention",
+      "shape": [
+        128,
+        128
+      ],
+      "speedup_over_cpu": 0.10789482216752934
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "format": "artifact-local-validation-v2",
+  "date": "2026-11-16",
+  "focused_portable_tests": {
+    "passed": 20,
+    "command": [
+      "uv",
+      "run",
+      "--locked",
+      "pytest",
+      "-q",
+      "tests/test_artifact.py",
+      "tests/test_llama_cpp_ffn_breakdown.py",
+      "tests/test_llama_cpp_process_guards.py"
+    ],
+    "returncode": 0,
+    "observed_stdout_excerpt": "20 passed in 1.29s",
+    "evidence_source": "Captured output of the actual follow-through focused validation run; original 18-test log is retained separately."
+  },
+  "source_sha256": {
+    "scripts/artifact.py": "5562811afa042b09b78165df3b865971e7618792599076e4ce475b58a4848276",
+    "scripts/artifact_common.py": "983fbbc933473d99a612913d2f697c7268d0be8f4142954a53c3edd2eb81cd14",
+    "scripts/prepare_artifact_native.py": "383476ffb585add2f2ec1d86b5c08e8781587124e11fbb580e997dfb4bf6e16e",
+    "scripts/prepare_imagenet_samples.py": "bdb051a5e83e2750e7106036938f81bd601c8a8b681e66dd61a0821084af5106",
+    "scripts/run_llama_cpp_ffn_ablation.py": "424ccd2a52cec4029065a15db9feee9410dbcc557737cc7912e88394c574a7ff",
+    "scripts/summarize_rebuttal_remaining.py": "559d66530ae69ab96770a672ed3c108a194f0e28ea6ea2cb746f0cefa257bba2",
+    "scripts/summarize_llama_cpp_ffn_split_screen.py": "2a644bff6e0a9eb8815ee6c8d28114214fcc38fd412005b339e011cfafcdf316",
+    "tests/conftest.py": "df53954c615e25ea480c39ec081d9380171a9ddc7ceb40d52c7520d9c8e48e2e",
+    "tests/test_artifact.py": "18d73a006ebedcade15db8379f98bdcff4c81cf832695c256f27c5d2b830d68b",
+    "pyproject.toml": "1bab1fc12a0d113137c1333c87aafac96f256d51d21ebacfe638b0992917e8b2"
+  },
+  "clean_build_follow_through": {
+    "kind": "artifact-clean-build-follow-through-v1",
+    "scope": "Author-run exercisability only; reduced samples do not replace or independently confirm paper results. Prompt timings are rejected even though inner numerical/execution gates passed. No retry-until-success or gate relaxation.",
+    "native_build": {
+      "completed": true,
+      "elapsed_seconds": 443.68449604399984,
+      "upstream_checkout_and_build_bytes": 275664327,
+      "integration_and_profile_build_bytes": 13342043
+    },
+    "pi_smoke": {
+      "float32": 0.0,
+      "int16_conv_int32_accumulation": 0.0,
+      "int32": 0.0
+    },
+    "custom_workload": {
+      "cases": 21,
+      "maximum_absolute_error": 9.5367431640625e-06,
+      "elapsed_seconds": 2.9885395510000308
+    },
+    "prompt": {
+      "completed": true,
+      "numerical_preflights_passed": true,
+      "execution_contracts_passed": true,
+      "dispatches": 560,
+      "fallbacks": 0,
+      "retained_for_latency": false,
+      "kernel_error_lines": [
+        "2026-11-16T17:38:42,333593-05:00 v3d 1002000000.v3d: MMU error from client PTB (1) at 0x2bc9000, pte invalid"
+      ],
+      "elapsed_seconds": 126.27939628700005,
+      "qualification": "MMU event occurred within the real-model preflight interval. Cause unisolated; all campaign latency remains rejected, including the timed portion.",
+      "full_vocabulary_cases": 6,
+      "max_probability_error": 1.43794836e-05,
+      "max_raw_logit_absolute_error": 0.636106491,
+      "max_total_variation": 1.80486786e-05,
+      "max_kl_divergence": 7.84265677e-07,
+      "all_argmax_equal": true
+    },
+    "agentic": {
+      "completed": true,
+      "numerical_preflights_passed": true,
+      "pairs": 2,
+      "samples": 4,
+      "retained_for_latency": true,
+      "kernel_error_lines": [],
+      "all_greedy_outputs_identical": true,
+      "all_qpu_executions_valid": true,
+      "elapsed_seconds": 130.67415909600004,
+      "maximum_peak_rss_bytes": 4405149696,
+      "full_vocabulary_cases": 6,
+      "max_probability_error": 1.43794836e-05,
+      "max_raw_logit_absolute_error": 0.636106491,
+      "max_total_variation": 1.80486786e-05,
+      "max_kl_divergence": 7.84265677e-07,
+      "all_argmax_equal": true
+    }
+  },
+  "scope": "Author-run preparation only. Prompt campaign latency rejected for a new kernel MMU event. Separate cached-request stage retained. No new performance confirmation, independent evaluation or sustained-reliability claim. Licensing and publication deferred."
+}

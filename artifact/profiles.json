@@ -1,0 +1,429 @@
+{
+  "format": "artifact-profiles-v1",
+  "note": "Plan by default; --execute runs stages sequentially. Preparation is separate. Historical sample counts and gates are preserved. These profiles are not the unavailable final manuscript specification.",
+  "profiles": {
+    "smoke": {
+      "hardware": false,
+      "stages": [
+        {
+          "id": "portable",
+          "argv": [
+            "{python}",
+            "scripts/artifact.py",
+            "smoke",
+            "--output",
+            "{output}/portable"
+          ]
+        },
+        {
+          "id": "analysis",
+          "argv": [
+            "{python}",
+            "scripts/artifact.py",
+            "analyze",
+            "--output",
+            "{output}/analysis"
+          ]
+        }
+      ]
+    },
+    "paper": {
+      "hardware": true,
+      "stages": [
+        {
+          "id": "prompt",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/prompt-control",
+            "--timeout",
+            "7200",
+            "--",
+            "{python}",
+            "scripts/run_llama_cpp_qpu_ffn_island_eval.py",
+            "--llama-root",
+            "{LLAMA_ROOT}",
+            "--llama-bench",
+            "{LLAMA_ROOT}/build/bin/llama-bench",
+            "--model",
+            "{GEMMA_MODEL}",
+            "--rows",
+            "129,257",
+            "--fractions",
+            "0.125",
+            "--repetitions",
+            "5",
+            "--skip-verification",
+            "--skip-fallback",
+            "--plugin",
+            "{INTEGRATION_BUILD}/libggml-qpu-inline.so",
+            "--stride-smoke",
+            "{INTEGRATION_BUILD}/qpu_repack_stride_smoke",
+            "--graph-smoke",
+            "{INTEGRATION_BUILD}/qpu_ffn_island_graph_smoke",
+            "--model-smoke",
+            "{INTEGRATION_BUILD}/qpu_ffn_island_model_smoke",
+            "--output",
+            "{output}/prompt.json"
+          ]
+        },
+        {
+          "id": "agentic",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/agentic-control",
+            "--timeout",
+            "7200",
+            "--",
+            "{python}",
+            "scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py",
+            "--server",
+            "{LLAMA_ROOT}/build/bin/llama-server",
+            "--model",
+            "{GEMMA_MODEL}",
+            "--plugin",
+            "{INTEGRATION_BUILD}/libggml-qpu-inline.so",
+            "--prefix",
+            "512",
+            "--suffixes",
+            "128",
+            "--fraction",
+            "0.125",
+            "--samples",
+            "15",
+            "--stride-smoke",
+            "{INTEGRATION_BUILD}/qpu_repack_stride_smoke",
+            "--graph-smoke",
+            "{INTEGRATION_BUILD}/qpu_ffn_island_graph_smoke",
+            "--model-smoke",
+            "{INTEGRATION_BUILD}/qpu_ffn_island_model_smoke",
+            "--output",
+            "{output}/agentic.json"
+          ]
+        }
+      ]
+    },
+    "rebuttal": {
+      "hardware": true,
+      "stages": [
+        {
+          "id": "todo1",
+          "argv": [
+            "{python}",
+            "scripts/run_llama_cpp_ffn_breakdown.py",
+            "--llama-root",
+            "{LLAMA_ROOT}",
+            "--model",
+            "{GEMMA_MODEL}",
+            "--pairs",
+            "5",
+            "--output",
+            "{output}/todo1",
+            "--cpu-profile",
+            "{BUILD_ROOT}/ffn-profile-cpu",
+            "--profile-build",
+            "{BUILD_ROOT}/llama-qpu-profile"
+          ]
+        },
+        {
+          "id": "todo2",
+          "argv": [
+            "{python}",
+            "scripts/run_llama_cpp_ffn_split_screen.py",
+            "--llama-root",
+            "{LLAMA_ROOT}",
+            "--model",
+            "{GEMMA_MODEL}",
+            "--repetitions",
+            "3",
+            "--output",
+            "{output}/todo2",
+            "--profile-build",
+            "{BUILD_ROOT}/llama-qpu-profile"
+          ]
+        },
+        {
+          "id": "todo3",
+          "argv": [
+            "{python}",
+            "scripts/run_llama_cpp_ffn_ablation.py",
+            "--llama-root",
+            "{LLAMA_ROOT}",
+            "--model",
+            "{GEMMA_MODEL}",
+            "--rounds",
+            "5",
+            "--output",
+            "{output}/todo3",
+            "--cpu-profile",
+            "{BUILD_ROOT}/ffn-ablation-cpu",
+            "--profile-build",
+            "{BUILD_ROOT}/llama-qpu-ablation"
+          ]
+        },
+        {
+          "id": "todo4",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/todo4-control",
+            "--timeout",
+            "300",
+            "--",
+            "{python}",
+            "scripts/benchmark_rebuttal_mtp.py",
+            "--binary",
+            "{BUILD_ROOT}/llama-qpu-ablation/qpu_llama_cpu_repack_bench",
+            "--plugin",
+            "{BUILD_ROOT}/llama-qpu-ablation/libggml-qpu-inline.so",
+            "--weights",
+            "{MTP_FIXTURE}/weights.q4_0.bin",
+            "--activation",
+            "{MTP_FIXTURE}/activation.f32",
+            "--pairs",
+            "5",
+            "--samples",
+            "31",
+            "--output",
+            "{output}/todo4"
+          ]
+        },
+        {
+          "id": "todo5-pointwise",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/todo5-pointwise-control",
+            "--timeout",
+            "900",
+            "--",
+            "{python}",
+            "scripts/benchmark_rebuttal_operators.py",
+            "conv",
+            "--conv-case",
+            "pointwise",
+            "--warmup",
+            "3",
+            "--repeat",
+            "11",
+            "--output",
+            "{output}/todo5-pointwise.json"
+          ]
+        },
+        {
+          "id": "todo5-dense",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/todo5-dense-control",
+            "--timeout",
+            "900",
+            "--",
+            "{python}",
+            "scripts/benchmark_rebuttal_operators.py",
+            "conv",
+            "--conv-case",
+            "dense-3x3",
+            "--warmup",
+            "3",
+            "--repeat",
+            "11",
+            "--output",
+            "{output}/todo5-dense.json"
+          ]
+        },
+        {
+          "id": "todo6",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/todo6-control",
+            "--timeout",
+            "900",
+            "--",
+            "{python}",
+            "scripts/benchmark_rebuttal_operators.py",
+            "epilogue",
+            "--warmup",
+            "3",
+            "--repeat",
+            "31",
+            "--output",
+            "{output}/todo6.json"
+          ]
+        },
+        {
+          "id": "todo7",
+          "argv": [
+            "{python}",
+            "scripts/run_rebuttal_diagnostics.py",
+            "--output",
+            "{output}/todo7-control",
+            "--timeout",
+            "900",
+            "--",
+            "{python}",
+            "scripts/benchmark_rebuttal_operators.py",
+            "resnet",
+            "--artifact",
+            "{RESNET_ARTIFACT}",
+            "--image",
+            "{RESNET_IMAGE}",
+            "--warmup",
+            "2",
+            "--repeat",
+            "7",
+            "--output",
+            "{output}/todo7.json"
+          ]
+        },
+        {
+          "id": "todo8-9",
+          "argv": [
+            "{python}",
+            "scripts/audit_rebuttal_fp32.py",
+            "--output",
+            "{output}/todo8-9.json"
+          ]
+        }
+      ]
+    },
+    "quality": {
+      "hardware": true,
+      "stages": [
+        {
+          "id": "mmlu",
+          "argv": [
+            "{python}",
+            "-m",
+            "qpu_xla.quality.cli",
+            "mmlu",
+            "--binary",
+            "{LLAMA_ROOT}/build/bin/llama-perplexity",
+            "--model",
+            "{GEMMA_MODEL}",
+            "--dataset",
+            "{MMLU_DATASET}",
+            "--plugin",
+            "{INTEGRATION_BUILD}/libggml-qpu-inline.so",
+            "--output",
+            "{output}/mmlu"
+          ]
+        },
+        {
+          "id": "resnet18-qpu_fp32",
+          "argv": [
+            "{python}",
+            "-m",
+            "qpu_xla.quality.cli",
+            "resnet18",
+            "--artifact",
+            "{RESNET_ARTIFACT}",
+            "--dataset",
+            "{IMAGENET_ROOT}",
+            "--manifest",
+            "{root}/artifact/evidence/manifests/imagenet-samples-5000.json",
+            "--mode",
+            "qpu_fp32",
+            "--output",
+            "{output}/resnet18-qpu_fp32"
+          ]
+        },
+        {
+          "id": "resnet18-hybrid_fp32",
+          "argv": [
+            "{python}",
+            "-m",
+            "qpu_xla.quality.cli",
+            "resnet18",
+            "--artifact",
+            "{RESNET_ARTIFACT}",
+            "--dataset",
+            "{IMAGENET_ROOT}",
+            "--manifest",
+            "{root}/artifact/evidence/manifests/imagenet-samples-5000.json",
+            "--mode",
+            "hybrid_fp32",
+            "--output",
+            "{output}/resnet18-hybrid_fp32"
+          ]
+        },
+        {
+          "id": "resnet18-qpu_w8a8",
+          "argv": [
+            "{python}",
+            "-m",
+            "qpu_xla.quality.cli",
+            "resnet18",
+            "--artifact",
+            "{RESNET_ARTIFACT}",
+            "--dataset",
+            "{IMAGENET_ROOT}",
+            "--manifest",
+            "{root}/artifact/evidence/manifests/imagenet-samples-5000.json",
+            "--mode",
+            "qpu_w8a8",
+            "--output",
+            "{output}/resnet18-qpu_w8a8"
+          ]
+        },
+        {
+          "id": "yolov8n",
+          "argv": [
+            "{python}",
+            "-m",
+            "qpu_xla.quality.cli",
+            "yolov8n",
+            "--checkpoint",
+            "{YOLO_CHECKPOINT}",
+            "--checkpoint-sha256",
+            "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+            "--images",
+            "{COCO_IMAGES}",
+            "--annotations",
+            "{COCO_ANNOTATIONS}",
+            "--manifest",
+            "{root}/artifact/evidence/manifests/coco-samples-1000.json",
+            "--samples",
+            "1000",
+            "--sample-seed",
+            "20260911",
+            "--bootstrap-replicates",
+            "0",
+            "--mode",
+            "qpu_fp32",
+            "--output",
+            "{output}/yolov8n"
+          ],
+          "qualification": "Matches the retained campaign: no 10000-replicate COCO bootstrap; that optional calculation was estimated at 83 hours."
+        },
+        {
+          "id": "smolvla",
+          "argv": [
+            "{python}",
+            "-m",
+            "qpu_xla.quality.cli",
+            "smolvla",
+            "--fp32-artifact",
+            "{SMOLVLA_ARTIFACT}",
+            "--replay",
+            "{SMOLVLA_REPLAY}",
+            "--mode",
+            "qpu_fp32",
+            "--output",
+            "{output}/smolvla"
+          ],
+          "enabled": false,
+          "qualification": "Known driver hangs and failed FP32 quality gates. Select explicitly with --only smolvla for diagnosis; do not claim stability or quality acceptance."
+        }
+      ]
+    }
+  }
+}

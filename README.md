@@ -14,6 +14,11 @@ video preprocessing, and TinyLlama-oriented runtime building blocks.
 For the current architecture, supported operators, runtime semantics, and
 known limitations, read [QPU-XLA.md](QPU-XLA.md).
 
+For the local CGO artifact release, installation checks, archived result
+regeneration, original and rebuttal experiment profiles, and limitations, start
+with [artifact/README.md](artifact/README.md). No archival DOI or badge is
+claimed yet.
+
 For the project-wide technical retrospective and practical guidance on kernel
 design, efficient QPU use, workload fit, heterogeneous placement, correctness,
 and benchmarking, read [LESSONS_LEARNED.md](LESSONS_LEARNED.md).
@@ -57,9 +62,9 @@ render node. Install `uv`, clone the repository, and run from its root:
 ```console
 sudo apt update
 sudo apt install git
-git clone https://github.com/Idein/py-videocore7.git
-cd py-videocore7
-uv sync
+git clone https://github.com/yiannisha/qpu-xla-triton.git
+cd qpu-xla-triton
+uv sync --locked --group dev
 ```
 
 Hardware execution requires access to `/dev/dri/renderD128` and membership in

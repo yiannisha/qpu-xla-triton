@@ -1,0 +1,81 @@
+{
+  "completed": true,
+  "environment": {
+    "errors": [],
+    "facts": {
+      "board": "Raspberry Pi 5 Model B Rev 1.1",
+      "device_nodes": {
+        "/dev/dri/by-path/platform-1002000000.v3d-card": {
+          "exists": true,
+          "read_write": true
+        },
+        "/dev/dri/renderD128": {
+          "exists": true,
+          "read_write": true
+        }
+      },
+      "firmware": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)",
+      "governors": {
+        "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor": "ondemand"
+      },
+      "machine": "aarch64",
+      "memory": "MemTotal:        8252352 kB\nMemFree:         2971392 kB\nMemAvailable:    7096640 kB\nBuffers:           87840 kB\nCached:          4220848 kB\nSwapCached:            0 kB\nActive:          2097520 kB\nInactive:        2677968 kB\nActive(anon):     519872 kB\nInactive(anon):     8832 kB\nActive(file):    1577648 kB\nInactive(file):  2669136 kB\nUnevictable:       12496 kB\nMlocked:               0 kB\nSwapTotal:       2097136 kB\nSwapFree:        2097136 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1040 kB\nWriteback:             0 kB\nAnonPages:        479312 kB\nMapped:           478864 kB\nShmem:             62496 kB\nKReclaimable:     141712 kB\nSlab:             197344 kB\nSReclaimable:     141712 kB\nSUnreclaim:        55632 kB\nKernelStack:        7024 kB\nPageTables:        13088 kB\nSecPageTables:       144 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     6223312 kB\nCommitted_AS:    2506800 kB\nVmallocTotal:   68447887360 kB\nVmallocUsed:       58304 kB\nVmallocChunk:          0 kB\nPercpu:             1344 kB\nCmaTotal:          65536 kB\nCmaFree:             688 kB\n",
+      "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.4\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+      "packages": {
+        "ioctl-opt": "1.3",
+        "numpy": "2.2.2",
+        "pycocotools": "2.0.10",
+        "pytest": "8.3.4",
+        "torch": "2.11.0",
+        "torchvision": "0.26.0",
+        "ultralytics": "8.4.146"
+      },
+      "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+      "python": "3.12.13",
+      "storage_free_bytes": 6778257408,
+      "swap": "Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n/dev/zram0                              partition\t2097136\t\t0\t\t100\n",
+      "temperature_millicelsius": {
+        "/sys/class/thermal/thermal_zone0/temp": "56200"
+      },
+      "throttled": "throttled=0x0",
+      "tools": {
+        "cc": [
+          "cc (Debian 14.2.0-19) 14.2.0"
+        ],
+        "cmake": [
+          "cmake version 3.31.6"
+        ],
+        "make": [
+          "GNU Make 4.4.1"
+        ],
+        "uv": [
+          "uv 0.11.2 (aarch64-unknown-linux-gnu)"
+        ]
+      }
+    },
+    "hardware_requested": true,
+    "kind": "artifact-environment-v1",
+    "ok": true
+  },
+  "executed": true,
+  "profile": "smoke",
+  "stages": [
+    {
+      "argv": [
+        "/home/yiannis/side/py-videocore7/.venv/bin/python",
+        "examples/benchmark_qpu_xla_matrix.py",
+        "--size",
+        "128",
+        "--warmup",
+        "2",
+        "--repeat",
+        "7",
+        "--output",
+        "/home/yiannis/side/py-videocore7/build/artifact-custom-example/matmul-128.json"
+      ],
+      "elapsed_seconds": 2.9885395510000308,
+      "id": "matmul-128",
+      "returncode": 0
+    }
+  ]
+}

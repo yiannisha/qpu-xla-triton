@@ -1,0 +1,25 @@
+{
+  "format": "artifact-profiles-v1",
+  "profiles": {
+    "smoke": {
+      "hardware": true,
+      "stages": [
+        {
+          "id": "matmul-128",
+          "argv": [
+            "{python}",
+            "examples/benchmark_qpu_xla_matrix.py",
+            "--size",
+            "128",
+            "--warmup",
+            "2",
+            "--repeat",
+            "7",
+            "--output",
+            "{output}/matmul-128.json"
+          ]
+        }
+      ]
+    }
+  }
+}

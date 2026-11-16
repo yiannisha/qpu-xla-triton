@@ -1,0 +1,54 @@
+{
+  "artifacts": {
+    "baseline": "cpu.jsonl",
+    "candidate": "qpu_hybrid.jsonl"
+  },
+  "baseline": "llama.cpp_cpu_repack",
+  "candidate": "llama.cpp_qpu_cpu_ffn_island",
+  "format": "qpu-model-quality-v1",
+  "integrity": {
+    "cpu_operations": 16625,
+    "errors": [],
+    "expected_fallbacks": 0,
+    "expected_samples": 1000,
+    "finite_outputs": true,
+    "processed_samples": 1000,
+    "qpu_dispatches": 16625,
+    "requires_cpu": true,
+    "requires_qpu": true,
+    "unexpected_fallbacks": 0,
+    "valid_run": true
+  },
+  "metrics": {
+    "accuracy_delta": {
+      "confidence": 0.95,
+      "delta": 0.001,
+      "high": 0.004,
+      "low": -0.002,
+      "replicates": 10000,
+      "seed": 20260910
+    },
+    "answer_agreement": 0.992,
+    "baseline_accuracy": 0.362,
+    "candidate_accuracy": 0.363,
+    "cpu_correct_candidate_wrong": 1,
+    "cpu_wrong_candidate_correct": 2,
+    "option_logprob_max_abs_error": 0.3427009999999999,
+    "option_logprob_mean_max_abs_error": 0.024893211460000012,
+    "questions": 1000
+  },
+  "provenance": {
+    "binary_sha256": "5af6c897eb17137955e323aafff025220fcc3022c94d48a87c296d4ae50da80e",
+    "dataset_sha256": "88bbb0b99f0ac75dc63b82017d301be2e6b1b922b6a6eb508df41e5ac4396b5c",
+    "model_sha256": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "plugin_sha256": "2674660110c5c2c3c4c5dc375330d58d9464600723660af987da9f9972817430",
+    "python": "3.12.13",
+    "selection_seed": 1,
+    "tasks": 1000,
+    "threads": 4,
+    "torch": "2.11.0+cu130"
+  },
+  "task": "gemma-mmlu"
+}

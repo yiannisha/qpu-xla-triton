@@ -1,0 +1,68 @@
+{
+  "artifacts": {
+    "actions": "actions.npz"
+  },
+  "baseline": "upstream_torch_cpu_fp32",
+  "candidate": "qpu_fp32",
+  "format": "qpu-model-quality-v1",
+  "integrity": {
+    "cpu_operations": 0,
+    "errors": [],
+    "expected_fallbacks": 0,
+    "expected_samples": 100,
+    "finite_outputs": true,
+    "processed_samples": 100,
+    "qpu_dispatches": 1293300,
+    "requires_cpu": false,
+    "requires_qpu": true,
+    "unexpected_fallbacks": 0,
+    "valid_run": true
+  },
+  "metrics": {
+    "cosine_similarity": 0.9998807436172017,
+    "finite_fraction": 1.0,
+    "inf_count": 0,
+    "max_abs_error": 0.7164907455444336,
+    "mean_abs_error": 0.0044105114750680515,
+    "nan_count": 0,
+    "normalized_rmse": 0.015553243079841201,
+    "normalized_rmse_interval": {
+      "confidence": 0.95,
+      "delta": 0.015424132301336406,
+      "high": 0.016574895944259763,
+      "low": 0.01430597777540724,
+      "replicates": 10000,
+      "seed": 20260910
+    },
+    "observations": 100,
+    "p99_abs_error": 0.1735852622985831,
+    "per_action_mae": [
+      0.004593861816637218,
+      0.002943239743821323,
+      0.004447058266587555,
+      0.0028426250089658425,
+      0.00614023506641388,
+      0.00549604894798249
+    ],
+    "per_action_rmse": [
+      0.0356202604051372,
+      0.021140016111701108,
+      0.030572334406005628,
+      0.020266281896023856,
+      0.03956463609613866,
+      0.040579709979113095
+    ],
+    "sign_agreement": 0.9991,
+    "worst_observation": 66
+  },
+  "provenance": {
+    "lerobot_revision": "8b256a6c0d4769c3cc3e7e98f04940126398a391",
+    "model_revision": "c83c3163b8ca9b7e67c509fffd9121e66cb96205",
+    "numpy": "2.2.2",
+    "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+    "python": "3.12.13",
+    "replay_sha256": "3b08a1c90328a7f961c4d5fb8f1de373e81fc3ee592c0fc53bd5d2b0ed9e287c",
+    "torch": "2.11.0+cu130"
+  },
+  "task": "smolvla-replay"
+}

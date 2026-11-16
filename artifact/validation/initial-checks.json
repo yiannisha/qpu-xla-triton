@@ -1,0 +1,107 @@
+{
+  "format": "artifact-local-validation-v1",
+  "date": "2026-11-16",
+  "portable_tests": {
+    "command": [
+      "uv",
+      "run",
+      "--locked",
+      "pytest",
+      "-q",
+      "tests/test_artifact.py",
+      "tests/test_llama_cpp_ffn_breakdown.py",
+      "tests/test_llama_cpp_process_guards.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.8259334079998553
+  },
+  "scope": "Focused packaging/rebuttal checks only; no full fresh paper performance or quality campaign. No independent evaluator. Container recipe unbuilt.",
+  "source_sha256": {
+    "scripts/artifact.py": "875622fee15ca9913afe4b1a0bcbe0ced91b9efccb0722461bb565d88fe2e974",
+    "scripts/artifact_common.py": "983fbbc933473d99a612913d2f697c7268d0be8f4142954a53c3edd2eb81cd14",
+    "scripts/prepare_artifact_native.py": "3fcda9718bba96de77b1345889f235466f86f8906d414860930e4f6c06a1efb1",
+    "scripts/prepare_imagenet_samples.py": "bdb051a5e83e2750e7106036938f81bd601c8a8b681e66dd61a0821084af5106",
+    "scripts/summarize_rebuttal_remaining.py": "559d66530ae69ab96770a672ed3c108a194f0e28ea6ea2cb746f0cefa257bba2",
+    "scripts/summarize_llama_cpp_ffn_split_screen.py": "2a644bff6e0a9eb8815ee6c8d28114214fcc38fd412005b339e011cfafcdf316",
+    "tests/conftest.py": "df53954c615e25ea480c39ec081d9380171a9ddc7ceb40d52c7520d9c8e48e2e",
+    "tests/test_artifact.py": "b4947163d1dfc33e0dd524500fecb5eb508acca60d108c0da028ee9104e18ba1",
+    "pyproject.toml": "1bab1fc12a0d113137c1333c87aafac96f256d51d21ebacfe638b0992917e8b2"
+  },
+  "pi_smoke": {
+    "evidence": {
+      "claim_groups": 11,
+      "kind": "artifact-verification-v1",
+      "ok": true,
+      "rebuttal_package_files": 41,
+      "rebuttal_provenance_records": 37,
+      "release_files": 957,
+      "selected_evidence_files": 23
+    },
+    "hardware": true,
+    "kind": "artifact-smoke-v1",
+    "matmul_shape": [
+      32,
+      8,
+      32
+    ],
+    "max_abs_error": {
+      "float32": 0.0,
+      "int16_conv_int32_accumulation": 0.0,
+      "int32": 0.0
+    },
+    "native_checks": [],
+    "ok": true
+  },
+  "native_preflights": [
+    {
+      "check": "qpu_repack_stride_smoke",
+      "returncode": 0,
+      "elapsed_seconds": 0.06392078300007142,
+      "binary_sha256": "7f6ba1183783ad87b25c855f793e1f48f6d7217b7a5fe34caf00ac3516bdf05c",
+      "matches_retained_preflight": true
+    },
+    {
+      "check": "qpu_ffn_island_graph_smoke",
+      "returncode": 0,
+      "elapsed_seconds": 0.06392033800000263,
+      "binary_sha256": "9620dbc67698a44d8e47ae7dae08500c52c8b6b818612879d74ca128e327f227",
+      "matches_retained_preflight": true
+    }
+  ],
+  "image_preparation": {
+    "source_sha256": "86cd7452777bda7e907c9a68e6079f16371b4f4c304cf710084e692d0a2fc943",
+    "samples_reconstructed_and_hash_verified": 5000
+  },
+  "release_install": {
+    "root": "/home/yiannis/side/py-videocore7/build/release-install-sii2u88u/qpu-xla-artifact-930ca48b38f6",
+    "archive": "/home/yiannis/side/py-videocore7/dist/qpu-xla-artifact-candidate.tar.gz",
+    "git_metadata_present": false,
+    "steps": [
+      {
+        "name": "install",
+        "returncode": 0,
+        "elapsed_seconds": 2.4191036110000823
+      },
+      {
+        "name": "verify",
+        "returncode": 0,
+        "elapsed_seconds": 0.7155832760001886
+      },
+      {
+        "name": "smoke",
+        "returncode": 0,
+        "elapsed_seconds": 1.7215526390000377
+      },
+      {
+        "name": "analysis",
+        "returncode": 0,
+        "elapsed_seconds": 4.572742815999845
+      },
+      {
+        "name": "identity",
+        "returncode": 0,
+        "elapsed_seconds": 0.2144168320000972
+      }
+    ]
+  }
+}

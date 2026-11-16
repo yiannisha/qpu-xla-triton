@@ -8,8 +8,12 @@ on:
       - 'tests/**'
       - 'pyproject.toml'
       - 'uv.lock'
+      - 'scripts/**'
+      - 'integrations/llama_cpp/**'
+      - 'artifact/**'
   push:
     branches:
+      - main
       - master
   schedule:
     - cron: '0 4 * * *'
@@ -32,7 +36,7 @@ jobs:
           python-version-file: pyproject.toml
 
       - name: Install locked development environment
-        run: uv sync --group dev
+        run: uv sync --locked --group dev
 
       - name: Verify VC7 render-node access
         run: test -c /dev/dri/renderD128

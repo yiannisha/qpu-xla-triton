@@ -3,6 +3,7 @@ name: Run Tests
 on:
   push:
     branches:
+      - main
       - master
   pull_request:
     paths:
@@ -10,6 +11,13 @@ on:
       - 'src/**'
       - 'tests/**'
       - 'examples/**'
+      - 'scripts/**'
+      - 'integrations/llama_cpp/**'
+      - 'artifact/**'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'setup.py'
+      - 'MANIFEST.in'
   schedule:
     - cron: '0 6 * * 1-5'
 
@@ -33,13 +41,20 @@ jobs:
         python-version-file: "pyproject.toml"
 
     - name: Install locked development environment
-      run: uv sync --group dev
+      run: uv sync --locked --group dev
+
+    - name: Verify artifact evidence and portable entry point
+      run: uv run --locked python scripts/artifact.py smoke --output build/artifact-ci-smoke
 
     - name: Run format checker
-      run: uv run ruff format --check src/qpu_xla tests/test_qpu_xla_*.py
+      run: |
+        uv run --locked ruff format --check src/qpu_xla tests/test_qpu_xla_*.py
+        uv run --locked ruff format --check scripts/artifact*.py scripts/prepare_artifact_native.py scripts/prepare_imagenet_samples.py scripts/run_llama_cpp_ffn_ablation.py scripts/summarize_rebuttal_remaining.py scripts/summarize_llama_cpp_ffn_split_screen.py tests/conftest.py tests/test_artifact.py
 
     - name: Run linter
-      run: uv run ruff check src/qpu_xla tests/test_qpu_xla_*.py
+      run: |
+        uv run --locked ruff check src/qpu_xla tests/test_qpu_xla_*.py
+        uv run --locked ruff check scripts/artifact*.py scripts/prepare_artifact_native.py scripts/prepare_imagenet_samples.py scripts/run_llama_cpp_ffn_ablation.py scripts/summarize_rebuttal_remaining.py scripts/summarize_llama_cpp_ffn_split_screen.py tests/conftest.py tests/test_artifact.py
 
     - name: Run type checker
       run: uv run mypy src/qpu_xla

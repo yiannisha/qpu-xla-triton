@@ -1,0 +1,102 @@
+{
+  "completed": true,
+  "environment": {
+    "errors": [],
+    "facts": {
+      "board": "Raspberry Pi 5 Model B Rev 1.1",
+      "device_nodes": {
+        "/dev/dri/by-path/platform-1002000000.v3d-card": {
+          "exists": true,
+          "read_write": true
+        },
+        "/dev/dri/renderD128": {
+          "exists": true,
+          "read_write": true
+        }
+      },
+      "firmware": "2026/01/21 13:38:47 \nCopyright (c) 2012 Broadcom\nversion ab8a9dde (release) (embedded)",
+      "governors": {
+        "/sys/devices/system/cpu/cpufreq/policy0/scaling_governor": "ondemand"
+      },
+      "machine": "aarch64",
+      "memory": "MemTotal:        8252352 kB\nMemFree:         2442896 kB\nMemAvailable:    7421088 kB\nBuffers:           66400 kB\nCached:          4928160 kB\nSwapCached:            0 kB\nActive:          2678560 kB\nInactive:        2779696 kB\nActive(anon):     189056 kB\nInactive(anon):   336560 kB\nActive(file):    2489504 kB\nInactive(file):  2443136 kB\nUnevictable:       12496 kB\nMlocked:               0 kB\nSwapTotal:       2097136 kB\nSwapFree:        2097136 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               528 kB\nWriteback:             0 kB\nAnonPages:        477040 kB\nMapped:           476784 kB\nShmem:             62496 kB\nKReclaimable:     135488 kB\nSlab:             193376 kB\nSReclaimable:     135488 kB\nSUnreclaim:        57888 kB\nKernelStack:        6848 kB\nPageTables:        13104 kB\nSecPageTables:       144 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     6223312 kB\nCommitted_AS:    2469792 kB\nVmallocTotal:   68447887360 kB\nVmallocUsed:       58064 kB\nVmallocChunk:          0 kB\nPercpu:             1344 kB\nCmaTotal:          65536 kB\nCmaFree:             432 kB\n",
+      "os_release": "PRETTY_NAME=\"Debian GNU/Linux 13 (trixie)\"\nNAME=\"Debian GNU/Linux\"\nVERSION_ID=\"13\"\nVERSION=\"13 (trixie)\"\nVERSION_CODENAME=trixie\nDEBIAN_VERSION_FULL=13.4\nID=debian\nHOME_URL=\"https://www.debian.org/\"\nSUPPORT_URL=\"https://www.debian.org/support\"\nBUG_REPORT_URL=\"https://bugs.debian.org/\"\n",
+      "packages": {
+        "ioctl-opt": "1.3",
+        "numpy": "2.2.2",
+        "pycocotools": "2.0.10",
+        "pytest": "8.3.4",
+        "torch": "2.11.0",
+        "torchvision": "0.26.0",
+        "ultralytics": "8.4.146"
+      },
+      "platform": "Linux-6.12.75+rpt-rpi-2712-aarch64-with-glibc2.41",
+      "python": "3.12.13",
+      "storage_free_bytes": 6776324096,
+      "swap": "Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n/dev/zram0                              partition\t2097136\t\t0\t\t100\n",
+      "temperature_millicelsius": {
+        "/sys/class/thermal/thermal_zone0/temp": "50700"
+      },
+      "throttled": "throttled=0x0",
+      "tools": {
+        "cc": [
+          "cc (Debian 14.2.0-19) 14.2.0"
+        ],
+        "cmake": [
+          "cmake version 3.31.6"
+        ],
+        "make": [
+          "GNU Make 4.4.1"
+        ],
+        "uv": [
+          "uv 0.11.2 (aarch64-unknown-linux-gnu)"
+        ]
+      }
+    },
+    "hardware_requested": true,
+    "kind": "artifact-environment-v1",
+    "ok": true
+  },
+  "executed": true,
+  "profile": "paper",
+  "stages": [
+    {
+      "argv": [
+        "/home/yiannis/side/py-videocore7/.venv/bin/python",
+        "scripts/run_rebuttal_diagnostics.py",
+        "--output",
+        "/home/yiannis/side/py-videocore7/build/artifact-functional-agentic/agentic-control",
+        "--timeout",
+        "7200",
+        "--",
+        "/home/yiannis/side/py-videocore7/.venv/bin/python",
+        "scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py",
+        "--server",
+        "/home/yiannis/side/py-videocore7/build/artifact-llama-clean/build/bin/llama-server",
+        "--model",
+        "/home/yiannis/side/models/gemma-4-E2B-qat-it-GGUF/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+        "--plugin",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-runtime/libggml-qpu-inline.so",
+        "--prefix",
+        "512",
+        "--suffixes",
+        "128",
+        "--fraction",
+        "0.125",
+        "--samples",
+        "2",
+        "--stride-smoke",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-runtime/qpu_repack_stride_smoke",
+        "--graph-smoke",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-runtime/qpu_ffn_island_graph_smoke",
+        "--model-smoke",
+        "/home/yiannis/side/py-videocore7/build/artifact-native-clean/llama-qpu-runtime/qpu_ffn_island_model_smoke",
+        "--output",
+        "/home/yiannis/side/py-videocore7/build/artifact-functional-agentic/agentic.json"
+      ],
+      "elapsed_seconds": 130.67415909600004,
+      "id": "agentic",
+      "returncode": 0
+    }
+  ]
+}

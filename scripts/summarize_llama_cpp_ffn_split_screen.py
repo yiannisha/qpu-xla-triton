@@ -5,14 +5,24 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import sys
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from scripts.artifact_common import read_record  # noqa: E402
 
 
 def summarize(directory: Path) -> dict:
     """Join fraction-specific numerical outcomes with complete-prompt timings."""
-    attempt = json.loads((directory / "screen-attempt.json").read_text())
+    archived = (directory / "provenance.json").is_file()
+    attempt = read_record(directory, "todo2/screen-attempt.json" if archived else "screen-attempt.json")
     timing_file = directory / "screen.json"
-    timing = json.loads(timing_file.read_text()) if timing_file.exists() else {}
+    timing = (
+        read_record(directory, "todo2/screen.json")
+        if archived
+        else (json.loads(timing_file.read_text()) if timing_file.exists() else {})
+    )
     numerical = {entry["fraction"]: entry for entry in attempt["preflights"]}
     comparisons = {(entry["rows"], entry["fraction"]): entry for entry in timing.get("comparisons", [])}
     rows = []

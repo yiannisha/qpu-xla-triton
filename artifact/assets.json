@@ -1,0 +1,87 @@
+{
+  "format": "artifact-assets-v1",
+  "note": "Weights, datasets and decoded images remain external. Hashes identify the original study; do not substitute a new revision silently. See ASSETS.md for preparation and licenses.",
+  "assets": [
+    {
+      "id": "gemma",
+      "kind": "file",
+      "filename": "gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf",
+      "sha256": "e531007218dfab990486a5de7676a6932d6ea8dea233d1f698d7c21cf8a16889",
+      "bytes": 2620370976,
+      "url": "https://huggingface.co/unsloth/gemma-4-E2B-it-qat-GGUF/resolve/66a399f68ddd113b06dff02fca9523e55465d11d/gemma-4-E2B-it-qat-UD-Q4_K_XL.gguf"
+    },
+    {
+      "id": "mtp-model",
+      "kind": "file",
+      "filename": "mtp-gemma-4-E2B-it.gguf",
+      "sha256": "586f2460b909008640981ec34060aa864e03c144fbabfb3173c4335087e4aae0",
+      "bytes": 59235648,
+      "url": "https://huggingface.co/unsloth/gemma-4-E2B-it-qat-GGUF/resolve/66a399f68ddd113b06dff02fca9523e55465d11d/mtp-gemma-4-E2B-it.gguf"
+    },
+    {
+      "id": "mmlu",
+      "kind": "file",
+      "filename": "mmlu-test.bin",
+      "sha256": "88bbb0b99f0ac75dc63b82017d301be2e6b1b922b6a6eb508df41e5ac4396b5c",
+      "url": "https://huggingface.co/datasets/ikawrakow/validation-datasets-for-llama.cpp/resolve/37884b81b4957f1950a53b6ff48d77c8dd5e430c/mmlu-test.bin",
+      "revision": "37884b81b4957f1950a53b6ff48d77c8dd5e430c",
+      "bytes": 6864888
+    },
+    {
+      "id": "yolo-checkpoint",
+      "kind": "file",
+      "filename": "yolov8n.pt",
+      "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+      "url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt"
+    },
+    {
+      "id": "coco-annotations",
+      "kind": "file",
+      "filename": "instances_val2017.json",
+      "sha256": "e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f",
+      "url": "https://images.cocodataset.org/annotations/annotations_trainval2017.zip",
+      "preparation": "Extract instances_val2017.json; hash applies to extracted JSON, not ZIP."
+    },
+    {
+      "id": "smolvla-replay",
+      "kind": "file",
+      "filename": "replay-100.npz",
+      "sha256": "3b08a1c90328a7f961c4d5fb8f1de373e81fc3ee592c0fc53bd5d2b0ed9e287c",
+      "preparation": "MODEL-QUALITY.md: build_smolvla_replay.py then record_smolvla_upstream.py. NPZ byte identity may depend on serialization; compare pinned semantic inputs if rebuilding and record a new hash."
+    },
+    {
+      "id": "imagenet-derivative",
+      "kind": "dataset",
+      "repository": "https://huggingface.co/datasets/benjamin-paine/imagenet-1k-128x128",
+      "revision": "dd3adfd6ecfb3ef3ae26205733bf5d9d5410643b",
+      "file": "data/validation-00000-of-00001.parquet",
+      "sha256": "86cd7452777bda7e907c9a68e6079f16371b4f4c304cf710084e692d0a2fc943",
+      "manifest": "artifact/evidence/manifests/imagenet-samples-5000.json"
+    },
+    {
+      "id": "coco-images",
+      "kind": "dataset",
+      "url": "https://images.cocodataset.org/zips/val2017.zip",
+      "manifest": "artifact/evidence/manifests/coco-samples-1000.json"
+    },
+    {
+      "id": "smolvla-checkpoint",
+      "kind": "dataset",
+      "repository": "https://huggingface.co/lerobot/smolvla_base",
+      "revision": "c83c3163b8ca9b7e67c509fffd9121e66cb96205"
+    },
+    {
+      "id": "lerobot",
+      "kind": "source",
+      "repository": "https://github.com/huggingface/lerobot",
+      "revision": "8b256a6c0d4769c3cc3e7e98f04940126398a391"
+    },
+    {
+      "id": "llama-cpp",
+      "kind": "source",
+      "repository": "https://github.com/ggml-org/llama.cpp",
+      "revision": "91d2fc387529940230555abd297a8b5e99737d3f",
+      "patches": "integrations/llama_cpp/patches/0001 through 0005 in order"
+    }
+  ]
+}
