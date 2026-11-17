@@ -95,6 +95,6 @@ conclusions. A successful author run cannot award either badge. New hardware
 errors remain failures even if logits agree; do not rerun until a clean attempt
 and discard earlier ones. See [VALIDATION.md](VALIDATION.md) and the bounded [MMU investigation](MMU-INVESTIGATION.md).
 
-Public archival deposit and the newer-code license decision remain deferred
-under the author’s instructions. No DOI, independent validation, badge award or publication is claimed.
+Public archival deposit remains a separate author action. The author selected
+GPL-2.0-only for newer author-owned code/docs; existing component notices are preserved. No DOI, independent validation, badge award or publication is claimed.
 A filled local PDF review draft has been built; no submission was performed.

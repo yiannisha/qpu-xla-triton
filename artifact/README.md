@@ -6,6 +6,10 @@ archival service is intentionally deferred. No DOI, independent result
 validation, or badge award is claimed. The supplied official manuscript is mapped in
 [PAPER.md](PAPER.md) and [manuscript.json](manuscript.json).
 
+Newer author-owned software and technical documentation use GPL-2.0-only; existing
+component notices, including GPL-2.0-or-later driver files, are preserved.
+See [LICENSES.md](LICENSES.md) for the component scope.
+
 Associated paper title supplied by the author: **Practical: Building and
 Evaluating a Native CPU-QPU Runtime for Edge AI Inference on Raspberry Pi 5**.
 

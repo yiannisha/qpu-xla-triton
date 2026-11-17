@@ -6,6 +6,10 @@ This repository has two layers:
   Raspberry Pi 5 VideoCore VII QPU;
 - `qpu_xla`: a newer ML-oriented heterogeneous runtime built on that driver.
 
+Newer author-owned code and associated technical documentation use the
+[GPL-2.0-only license](LICENSE). Existing component licenses, including GPL-2.0-or-later
+for the low-level driver, remain in effect; see [component notices](artifact/LICENSES.md).
+
 The current development focus is `qpu_xla`. It provides host-mapped tensors,
 CPU/QPU queues and events, reusable tiled kernels, operator contracts,
 shape-aware placement, explicit CPU/QPU hybrid execution, persistent plans,

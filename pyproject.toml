@@ -2,6 +2,8 @@
 name = "py-videocore7"
 description = "VideoCore VII QPU assembler, driver, and heterogeneous ML runtime for Raspberry Pi 5"
 readme = "README.md"
+license = "GPL-2.0-only AND GPL-2.0-or-later AND MIT"
+license-files = ["LICENSE", "LICENSE.GPL2", "artifact/LICENSES.md"]
 authors = [
     { name = "notogawa", email = "n.ohkawa@gmail.com" }
 ]
@@ -29,7 +31,7 @@ evaluation = [
 qpu-model-quality = "qpu_xla.quality.cli:main"
 
 [build-system]
-requires = ["setuptools", "setuptools_scm"]
+requires = ["setuptools>=77", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]

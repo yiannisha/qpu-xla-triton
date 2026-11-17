@@ -15,7 +15,8 @@ hashes and pagination; `manuscript-ae.patch` exposes the paper/bibliography edit
 A normal acmart 2.19 installation can compile main.tex with the root figures,
 main.bib and artifact/APPENDIX.tex. XeTeX and pdfTeX may paginate differently.
 
-The appendix preserves deferred licensing/deposit, numerical/stability limits
+The appendix records GPL-2.0-only for newer author-owned code/docs, existing component
+licenses, separate public deposit, numerical/stability limits
 and the distinction between author checks and independently awarded badges.
 No historical table values were changed. Add an archival link only when deposit
 is authorized; no DOI or manuscript submission has been performed.

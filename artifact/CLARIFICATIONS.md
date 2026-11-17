@@ -17,6 +17,7 @@ corrections create a new content-identified package. Publication is deferred.
 | 2026-11-17 UTC | MMU diagnosis | Kernel suppresses repeats; tiled GEMM overreads tail and FP16 scale | Verified repeated logging; private trace and allocation boundaries isolate both reads; corrected six-case preflight: 0 faults/840 dispatches; six boundary tests pass | Corrected within tested scope |
 | 2026-11-17 UTC | Full corrected reproduction | Need matched, observable full protocol | 20 prompt processes + 15 cached pairs pass; cached 1.0431 [1.0231,1.0504], M129 prompt interval spans parity; 117 default/123 optional AP checks pass | Author reproduction; no automatic promotion |
 | 2026-11-17 UTC | Manuscript source integration | Author supplied main.tex, bibliography and five figures | AE and qualifications integrated; acmart 2.19 draft has two AE pages; source patch and original/revised hashes retained | Local review draft, no submission |
+| 2026-11-17 UTC | GPL licensing | Author resolved the newer-code license decision as GPL-2.0-only | Root GPL license, mixed-component notices and package metadata updated; prior GPL/MIT notices preserved; regenerated manuscript and local bundle | GPL-2.0-only selected for author-owned software/docs; public deposit remains separate |
 | — | Independent evaluator | No external review performed by these preparation tools | Record evaluator environment, commands, issues, outcomes and tolerances here when available | Pending independent evaluation |
 
 For each reviewer issue, record the original failure/output, affected claim,

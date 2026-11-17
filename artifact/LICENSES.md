@@ -1,24 +1,34 @@
 # Component notices and external assets
 
-The author explicitly left the newer-code license decision pending on
-2026-11-16. This repository has mixed per-file notices. Preserve them and
-`LICENSE.GPL2`; do not label the entire artifact MIT.
+On 2026-11-17 UTC the author selected **GPL-2.0-only** for their newer code and
+associated technical documentation previously lacking a notice. Copyright
+(c) 2026 Yiannis Hadjiyianni and contributors. The full license is in root
+[LICENSE](../LICENSE).
 
-| Component | Existing notice or status |
+This grant covers author contributions in `src/qpu_xla`, the native integration,
+examples, scripts, tests and artifact tooling/documentation, except where a
+file has an existing notice or is third-party-derived material. Existing
+copyright notices and per-file terms take precedence and remain unchanged.
+The Python distribution declares `GPL-2.0-only AND GPL-2.0-or-later AND MIT`
+to identify the licenses present, not alternative licenses for every file.
+
+| Component | License or distribution boundary |
 |---|---|
-| `src/_videocore7/driver.py`, `src/_videocore7/drm_v3d.py` | GPL version 2 or later, with Broadcom and Idein copyright notices |
-| Assembler and other files carrying the permission grant | MIT-style permission text in the individual files; preserve their copyright notices |
-| Newer `src/qpu_xla` and integration files without notices | No blanket license is inferred; author license decision is pending |
-| Artifact tools and documentation without notices | Included for evaluation; project-wide license declaration is pending author confirmation |
-| Retained measurements, numerical outputs, sample manifests | Author-created evidence, with upstream dataset/model provenance retained; no new blanket data license asserted |
-| `llama.cpp`, LeRobot, PyTorch and other dependencies | Acquired separately under their upstream terms; not relicensed by this package |
-| Models and image/robot datasets | Acquired separately; consult their pinned model/dataset cards and access terms |
+| Newer author-owned code and associated technical documentation without another notice | GPL-2.0-only, in root `LICENSE` |
+| `src/_videocore7/driver.py`, `drm_v3d.py`, `v3d.py` | Existing GPL version 2 or later; Broadcom/Idein notices and `LICENSE.GPL2` preserved |
+| Assembler and other files carrying an MIT-style permission grant | Existing per-file permission grant and original copyright notices preserved |
+| Third-party-derived code and bundled patches | Existing upstream terms and notices preserved; no third-party contribution is relicensed |
+| Retained measurements, numerical outputs and sample manifests | Distributed for reproduction with source provenance; the software license does not relicense upstream data or model-derived material |
+| Manuscript source, bibliography and figure PDFs | Paper materials; the software GPL grant does not assign a new publication license |
+| `llama.cpp`, LeRobot, PyTorch and other dependencies | Acquired separately under their upstream terms |
+| Models and image/robot datasets | Acquired separately under their pinned model/dataset terms |
 
 Only a 1024-byte production activation is retained for the MTP diagnostic.
 Its Q4_0 weights are extracted from a separately acquired hashed GGUF, rather
 than redistributed here. Model-quality payloads contain numerical outputs,
 not model weights, decoded images, or source robot videos.
 
-Before public deposit, authors must confirm distribution rights and declare
-the intended licenses for files currently lacking notices. This document
-records the current state and does not grant rights on behalf of third parties.
+For a mixed-license Zenodo record, declare GPL-2.0-only, GPL-2.0-or-later and
+MIT with this component scope rather than assigning one blanket license to
+every file. External assets retain their own terms. Public deposit remains a
+separate author action; selecting GPL does not itself publish the artifact.

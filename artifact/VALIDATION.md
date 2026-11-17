@@ -3,7 +3,9 @@
 Author checks on Raspberry Pi 5, 2026-11-16/17 UTC. The repository and revised
 manuscript are prepared for independent evaluation. No independent review,
 publisher badge, sustained-reliability claim or public deposit is implied.
-The newer-code license decision remains pending by author instruction.
+The author subsequently selected GPL-2.0-only for newer author-owned code/docs; existing
+component notices remain in effect. This licensing-only revision rebuilds the
+package and manuscript without rerunning numerical/performance campaigns.
 
 ## Current corrected build
 
