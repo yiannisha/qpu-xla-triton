@@ -1,0 +1,207 @@
+--- a/main.tex
++++ b/main.tex
+@@ -276,7 +276,7 @@
+ 
+ 
+ \begin{abstract}
+-Raspberry Pi systems are widely used for edge AI, yet the Raspberry Pi~5 inference stack still treats its Arm CPU and VideoCore~VII QPUs as separate targets: using both processors for inference requires coordinating native kernels, tensor representations, and model-runtime scheduling. We build a native CPU--QPU runtime to investigate when this execution path can reduce inference latency. The implementation combines FP32 and W8A8 kernels with persistent programs and weights, mapped tensor storage, explicit dependencies, and concurrent operator partitions. We evaluate operators and model execution against optimized CPU implementations, including OpenBLAS and \texttt{llama.cpp} CPU\_REPACK, across vision, language, and vision--language--action workloads. Exploratory FP32 measurements identify selected projection improvements of 1.12--1.36$\times$ and stage improvements of up to 2.30$\times$. We introduce channel-partitioned FFN execution that reuses production activation representations and retains QPU intermediates, reducing full-prompt latency by 3.31\% and cached-request latency by 3.65\% against CPU\_REPACK. Evaluations on MMLU, ImageNet, COCO, and SmolVLA replay show comparable task accuracy and action outputs for the tested native-format LLM and FP32 paths. The measurements identify how representation, preparation, and execution boundaries determine whether native QPU work improves inference, providing practical guidance for code generation and heterogeneous runtime optimization on Raspberry Pi~5.
++Raspberry Pi systems are widely used for edge AI, yet the Raspberry Pi~5 inference stack still treats its Arm CPU and VideoCore~VII QPUs as separate targets: using both processors for inference requires coordinating native kernels, tensor representations, and model-runtime scheduling. We build a native CPU--QPU runtime to investigate when this execution path can reduce inference latency. The implementation combines FP32 and W8A8 kernels with persistent programs and weights, mapped tensor storage, explicit dependencies, and concurrent operator partitions. We evaluate operators and model execution against optimized CPU implementations, including OpenBLAS and \texttt{llama.cpp} CPU\_REPACK, across vision, language, and vision--language--action workloads. Exploratory FP32 measurements identify selected projection improvements of 1.12--1.36$\times$ and stage improvements of up to 2.30$\times$. We introduce channel-partitioned FFN execution that reuses production activation representations and retains QPU intermediates, reducing full-prompt latency by 3.31\% and cached-request latency by 3.65\% against CPU\_REPACK. MMLU, ImageNet, and COCO evaluations show comparable task accuracy for the tested native-format LLM and FP32 paths. SmolVLA replay misses its predefined FP32 agreement gates and required resumes after driver hangs. The measurements identify how representation, preparation, and execution boundaries determine whether native QPU work improves inference, providing practical guidance for code generation and heterogeneous runtime optimization on Raspberry Pi~5.
+ \end{abstract}
+ 
+ 
+@@ -295,14 +295,14 @@
+ We implement FP32 and signed-byte dot-product kernels and retain weights, programs, uniforms, and workspaces across invocations. We expose mapped tensors to both processors and coordinate concurrent execution through explicit queues and dependencies. We provide disjoint CPU--QPU execution across rows or output columns, and intermediate-channel decomposition with partial outputs combined at the final join. We support FP32, signed W8A8, and native GGML block-quantized formats, allowing us to jointly evaluate numerical representation, kernel implementation, and execution placement. 
+ Building on this runtime, we support operators across classification, detection, language-model, and vision-language-action (VLA) workloads. 
+ 
+-For language models, we introduce a channel-partitioned FFN execution path within \texttt{llama.cpp} that reuses production activation representations and retains QPU intermediates through the down projection, reducing full-prompt latency by 3.31\% and cached-request latency by 3.65\%. We evaluate model families such as ResNet and YOLO workloads; native language modeling with \texttt{llama.cpp}; VLA policies with complete SmolVLA topologies, including image processing, transformer execution, KV state, and iterative action generation. We evaluate these implementations against optimized OpenBLAS, NumPy, PyTorch, and GGML CPU paths, establishing how workload shape, numerical representation, data preparation, persistence, and synchronization determine the effectiveness of QPU execution. Selected FP32 projections improve over the faster measured NumPy or PyTorch implementation by 1.117--1.356$\times$, while selected normalization and activation stages reach 2.30$\times$. Evaluations on MMLU, ImageNet, COCO, and SmolVLA replay show comparable downstream task accuracy and action outputs for the tested native-format LLM and FP32 paths.
+-
+-Overall, our implementation provides the first systematic account, to our knowledge, of how native VideoCore~VII code generation, numerical representation, and heterogeneous execution interact across modern edge-AI workloads. For reproducibility, alongside the current Artifact submission (Appendix~\ref{appx:artifact}), we open-source the project \footnote{GitHub: \url{https://github.com/yiannisha/qpu-xla-triton}} and provide provide the runtime, native kernel generators, validation suite, model adapters, and benchmark drivers for generating measurements and execution traces (Appendix~\ref{app:organization}). Our aim is for the system to serve as an executable foundation and practical guidance for generating and integrating native accelerator code on current and future Raspberry Pi systems. 
++For language models, we introduce a channel-partitioned FFN execution path within \texttt{llama.cpp} that reuses production activation representations and retains QPU intermediates through the down projection, reducing full-prompt latency by 3.31\% and cached-request latency by 3.65\%. We evaluate model families such as ResNet and YOLO workloads; native language modeling with \texttt{llama.cpp}; VLA policies with complete SmolVLA topologies, including image processing, transformer execution, KV state, and iterative action generation. We evaluate these implementations against optimized OpenBLAS, NumPy, PyTorch, and GGML CPU paths, establishing how workload shape, numerical representation, data preparation, persistence, and synchronization determine the effectiveness of QPU execution. Selected FP32 projections improve over the faster measured NumPy or PyTorch implementation by 1.117--1.356$\times$, while selected normalization and activation stages reach 2.30$\times$. MMLU, ImageNet, and COCO evaluations show comparable downstream task accuracy for the tested native-format LLM and FP32 paths. SmolVLA replay misses the predefined FP32 agreement gates and required resumes after driver hangs; we do not establish sustained reliability or robot task success.
++
++Our contribution is the integration and evaluation of native VideoCore~VII execution with production Arm CPU\_REPACK, including physical strides, representation continuity, ownership, and complete-model checks. For reproducibility, alongside the current Artifact submission (Appendix~\ref{appx:artifact}), we provide the project source for evaluation \footnote{GitHub: \url{https://github.com/yiannisha/qpu-xla-triton}} and provide the runtime, native kernel generators, validation suite, model adapters, and benchmark drivers for generating measurements and execution traces (Appendix~\ref{app:organization}). Our aim is for the system to serve as an executable foundation and practical guidance for generating and integrating native accelerator code on current and future Raspberry Pi systems. 
+ 
+ 
+ \begin{figure}
+     \centering
+-    \includegraphics[width=0.95\linewidth]{figures/figure1.pdf}
++    \includegraphics[width=0.95\linewidth]{figure1.pdf}
+     \caption{Native CPU--QPU runtime on Raspberry Pi~5. Vision, language, and VLA workloads share persistent programs, weights, and workspaces, with separate CPU and QPU queues accessing shared physical memory.}
+     \label{fig:overview}
+ \end{figure}
+@@ -317,6 +317,8 @@
+ 
+ At the lower level, \texttt{py-videocore7} supplies the assembler and V3D device interface used by our implementation~\cite{pyvideocore7}. VC4CL provides an OpenCL environment for the earlier VideoCore~IV architecture~\cite{vc4cl}, while V3DLib provides native VideoCore programming abstractions and kernel examples for documented VideoCore~IV and VI targets~\cite{v3dlib}. However, Raspberry Pi~5 presents a distinct implementation setting in which the CPU and QPUs share physical memory, while QPU execution relies on a target-specific instruction set and dispatch interface. Native QPU code must therefore coexist with representations and CPU implementations designed around different execution models: W8A8 maps directly to signed-byte dot products, GGML block formats~\cite{llamacpp} require format-specific unpacking and scaling, OpenBLAS targets dense numerical operations~\cite{openblas}, and CPU\_REPACK~\cite{llamacpp} couples packed representations with optimized Arm kernels.
+ 
++Intra-layer FFN partitioning has established precedents: Megatron-LM splits intermediate channels and combines down-projection contributions~\cite{shoeybi2019megatron}; PowerInfer distributes hot and cold neuron execution between GPU and CPU~\cite{song2024powerinfer}; CoDL coordinates heterogeneous operator partitions and chains to reduce sharing costs~\cite{jia2022codl}. Our contribution is the native VideoCore~VII integration and its production CPU\_REPACK evaluation, building on the earlier QPU substrate~\cite{hadjiyianni2026qpu}, rather than introducing channel partitioning or operator-chain locality.
++
+ Recent Raspberry Pi inference studies investigate low-bit and ternary quantization for language models~\cite{llmpi}, INT8 deployment of convolutional detectors through TensorFlow Lite~\cite{boddu2025quantizedyolo}, and lightweight CPU implementations of spiking neural networks~\cite{derzhavin2025spiffy}. These approaches target model compression and application-specific execution without developing native CPU--QPU co-execution. Overall, to our knowledge, Raspberry Pi~5 currently lacks an AI-inference execution layer that combines native QPU kernels, persistent model state, packed representations, and concurrent execution within one model runtime.
+ 
+ 
+@@ -364,7 +366,7 @@
+ 
+ \begin{figure}[t!]
+     \centering
+-    \includegraphics[width=0.95\linewidth]{figures/figure2.pdf}
++    \includegraphics[width=0.95\linewidth]{figure2.pdf}
+     \caption{FP32 and W8A8 matrix-kernel dataflows. FP32 uses a $16\times16\times4$ tile; W8A8 uses a $16\times16\times16$ tile with packed byte-dot arithmetic, persistent weights, and fused output scaling.}
+     \label{fig:placeholder}
+ \end{figure}
+@@ -418,7 +420,7 @@
+ +
+ H_{[:,J_q]}W_{d[J_q,:]}.
+ \end{equation}
+-Each processor computes its gate and up projections, activation, and down-projection contribution for its assigned channels. We select the partition size through calibration; the execution boundary follows from this channel independence and the additive structure of the down projection.
++Each processor computes its gate and up projections, activation, and down-projection contribution for its assigned channels. The corrected confirmation fixes the QPU share at one eighth before evaluation; later exploratory screening does not establish an optimum. The execution boundary follows from this channel independence and the additive structure of the down projection.
+ 
+ We implement this within CPU\_REPACK~\cite{llamacpp} to reuse the activation representation already prepared by the CPU runtime. We pass the CPU partition width and physical source-row stride separately to the activation quantizer, allowing CPU\_REPACK to process its channel slice directly without an additional compacting copy. We retain the QPU's GEGLU-to-Q8 intermediate for its down projection, avoiding a return to host storage between these stages. The CPU and QPU produce hidden-size partial outputs that we add at the final join. This design addresses both representation preparation and intermediate synchronization while preserving the optimized CPU path for its channel slice. We validate the combined output against CPU execution, accounting for intermediate quantization and the changed accumulation order.
+ 
+@@ -437,7 +439,7 @@
+ 
+ \begin{figure}[t]
+     \centering
+-    \includegraphics[width=0.9\linewidth]{figures/figure3.pdf}
++    \includegraphics[width=0.9\linewidth]{figure3.pdf}
+     \caption{Language-model execution scopes: (A) direct QPU node execution, (B) asynchronous projection overlap, and (C) channel-partitioned FFN execution with resident intermediates and addition of hidden-size partial outputs.}
+     \label{fig:integration}
+ \end{figure}
+@@ -535,7 +537,7 @@
+ 
+ \begin{figure}[t]
+     \centering
+-    \includegraphics[width=\linewidth]{figures/figure4.pdf}
++    \includegraphics[width=\linewidth]{figure4.pdf}
+     \caption{Exact-stripe kernel selection. Length 4,194,048 permits twelve-way vector execution; the neighboring length 4,194,240 fails the vector-selection predicate and uses the scalar path.}
+     \label{fig:stripes}
+ \end{figure}
+@@ -596,7 +598,7 @@
+ 
+ \begin{figure}[t]
+     \centering
+-    \includegraphics[width=\linewidth]{figures/figure5.pdf}
++    \includegraphics[width=\linewidth]{figure5.pdf}
+     \caption{Measured projection overlap at $M=257$ with one quarter of the output assigned to the QPU. Its 40.66\,ms execution overlaps 21.43\,ms of CPU work, leaving a 19.23\,ms tail before the join.}
+     \label{fig:overlap}
+ \end{figure}
+@@ -769,7 +771,7 @@
+ \iffalse
+ \section{Artifact and Reproducibility}
+ The supplementary material documents source entry points, numerical contracts, benchmark commands, and external model and replay requirements. The accompanying code includes native kernels, the Python runtime, the C \texttt{llama.cpp} integration, model adapters, tests, and experiment drivers. These drivers support generating timing records, validation results, and execution traces, with program hashes and source identities where available. We distinguish measured latency, numerical validation, historical diagnostics, and static estimates, and document the measurement scope of each campaign. Automatic placement excludes historical records whose implementation hashes no longer match.
+-\noindent\textbf{Anonymous artifact:} \url{https://anonymous.4open.science/r/cgo27-artifact-1ce0/}.
++\noindent\textbf{CGO evaluation artifact:} \url{https://github.com/yiannisha/qpu-xla-triton}.
+ \fi
+ 
+ 
+@@ -780,26 +782,27 @@
+ The study demonstrates gains for selected operators and identifies how layout, activation preparation, representation handling, and synchronization determine their effect within a model runtime. These findings guided our FFN implementation, which reuses CPU\_REPACK activations and retains intermediate computation within each processor's assigned region. The practical lesson is to optimize the complete execution boundary alongside the kernel, accounting for numerical behavior and the optimized CPU alternative. Our implementation provides a foundation for extending native QPU support and guiding code generation, runtime optimization, and accelerator interfaces for edge AI.
+ 
+ 
+-% Artifact Submission!
+-\include{ae.tex}
+-
+-\newpage
++% Artifact submission: completed appendix, before References.
++\clearpage
++\appendix
++\input{artifact/APPENDIX.tex}
++
++\clearpage
+ \bibliographystyle{ACM-Reference-Format}
+ \bibliography{main}
+ 
+-\newpage
+-
+-
+-\appendix
++\clearpage
++
++% Continue appendix numbering after the artifact appendix; do not reset to A.
+ 
+ \section{Artifact Organization - Measurements}
+ \label{app:organization}
+ 
+-\noindent\textbf{Anonymous artifact:} \url{https://anonymous.4open.science/r/cgo27-artifact-1ce0/}
++\noindent\textbf{CGO evaluation artifact:} \url{https://github.com/yiannisha/qpu-xla-triton}
+ 
+ This supplement provides the extended operator measurements, model-runtime experiments, numerical checks, and reproduction procedures supporting the main paper. We organize the results by execution boundary: prepared kernels, complete operators, concurrent regions, full requests, and application outputs. Unless otherwise stated, speedup is \(T_{\mathrm{reference}}/T_{\mathrm{candidate}}\), so values above one indicate lower candidate latency. Each comparison identifies its numerical representation, CPU reference, and timed interval.
+ 
+-The anonymized distribution provides source and evaluation drivers. Table~\ref{tab:artifact-map} lists the implementation entry points. For anonymization purposes, historical logs, downloaded models, datasets, and raw output arrays are excluded from the source archive. The supplied drivers generate machine-readable measurements and validation records for the evaluated configuration. Historical measurements in this supplement retain their original experimental scope, while automatic placement requires a matching validated configuration for the executing implementation.
++The CGO evaluation distribution provides source, evaluation drivers, retained historical logs, selected numerical output arrays, and provenance. Table~\ref{tab:artifact-map} lists the implementation entry points. Downloaded models and datasets are acquired separately under their providers' terms. This source-and-evidence release differs from the earlier anonymous source-only snapshot. The supplied drivers generate machine-readable measurements and validation records for the evaluated configuration. Historical measurements in this supplement retain their original experimental scope, while automatic placement requires a matching validated configuration for the executing implementation.
+ 
+ \begin{table*}[t]
+ \centering
+@@ -838,7 +841,7 @@
+ 
+ \subsection{Source distribution and provenance}
+ 
+-We identify external dependencies and model configurations through the build and loading instructions. For anonymization purposes, the anonymous source snapshot excludes development history, tags, machine-specific paths, and historical logs. These packaging choices do not change the numerical contracts or justify transferring an old placement decision to a different implementation. Where available, generated records include source and program identities alongside the measurement configuration; historical records with unmatched identities remain separate from automatic-placement entries.
++We identify external dependencies and model configurations through the build and loading instructions. The CGO release excludes development history, arbitrary working files, models and datasets, while preserving historical evidence and its original provenance paths. Its explicit inventory and checksums identify the distributed files. These packaging choices do not change the numerical contracts or justify transferring an old placement decision to a different implementation. Where available, generated records include source and program identities alongside the measurement configuration; historical records with unmatched identities remain separate from automatic-placement entries.
+ 
+ We distinguish measured latency, numerical validation, diagnostic experiments, and static estimates throughout the supplement. Earlier operator campaigns use the recorded \texttt{ondemand} configuration. Later FFN request measurements use controlled, swap-disabled sessions. Prepared-component timings state their preparation exclusions, and model-quality measurements report the evaluated samples and output metrics.
+ 
+@@ -1590,6 +1593,15 @@
+ 
+ Automatic placement remains separate from implementation availability. Packed INT16 assembly with unresolved numerical errors, unmatched historical records, slower native GGML kernels, column-W8 candidates without the required performance or quality evidence, and persistent multi-phase prototypes remain experimental or opt-in. FFN configurations retain their recorded numerical outcomes. The integrated FFN request path passes its reported checks but remains opt-in below the 1.05$\times$ speedup threshold; SmolVLA placement additionally depends on the applicable numerical and stability requirements.
+ 
++
++\subsection{Rebuttal evidence and artifact corrections}
++
++The artifact preserves the separate October diagnostics rather than substituting them for the headline campaign. Timestamped complete-FFN measurements place CPU completion last in 172/175 measured FFNs at $M=129$ and all 175 at $M=257$; the earlier projection-only overlap in Figure~\ref{fig:overlap} has a different boundary. The exploratory two-shape, three-fraction screen contains four inconclusive comparisons and two losses, with no median reaching 1.05$\times$; it neither establishes an optimum nor promotes a policy. Matched mechanism ablations find a clear serialization penalty, while compact-copy and materialization effects span parity and must not be added as independent contributions.
++
++Additional controls retain the slower production MTP node, host-preparation costs in pointwise and dense convolution, the faster fused Torch bias-plus-ReLU baseline, and a slower complete one-input ResNet execution. An optimized same-contract CPU W8A8 performance control remains unavailable. Full records, rejected depthwise attempts, numerical contracts, and campaign-specific machine qualifications are distributed with the artifact.
++
++Post-manuscript validation exposed two native GEMM bounds errors: a speculative final K16 prefetch and a TMU word read beyond the final FP16 scale. The revised artifact re-reads valid tail data and selects FP16 scales from aligned words. On the same six full-vocabulary cases, 840 compute dispatches then complete with zero observed MMU faults and unchanged numerical acceptance. The diagnostic enables repeated MMU logging because the evaluation kernel otherwise suppresses faults after its first report. Historical records remain unchanged and do not establish fault-free execution under that stronger observation. New build identities and validation outcomes are recorded in \path{artifact/VALIDATION.md}; these bounded checks do not establish sustained driver reliability.
++
+ \section{Reproduction Procedures}
+ \label{app:commands}
+ 
+@@ -1663,6 +1675,7 @@
+ {\footnotesize
+ \begin{verbatim}
+ cmake -S integrations/llama_cpp \
++  -DCMAKE_BUILD_TYPE=Release \
+   -B build/llama-qpu-runtime \
+   -DLLAMA_CPP_ROOT=/path/to/llama.cpp \
+   -DQPU_LLAMA_BUILD_GGML_BACKEND=ON \
+--- a/main.bib
++++ b/main.bib
+@@ -111,6 +111,7 @@
+ }
+ 
+ @misc{pytorchbenchmark,
++  year         = {n.d.},
+   author       = {{PyTorch Contributors}},
+   title        = {Benchmark Utils: torch.utils.benchmark},
+   howpublished = {\url{https://docs.pytorch.org/docs/2.14/benchmark_utils.html}},
+@@ -379,3 +380,32 @@
+   howpublished = {\url{https://ollama.com/blog/mlx}},
+   note         = {Accessed 2026-08-29}
+ }
++
++
++@misc{shoeybi2019megatron,
++  author = {Mohammad Shoeybi and Mostofa Patwary and Raul Puri and Patrick LeGresley and Jared Casper and Bryan Catanzaro},
++  title = {{Megatron-LM}: Training Multi-Billion Parameter Language Models Using Model Parallelism},
++  year = {2019},
++  eprint = {1909.08053},
++  archivePrefix = {arXiv},
++  url = {https://arxiv.org/abs/1909.08053}
++}
++
++@misc{song2024powerinfer,
++  author = {Yixin Song and Zeyu Mi and Haotong Xie and Haibo Chen},
++  title = {{PowerInfer}: Fast Large Language Model Serving with a Consumer-grade {GPU}},
++  year = {2024},
++  note = {SOSP 2024},
++  eprint = {2312.12456},
++  archivePrefix = {arXiv},
++  url = {https://arxiv.org/abs/2312.12456}
++}
++
++@inproceedings{jia2022codl,
++  author = {Fucheng Jia and Deyu Zhang and Ting Cao and Shiqi Jiang and Yunxin Liu and Ju Ren and Yaoxue Zhang},
++  title = {{CoDL}: Efficient {CPU-GPU} Co-execution for Deep Learning Inference on Mobile Devices},
++  booktitle = {Proceedings of the 20th Annual International Conference on Mobile Systems, Applications and Services},
++  year = {2022},
++  pages = {209--221},
++  url = {https://github.com/csu-eis/CoDL}
++}

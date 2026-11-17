@@ -483,7 +483,7 @@ static const uint64_t qpu_ggml_q4_0_q8_0_m4[] = {
     UINT64_C(0x38003186bb03f000),
 };
 static const size_t qpu_ggml_q4_0_q8_0_m4_instruction_count = 476;
-static const char qpu_ggml_q4_0_q8_0_m4_source_hash[] = "d8769ceec2c61c372c47ad2bd87fcaf12d9f338526c42b5a66a323f66a98950a";
+static const char qpu_ggml_q4_0_q8_0_m4_source_hash[] = "19f1d5f900c9dfbc42ac48237316c4a2d438d57dfe26153130c1644edf8d8884";
 static const char qpu_ggml_q4_0_q8_0_m4_binary_hash[] = "642c515e0568710a6a93429b2bf5ccbbcbce8972f165126b300d5144a576792d";
 
 #endif

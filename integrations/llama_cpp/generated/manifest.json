@@ -8,12 +8,12 @@
         "column_weight_scale": true
       },
       "binary": "ggml-column-w8-q8-0-mx.bin",
-      "binary_sha256": "0b28eca757793042df7d3be16cc82a7dc038037eb1284208dc1a8690afb33134",
+      "binary_sha256": "5e4b097fe10f7f276143fae98c520c2c3a7a6c41416be595fba6149840f59ab4",
       "code_alignment": 8,
       "data_alignment": 4,
       "description": "Approximate per-column W8 by block-Q8_0 arbitrary-row 16x16 tiled linear with fused FP32 scaling.",
       "header": "ggml-column-w8-q8-0-mx.h",
-      "instruction_count": 470,
+      "instruction_count": 478,
       "launch": {
         "local_invocation": [
           16,
@@ -29,10 +29,10 @@
         ]
       },
       "name": "ggml-column-w8-q8-0-mx",
-      "size_bytes": 3760,
+      "size_bytes": 3824,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
-      "source_hash": "45fbd1af423819006d552e179bfc3f0490787e5a07d99071a709c800f2464fab",
+      "source_file_sha256": "39f3854b60218e62d961c0ee97c0324f1295723c9f3a38d990e360a16677eb64",
+      "source_hash": "8854349e529a1b4c2f406fdbc89145f93ed7d9b4835b9838664e7586d09a75f0",
       "symbol": "qpu_ggml_column_w8_q8_0_mx",
       "uniform_word_count": 10,
       "uniforms": [
@@ -474,8 +474,8 @@
       "name": "ggml-q4-0-q8-0-m1",
       "size_bytes": 3808,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
-      "source_hash": "e35efa836cb40615f200a94f4bf1916e3003f9c273168826d0ed278d5cf9c730",
+      "source_file_sha256": "39f3854b60218e62d961c0ee97c0324f1295723c9f3a38d990e360a16677eb64",
+      "source_hash": "f698f938cb1c0c9f6555e162738a8445865809bf8651823940520e18fa5f6ec1",
       "symbol": "qpu_ggml_q4_0_q8_0_m1",
       "uniform_word_count": 13,
       "uniforms": [
@@ -565,8 +565,8 @@
       "name": "ggml-q4-0-q8-0-m4",
       "size_bytes": 3808,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
-      "source_hash": "d8769ceec2c61c372c47ad2bd87fcaf12d9f338526c42b5a66a323f66a98950a",
+      "source_file_sha256": "39f3854b60218e62d961c0ee97c0324f1295723c9f3a38d990e360a16677eb64",
+      "source_hash": "19f1d5f900c9dfbc42ac48237316c4a2d438d57dfe26153130c1644edf8d8884",
       "symbol": "qpu_ggml_q4_0_q8_0_m4",
       "uniform_word_count": 13,
       "uniforms": [
@@ -631,12 +631,12 @@
     {
       "assembly_kwargs": {},
       "binary": "ggml-q4-0-q8-0-mx.bin",
-      "binary_sha256": "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072",
+      "binary_sha256": "690a5690edfd14b683f8ad8444c064917d086624e9af86569317c9f4fffdd218",
       "code_alignment": 8,
       "data_alignment": 4,
       "description": "Native GGML Q4_0 by Q8_0 arbitrary-row 16x16 tiled linear with padded rows, persistent weights, and FP32 output.",
       "header": "ggml-q4-0-q8-0-mx.h",
-      "instruction_count": 470,
+      "instruction_count": 481,
       "launch": {
         "local_invocation": [
           16,
@@ -652,10 +652,10 @@
         ]
       },
       "name": "ggml-q4-0-q8-0-mx",
-      "size_bytes": 3760,
+      "size_bytes": 3848,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
-      "source_hash": "c13fbb9a717ef7539fb4094c76713936eb2db00239cce6b7796885ed2bc7d150",
+      "source_file_sha256": "39f3854b60218e62d961c0ee97c0324f1295723c9f3a38d990e360a16677eb64",
+      "source_hash": "2ac29981b2e79d872b121940f8098996b6a454071707952351118447bcd97451",
       "symbol": "qpu_ggml_q4_0_q8_0_mx",
       "uniform_word_count": 11,
       "uniforms": [
@@ -710,12 +710,12 @@
         "activation_scale_word": true
       },
       "binary": "ggml-q4-0-q8-wordscale-mx.bin",
-      "binary_sha256": "5179b32c70411506bed9882d422ad29198f62462ae7fbdbb8c560785c5fbde63",
+      "binary_sha256": "46f792d6015d521f4ef29c0240a171748233bbedf305858a2e944b451ac43cb1",
       "code_alignment": 8,
       "data_alignment": 4,
       "description": "Exact tiled Q4_0 down projection consuming low-F16 scale words and dense Q8 values emitted directly by the fused GEGLU producer.",
       "header": "ggml-q4-0-q8-wordscale-mx.h",
-      "instruction_count": 470,
+      "instruction_count": 477,
       "launch": {
         "local_invocation": [
           16,
@@ -731,10 +731,10 @@
         ]
       },
       "name": "ggml-q4-0-q8-wordscale-mx",
-      "size_bytes": 3760,
+      "size_bytes": 3816,
       "source": "src/qpu_xla/kernels/ggml_q4_0.py",
-      "source_file_sha256": "f93a831931598a53e44560c3aa9b15ec606de0035c35767d2053dc70c830b883",
-      "source_hash": "16d16e8f1a33836e5db425c68b2ce3c3b8a8dc4832995a68ba65ee802c3f265b",
+      "source_file_sha256": "39f3854b60218e62d961c0ee97c0324f1295723c9f3a38d990e360a16677eb64",
+      "source_hash": "0d148b90102e69cdd7ea8ed0c0600d769d6725be0135ad26f9ecde39804f0cd8",
       "symbol": "qpu_ggml_q4_0_q8_wordscale_mx",
       "uniform_word_count": 11,
       "uniforms": [

@@ -89,6 +89,7 @@ def test_paper_profile_uses_the_selected_isolated_native_build(tmp_path, monkeyp
     )
     result = run_profile(args)
     for stage in result["stages"]:
+        assert stage["argv"][stage["argv"].index("--llama-root") + 1] == str(tmp_path / "llama")
         for flag in ("--plugin", "--stride-smoke", "--graph-smoke", "--model-smoke"):
             selected = Path(stage["argv"][stage["argv"].index(flag) + 1])
             assert selected.is_relative_to(build)
@@ -125,3 +126,46 @@ def test_profile_rejects_failed_control_gate_even_when_child_exits_zero(tmp_path
     assert record["failed_stage"] == "prompt"
     assert record["stages"][0]["returncode"] == 0
     assert record["stages"][0]["control"]["retained_for_latency"] is False
+
+
+def test_clean_native_preparation_uses_release_for_every_cmake_project(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from scripts import prepare_artifact_native as native
+
+    monkeypatch.setattr(native, "patched_sources", lambda llama, patches: {})
+    monkeypatch.setattr(
+        native.subprocess, "check_output", lambda argv, **kwargs: native.PIN if "rev-parse" in argv else ""
+    )
+    calls = []
+
+    def record(argv, **kwargs):
+        calls.append(argv)
+        return SimpleNamespace(returncode=0, check_returncode=lambda: None)
+
+    monkeypatch.setattr(native.subprocess, "run", record)
+    native.prepare(tmp_path / "llama", True, 4, tmp_path / "build")
+    projects = [argv for argv in calls if argv[:2] == ["cmake", "-S"]]
+    assert len(projects) == 4  # upstream plus runtime, profile and ablation
+    assert all("-DCMAKE_BUILD_TYPE=Release" in argv for argv in projects)
+
+
+@pytest.mark.parametrize("writable", [True, False])
+def test_mmu_logging_restores_on_failure_and_refuses_disabled_observation(tmp_path, writable):
+    from scripts.run_rebuttal_diagnostics import observable_mmu_errors
+
+    parameter = tmp_path / "debug_mmu"
+    parameter.write_text("N\n")
+    state = {}
+
+    def write(value):
+        if writable or value == "N":
+            parameter.write_text(value + "\n")
+
+    with pytest.raises(RuntimeError, match="command failed|unobservable timing"):
+        with observable_mmu_errors(state, write, parameter):
+            assert parameter.read_text().strip() == "Y"
+            raise RuntimeError("command failed")
+    assert parameter.read_text().strip() == "N"
+    assert state["restored"]
+    assert state["verified"] == writable

@@ -10,6 +10,7 @@ import argparse
 import os
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +18,30 @@ sys.path.insert(0, str(ROOT))
 from scripts.llama_cpp_common import collect_environment, gpu_error_lines, utc_now, write_json_atomic  # noqa: E402
 from scripts.run_llama_cpp_ffn_breakdown import capture  # noqa: E402
 from scripts.run_llama_cpp_qpu_ffn_island_eval import require_no_competing_workloads, wait_until_cool  # noqa: E402
+
+MMU_PARAMETER = Path("/sys/module/v3d/parameters/debug_mmu")
+
+
+@contextmanager
+def observable_mmu_errors(state, write, path=MMU_PARAMETER):
+    """Enable repeated MMU fault logging and restore the original driver setting."""
+    original = path.read_text().strip()
+    state.update(path=str(path), original=original, verified=False, restored=False)
+    try:
+        write("Y")
+        state["during"] = path.read_text().strip()
+        state["verified"] = state["during"].upper() in {"Y", "1"}
+        if not state["verified"]:
+            raise RuntimeError("V3D repeated MMU logging could not be enabled; refuse unobservable timing")
+        yield state
+        if path.read_text().strip().upper() not in {"Y", "1"}:
+            state["verified"] = False
+            raise RuntimeError("V3D repeated MMU logging changed during execution")
+    finally:
+        write(original)
+        state["restored"] = path.read_text().strip() == original
+        if not state["restored"]:
+            raise RuntimeError("could not restore V3D debug_mmu setting")
 
 
 def main():
@@ -54,14 +79,24 @@ def main():
         for swap in swaps:
             sudo("swapoff", swap[0])
         wait_until_cool(65, 600)
-        record["environment_before"] = collect_environment()
-        save()
-        env = {**os.environ, "OPENBLAS_NUM_THREADS": "4", "OMP_NUM_THREADS": "4"}
-        record["result"] = capture(command, env, out / "run", timeout_seconds=args.timeout)
-        record["completed"] = record["result"]["returncode"] == 0 and record["result"]["invalid_reason"] is None
-        record["kernel_error_lines"] = gpu_error_lines(record["result"]["kernel"])
-        record["retained_for_latency"] = record["completed"] and not record["kernel_error_lines"]
-    except Exception as error:
+        record["mmu_logging"] = {}
+
+        def write_mmu(value):
+            sudo("tee", str(MMU_PARAMETER), value=value + "\n")
+
+        with observable_mmu_errors(record["mmu_logging"], write_mmu):
+            record["environment_before"] = collect_environment()
+            save()
+            env = {**os.environ, "OPENBLAS_NUM_THREADS": "4", "OMP_NUM_THREADS": "4"}
+            record["result"] = capture(
+                command, env, out / "run", timeout_seconds=args.timeout, abort_on_gpu_error=True
+            )
+            record["completed"] = record["result"]["returncode"] == 0 and record["result"]["invalid_reason"] is None
+            record["kernel_error_lines"] = gpu_error_lines(record["result"]["kernel"])
+            record["retained_for_latency"] = record["completed"] and not record["kernel_error_lines"]
+
+    except (Exception, KeyboardInterrupt) as error:
+        record["retained_for_latency"] = False
         record["completed"] = False
         record["error"] = str(error)
     finally:

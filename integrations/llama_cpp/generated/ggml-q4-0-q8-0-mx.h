@@ -197,6 +197,9 @@ static const uint64_t qpu_ggml_q4_0_q8_0_mx[] = {
     UINT64_C(0x39e02dcafd283281),
     UINT64_C(0x2c82405e38006781),
     UINT64_C(0x3882819f380837c1),
+    UINT64_C(0x39e061b73c03f801),
+    UINT64_C(0x39e8218c3803f310),
+    UINT64_C(0x3808218e3c03f38d),
     UINT64_C(0x39c031a0ba03f0c0),
     UINT64_C(0x3800318cf903f303),
     UINT64_C(0x39c031a0ba03f0c0),
@@ -332,12 +335,20 @@ static const uint64_t qpu_ggml_q4_0_q8_0_mx[] = {
     UINT64_C(0x2c82405e38006781),
     UINT64_C(0x3882819f380837c1),
     UINT64_C(0x39c031a0f903f7c3),
-    UINT64_C(0x3800318cf903f883),
-    UINT64_C(0x3820318cf903f903),
+    UINT64_C(0x39e02181b503f89c),
+    UINT64_C(0x3800318cf903f043),
+    UINT64_C(0x39e02182b503f91c),
+    UINT64_C(0x3820318cf903f083),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38897186bb03f000),
     UINT64_C(0x3889b186bb03f000),
+    UINT64_C(0x39e02181b503f882),
+    UINT64_C(0x39e021817c03f043),
+    UINT64_C(0x380021a57d03f941),
+    UINT64_C(0x39e02182b503f902),
+    UINT64_C(0x39e021827c03f083),
+    UINT64_C(0x380021a67d03f982),
     UINT64_C(0x380021a5f903f948),
     UINT64_C(0x39e021a23803f882),
     UINT64_C(0x380021a6f903f988),
@@ -423,7 +434,7 @@ static const uint64_t qpu_ggml_q4_0_q8_0_mx[] = {
     UINT64_C(0x54001dc6bbdc0000),
     UINT64_C(0x380021b60503fdb7),
     UINT64_C(0x39e061a03c03f801),
-    UINT64_C(0x02fff463ff009000),
+    UINT64_C(0x02fff40bff009000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
@@ -476,8 +487,8 @@ static const uint64_t qpu_ggml_q4_0_q8_0_mx[] = {
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
 };
-static const size_t qpu_ggml_q4_0_q8_0_mx_instruction_count = 470;
-static const char qpu_ggml_q4_0_q8_0_mx_source_hash[] = "c13fbb9a717ef7539fb4094c76713936eb2db00239cce6b7796885ed2bc7d150";
-static const char qpu_ggml_q4_0_q8_0_mx_binary_hash[] = "9a104f807dda6ac95998cc3da179f784385c0c09c8e95696cec0b7d625ec1072";
+static const size_t qpu_ggml_q4_0_q8_0_mx_instruction_count = 481;
+static const char qpu_ggml_q4_0_q8_0_mx_source_hash[] = "2ac29981b2e79d872b121940f8098996b6a454071707952351118447bcd97451";
+static const char qpu_ggml_q4_0_q8_0_mx_binary_hash[] = "690a5690edfd14b683f8ad8444c064917d086624e9af86569317c9f4fffdd218";
 
 #endif

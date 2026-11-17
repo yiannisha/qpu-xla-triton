@@ -12,6 +12,7 @@ from qpu_xla.kernels.ggml_q4_0 import (
     pack_ggml_q4_0_blocks,
     pack_ggml_q4_0_tiled_weights,
     pack_ggml_q8_0_blocks,
+    qpu_ggml_q4_0_q8_0_tiled_gemm,
     unpack_ggml_q4_0_blocks,
     unpack_ggml_q8_0_blocks,
 )
@@ -158,3 +159,71 @@ def test_persistent_q4_0_streams_cover_24_threads_and_cross_phase_barrier() -> N
 
     np.testing.assert_allclose(actual, expected, rtol=2e-6, atol=2e-5)
     np.testing.assert_allclose(actual_second, expected, rtol=2e-6, atol=2e-5)
+
+
+@pytest.mark.hardware
+@pytest.mark.skipif(not Path("/dev/dri/renderD128").exists(), reason="VideoCore VII render node is unavailable")
+@pytest.mark.parametrize("blocks", [1, 2])
+@pytest.mark.parametrize("scale_mode", ["fp16", "word", "column"])
+def test_tiled_q4_final_prefetch_preserves_one_and_two_block_results(blocks, scale_mode):
+    rng = np.random.default_rng(4480 + blocks)
+    rows = outputs = 16
+    activations = pack_ggml_q8_0_blocks(
+        rng.uniform(0.001, 0.2, (rows, blocks)).astype(np.float16),
+        rng.integers(-127, 128, (rows, blocks, 32), dtype=np.int16),
+    )
+    reference_weight_scales = rng.uniform(-0.2, 0.2, (outputs, blocks)).astype(np.float16)
+    if scale_mode == "column":
+        reference_weight_scales[:] = reference_weight_scales[:, :1]
+    weights = pack_ggml_q4_0_blocks(
+        reference_weight_scales,
+        rng.integers(0, 16, (outputs, blocks, 32), dtype=np.uint8),
+    )
+    expected = ggml_q4_0_q8_0_reference(activations, weights)
+    scales = np.ascontiguousarray(activations[..., :2].view(np.uint16).reshape(rows, blocks))
+    quants = np.ascontiguousarray(activations[..., 2:].reshape(rows, blocks * 32))
+    weight_scales, weight_quants = pack_ggml_q4_0_tiled_weights(weights)
+    if scale_mode == "word":
+        scales = scales.astype(np.uint32)
+    if scale_mode == "column":
+        weight_scales = reference_weight_scales[:, 0].astype(np.float32).reshape(1, outputs)
+    with Driver(data_area_size=1 << 20) as drv:
+        program = drv.program(
+            qpu_ggml_q4_0_q8_0_tiled_gemm,
+            activation_scale_word=scale_mode == "word",
+            column_weight_scale=scale_mode == "column",
+        )
+        buffers = []
+        for data in (quants, weight_quants, scales, weight_scales):
+            buffer = drv.alloc(data.shape, dtype=data.dtype)
+            buffer[:] = data
+            buffers.append(buffer)
+        aq, wq, asc, wsc = buffers
+        destination = drv.alloc(expected.shape, dtype=np.float32)
+        destination[:] = np.nan
+        values = (
+            aq.strides[0],
+            aq.addresses()[0, 0],
+            wq.strides[0],
+            wq.addresses()[0, 0],
+            destination.strides[0],
+            destination.addresses()[0, 0],
+            blocks,
+            asc.strides[0],
+            asc.addresses()[0, 0],
+        )
+        if scale_mode != "column":
+            values += (wsc.strides[0],)
+        values += (wsc.addresses()[0, 0],)
+        uniforms = drv.alloc(len(values), dtype=np.uint32)
+        uniforms[:] = values
+        drv.execute(
+            program,
+            local_invocation=(16, 1, 1),
+            workgroup=(1, 1, 1),
+            uniforms=uniforms.addresses()[0],
+            wgs_per_sg=24,
+            thread=1,
+        )
+        actual = np.array(destination, copy=True)
+    np.testing.assert_allclose(actual, expected, rtol=2e-6, atol=2e-5)

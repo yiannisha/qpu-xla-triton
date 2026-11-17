@@ -1,117 +1,97 @@
-# Local preparation checks
+# Local preparation and reproduction checks
 
-Local checks on Raspberry Pi 5, 2026-11-16. Structured results, source-file
-fingerprints and the focused test log are in [validation/](validation/).
-No independent reviewer, fresh long quality campaign, container build, or
-publisher badge is implied. Licensing and public deposit remain deferred.
-The supplied manuscript is now mapped; its paper source still needs appendix
-and qualification edits. The full fresh FFN protocol completed, with numerical
-passes but **without confirming the historical statistically positive gains**.
+Author checks on Raspberry Pi 5, 2026-11-16/17 UTC. The repository and revised
+manuscript are prepared for independent evaluation. No independent review,
+publisher badge, sustained-reliability claim or public deposit is implied.
+The newer-code license decision remains pending by author instruction.
 
-| Check | Observed outcome |
+## Current corrected build
+
+The native preparer now selects Release for upstream and all integration
+variants, records the actual isolated source checkout, and builds every target
+used in HOWTO.md. Two tiled Q4 GEMM out-of-bounds reads were fixed: a final
+unused K16 prefetch and an unaligned 32-bit read of the last FP16 scale.
+Generated programs and source identities were refreshed. Historical calibration
+identities were preserved; no automatic placement was promoted.
+
+The installed kernel suppresses repeated MMU messages by default. Controlled
+runs now enable and verify `debug_mmu=Y`, monitor the kernel, abort on errors,
+and restore the original setting. A private trace instance and optional native
+buffer inventory isolated both bugs without changing global tracing or killing
+desktop clients. See [MMU-INVESTIGATION.md](MMU-INVESTIGATION.md).
+
+| Check | Outcome |
 |---|---|
-| Focused portable tests | 20 passed: artifact integrity, archive regeneration, explicit diagnostic selection, isolated build selection, failed control-gate propagation, existing FFN aggregation and process guards |
-| Evidence verification | 41 October package files, 37 original provenance records, original selected model outputs plus clean-build follow-through records; release inventory also checked |
-| Offline analysis | Corrected September headline medians and bootstrap intervals reproduce exactly; October TODO3–9 summary equals the retained summary; 112 projection cases with 10 supported wins |
-| Raw quality-output checks | Recomputed MMLU 36.2%/36.3%, ResNet FP32 agreement, W8A8 regression, and SmolVLA numerical errors agree with retained reports; expensive CI/AP calculations are preserved as report views rather than rerun |
-| Pi Python basic test | Forced QPU FP32 and INT32 matmul and public widened INT16 convolution: all max absolute errors zero |
-| Native basic checks | Newly compiled stride regression and joined synthetic FFN graph passed, along with fresh Pi Python smoke; historical binaries remain preserved |
-| Native preparation | Complete clean pinned checkout, patches 0001–0005, llama-bench/server/perplexity, three native integration variants and two isolated diagnostic CPU libraries all built successfully |
-| ImageNet preparation | All 5000 retained sample identities reconstructed from the pinned public Parquet, with original encoded bytes and content hashes |
-| MTP preparation | Exact retained 294912-byte weight slice extracted from hashed GGUF; 1024-byte activation identity also verified |
-| Acquisition identities | Pinned model/source manifests retained; MMLU upstream file metadata and downloaded YOLO checkpoint match the retained SHA256 identities |
-| CPU/hardware selection | Legacy driver/DRM tests are deselected under `not hardware`; non-Pi collection avoids importing the Pi-only register extension |
-| Extracted release | Locked fresh environment, compiled Python C extension, checksum verification, portable smoke and offline analysis all passed from a separate extracted tree with no `.git` directory; imports point into that tree and installed package version matches its content identifier |
-| Customized workload | Documented size-128 example executed all 21 matrix/attention configurations; maximum absolute error 9.54e-6 |
-| Bounded prompt workflow | Six full-vocabulary cases passed; 560 timed/warmup dispatches with zero fallback and valid contracts. A new MMU event during real-model preflight rejects the entire campaign's latency, despite its successful process exit |
-| Bounded cached-request workflow | Separately executed remaining stage: two CPU/QPU pairs, identical greedy outputs, all context/execution contracts passing, zero kernel errors and retained environment gates. This is exercisability evidence, not independent performance confirmation |
+| Focused portable controls | 24 passed in 2.02 s; log in `validation/final-controls.log` |
+| Hardware boundary regression | Six cases: one/two K16 blocks across FP16, word and column scales; all pass with zero kernel errors and verified repeated logging |
+| Six-case full-vocabulary diagnostic | 840 compute dispatches, zero MMU faults after both fixes; original/tail-only variants produced 1080/234 faults under the same observable logging |
+| Complete paper protocol | 20 prompt processes and 15 cached-request pairs; numerical, dispatch, context, greedy-output and environment gates pass; zero kernel errors |
+| Prepared producer/down | M=65/129/257 exact Q8 values/scales; maximum down error 9.54e-6; complete producer/down remains slower than CPU |
+| Archived-data agreement | 117 default printed-value checks; 123 with optional pinned COCO annotations, zero mismatches; all 39 tables/five figures indexed, not every supplemental cell recomputed |
+| Model-output analysis | Classification metrics, SmolVLA errors, static memory plans and optional COCO AP recomputed; expensive quality confidence intervals remain preserved views |
+| Manuscript | Supplied source/assets integrated; acmart 2.19 build yields a two-page AE before References; no AE overfull boxes; original PDF unchanged |
 
-The detailed follow-through summary, raw records and complete native build log
-are in [evidence/clean-build/](evidence/clean-build/). The prompt's inner numerical
-record reports successful execution; **its outer control rejects latency**.
-Do not interpret the inner `retention` field as overriding the kernel monitor.
-The profile command now includes the outer control decision directly in its
-campaign summary and rejects a failed gate even if a child exits zero.
+### Fresh full protocol
 
-The complete clean native preparation took **443.7 s (7.4 min)** with four build
-jobs. Its checkout plus upstream build occupied 275.7 MB, and the integration/
-profile outputs another 13.3 MB. Upstream acquisition used a local shared Git
-object store; cold network clone/download time and separate Git-object storage
-are not included. The bounded prompt and cached-request stages took about
-126.3 s and 130.7 s respectively, including mandatory preflights and process
-setup. The largest observed model process peak RSS was 4.41 GB; 8 GiB RAM leaves
-headroom for the controlled no-swap environment. These are setup/workflow cost
-observations, not new inference-speed claims.
-
-The extracted-tree install took about 2.4 s with cached dependencies and
-hardlinks on ordinary disk. Its verification took about 0.7 s, portable smoke
-1.7 s and full offline analysis 4.6 s. These are preparation checks, not cold
-download costs, inference latency, or portable timing guarantees. Each native
-basic binary completed in under a second. The full fresh FFN costs are recorded below; long fresh task-quality campaign
-costs remain additional.
-
-The first extracted install failed while copying Torch into a 4 GiB RAM-backed
-`/tmp`; its log was retained under `build/artifact-preparation/`. Only that
-task-created failed extraction was removed. Retrying on ordinary disk passed.
-Allow several GB for dependency installation, distinct from the roughly
-210 MB unpacked source/evidence archive.
-
-The final local archive and its exact identity are written to
-`dist/qpu-xla-artifact.tar.gz` and its `.sha256` sidecar. Within an extracted
-release, `artifact/RELEASE.json` gives the complete content identity, original
-source-base commit, per-file hashes and modes; `SHA256SUMS` covers the packaged
-files. Do not place a package's own hash into its input documentation and then
-silently rebuild it under the same identity.
-
-The optional Docker recipe is supplied but unbuilt: Docker is not installed
-on this preparation host. Native setup is the exercised path. Long quality
-campaigns were not repeated. Neither bounded nor full author runs award a badge
-or establish sustained driver reliability.
-
-## Official-manuscript follow-through
-
-The 26-page author-supplied PDF is identified by SHA256 in `manuscript.json`.
-All **39 tables and five figures** are mapped. The offline paper checker passes
-**111 printed-value checks**, including main timing, classification quality,
-selected operator values and both empirical figures. The complete FP32 operator
-grid is exported with slower cases included; static estimates, preserved quality
-intervals and COCO AP remain labeled report views. This is archived-data
-agreement, not a new experiment or independent validation.
-
-The focused tests still pass: **20 passed in 1.37 s**, recorded in
-`validation/manuscript-tests.log`. The preparer now also builds `ggml-qpu` and
-`qpu_ggml_geglu_bench`, required by Table 2's standalone command. Incremental
-preparation from the existing clean build took 11.9 s. Its three prepared
-producer/down cases passed exact Q8 bytes and numerical checks, with maximum
-down-projection error 9.54e-6 and clean kernel retention. Complete producer+down
-ratios were 0.225/0.350/0.289 at M=65/129/257, preserving the conclusion that
-the sequence is slower than CPU. These are prepared, not full-FFN timings.
-
-The full declared paper profile ran once after manuscript alignment: **20 prompt
-processes** (five independent CPU/candidate processes at each M=129/257) and
-**15 cached-request pairs**. Both outer kernel monitors were clean, all inner
-retention gates passed, and all candidate dispatch/context contracts and greedy
-outputs passed. Prompt and cached-request stages took **296.9 s and 647.6 s**
-including preflights and process setup, about 15.7 minutes total. Peak observed
-cached-request RSS was 4,405,198,848 bytes. Host governors and zram were restored.
-
-| Boundary | Historical ratio [95% interval] | Fresh ratio [95% interval] | Interpretation |
+| Boundary | Historical ratio [95% interval] | Corrected fresh ratio [95% interval] | Interpretation |
 |---|---|---|---|
-| Prompt M=129 | 1.0342 [1.0090, 1.1104] | 1.0167 [0.9843, 1.0567] | Fresh interval spans parity; historical positive gain not confirmed |
-| Prompt M=257 | 1.0069 [0.9651, 1.0168] | 1.0032 [0.9667, 1.0255] | Still inconclusive |
-| Cached request wall | 1.0379 [1.0241, 1.0520] | 0.9919 [0.9726, 1.0170] | Fresh interval spans parity and does not overlap the historical interval |
+| Prompt M=129 | 1.0342 [1.0090, 1.1104] | 1.0738 [0.9835, 1.0883] | Positive median; fresh interval spans parity |
+| Prompt M=257 | 1.0069 [0.9651, 1.0168] | 1.0310 [1.0196, 1.1300] | Positive in this author run |
+| Cached request wall | 1.0379 [1.0241, 1.0520] | 1.0431 [1.0231, 1.0504] | Supports the historical modest benefit |
 
-The small historical performance gains have therefore **not** been freshly
-confirmed. Do not mark Results Validated ready or claim independent reproduction
-on this evidence. Investigating the discrepancy or revising the claim needs an
-explicitly recorded follow-up, preserving this attempt and its sample design.
-The successful functional run also does not erase the earlier reduced attempt's
-MMU event. Its cause remains unresolved; a client inventory found desktop V3D
-clients as well as this runtime. See `MMU-INVESTIGATION.md`.
+Thirteen of 15 cached pairs favor the candidate; both losses remain included.
+No additional campaign was run to tighten the M=129 interval. This does not
+establish an automatic-placement policy or independent Results Validated award.
+Prompt and cached stages cost 262.8 s and 600.7 s including preflights and
+process setup: about 14.4 minutes total. Peak cached-process RSS was
+4,405,002,240 bytes. Governors, swap and repeated-MMU logging were restored.
+Full raw records, trace diagnostics, printed-value outputs, producer results
+and controls are in [evidence/kernel-bounds-fix/](evidence/kernel-bounds-fix/).
 
-All full-run raw records, controls, exact fresh intervals, printed-value checks,
-CSV outputs and figure PDFs are retained in
-[evidence/manuscript-validation/](evidence/manuscript-validation/). The supplied
-PDF remains unchanged. `APPENDIX.tex` replaces its blank p.12 template, and
-`MANUSCRIPT-EDITS.md` gives concrete qualification/rebuttal text. Integration into
-the actual paper source and the two-page fit check remain author actions.
+## Preserved earlier attempts
+
+- `evidence/clean-build/`: initial native preparation took 443.7 s (7.4 min).
+  Upstream checkout/build occupied 275.7 MB and integration outputs 13.3 MB,
+  excluding separately shared Git objects. Pi smoke errors were zero; the
+  customized 21-case example had maximum error 9.54e-6. A preflight MMU event
+  rejected the entire reduced prompt campaign despite numerical passes.
+  Its separately executed two-pair cached stage reported no new errors, but
+  repeated logging was not verified then; quiet logs are not proof of no fault.
+- `evidence/manuscript-validation/`: initial full 20-process/15-pair run had
+  an unoptimized integration unlike the historical Release plugin. Its
+  M129/cached intervals span parity and are retained unchanged. Its timing is
+  not a matched-build reproduction; repeated MMU logging was also unverified.
+  See `build-mismatch.json` and the summary's build qualification.
+- `evidence/kernel-bounds-fix/interrupted-release-*`: a subsequent Release
+  campaign was stopped when the logging blind spot was discovered. It is not
+  retained performance evidence. The original stop reason and partial records
+  remain included.
+
+The corrected campaign follows explicit build, observability and bounds fixes;
+it does not erase these failures or reinterpret earlier retention fields.
+Historical SmolVLA hangs, rejected depthwise runs, missing optimized CPU W8A8
+control and task-quality regressions remain limitations.
+
+## Package and manuscript checks
+
+The explicit release inventory excludes models, arbitrary benchmark_runs,
+local configuration and build caches. The archive includes content-based
+version metadata, a complete per-file manifest and checksums. Its sidecars
+record the final archive hash and checks from a separate Git-free extracted
+tree: locked install, verification, portable smoke, default paper analysis and
+import/version identity. Identical inputs must produce identical archive bytes.
+Changed Python files pass Ruff lint/format checks. The broader repository
+formatter still flags 27 unchanged files; unrelated formatting was left out of
+scope. This is not a claim that the entire existing CI suite passes.
+The source/evidence payload is roughly 210 MB; allow several GB for dependencies
+on ordinary disk. An earlier install into a 4 GiB RAM-backed /tmp failed while
+copying Torch; ordinary-disk extraction passed. Cached installation costs do
+not represent cold downloads. Models/datasets and fresh quality campaigns add
+separate costs. Docker is supplied but unbuilt on this host.
+
+`manuscript-revision.json` records original/revised source hashes and the local
+draft PDF identity. The actual AE occupies pages 13–14; References start on 15.
+Both supplied and revised source have 12 main-body pages under the same local
+XeTeX/acmart toolchain. The original pdfTeX PDF has different pagination; exact
+pagination equivalence is not claimed. `manuscript-ae.patch` exposes all source
+and bibliography edits. No historical result-table values were rewritten.

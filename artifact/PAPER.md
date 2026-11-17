@@ -14,8 +14,9 @@ Page numbers below refer to this exact version. Later manuscript revisions need 
 Follow [INSTALL.md](../INSTALL.md) and [HOWTO.md](../HOWTO.md).
 `scripts/reproduce_paper.py --output build/paper-analysis` regenerates the main
 measurement data, checks printed values and exports the full FP32 operator grid.
-Use `--plots` for PDF renderings of Figures 4/5. Static estimates, preserved
-quality intervals and COCO AP remain explicitly labeled report views.
+Use `--plots` for PDF renderings of Figures 4/5. Static memory plans are
+recomputed; optional pinned annotations enable COCO AP recomputation. Preserved
+quality confidence intervals remain report views. Default/optional checks: 117/123.
 The map covers all tables; this does not assert automated recomputation of every
 supplemental cell. The JSON map gives exact evidence paths for each entry.
 
@@ -25,8 +26,8 @@ supplemental cell. The JSON map gives exact evidence paths for each entry.
 | 2 | 8 | Prepared GEGLU producer and down projection | paper-results:producer. Prepared inputs; not complete FFN latency. |
 | 3 | 9 | Column-W8 complete requests | paper-results:column-w8. M=129/257 held-out five pairs; M=513 one-pair screen, no interval. |
 | 4 | 9 | Corrected integrated FFN | paper-results:headline; paper:prompt,agentic. Main evidence. Five independent processes per placement/shape; 15 request pairs. Original shortened-stride results invalid. |
-| 5 | 9 | Static SmolVLA memory | retained static estimate; examples/benchmark_qpu_xla_smolvla.py. Planner estimate, not observed RSS. Requires separately acquired model for new plan. |
-| 6 | 10 | Task quality | paper-results:quality; quality profile. Raw classification metrics recomputed; preserved confidence intervals and COCO AP labeled report views. |
+| 5 | 9 | Static SmolVLA memory | paper-results:memory. Recomputed static planner estimate without weights; not observed RSS. |
+| 6 | 10 | Task quality | paper-results:quality; quality profile. Raw classification metrics recomputed; optional pinned annotations recompute COCO AP. Confidence intervals remain preserved views. |
 | 7 | 15 | Source entry points | manual source inventory. Documentation table, no measurement. |
 | 8 | 15 | All ten selected FP32 projections | paper-results:projections. Selection rule and all 112 cases retained; CPU reference varies by case. |
 | 9 | 15 | Stage sweep counts | paper-results:operator-grid. 240 stage configurations; not independent process samples. |
@@ -59,7 +60,7 @@ supplemental cell. The JSON map gives exact evidence paths for each entry.
 | 36 | 22 | Detailed task quality | paper-results:quality; quality profile. Expanded Table 6; no COCO bootstrap in reported campaign. |
 | 37 | 23 | SmolVLA operators | manual implementation inventory. Supported partition axes, not measured end-to-end speedups. |
 | 38 | 23 | SmolVLA action agreement | paper-results:quality; quality:smolvla (explicit diagnostic). Completed 100-observation outputs only; FP32 gates fail; hangs/resumes retained. |
-| 39 | 23 | Static SmolVLA memory | retained static estimate. Same as Table 5; not measured peak RSS. |
+| 39 | 23 | Static SmolVLA memory | paper-results:memory. Same recomputed plan as Table 5; not measured peak RSS. |
 
 | Figure | Page | Kind | Evidence |
 |---|---:|---|---|
@@ -71,18 +72,19 @@ supplemental cell. The JSON map gives exact evidence paths for each entry.
 
 ## Corrections for the manuscript source
 
-Concrete proposed wording is in [MANUSCRIPT-EDITS.md](MANUSCRIPT-EDITS.md).
-The supplied PDF is the official input, not an edited output. These items need
-author integration into its LaTeX source; the artifact does not silently rewrite it.
+The supplied source and assets are now integrated in `main.tex`/`main.bib`.
+`manuscript-ae.patch` shows the edits and `manuscript-revision.json` records the
+local draft identity and actual two-page AE fit. The original PDF remains
+unchanged; all page/table references above refer to it. Revised supplement
+letters continue B–I after AE Appendix A.
 
-1. Replace the blank obligatory artifact template on p.12 with [APPENDIX.tex](APPENDIX.tex). Keep it before References, verify the two-page limit, and resolve duplicate Appendix A numbering in the supplement. Source and a TeX toolchain were not supplied, so integration and page fit are unverified.
-2. Table 7 and Appendix H promise `INSTALL.md` and `HOWTO.md`; these now exist and lead to the exercised installation and result workflows. Appendix H.2’s render-node wording is incomplete for the current driver: the V3D card path also needs access.
-3. The abstract/introduction’s broad action-agreement wording should carry §5.3 and Appendix F.2’s qualification: SmolVLA NRMSE=1.56% and cosine=0.999881 fail the stated FP32 gates; the completed replay followed hangs/resets and does not establish reliability or robot success.
-4. §3.4.3’s calibration wording should distinguish the fixed 1/8 share in corrected confirmation from exploratory selection. October TODO2 does not prove optimality or promote a split. Figure 5/Table 25 show earlier projection-only overlap, not the October complete-FFN critical path.
-5. Supplement A describes an anonymized source-only snapshot without logs/arrays. The CGO evaluation release described here includes retained raw evidence and component provenance. Identify that distribution explicitly rather than claiming the two packages are identical.
-6. Table 22’s isolated GEGLU numbers have calibration/held-out labels, but their source report also says the campaign was rejected for a publication performance claim because governors were ondemand and a competing server was active. Retain that qualification when interpreting the operator ratios.
-7. Integrate the attribution corrections in `REBUTTAL_NOTES.md` (TODO10) into Related Work and references. The supplied PDF does not establish that those corrections have been made. Preserve upstream assembler/driver and native llama.cpp attribution.
-8. The October critical-path, split, ablation, CPU_REPACK MTP, preparation, fused Torch and complete-ResNet measurements are supplemental rebuttal evidence, not numerical tables already present in this PDF. Their exclusions—including MMU events, rejected depthwise, and missing optimized same-contract CPU W8A8 control—must travel with the results.
+The source now includes the completed AE, qualified SmolVLA/action and partition
+claims, source/evidence distribution description, prior-substrate attribution,
+Megatron-LM/PowerInfer/CoDL references and a concise rebuttal/corrections section.
+That section preserves rejected conditions, slower controls, the missing CPU
+W8A8 control and the November bounds corrections. Historical numerical tables
+remain unchanged. [MANUSCRIPT-EDITS.md](MANUSCRIPT-EDITS.md) retains fuller wording
+and the current author reproduction qualifications for review.
 
 ## Badge boundaries
 
@@ -94,5 +96,5 @@ errors remain failures even if logits agree; do not rerun until a clean attempt
 and discard earlier ones. See [VALIDATION.md](VALIDATION.md) and the bounded [MMU investigation](MMU-INVESTIGATION.md).
 
 Public archival deposit and the newer-code license decision remain deferred
-under the author’s instructions. No DOI, independent validation, filled PDF
-appendix or publication is claimed.
+under the author’s instructions. No DOI, independent validation, badge award or publication is claimed.
+A filled local PDF review draft has been built; no submission was performed.

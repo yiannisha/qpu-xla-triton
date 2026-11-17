@@ -1,7 +1,9 @@
-# Proposed manuscript qualifications
+# Manuscript qualifications and applied source edits
 
-These are proposed insertions for the author-supplied PDF identified in
-`manuscript.json`, not a claim that the PDF has been edited. Each addition
+Condensed forms are now integrated into main.tex/main.bib; see
+`manuscript-ae.patch` and `manuscript-revision.json`. The original PDF identified
+in `manuscript.json` remains unchanged. These fuller review notes retain each
+qualification and are not additional numerical paper tables. Each addition
 states its measurement boundary. Retained raw records and fresh-run profiles
 are mapped in `claims.json`; full reports remain authoritative for details.
 
@@ -76,11 +78,11 @@ specified with primary links in `REBUTTAL_NOTES.md`; choose citation keys in
 the actual bibliography rather than inventing entries in the PDF.
 
 **New author reproduction.**
-Report the full November run separately from September confirmation. Its
-M=129 prompt ratio is 1.0167 [0.9843, 1.0567], so the fresh attempt does not
-confirm the historical statistically positive gain. M=257 is 1.0032
-[0.9667, 1.0255], still inconclusive. Preserve the earlier MMU-rejected reduced
-attempt. The 15-pair cached-request ratio is 0.9919 [0.9726, 1.0170], which does not
-confirm the historical gain. Its interval does not overlap the historical
-[1.0241, 1.0520] interval. Full controls are recorded in `VALIDATION.md`;
-neither run is independent validation or proof of a resolved driver fault.
+The initial full run had an unoptimized integration and unverified repeated MMU
+logging; its negative/inconclusive intervals remain archived. After explicit
+Release, logging and bounds fixes, the full 20-process/15-pair protocol passes
+all controls with zero faults. Cached-request ratio is 1.0431 [1.0231, 1.0504],
+supporting the historical modest benefit. M=129 prompt is 1.0738
+[0.9835, 1.0883], still spanning parity; M=257 is 1.0310 [1.0196, 1.1300] in this
+run. Both cached losses remain included. These author checks neither award a
+badge nor justify automatic promotion or sustained-reliability claims.

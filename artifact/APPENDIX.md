@@ -1,23 +1,21 @@
 # Artifact appendix integration
 
-[APPENDIX.tex](APPENDIX.tex) replaces the blank Appendix A on page 12 of the
-supplied official `QPUs_CGO2027.pdf`. It fills Abstract, checklist, access,
-dependencies, installation, workflow, expected results, customization, notes
-and methodology. It follows the fields in the manuscript's existing template
-and the [current linked template](https://www.asplos-conference.org/asplos2027/ae-artifact-appendix/).
+[APPENDIX.tex](APPENDIX.tex) is integrated into the supplied [main.tex](../main.tex)
+before References. It fills the existing template fields and follows the
+[current linked template](https://www.asplos-conference.org/asplos2027/ae-artifact-appendix/).
+The supplement continues at Appendix B, avoiding duplicate Appendix A numbering.
+Supplied figures and bibliography are included; original PDF and figure bytes
+are preserved. The original PDF's page/table mapping remains in `manuscript.json`.
 
-The exact title, nine paper authors, PDF hash, all 39 table locations and five
-figure locations are recorded in [manuscript.json](manuscript.json).
-[PAPER.md](PAPER.md) records the manuscript qualifications and author edits.
-[claims.json](claims.json) maps the stable original/rebuttal claim IDs.
+The local Tectonic 0.17.0 / acmart 2.19 build verifies **two AE pages (13–14)**,
+References beginning on 15, and no AE overfull boxes. The revised review PDF is
+`dist/QPUs_CGO2027-artifact-draft.pdf`; this generated draft is separate from the
+supplied official PDF. `manuscript-revision.json` records source/tool identities,
+hashes and pagination; `manuscript-ae.patch` exposes the paper/bibliography edits.
+A normal acmart 2.19 installation can compile main.tex with the root figures,
+main.bib and artifact/APPENDIX.tex. XeTeX and pdfTeX may paginate differently.
 
-Insert the source before References and check the two-page limit in the actual
-acmart manuscript. Resolve duplicate Appendix A numbering in the supplement.
-The manuscript LaTeX source and a TeX toolchain were not supplied, so the PDF
-itself has not been edited and page fit remains unverified. Add the final
-artifact access/archival link if and when publication is authorized.
-
-The appendix explicitly preserves deferred licensing and deposit, the numerical
-and stability limitations, and the distinction between author validation and
-independently awarded badges. It does not claim results outside the retained
-evidence or silently incorporate October results into earlier paper tables.
+The appendix preserves deferred licensing/deposit, numerical/stability limits
+and the distinction between author checks and independently awarded badges.
+No historical table values were changed. Add an archival link only when deposit
+is authorized; no DOI or manuscript submission has been performed.

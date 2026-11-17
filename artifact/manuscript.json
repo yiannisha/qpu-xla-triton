@@ -4,7 +4,7 @@
     "file_name": "QPUs_CGO2027.pdf",
     "sha256": "3bcc96f58f3b8b500fc8e89ff7c2b8e25bb5226dbf2a946159c7b75f587b6ad2",
     "pages": 26,
-    "title": "Practical: Building and Evaluating a Native CPU–QPU Runtime for Edge AI Inference on Raspberry Pi 5",
+    "title": "Practical: Building and Evaluating a Native CPU\u2013QPU Runtime for Edge AI Inference on Raspberry Pi 5",
     "status": "Accepted (shepherding), supplied by author 2026-11-16",
     "authors": [
       "Yiannis Hadjiyianni",
@@ -71,8 +71,8 @@
         "SMOLVLA-QPU.md",
         "src/qpu_xla/models/smolvla/placement.py"
       ],
-      "workflow": "retained static estimate; examples/benchmark_qpu_xla_smolvla.py",
-      "scope": "Planner estimate, not observed RSS. Requires separately acquired model for new plan."
+      "workflow": "paper-results:memory",
+      "scope": "Recomputed static SmolVLA memory plan without weights; not observed RSS."
     },
     {
       "number": 6,
@@ -86,7 +86,7 @@
         "artifact/evidence/model-quality/yolov8n-coco1000-random-seed20260911-qpu-fp32/report.json"
       ],
       "workflow": "paper-results:quality; quality profile",
-      "scope": "Raw classification metrics recomputed; preserved confidence intervals and COCO AP labeled report views."
+      "scope": "Raw classification metrics recomputed; preserved confidence intervals and COCO AP labeled report views. Optional --coco-annotations recomputes AP/AP50 with pinned annotation hash and exact selected identities; no bootstrap rerun."
     },
     {
       "number": 7,
@@ -433,7 +433,7 @@
         "artifact/evidence/model-quality/yolov8n-coco1000-random-seed20260911-qpu-fp32/report.json"
       ],
       "workflow": "paper-results:quality; quality profile",
-      "scope": "Expanded Table 6; no COCO bootstrap in reported campaign."
+      "scope": "Expanded Table 6; no COCO bootstrap in reported campaign. Optional --coco-annotations recomputes AP/AP50 with pinned annotation hash and exact selected identities; no bootstrap rerun."
     },
     {
       "number": 37,
@@ -465,8 +465,8 @@
         "SMOLVLA-QPU.md",
         "src/qpu_xla/models/smolvla/placement.py"
       ],
-      "workflow": "retained static estimate",
-      "scope": "Same as Table 5; not measured peak RSS."
+      "workflow": "paper-results:memory",
+      "scope": "Recomputed static SmolVLA memory plan without weights; not observed RSS."
     }
   ],
   "figures": [
@@ -531,5 +531,6 @@
   "appendix": {
     "page": 12,
     "status": "Blank obligatory template in supplied PDF; replacement source is artifact/APPENDIX.tex. Actual manuscript edit/typesetting remains an author action."
-  }
+  },
+  "source_revision": "artifact/manuscript-revision.json"
 }

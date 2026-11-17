@@ -138,16 +138,18 @@
     },
     {
       "id": "rebuttal-todo10",
-      "manuscript_location": "Abstract/\u00a71/\u00a73.4.3 and Related Work require author review; blank Appendix A p.12 needs replacement. See PAPER.md.",
-      "statement": "Manuscript mapped; attribution, scope and appendix corrections recorded for author integration.",
+      "manuscript_location": "Revised main.tex/main.bib and AE Appendix A; original PDF references remain in manuscript.json.",
+      "statement": "Attribution, scope and appendix corrections integrated in supplied manuscript source; local AE verified at two pages.",
       "evidence": [
         "REBUTTAL_NOTES.md",
         "experiment_logs/20261028-rebuttal/REPORT.md",
         "artifact/APPENDIX.md",
-        "artifact/CLARIFICATIONS.md"
+        "artifact/CLARIFICATIONS.md",
+        "artifact/manuscript-revision.json",
+        "artifact/manuscript-ae.patch"
       ],
       "fresh_run": "manual manuscript alignment",
-      "scope": "Supplied PDF is authoritative for mapping. No edited paper, DOI, badge award or upload is claimed."
+      "scope": "Original PDF preserved as map input; revised local review draft and source patch retained. No DOI, independent badge or upload."
     },
     {
       "id": "artifact-clean-build-validation",
@@ -161,12 +163,12 @@
         "artifact/evidence/clean-build/agentic-control.json.gz"
       ],
       "fresh_run": "profiles-functional.json:paper and separately --only agentic after the first campaign stops",
-      "scope": "Bounded author-run exercisability only, with unchanged gates. No retry-until-success, independent confirmation or new performance/stability claim. Kernel event cause unisolated."
+      "scope": "Bounded author-run exercisability only, with unchanged gates. No retry-until-success, independent confirmation or new performance/stability claim. Kernel event cause unisolated. Subsequent bounds diagnosis recorded in MMU-INVESTIGATION.md; older quiet logs did not verify repeated logging."
     },
     {
       "id": "artifact-full-paper-validation",
       "manuscript_location": "New author follow-through of \u00a74/Appendix H.3 and Tables 4/30, separate from paper measurements.",
-      "statement": "Full numerical/execution/kernel gates pass; M129 prompt and cached-request positive gains are not freshly confirmed.",
+      "statement": "Initial full run used unoptimized integration and unverified repeated logging; functional results retained, positive gains not confirmed in that attempt.",
       "evidence": [
         "artifact/evidence/manuscript-validation/summary.json",
         "artifact/evidence/manuscript-validation/prompt.json.gz",
@@ -175,7 +177,20 @@
         "artifact/MMU-INVESTIGATION.md"
       ],
       "fresh_run": "paper:prompt,agentic at full sample counts",
-      "scope": "20 prompt processes and 15 request pairs. Fresh M129 and cached intervals include parity; cached interval does not overlap the historical interval. Printed-value agreement from retained data is separate from empirical agreement. No independent badge, policy promotion or resolved stability issue."
+      "scope": "20 prompt processes and 15 request pairs. Fresh M129 and cached intervals include parity; cached interval does not overlap the historical interval. Printed-value agreement from retained data is separate from empirical agreement. No independent badge, policy promotion or resolved stability issue. This is not a matched Release comparison; final corrected campaign is a separate claim below."
+    },
+    {
+      "id": "artifact-corrected-full-validation",
+      "manuscript_location": "New author follow-through, separate from historical Tables 4/30; revised supplement records bounds correction.",
+      "statement": "Both tiled native GEMM bounds reads corrected; observable full protocol passes with zero faults. Cached-request modest benefit supported; M129 prompt interval spans parity.",
+      "evidence": [
+        "artifact/evidence/kernel-bounds-fix/summary.json",
+        "artifact/evidence/kernel-bounds-fix/diagnosis.json",
+        "artifact/evidence/kernel-bounds-fix/agreement.json",
+        "artifact/MMU-INVESTIGATION.md"
+      ],
+      "fresh_run": "paper:prompt,agentic; six one/two-block scale-mode differential cases",
+      "scope": "20 prompt processes, 15 cached pairs, all original gates. Cached 1.0431 [1.0231,1.0504]; M129 1.0738 [0.9835,1.0883]. Verified repeated MMU logging/restoration; no new automatic placement, independent badge or sustained reliability claim."
     }
   ]
 }

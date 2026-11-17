@@ -1,0 +1,82 @@
+{
+  "format": "artifact-mmu-diagnosis-v1",
+  "kernel_commit": "89050b1059997d38d55462b323b099a6436dc10d",
+  "kernel_version": "6.12.75+rpt-rpi-2712",
+  "kernel_source": "https://github.com/raspberrypi/linux/blob/89050b1059997d38d55462b323b099a6436dc10d/drivers/gpu/drm/v3d/v3d_irq.c",
+  "logging_finding": "The installed driver suppresses repeated MMU messages unless debug_mmu is enabled. The old PTB label uses the older client decode and does not identify a userspace process.",
+  "experiments": [
+    {
+      "variant": "original",
+      "path": "artifact-mmu-trace",
+      "mmu_errors": 1080,
+      "compute_dispatches": 840,
+      "render_dispatches": 41,
+      "trace_complete": true,
+      "lost_events": 0,
+      "mmu_logging": {
+        "path": "/sys/module/v3d/parameters/debug_mmu",
+        "original": "N",
+        "verified": true,
+        "restored": true,
+        "during": "Y"
+      },
+      "instance_removed": true,
+      "model_output_checks_passed": true
+    },
+    {
+      "variant": "tail-prefetch-only",
+      "path": "artifact-mmu-fixed-trace",
+      "mmu_errors": 234,
+      "compute_dispatches": 840,
+      "render_dispatches": 41,
+      "trace_complete": true,
+      "lost_events": 0,
+      "mmu_logging": {
+        "path": "/sys/module/v3d/parameters/debug_mmu",
+        "original": "N",
+        "verified": true,
+        "restored": true,
+        "during": "Y"
+      },
+      "instance_removed": true,
+      "model_output_checks_passed": true
+    },
+    {
+      "variant": "tail-prefetch-plus-buffer-inventory",
+      "path": "artifact-mmu-buffer-trace",
+      "mmu_errors": 234,
+      "compute_dispatches": 840,
+      "render_dispatches": 43,
+      "trace_complete": true,
+      "lost_events": 0,
+      "mmu_logging": {
+        "path": "/sys/module/v3d/parameters/debug_mmu",
+        "original": "N",
+        "verified": true,
+        "restored": true,
+        "during": "Y"
+      },
+      "instance_removed": true,
+      "model_output_checks_passed": true
+    },
+    {
+      "variant": "tail-prefetch-and-aligned-FP16-loads",
+      "path": "artifact-mmu-safe-trace",
+      "mmu_errors": 0,
+      "compute_dispatches": 840,
+      "render_dispatches": 41,
+      "trace_complete": true,
+      "lost_events": 0,
+      "mmu_logging": {
+        "path": "/sys/module/v3d/parameters/debug_mmu",
+        "original": "N",
+        "verified": true,
+        "restored": true,
+        "during": "Y"
+      },
+      "instance_removed": true,
+      "model_output_checks_passed": true
+    }
+  ],
+  "conclusion": "The speculative final K16 prefetch caused out-of-bounds reads; remaining faults were TMU word reads beyond the final FP16 scale. Buffer inventory located all three remaining addresses exactly at allocated scale-buffer ends. Re-reading the last valid K16 and aligned word/half selection removes all observed MMU errors across the same six model cases and 840 compute dispatches, preserving numerical outputs. This is bounded validation, not sustained driver reliability."
+}

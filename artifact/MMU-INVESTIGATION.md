@@ -1,42 +1,70 @@
-# Retained MMU event investigation
+# Native GEMM MMU diagnosis and correction
 
-The reduced clean-build prompt campaign recorded:
+Two GPU read-boundary errors were found and corrected in the tiled native
+Q4_0/Q8_0 GEMM used by the FFN. Numerical output checks alone missed them:
+unused speculative loads and unused bytes of a word can fault without changing
+the consumed arithmetic results.
 
-```text
-2026-11-16T17:38:42,333593-05:00 v3d 1002000000.v3d: MMU error from client PTB (1) at 0x2bc9000, pte invalid
+| Diagnostic variant | Compute dispatches | Observed MMU faults | Numerical cases passed |
+|---|---:|---:|---:|
+| Original kernel | 840 | 1080 | 6/6 |
+| Final K16 prefetch corrected | 840 | 234 | 6/6 |
+| Same kernel, with allocation inventory | 840 | 234 | 6/6 |
+| Prefetch and FP16 reads corrected | 840 | 0 | 6/6 |
+
+All four diagnostics enabled repeated MMU logging and captured private V3D
+trace instances without lost events. Rendering continued concurrently; the
+allocation inventory links the remaining three fault addresses directly to
+this runtime's buffer ends. The traces and original failures are preserved in
+[evidence/kernel-bounds-fix/](evidence/kernel-bounds-fix/).
+
+The double-buffered GEMM stream requested another K16 chunk after the last
+useful chunk. It now re-reads that final valid chunk. FP16 scales occupy two
+bytes, while their TMU reads fetch four: the final unaligned read could cross
+a buffer boundary. Reads now use the containing aligned word and select the
+requested half. Tile sizes, numerical representations, accumulation order and
+ownership remain unchanged. Generated binaries, headers and source identities
+were refreshed; historical calibration identities do not transfer to them.
+
+The allocation trace identifies the remaining addresses `0x2bc9000`,
+`0x2ded000` and `0x3875000` exactly at the ends of 147456-byte scale allocations.
+The correction removes those faults as well as the speculative-read faults.
+Six one-/two-block numerical boundary cases cover FP16, word-scale and
+column-scale variants. The full model preflight covers M=129/257 and all 35
+layers, with fixed probability/TV/KL gates. The subsequent full protocol also
+passes with zero observed faults and repeated logging enabled.
+
+## Fault visibility is a required control
+
+The installed kernel is `6.12.75+rpt-rpi-2712`, built from Raspberry Pi commit
+`89050b1059997d38d55462b323b099a6436dc10d`. Its
+[IRQ implementation](https://github.com/raspberrypi/linux/blob/89050b1059997d38d55462b323b099a6436dc10d/drivers/gpu/drm/v3d/v3d_irq.c#L173-L191)
+logs only its first MMU error unless `debug_mmu` is enabled. Its older client
+name decoding also cannot establish the originating process. An empty later
+log with that parameter disabled is insufficient evidence of fault-free work.
+
+`run_rebuttal_diagnostics.py` now enables and verifies repeated logging for the
+command, rejects GPU errors immediately, drains the kernel stream at process
+exit, and restores the original parameter. Missing or ineffective control is
+an error. It also retains the governor/swap controls and restores host state.
+Earlier records retain their original retention fields; they do not satisfy
+this newly established observability requirement retroactively.
+
+For a separate diagnostic, outside timing measurements:
+
+```sh
+QPU_LLAMA_TRACE_BUFFERS=1 uv run --locked python scripts/trace_artifact_v3d.py \
+  --output build/v3d-diagnostic --timeout 180 -- \
+  "$BUILD_ROOT/llama-qpu-runtime/qpu_ffn_island_model_smoke" "$GEMMA_MODEL"
 ```
 
-Its timestamp falls inside the real-model full-vocabulary preflight
-(22:37:59–22:39:19 UTC), after the synthetic joined-graph test finished.
-All numerical cases passed, but the outer monitor correctly rejected the
-entire campaign's latency. Numerical correctness does not annul a kernel error.
-The original process, preflight and kernel records remain in
-`evidence/clean-build/`.
+This records submission/IRQ events, kernel logs, allocation addresses/sizes,
+monotonic timing and per-CPU loss counters. It removes only its own trace
+instance; global tracing settings and the original MMU setting are preserved.
+The allocation tracing flag is off by default. Traced durations are diagnostic
+and must not be presented as paper performance measurements.
 
-A bounded source review checked the native submission/wait and failure-injection
-paths. Each submission includes its program, uniforms and data BO handles.
-The runtime performs the real BO wait before returning an injected wait error,
-poisons the context after a wait error, and prevents another submission on that
-context. There is no evidence here that the event came from failure injection,
-nor a confirmed source-level fix. No native kernel, allocator or synchronization
-code was changed speculatively.
-
-The read-only DRM client inventory in
-`evidence/manuscript-validation/gpu-clients.json` also found `labwc` and
-`xdg-desktop-portal` clients during the subsequent full campaign. This is an
-observed possible source of GPU contention, not an attribution of the earlier
-fault. A global V3D message does not identify its originating process from a
-wall-clock timestamp. The compositor was not stopped and no display service
-was reconfigured. The [kernel driver overview](https://docs.kernel.org/gpu/v3d.html)
-describes both rendering and compute pipelines behind V3D.
-
-The subsequent full protocol is a separately declared manuscript-validation
-campaign, using the paper's actual sample counts rather than repeating the
-reduced stage until it passes. Both campaigns remain in the package; fresh
-results and retention are recorded in `VALIDATION.md`. Clean completion of a
-later campaign does not prove the fault fixed or establish sustained stability.
-
-Further causal isolation needs a dedicated headless evaluation session and
-per-submission/BO diagnostics correlated with kernel events, with every attempt
-retained. That is unresolved runtime/driver work. Kernel-error rejection must
-remain enabled for both author and independent reviewer runs.
+The corrected runs establish bounded functionality on the tested shapes.
+They do not establish sustained reliability or resolve every historical
+SmolVLA/depthwise hang. Those separate failures and quality limitations remain
+in the artifact; packed INT16 stays quarantined.

@@ -15,7 +15,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from scripts.llama_cpp_common import collect_environment, sha256_file, utc_now, write_json_atomic  # noqa: E402
+from scripts.llama_cpp_common import (  # noqa: E402
+    collect_environment,
+    gpu_error_lines,
+    sha256_file,
+    utc_now,
+    write_json_atomic,
+)
 from scripts.run_llama_cpp_qpu_ffn_island_eval import (  # noqa: E402
     git_record,
     manifest_programs,
@@ -26,7 +32,7 @@ from scripts.run_llama_cpp_qpu_ffn_island_eval import (  # noqa: E402
 )
 
 
-def capture(command, env, log_prefix, timeout_seconds=180, abort_on_undervoltage=True):
+def capture(command, env, log_prefix, timeout_seconds=180, abort_on_undervoltage=True, abort_on_gpu_error=False):
     """Capture a process group and a live kernel stream with bounded cleanup."""
     kernel = subprocess.Popen(
         ["sudo", "-n", "dmesg", "--follow-new", "--time-format", "iso"],
@@ -57,6 +63,8 @@ def capture(command, env, log_prefix, timeout_seconds=180, abort_on_undervoltage
                     os.fsync(f.fileno())
                     if abort_on_undervoltage and b"Undervoltage detected!" in streams[label]:
                         reason = "new kernel undervoltage event during diagnostic"
+                    if abort_on_gpu_error and gpu_error_lines(streams[label].decode(errors="replace")):
+                        reason = "new kernel GPU error during diagnostic"
             if time.monotonic() - start > timeout_seconds:
                 reason = "diagnostic process timeout"
             if kernel.poll() is not None:
@@ -69,6 +77,18 @@ def capture(command, env, log_prefix, timeout_seconds=180, abort_on_undervoltage
                     os.killpg(child.pid, signal.SIGKILL)
                     child.wait()
                 break
+        # The final IRQ/log line may race the child's exit; drain a short tail
+        # while the kernel monitor is still live before evaluating retention.
+        drain_deadline = time.monotonic() + 0.25
+        while time.monotonic() < drain_deadline:
+            for key, _ in selector.select(max(0, drain_deadline - time.monotonic())):
+                chunk = os.read(key.fileobj.fileno(), 65536)
+                label, f = key.data
+                if not chunk:
+                    selector.unregister(key.fileobj)
+                    continue
+                streams[label].extend(chunk)
+                f.write(chunk)
         for key in list(selector.get_map().values()):
             label, f = key.data
             if label != "kernel":

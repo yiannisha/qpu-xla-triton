@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import gzip
 import json
 import statistics
 import sys
@@ -21,7 +22,7 @@ def read(relative: str):
     return json.loads(contained(ROOT, relative).read_text())
 
 
-def regenerate(output: Path, plots: bool = False) -> dict:
+def regenerate(output: Path, plots: bool = False, coco_annotations: Path | None = None) -> dict:
     """Keep expected PDF transcription separate from calculated measurement values."""
     output.mkdir(parents=True, exist_ok=True)
     manifest = read("artifact/manuscript.json")
@@ -170,6 +171,27 @@ def regenerate(output: Path, plots: bool = False) -> dict:
         ):
             check("Tables 4/30", label + ":" + metric, value, paper, decimals)
 
+    # Static planner values can be reconstructed from the pinned default topology,
+    # without allocating a QPU arena or downloading a model.
+    from qpu_xla.models.smolvla.checkpoint import SmolVLANumerics
+    from qpu_xla.models.smolvla.config import SmolVLAConfig
+    from qpu_xla.models.smolvla.placement import SmolVLAMemoryPlan
+
+    tables["table5"] = {}
+    for numerics, expected_memory in (
+        (SmolVLANumerics.FP32, (1.677, 0.906, 3.259)),
+        (SmolVLANumerics.W8A8, (0.687, 0.625, 1.989)),
+    ):
+        plan = SmolVLAMemoryPlan.build(SmolVLAConfig(), numerics)
+        values = {
+            "artifact_GiB": plan.artifact_bytes / 1024**3,
+            "arena_GiB": plan.qpu_arena_bytes / 1024**3,
+            "projected_RSS_GiB": plan.projected_peak_rss_bytes / 1024**3,
+        }
+        tables["table5"][numerics.value] = values
+        for (metric, value), expected_value in zip(values.items(), expected_memory, strict=True):
+            check("Tables 5/39", numerics.value + ":" + metric, value, expected_value, 3)
+
     quality = json.loads((output / "analysis/quality-numerical.json").read_text())
     tables["quality-raw-metrics"] = quality
     for name, expected in [
@@ -232,6 +254,35 @@ def regenerate(output: Path, plots: bool = False) -> dict:
         check("Figure 5 / Table 25", key, figure5[key], value, 2)
     tables["figure4"] = figure4
     tables["figure5"] = figure5
+    if coco_annotations is not None:
+        from qpu_xla.quality.coco import coco_bbox_metrics
+
+        asset = next(a for a in read("artifact/assets.json")["assets"] if a["id"] == "coco-annotations")
+        annotation_hash = sha256(coco_annotations)
+        if annotation_hash != asset["sha256"]:
+            raise ValueError("COCO annotation hash differs from the pinned paper input")
+        samples = read("artifact/evidence/manifests/coco-samples-1000.json")["samples"]
+        image_ids = [int(sample["sample_id"]) for sample in samples]
+        if len(image_ids) != 1000 or len(set(image_ids)) != 1000:
+            raise ValueError("COCO paper manifest must contain 1000 unique image IDs")
+        folder = ROOT / "artifact/evidence/model-quality/yolov8n-coco1000-random-seed20260911-qpu-fp32"
+        rescored = {"annotation_sha256": annotation_hash, "images": len(image_ids)}
+        expected_ap = {"baseline": (38.572371, 53.272310), "candidate": (38.572378, 53.272322)}
+        for name, file in (("baseline", "cpu_predictions.json.gz"), ("candidate", "candidate_predictions.json.gz")):
+            predictions = json.loads(gzip.decompress((folder / file).read_bytes()))
+            if {p["image_id"] for p in predictions} != set(image_ids):
+                raise ValueError("COCO predictions do not match the retained sample manifest")
+            metrics = coco_bbox_metrics(coco_annotations, predictions, image_ids=image_ids)
+            rescored[name] = metrics
+            for metric, expected in zip(("AP", "AP50"), expected_ap[name], strict=True):
+                check("Tables 6/36 recomputed COCO", name + ":" + metric + " %", metrics[metric] * 100, expected, 6)
+        delta_ap = (rescored["candidate"]["AP"] - rescored["baseline"]["AP"]) * 100
+        delta_ap50 = (rescored["candidate"]["AP50"] - rescored["baseline"]["AP50"]) * 100
+        check("Tables 6/36 recomputed COCO", "AP delta in 1e-6 pp", delta_ap / 1e-6, 6.52, 2)
+        check("Tables 6/36 recomputed COCO", "AP50 delta in 1e-5 pp", delta_ap50 / 1e-5, 1.21, 2)
+        tables["recomputed-coco"] = rescored
+        write_json(output / "coco-recomputed.json", rescored)
+
     write_json(output / "paper-data.json", tables)
     # Export every historical FP32 operator result, including slower cases.
     grid = []
@@ -301,8 +352,8 @@ def regenerate(output: Path, plots: bool = False) -> dict:
         f"Checks: {len(checks)}; mismatches: {len(mismatches)}.",
         "",
         (
-            "Static memory estimates (Tables 5/39), quality intervals and COCO AP are preserved views, "
-            "not regenerated task evaluations."
+            "Static memory estimates are recomputed from topology. Quality intervals remain preserved views; "
+            "COCO AP is recomputed only when --coco-annotations is supplied."
         ),
         "",
         "| Item | Page | Result | Evidence/workflow |",
@@ -347,8 +398,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--plots", action="store_true", help="also write PDF figures; requires matplotlib")
+    parser.add_argument(
+        "--coco-annotations", type=Path, help="recompute COCO AP from retained predictions and hashed annotations"
+    )
     args = parser.parse_args()
-    result = regenerate(args.output.resolve(), args.plots)
+    result = regenerate(args.output.resolve(), args.plots, args.coco_annotations)
     print(json.dumps({k: v for k, v in result.items() if k != "sources"}, indent=2))
     return 0 if result["ok"] else 2
 

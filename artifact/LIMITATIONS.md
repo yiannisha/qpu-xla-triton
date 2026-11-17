@@ -30,15 +30,17 @@ does not mean a predefined task-quality gate passed.
 - The November clean-build follow-through also observed a new MMU event within
   the real-model numerical preflight. All six cases and the prompt dispatch
   contracts passed, but the outer kernel monitor rejected the entire prompt
-  campaign's latency. Its cause remains unisolated. A separately executed
+  campaign's latency. The tiled native GEMM bounds faults were subsequently
+  isolated and corrected; see MMU-INVESTIGATION.md. A separately executed
   two-pair cached-request stage passed numerical/execution/environment gates
   without new kernel errors; neither outcome establishes sustained stability
   or independently confirms the historical small performance gain.
-- A full fresh manuscript-protocol run passes numerical/execution/kernel gates,
-  but M=129 prompt and 15-pair cached-request intervals span parity. The cached
-  interval does not overlap its historical positive interval. These gains are
-  not freshly confirmed; see `VALIDATION.md` before making a Results Validated
-  claim. The earlier rejected MMU attempt remains unchanged.
+- The first full run had an unoptimized integration and unverified repeated
+  MMU logging. It remains preserved as a mismatched-build attempt. The final
+  corrected Release run passes numerical/execution/environment gates with
+  verified repeated logging and zero faults. Cached requests support the modest
+  historical gain; M=129 prompt still spans parity. No automatic placement or
+  sustained reliability follows. See `VALIDATION.md` for exact intervals.
 - MTP inline QPU, matched fused bias+ReLU, and complete one-input ResNet QPU
   execution are slower than their measured CPU controls. A same-contract
   optimized CPU W8A8 performance control remains unavailable. Numerical INT32
@@ -65,10 +67,11 @@ does not mean a predefined task-quality gate passed.
   kernel driver. Not every external asset is needed for smoke or offline analysis.
 - The supplied official manuscript and exact table/figure map are recorded in
   `manuscript.json` and `PAPER.md`. Its blank artifact appendix and identified
-  qualifications still need author integration in the paper source. Independent
+  qualifications are integrated into the supplied source and a local draft;
+  the AE is verified at two pages. Independent
   evaluator reports, archival DOI and publisher badge award are not present.
 
 See `REBUTTAL_NOTES.md`, `BUG_FIX_RESULTS.md`, `CORRECTNESS_REPORT.md`, and the
 October reports for full experimental boundaries and exclusions. Attribution
 to the earlier QPU substrate and prior CPU/GPU partitioning work remains part
-of the manuscript alignment task.
+of the revised manuscript and its bibliography.

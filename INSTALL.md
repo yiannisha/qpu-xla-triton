@@ -32,7 +32,11 @@ The current driver needs access to both `/dev/dri/renderD128` and
 `video` groups. See [artifact/README.md](artifact/README.md#pi-preparation-and-basic-test)
 for the dedicated pinned `llama.cpp` checkout, ordered patch preparation and
 native smoke commands. Set `BUILD_ROOT` to the new isolated build directory
-for subsequent profiles. Do not reuse unrelated modified checkouts.
+for subsequent profiles. The pinned upstream revision is
+`91d2fc387529940230555abd297a8b5e99737d3f` plus patches 0001–0005. The preparer sets Release mode for upstream and all
+integration variants. Do not reuse unrelated modified checkouts. Controlled
+timing also needs the documented lab access for governors, swap and the V3D
+`debug_mmu` parameter; runners verify repeated logging and restore its value.
 
 Install task-quality dependencies only when evaluating those workloads:
 

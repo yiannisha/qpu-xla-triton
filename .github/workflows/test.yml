@@ -52,12 +52,12 @@ jobs:
     - name: Run format checker
       run: |
         uv run --locked ruff format --check src/qpu_xla tests/test_qpu_xla_*.py
-        uv run --locked ruff format --check scripts/artifact*.py scripts/reproduce_paper.py scripts/prepare_artifact_native.py scripts/prepare_imagenet_samples.py scripts/run_llama_cpp_ffn_ablation.py scripts/summarize_rebuttal_remaining.py scripts/summarize_llama_cpp_ffn_split_screen.py tests/conftest.py tests/test_artifact.py
+        uv run --locked ruff format --check scripts/artifact*.py scripts/run_rebuttal_diagnostics.py scripts/run_llama_cpp_ffn_breakdown.py scripts/trace_artifact_v3d.py scripts/reproduce_paper.py scripts/prepare_artifact_native.py scripts/prepare_imagenet_samples.py scripts/run_llama_cpp_ffn_ablation.py scripts/summarize_rebuttal_remaining.py scripts/summarize_llama_cpp_ffn_split_screen.py tests/conftest.py tests/test_artifact.py
 
     - name: Run linter
       run: |
         uv run --locked ruff check src/qpu_xla tests/test_qpu_xla_*.py
-        uv run --locked ruff check scripts/artifact*.py scripts/reproduce_paper.py scripts/prepare_artifact_native.py scripts/prepare_imagenet_samples.py scripts/run_llama_cpp_ffn_ablation.py scripts/summarize_rebuttal_remaining.py scripts/summarize_llama_cpp_ffn_split_screen.py tests/conftest.py tests/test_artifact.py
+        uv run --locked ruff check scripts/artifact*.py scripts/run_rebuttal_diagnostics.py scripts/run_llama_cpp_ffn_breakdown.py scripts/trace_artifact_v3d.py scripts/reproduce_paper.py scripts/prepare_artifact_native.py scripts/prepare_imagenet_samples.py scripts/run_llama_cpp_ffn_ablation.py scripts/summarize_rebuttal_remaining.py scripts/summarize_llama_cpp_ffn_split_screen.py tests/conftest.py tests/test_artifact.py
 
     - name: Run type checker
       run: uv run mypy src/qpu_xla

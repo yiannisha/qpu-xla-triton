@@ -62,6 +62,7 @@ Build and test:
 
 ```sh
 cmake -S integrations/llama_cpp -B build/llama-qpu-runtime \
+  -DCMAKE_BUILD_TYPE=Release \
   -DQPU_LLAMA_BUILD_HARDWARE_TESTS=ON \
   -DQPU_LLAMA_BUILD_BENCHMARK=ON \
   -DQPU_LLAMA_BUILD_GGML_BACKEND=ON \

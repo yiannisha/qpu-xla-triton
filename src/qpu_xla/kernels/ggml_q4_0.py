@@ -36,9 +36,7 @@ def pack_ggml_q4_0_blocks(
         raise ValueError("Q4_0 codes must have scales.shape + (32,) and values in 0..15")
     packed = np.empty((*scales.shape, Q4_0_BLOCK_BYTES), dtype=np.uint8)
     packed[..., :2] = scales.astype("<f2", copy=False).view(np.uint8).reshape(*scales.shape, 2)
-    packed[..., 2:] = (
-        codes[..., :16].astype(np.uint8) | (codes[..., 16:].astype(np.uint8) << 4)
-    )
+    packed[..., 2:] = codes[..., :16].astype(np.uint8) | (codes[..., 16:].astype(np.uint8) << 4)
     return np.ascontiguousarray(packed)
 
 
@@ -369,8 +367,7 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
     add(reg_c_base, reg_c_base, rf3, sig=ldunifrf(reg_block_count))
 
     nop(sig=ldunifrf(reg_activation_scale_stride))
-    umul24(rf3, reg_tile_i, reg_activation_scale_stride,
-        sig=ldunifrf(reg_activation_scale_pointer))
+    umul24(rf3, reg_tile_i, reg_activation_scale_stride, sig=ldunifrf(reg_activation_scale_pointer))
     shl(rf3, rf3, 4)
     add(reg_activation_scale_pointer, reg_activation_scale_pointer, rf3)
     eidx(rf3)
@@ -387,21 +384,19 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
     add(reg_weight_scale_pointer, reg_weight_scale_pointer, rf3)
 
     for index in range(8):
-        bxor(reg_float_accumulator[index], reg_float_accumulator[index],
-            reg_float_accumulator[index]).sub(
-                reg_float_accumulator[index + 8],
-                reg_float_accumulator[index + 8],
-                reg_float_accumulator[index + 8],
-                sig=ldtmu((reg_a + reg_b)[index]),
-            )
+        bxor(reg_float_accumulator[index], reg_float_accumulator[index], reg_float_accumulator[index]).sub(
+            reg_float_accumulator[index + 8],
+            reg_float_accumulator[index + 8],
+            reg_float_accumulator[index + 8],
+            sig=ldtmu((reg_a + reg_b)[index]),
+        )
     setnnmode_ss()
 
     def emit_k16() -> None:
         bnot(tmuc, 3)
         mov(tmua, reg_a_base)
         bnot(tmuc, 3)
-        mov(tmua, reg_b_base, sig=thrsw).add(
-            reg_b_base, reg_b_base, reg_b_stride_x4)
+        mov(tmua, reg_b_base, sig=thrsw).add(reg_b_base, reg_b_base, reg_b_stride_x4)
         sub(reg_a_base, reg_a_base, -16)
 
         broadcast_order = deque(reg_b * 16)
@@ -414,74 +409,89 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
         v8dot(rf1, rf0, reg_a[0])
         for index in range(15):
             broadcast_next()
-            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(
-                rf1, rf0, reg_a[0])
+            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(rf1, rf0, reg_a[0])
         broadcast_next()
-        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1).v8dot(
-            rf1, rf0, reg_a[1])
+        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1).v8dot(rf1, rf0, reg_a[1])
         for index in range(15):
             broadcast_next()
-            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(
-                rf1, rf0, reg_a[1])
+            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(rf1, rf0, reg_a[1])
         broadcast_next()
-        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1).v8dot(
-            rf1, rf0, reg_a[2])
+        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1).v8dot(rf1, rf0, reg_a[2])
         for index in range(15):
             broadcast_next()
-            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(
-                rf1, rf0, reg_a[2])
+            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(rf1, rf0, reg_a[2])
         broadcast_next()
-        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1).v8dot(
-            rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1).v8dot(rf1, rf0, reg_a[3])
         for index in range(8):
             broadcast_next()
-            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(
-                rf1, rf0, reg_a[3])
+            add(reg_integer_accumulator[index], reg_integer_accumulator[index], rf1).v8dot(rf1, rf0, reg_a[3])
         broadcast_next()
-        add(reg_integer_accumulator[8], reg_integer_accumulator[8], rf1,
-            sig=ldtmu(reg_a[0])).v8dot(rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[8], reg_integer_accumulator[8], rf1, sig=ldtmu(reg_a[0])).v8dot(rf1, rf0, reg_a[3])
         broadcast_next()
-        add(reg_integer_accumulator[9], reg_integer_accumulator[9], rf1,
-            sig=ldtmu(reg_a[1])).v8dot(rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[9], reg_integer_accumulator[9], rf1, sig=ldtmu(reg_a[1])).v8dot(rf1, rf0, reg_a[3])
         broadcast_next()
-        add(reg_integer_accumulator[10], reg_integer_accumulator[10], rf1,
-            sig=ldtmu(reg_a[2])).v8dot(rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[10], reg_integer_accumulator[10], rf1, sig=ldtmu(reg_a[2])).v8dot(
+            rf1, rf0, reg_a[3]
+        )
         broadcast_next()
-        add(reg_integer_accumulator[11], reg_integer_accumulator[11], rf1,
-            sig=ldtmu(rf2)).v8dot(rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[11], reg_integer_accumulator[11], rf1, sig=ldtmu(rf2)).v8dot(rf1, rf0, reg_a[3])
         broadcast_next()
-        add(reg_integer_accumulator[12], reg_integer_accumulator[12], rf1,
-            sig=ldtmu(reg_b[0])).v8dot(rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[12], reg_integer_accumulator[12], rf1, sig=ldtmu(reg_b[0])).v8dot(
+            rf1, rf0, reg_a[3]
+        )
         broadcast_next()
-        add(reg_integer_accumulator[13], reg_integer_accumulator[13], rf1,
-            sig=ldtmu(reg_b[1])).v8dot(rf1, rf0, reg_a[3])
+        add(reg_integer_accumulator[13], reg_integer_accumulator[13], rf1, sig=ldtmu(reg_b[1])).v8dot(
+            rf1, rf0, reg_a[3]
+        )
         broadcast_next()
-        add(reg_integer_accumulator[14], reg_integer_accumulator[14], rf1,
-            sig=ldtmu(reg_b[2])).v8dot(rf1, rf0, reg_a[3])
-        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1,
-            sig=ldtmu(reg_b[3])).mov(reg_a[3], rf2)
+        add(reg_integer_accumulator[14], reg_integer_accumulator[14], rf1, sig=ldtmu(reg_b[2])).v8dot(
+            rf1, rf0, reg_a[3]
+        )
+        add(reg_integer_accumulator[15], reg_integer_accumulator[15], rf1, sig=ldtmu(reg_b[3])).mov(reg_a[3], rf2)
 
     with loop as block_loop:
         for index in range(8):
-            bxor(reg_integer_accumulator[index], reg_integer_accumulator[index],
-                reg_integer_accumulator[index]).sub(
-                    reg_integer_accumulator[index + 8],
-                    reg_integer_accumulator[index + 8],
-                    reg_integer_accumulator[index + 8],
-                )
+            bxor(reg_integer_accumulator[index], reg_integer_accumulator[index], reg_integer_accumulator[index]).sub(
+                reg_integer_accumulator[index + 8],
+                reg_integer_accumulator[index + 8],
+                reg_integer_accumulator[index + 8],
+            )
         emit_k16()
+        # The stream always loads the next K16 chunk, including after the last
+        # useful chunk. Re-read that final valid chunk instead of requesting
+        # bytes beyond the activation/weight allocation on the final block.
+        sub(reg_float_temporary, reg_block_count, 1, cond="pushz")
+        add(reg_a_base, reg_a_base, -16, cond="ifa")
+        sub(reg_b_base, reg_b_base, reg_b_stride_x4, cond="ifa")
         emit_k16()
 
         mov(tmuc, -1)
-        if column_weight_scale:
-            _load_tmu_word(reg_activation_scale_pointer, reg_activation_scale)
-        else:
+        # FP16 scales occupy two bytes, but TMU word reads fetch four. Align
+        # each read to its containing word, then select the requested half;
+        # an unaligned read at the final scale would cross the BO boundary.
+        if activation_scale_word:
             mov(tmua, reg_activation_scale_pointer)
-            mov(tmua, reg_weight_scale_pointer, sig=thrsw)
-            nop()
-            nop()
-            nop(sig=ldtmu(reg_activation_scale))
+        else:
+            band(rf1, reg_activation_scale_pointer, -4)
+            mov(tmua, rf1)
+        if not column_weight_scale:
+            band(rf2, reg_weight_scale_pointer, -4)
+            mov(tmua, rf2, sig=thrsw)
+        else:
+            nop(sig=thrsw)
+        nop()
+        nop()
+        nop(sig=ldtmu(reg_activation_scale))
+        if not column_weight_scale:
             nop(sig=ldtmu(reg_weight_scale))
+        if not activation_scale_word:
+            band(rf1, reg_activation_scale_pointer, 2)
+            shl(rf1, rf1, 3)
+            shr(reg_activation_scale, reg_activation_scale, rf1)
+        if not column_weight_scale:
+            band(rf2, reg_weight_scale_pointer, 2)
+            shl(rf2, rf2, 3)
+            shr(reg_weight_scale, reg_weight_scale, rf2)
         fmov(reg_activation_scale, reg_activation_scale.unpack("l"))
         add(
             reg_activation_scale_pointer,
@@ -490,8 +500,7 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
         )
         if not column_weight_scale:
             fmov(reg_weight_scale, reg_weight_scale.unpack("l"))
-            add(reg_weight_scale_pointer, reg_weight_scale_pointer,
-                reg_weight_scale_block_stride)
+            add(reg_weight_scale_pointer, reg_weight_scale_pointer, reg_weight_scale_block_stride)
 
         for index in range(16):
             if not column_weight_scale:
@@ -500,8 +509,7 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
             fmul(reg_float_temporary, reg_float_temporary, reg_activation_scale)
             if not column_weight_scale:
                 fmul(reg_float_temporary, reg_float_temporary, rf0)
-            fadd(reg_float_accumulator[index], reg_float_accumulator[index],
-                reg_float_temporary)
+            fadd(reg_float_accumulator[index], reg_float_accumulator[index], reg_float_temporary)
 
         sub(reg_block_count, reg_block_count, 1, cond="pushz")
         block_loop.b(cond="na0")
@@ -540,9 +548,7 @@ def qpu_ggml_q4_0_q8_0_tiled_gemm(
 
 
 @qpu
-def qpu_ggml_q4_0_q8_0_linear(
-    asm: Assembly, *, rows: Literal[0, 1, 4], grouped_rows: bool = False
-) -> None:
+def qpu_ggml_q4_0_q8_0_linear(asm: Assembly, *, rows: Literal[0, 1, 4], grouped_rows: bool = False) -> None:
     """Compute native Q4_0 by Q8_0; ``rows=0`` selects 16x16 tiled M."""
     if rows not in {0, 1, 4}:
         raise ValueError("native Q4_0 linear supports one, four, or batched rows")
@@ -713,9 +719,7 @@ class _ProgramState:
 
 
 _STATE_LOCK = Lock()
-_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[tuple[int, bool], _ProgramState]] = (
-    WeakKeyDictionary()
-)
+_PROGRAMS: WeakKeyDictionary[PyVideoCore7Backend, dict[tuple[int, bool], _ProgramState]] = WeakKeyDictionary()
 
 
 def supports_ggml_q4_0_q8_0_linear(
@@ -757,9 +761,7 @@ def supports_ggml_q4_0_q8_0_linear(
     return all(tensor.numpy().flags.c_contiguous for tensor in (activation, weight, destination))
 
 
-def _program_state(
-    backend: PyVideoCore7Backend, rows: Literal[0, 1, 4], grouped_rows: bool = False
-) -> _ProgramState:
+def _program_state(backend: PyVideoCore7Backend, rows: Literal[0, 1, 4], grouped_rows: bool = False) -> _ProgramState:
     with _STATE_LOCK:
         states = _PROGRAMS.setdefault(backend, {})
         key = (rows, grouped_rows)
@@ -848,9 +850,7 @@ def pack_ggml_q4_0_tiled_weights(
         raise ValueError("native Q4_0 weights must have shape (outputs, blocks, 18)")
     scale_words = np.ascontiguousarray(scales.astype(np.float16).T.view(np.uint16))
     outputs, reduction_blocks, _ = values.shape
-    groups = np.ascontiguousarray(
-        values.reshape(outputs, reduction_blocks, 8, 4).transpose(1, 2, 0, 3)
-    )
+    groups = np.ascontiguousarray(values.reshape(outputs, reduction_blocks, 8, 4).transpose(1, 2, 0, 3))
     packed_values = groups.view(np.uint32).reshape(reduction_blocks * 8, outputs)
     return scale_words, np.ascontiguousarray(packed_values)
 
@@ -891,9 +891,9 @@ def supports_ggml_q4_0_q8_0_tiled_linear(
         return False
     if destination.dtype != np.dtype(np.float32):
         return False
-    if any(len(tensor.shape) != 2 for tensor in (
-        activation_q, activation_scales, weight_q, weight_scales, destination
-    )):
+    if any(
+        len(tensor.shape) != 2 for tensor in (activation_q, activation_scales, weight_q, weight_scales, destination)
+    ):
         return False
     rows, columns = activation_q.shape
     blocks = columns // Q4_0_BLOCK_ELEMENTS
@@ -909,9 +909,10 @@ def supports_ggml_q4_0_q8_0_tiled_linear(
         and weight_q.shape == (blocks * 8, outputs)
         and weight_scales.shape == (blocks, outputs)
         and destination.shape == (rows, outputs)
-        and all(tensor.numpy().flags.c_contiguous for tensor in (
-            activation_q, activation_scales, weight_q, weight_scales, destination
-        ))
+        and all(
+            tensor.numpy().flags.c_contiguous
+            for tensor in (activation_q, activation_scales, weight_q, weight_scales, destination)
+        )
     )
 
 
@@ -921,9 +922,7 @@ def _execute_ggml_q4_0_q8_0_tiled_linear(
     grid: tuple[int, int, int],
 ) -> None:
     if len(args) != 5 or not all(isinstance(argument, Tensor) for argument in args):
-        raise KernelError(
-            "tiled Q4_0 linear expects split activation/weight scales, values, and output"
-        )
+        raise KernelError("tiled Q4_0 linear expects split activation/weight scales, values, and output")
     activation_q, activation_scales, weight_q, weight_scales, destination = args
     if not supports_ggml_q4_0_q8_0_tiled_linear(
         activation_q,

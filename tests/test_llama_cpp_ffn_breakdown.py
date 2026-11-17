@@ -131,3 +131,28 @@ def test_screen_export_preserves_missing_and_numerically_rejected_cells(tmp_path
     assert all(not row["confirmed_for_placement"] for row in result["grid"])
     assert result["grid"][0]["numerical_returncode"] == 1
     assert result["grid"][1]["numerical_returncode"] is None
+
+
+def test_gpu_monitor_aborts_before_a_long_command_completes(monkeypatch, tmp_path):
+    real_popen = subprocess.Popen
+
+    def popen(command, **kwargs):
+        if command[0] == "sudo":
+            command = [
+                sys.executable,
+                "-u",
+                "-c",
+                "import time; print('v3d: MMU error from client PTB (1)',flush=True); time.sleep(60)",
+            ]
+        return real_popen(command, **kwargs)
+
+    monkeypatch.setattr(subprocess, "Popen", popen)
+    result = capture(
+        [sys.executable, "-c", "import time; time.sleep(60)"],
+        os.environ.copy(),
+        tmp_path / "capture",
+        abort_on_gpu_error=True,
+    )
+    assert result["invalid_reason"] == "new kernel GPU error during diagnostic"
+    assert "MMU error" in result["kernel"]
+    assert result["returncode"] != 0

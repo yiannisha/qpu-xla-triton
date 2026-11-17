@@ -1,8 +1,11 @@
 % Replace the blank Artifact Appendix on p.12 of QPUs_CGO2027.pdf.
 % Insert before References; check two-page fit in the author's acmart source.
 % Public deposit and newer-code licensing remain deferred by the author.
+\begingroup
+\emergencystretch=2em\relax
 \section{Artifact Appendix}
 \label{sec:artifact-appendix}
+\label{appx:artifact}
 \subsection{Abstract}
 This artifact supports \emph{Practical: Building and Evaluating a Native
 CPU--QPU Runtime for Edge AI Inference on Raspberry Pi 5}. It contains the
@@ -18,12 +21,12 @@ independent evaluation and do not constitute an awarded badge.
 native C/C++ integration; packed FP32/W8A8 matrix, activation and model paths.
 \item \textbf{Compilation/binaries:} C/C++ compiler, CMake, Make;
 QPU program binaries and identities included; native host libraries rebuilt.
-\item \textbf{Models/data:} Gemma GGUF/MTP, MMLU, ResNet-18/ImageNet,
-YOLOv8n/COCO and optional SmolVLA replay. Weights/datasets acquired separately
-using pinned revisions and hashes in \texttt{artifact/assets.json}.
+\item \textbf{Models/data:} Gemma/MTP, MMLU, ResNet-18 and ImageNet,
+YOLOv8n and COCO, optional SmolVLA. Acquire assets separately;
+pinned inputs and commands are in \path{artifact/ASSETS.md}.
 \item \textbf{Environment/hardware:} Python 3.12+, \texttt{uv}, locked
 dependencies; 64-bit Linux; actively cooled Raspberry Pi 5, 8\,GB RAM,
-reliable power and V3D access. Portable analysis does not require QPU hardware.
+reliable power and V3D access. Portable analysis runs on ordinary Linux hosts.
 \item \textbf{State/execution:} Idle board, performance governors, swap
 disabled and cooling gates for controlled timings. Runners use existing lab
 privileges for host controls, record kernel errors and restore host state.
@@ -32,31 +35,31 @@ quality, dispatch/fallback telemetry; checksummed JSON, CSV and PDF plots.
 \item \textbf{Disk/time:} Source/evidence about 210\,MB unpacked; dependencies
 need several additional GB on ordinary disk. Gemma adds about 2.7\,GB;
 optional datasets need more. Measured cached native preparation took
-7.4 minutes; full FFN protocol about 15.7 minutes. Complete quality
-campaigns and cold downloads cost more; see \texttt{artifact/VALIDATION.md}.
+7.4 minutes; full FFN protocol about 14.4 minutes. Complete quality
+campaigns and cold downloads cost more; see \path{artifact/VALIDATION.md}.
 \item \textbf{Access/licenses/archive:} Source repository below; local
 release has content identity and checksums. Existing mixed component notices
 are preserved. Newer-code licensing and public archival deposit/DOI are
 explicitly deferred; no archival badge is asserted.
-\item \textbf{Workflow:} Argument-array Python profiles; no proprietary
-workflow service. Controlled experiments run sequentially.
+\item \textbf{Workflow:} Configurable Python profiles; sequential controlled
+experiments.
 \end{itemize}
 
 \subsection{Description}
 \subsubsection{How to access}
 The source is at \url{https://github.com/yiannisha/qpu-xla-triton}.
-The extracted package's \texttt{artifact/RELEASE.json} identifies its source
+The extracted package's \path{artifact/RELEASE.json} identifies its source
 and content; \texttt{SHA256SUMS} verifies it. Reviewer hardware arrangements
-and the return-record checklist are in \texttt{artifact/REVIEWER\_ACCESS.md}.
+and the return-record checklist are in \path{artifact/REVIEWER_ACCESS.md}.
 \subsubsection{Hardware and software dependencies}
 The driver requires access to both the V3D card path and render node.
 Native builds use \texttt{llama.cpp} revision
-\texttt{91d2fc387529940230555abd297a8b5e99737d3f} plus bundled patches
+\texttt{91d2fc3} (full identity in \texttt{INSTALL.md}) plus bundled patches
 0001--0005. \texttt{INSTALL.md} describes a dedicated checkout and isolated
 build root. Containers do not supply a V3D kernel driver; the native path is
 the measured setup.
 \subsubsection{Data sets and models}
-\texttt{artifact/ASSETS.md} supplies input revisions, hashes, acquisition and
+\path{artifact/ASSETS.md} supplies input revisions, hashes, acquisition and
 preparation instructions, including the exact 5000 encoded ImageNet samples
 and MTP tensor extraction. Model and dataset terms remain those of their
 providers. Sample manifests and selected raw outputs are included.
@@ -73,12 +76,13 @@ uv run --locked python scripts/reproduce_paper.py \
 Smoke returns \texttt{ok: true}, verifies evidence checksums and reports
 FP32/INT32 maximum errors using the fake backend. For QPU checks follow
 \texttt{INSTALL.md}, prepare the pinned native build, then use
-\texttt{artifact.py smoke --hardware --native-build <integration>}.
+\texttt{artifact.py smoke --hardware}, supplying the prepared integration
+with \texttt{--native-build}.
 This adds exact widened INT16 convolution, stride and synthetic joined-FFN
 checks. Install the locked \texttt{evaluation} extra for task-quality tools.
 
 \subsection{Experiment workflow}
-\texttt{HOWTO.md} maps Appendix H procedures to runnable commands.
+\texttt{HOWTO.md} maps the reproduction procedures to runnable commands.
 \texttt{artifact.py run paper} plans the full protocol: five independent
 CPU/candidate processes at each of $M=129,257$ and 15 cached-request pairs.
 Supply model/build paths and add \texttt{--execute} to run; each campaign
@@ -91,20 +95,22 @@ supersedes numerical, dispatch or kernel-log retention gates.
 \subsection{Evaluation and expected results}
 Offline analysis regenerates main table values and Figures 4/5 from archived
 measurements and checks them at printed precision. All supplemental tables
-are indexed; preserved static estimates, quality intervals and COCO AP are
-labeled report views. Fresh hardware measurements test empirical conclusions.
+are indexed; static estimates are recomputed from topology. Quality intervals
+remain report views; supplying pinned COCO annotations also recomputes AP
+from retained predictions. Fresh hardware measurements test empirical conclusions.
 The historical FFN gain is small at $M=129$ and inconclusive at $M=257$;
-placement remains opt-in below the automatic promotion threshold. A fresh
-author-run full protocol passes numerical/execution controls but its $M=129$
-prompt and cached-request intervals span parity; the historical positive gains
-are not freshly confirmed.
+placement remains opt-in below the automatic promotion threshold.
+Fresh author validation uses Release builds for both upstream and integration,
+and enables repeated MMU logging; exact outcomes are in
+\path{artifact/VALIDATION.md}. The corrected 15-pair cached-request run gives
+1.043$\times$ [1.023, 1.050]; its $M=129$ prompt interval spans parity.
 Timing variation must preserve the reported conclusions under the specified
 statistical design; no blanket percentage tolerance is asserted.
 
 \subsection{Experiment customization}
 Copy a profile and alter its explicit shape, thread, fraction or input paths;
 record new input hashes and write to a new output directory.
-\texttt{artifact/EXTENDING.md} gives a tested example. Changed models,
+\path{artifact/EXTENDING.md} gives a tested example. Changed models,
 representations or implementations define new experiments.
 
 \subsection{Notes}
@@ -112,15 +118,20 @@ Spatial convolution remains im2col plus GEMM; pointwise is also GEMM-backed.
 Public INT16 widens correctly; experimental packed INT16 stays quarantined.
 ResNet W8A8 regresses in quality. SmolVLA fails its stated FP32 gates and had
 hangs/resets; completed resumed actions do not establish sustained reliability
-or robot success. The clean-build reduced prompt attempt also recorded an MMU
-error and its latency was rejected. All exclusions and newer validation
-outcomes are retained in \texttt{artifact/VALIDATION.md}. October evidence
+or robot success. Original attempts recorded MMU faults. The revised artifact bounds the final
+GEMM prefetch and aligns FP16 scale reads; six model cases and 840 compute
+dispatches then pass with zero faults under repeated-error logging. This
+is bounded validation, not sustained reliability. All exclusions and newer
+outcomes are retained in \path{artifact/VALIDATION.md}. October evidence
 does not establish an optimal split or an optimized same-contract CPU W8A8 win.
 
 \subsection{Methodology}
 The package separates numerical checks, historical confirmation, exploratory
 screens, instrumented diagnostics and rejected attempts. See
-\texttt{artifact/PAPER.md} for manuscript qualifications and exact evidence.
+\path{artifact/PAPER.md} for manuscript qualifications and exact evidence.
 An independent evaluator must assess functionality/reuse and reproduce the
 main conclusions under the CGO evaluation process; authors' runs do not award
 those badges. Public archival publication remains a separate deferred step.
+
+\label{sec:artifact-appendix-end}
+\endgroup

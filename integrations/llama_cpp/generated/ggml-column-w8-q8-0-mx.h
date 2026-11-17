@@ -196,6 +196,9 @@ static const uint64_t qpu_ggml_column_w8_q8_0_mx[] = {
     UINT64_C(0x39e02dcafd283281),
     UINT64_C(0x2c82405e38006781),
     UINT64_C(0x3882819f380837c1),
+    UINT64_C(0x39e061b73c03f801),
+    UINT64_C(0x39e8218c3803f310),
+    UINT64_C(0x3808218e3c03f38d),
     UINT64_C(0x39c031a0ba03f0c0),
     UINT64_C(0x3800318cf903f303),
     UINT64_C(0x39c031a0ba03f0c0),
@@ -331,10 +334,15 @@ static const uint64_t qpu_ggml_column_w8_q8_0_mx[] = {
     UINT64_C(0x2c82405e38006781),
     UINT64_C(0x3882819f380837c1),
     UINT64_C(0x39c031a0f903f7c3),
-    UINT64_C(0x3820318cf903f883),
+    UINT64_C(0x39e02181b503f89c),
+    UINT64_C(0x3800318cf903f043),
+    UINT64_C(0x38203186bb03f000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38897186bb03f000),
+    UINT64_C(0x39e02181b503f882),
+    UINT64_C(0x39e021817c03f043),
+    UINT64_C(0x380021a57d03f941),
     UINT64_C(0x380021a5f903f948),
     UINT64_C(0x39e021a23803f882),
     UINT64_C(0x380021b7f603f420),
@@ -386,7 +394,7 @@ static const uint64_t qpu_ggml_column_w8_q8_0_mx[] = {
     UINT64_C(0x54001dc6bbde5000),
     UINT64_C(0x380021b60503fdb7),
     UINT64_C(0x39e061a03c03f801),
-    UINT64_C(0x02fff583ff009000),
+    UINT64_C(0x02fff543ff009000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
@@ -476,8 +484,8 @@ static const uint64_t qpu_ggml_column_w8_q8_0_mx[] = {
     UINT64_C(0x38003186bb03f000),
     UINT64_C(0x38003186bb03f000),
 };
-static const size_t qpu_ggml_column_w8_q8_0_mx_instruction_count = 470;
-static const char qpu_ggml_column_w8_q8_0_mx_source_hash[] = "45fbd1af423819006d552e179bfc3f0490787e5a07d99071a709c800f2464fab";
-static const char qpu_ggml_column_w8_q8_0_mx_binary_hash[] = "0b28eca757793042df7d3be16cc82a7dc038037eb1284208dc1a8690afb33134";
+static const size_t qpu_ggml_column_w8_q8_0_mx_instruction_count = 478;
+static const char qpu_ggml_column_w8_q8_0_mx_source_hash[] = "8854349e529a1b4c2f406fdbc89145f93ed7d9b4835b9838664e7586d09a75f0";
+static const char qpu_ggml_column_w8_q8_0_mx_binary_hash[] = "5e4b097fe10f7f276143fae98c520c2c3a7a6c41416be595fba6149840f59ab4";
 
 #endif

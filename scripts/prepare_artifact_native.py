@@ -120,6 +120,7 @@ def prepare(llama: Path, rebuttal: bool, jobs: int, build_root: Path) -> None:
                 str(ROOT / "integrations/llama_cpp"),
                 "-B",
                 str(directory),
+                "-DCMAKE_BUILD_TYPE=Release",
                 f"-DLLAMA_CPP_ROOT={llama}",
                 f"-DLLAMA_CPP_BUILD_DIR={llama / 'build'}",
                 "-DQPU_LLAMA_BUILD_GGML_BACKEND=ON",

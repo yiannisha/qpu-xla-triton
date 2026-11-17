@@ -32,15 +32,15 @@ Analysis regenerates the corrected September headline medians/intervals, the
 October rebuttal summaries and full 112-case projection grid,
 recomputes inexpensive numerical metrics from retained model outputs, and
 writes `RESULTS.md` and JSON. It neither reruns hardware measurements nor
-recomputes expensive quality confidence intervals or COCO AP; the original
-quality reports remain separate, explicitly labeled views.
+recomputes expensive quality confidence intervals. The paper checker also recomputes
+static memory estimates and optionally COCO AP with pinned annotations; see HOWTO.md.
 
 The local source/evidence package is about 210 MB unpacked before dependencies.
 Allow several GB for the locked Torch environment on ordinary disk, not a
 small RAM-backed `/tmp`; model builds and datasets
 need additional space. [ASSETS.md](ASSETS.md) distinguishes these costs. See
 [VALIDATION.md](VALIDATION.md) for actual preparation/check durations measured
-during this release; the full FFN protocol costs about 15.7 minutes here, including preflights.
+during this release; the corrected full FFN protocol costs about 14.4 minutes here, including preflights.
 Cold downloads and long fresh quality campaigns remain additional.
 
 ## Inventory and evidence
@@ -96,7 +96,8 @@ uv run --locked python scripts/artifact.py smoke --hardware \
   --native-build "$BUILD_ROOT/llama-qpu-runtime" --output build/pi-smoke
 ```
 
-Preparation checks the base revision, checks/applies bundled patches in order,
+Preparation selects Release mode for upstream and every native integration
+variant, checks the base revision, checks/applies bundled patches in order,
 builds the ordinary integration, and with `--rebuttal` builds the separate
 profile/ablation libraries. It does not reset source trees. A patch conflict is
 an error; return to a dedicated clean checkout rather than forcing application.
@@ -137,9 +138,11 @@ uv run --locked python scripts/artifact.py run paper \
 This preserves the numerical/dispatch/environment gates but has fewer
 processes than the full paper campaign. It verifies exercisability; it does
 not independently confirm small performance gains or promote a placement.
-The full manuscript protocol subsequently completed with clean retention but
-did not confirm the historical statistically positive prompt/cached gains.
-Those fresh results and archived printed-value agreement are distinct.
+The corrected Release protocol completed with verified repeated MMU logging and
+zero kernel errors. Its cached-request ratio is 1.0431 [1.0231, 1.0504], supporting
+the historical modest benefit; the M=129 prompt interval still spans parity.
+Fresh results and archived printed-value agreement are distinct. Earlier
+unoptimized and logging-limited attempts remain retained and qualified.
 The earlier clean-build follow-through passed all numerical/dispatch checks, but a
 new MMU event rejected its prompt latency; the separately exercised cached
 request passed with clean kernel retention. Both records are retained in
@@ -148,7 +151,7 @@ request passed with clean kernel retention. Both records are retained in
 Hardware stages run sequentially. Before controlled timing, establish the
 documented lab access with `sudo -v`; runners need noninteractive access for
 governors, swap control, and kernel monitoring. They record and restore host
-state. Stop unrelated inference, compilation and CPU-heavy work. A child exit
+state, including verified repeated MMU logging (`debug_mmu=Y`). Stop unrelated inference, compilation and CPU-heavy work. A child exit
 of zero does not replace numerical, dispatch, kernel-log, or retention checks.
 Do not mix build time, setup, steady-state execution, or instrumented diagnostics.
 
@@ -197,8 +200,9 @@ and kernel extension guidance remain in `QPU-XLA.md` and `LESSONS_LEARNED.md`.
 The official manuscript is now mapped to all 39 tables and five figures.
 Use [HOWTO.md](../HOWTO.md) to regenerate the main numerical results and empirical
 figures. [APPENDIX.md](APPENDIX.md) documents the replacement for its blank p.12
-template; [APPENDIX.tex](APPENDIX.tex) still needs integration and a two-page
-fit check in the manuscript source. Coordinate
+template; [APPENDIX.tex](APPENDIX.tex) is integrated into the supplied source, and its
+two-page fit is verified in the local acmart 2.19 draft. See
+[manuscript-revision.json](manuscript-revision.json). Coordinate
 hardware using the concrete [reviewer-access plan](REVIEWER_ACCESS.md).
 CGO's appendix limit is two pages
 before References, using the linked ASPLOS template. The current CGO process is

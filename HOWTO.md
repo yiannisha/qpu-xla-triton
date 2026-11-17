@@ -22,8 +22,18 @@ use the precision printed in the paper and exit nonzero on disagreement.
 Figures 4 and 5 can also be exported as PDF plots with `--plots` (requires
 `matplotlib`, available through the locked `evaluation` extra). Their appearance
 can differ from the manuscript while the measured values agree. Figures 1–3
-are design diagrams, not empirical plots. Static memory estimates, recorded
-quality confidence intervals and COCO AP are explicitly preserved report views.
+are design diagrams, not empirical plots. The default **117 checks** include
+recomputed static memory estimates. Recorded quality confidence intervals remain
+preserved report views. To recompute COCO AP/AP50 from retained predictions and
+the pinned annotations (evaluation extra required), run:
+
+```sh
+uv run --locked python scripts/reproduce_paper.py --output build/paper-with-ap \
+  --coco-annotations /datasets/coco/annotations/instances_val2017.json
+```
+
+This verifies the annotation SHA256 and all 1000 selected identities, and runs
+**123 checks** in total. It does not rerun inference or the omitted bootstrap.
 The checker does not claim to recompute every supplementary table cell.
 
 For fresh operator results (Tables 1/8 and Figure 4), the original
@@ -65,11 +75,16 @@ uv run --locked python scripts/artifact.py run paper --output build/paper-new
 uv run --locked python scripts/artifact.py run paper --output build/paper-new --execute
 ```
 
+Use Release mode for both upstream and the integration; an empty CMake build
+type leaves the latter unoptimized. The preparer sets it explicitly.
+
 The full paper profile uses five independent processes per placement at
 M=129/257 and 15 cached-request CPU/candidate pairs, preserving the statistical
 design in §4 and Tables 4/30. Stride, joined-graph and full-vocabulary preflights
 are mandatory. The outer monitor rejects latency on a V3D error even if the
-child completes numerical checks. A reduced functional profile is also supplied
+child completes numerical checks. The wrapper enables and verifies repeated
+MMU logging, captures the exit tail and restores the original kernel setting;
+an unavailable or ineffective logging control rejects the run. A reduced functional profile is also supplied
 for installation checks; it does not confirm the small performance effects.
 
 Use `run quality --only mmlu` or the named ResNet/YOLO stages after acquiring

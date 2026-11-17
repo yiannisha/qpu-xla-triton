@@ -16,6 +16,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <time.h>
 #include <unistd.h>
 
 #define QPU_LLAMA_DEFAULT_TIMEOUT_NS UINT64_C(10000000000)
@@ -27,6 +28,7 @@ struct qpu_llama_context {
     uint32_t failure_mask;
     bool poisoned;
     bool submission_active;
+    bool trace_buffers;
     pthread_mutex_t mutex;
     qpu_llama_capabilities capabilities;
     char last_error[256];
@@ -116,10 +118,24 @@ static int open_render_node(const char *requested, char resolved[128]) {
     return -1;
 }
 
+static void trace_buffer(const qpu_llama_buffer *buffer, const char *event) {
+    if (buffer == NULL || buffer->context == NULL || !buffer->context->trace_buffers) {
+        return;
+    }
+    struct timespec now = {0};
+    (void) clock_gettime(CLOCK_MONOTONIC, &now);
+    fprintf(stderr, "QPU_BO {\"event\":\"%s\",\"pid\":%ld,\"monotonic_ns\":%llu,"
+        "\"handle\":%u,\"gpu_address\":%u,\"bytes\":%zu,\"cached\":%s}\n",
+        event, (long) getpid(),
+        (unsigned long long) now.tv_sec * UINT64_C(1000000000) + (unsigned long long) now.tv_nsec,
+        buffer->handle, buffer->gpu_address, buffer->size, buffer->dmabuf_fd >= 0 ? "true" : "false");
+}
+
 static void destroy_buffer_unlocked(qpu_llama_buffer *buffer) {
     if (buffer == NULL) {
         return;
     }
+    trace_buffer(buffer, "destroy");
     if (buffer->mapping != NULL && buffer->mapping != MAP_FAILED) {
         munmap(buffer->mapping, buffer->size);
     }
@@ -175,6 +191,7 @@ static qpu_llama_status create_buffer_unlocked(
         destroy_buffer_unlocked(buffer);
         return QPU_LLAMA_IO_FAILED;
     }
+    trace_buffer(buffer, "create");
     *result = buffer;
     return QPU_LLAMA_OK;
 }
@@ -254,6 +271,7 @@ static qpu_llama_status create_cached_buffer_unlocked(
         destroy_buffer_unlocked(buffer);
         return QPU_LLAMA_IO_FAILED;
     }
+    trace_buffer(buffer, "create");
     *result = buffer;
     return QPU_LLAMA_OK;
 }
@@ -270,6 +288,8 @@ qpu_llama_status qpu_llama_context_create(
         return QPU_LLAMA_ALLOCATION_FAILED;
     }
     context->fd = -1;
+    const char *trace = getenv("QPU_LLAMA_TRACE_BUFFERS");
+    context->trace_buffers = trace != NULL && strcmp(trace, "1") == 0;
     context->timeout_ns = config != NULL && config->timeout_ns != 0
         ? config->timeout_ns
         : QPU_LLAMA_DEFAULT_TIMEOUT_NS;

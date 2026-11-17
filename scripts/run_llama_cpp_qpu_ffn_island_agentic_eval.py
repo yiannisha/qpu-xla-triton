@@ -227,6 +227,9 @@ def main() -> None:
     parser.add_argument("--prefix", type=int, default=512)
     parser.add_argument("--suffixes", type=integer_list, default=integer_list("64,128"))
     parser.add_argument("--fraction", type=float, default=0.125)
+    parser.add_argument(
+        "--llama-root", type=Path, help="Source checkout for provenance; inferred from the server path otherwise"
+    )
     parser.add_argument("--samples", type=int, default=3)
     parser.add_argument("--threads", type=int, default=4)
     parser.add_argument("--minimum-rows", type=int, default=64)
@@ -379,7 +382,7 @@ def main() -> None:
         },
         "source": {
             "py_videocore7": git_record(ROOT),
-            "llama_cpp": git_record(Path("/home/yiannis/side/llama.cpp")),
+            "llama_cpp": git_record(args.llama_root or args.server.resolve().parents[2]),
         },
         "correctness_preflight": correctness_preflight,
         "samples": samples,

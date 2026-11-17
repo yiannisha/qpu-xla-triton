@@ -1,8 +1,8 @@
 {
-  "format": "artifact-local-validation-v3",
-  "date": "2026-11-16",
+  "format": "artifact-local-validation-v4",
+  "date": "2026-11-17",
   "focused_portable_tests": {
-    "passed": 20,
+    "passed": 24,
     "command": [
       "uv",
       "run",
@@ -14,22 +14,29 @@
       "tests/test_llama_cpp_process_guards.py"
     ],
     "returncode": 0,
-    "observed_stdout_excerpt": "20 passed in 1.37s",
-    "evidence_source": "artifact/validation/manuscript-tests.log"
+    "observed_stdout_excerpt": "24 passed in 2.02s",
+    "evidence_source": "artifact/validation/final-controls.log"
   },
   "source_sha256": {
     "scripts/artifact.py": "70980fcd7af99533c244c1cf716e00d84f47b43db03c41b68694145e6d90f269",
     "scripts/artifact_common.py": "983fbbc933473d99a612913d2f697c7268d0be8f4142954a53c3edd2eb81cd14",
-    "scripts/prepare_artifact_native.py": "4ae6af3bd1400dc5aec360577bcb13a91d1e16686cb3b9c1837879d5712a6bb7",
+    "scripts/prepare_artifact_native.py": "736f08f84eba042a4f787bc44f98551bfd1e966ebdbd3ea1747514e44e71ee1e",
     "scripts/prepare_imagenet_samples.py": "bdb051a5e83e2750e7106036938f81bd601c8a8b681e66dd61a0821084af5106",
     "scripts/run_llama_cpp_ffn_ablation.py": "424ccd2a52cec4029065a15db9feee9410dbcc557737cc7912e88394c574a7ff",
     "scripts/summarize_rebuttal_remaining.py": "559d66530ae69ab96770a672ed3c108a194f0e28ea6ea2cb746f0cefa257bba2",
     "scripts/summarize_llama_cpp_ffn_split_screen.py": "2a644bff6e0a9eb8815ee6c8d28114214fcc38fd412005b339e011cfafcdf316",
     "tests/conftest.py": "df53954c615e25ea480c39ec081d9380171a9ddc7ceb40d52c7520d9c8e48e2e",
-    "tests/test_artifact.py": "18d73a006ebedcade15db8379f98bdcff4c81cf832695c256f27c5d2b830d68b",
+    "tests/test_artifact.py": "b7f25d5392da3a0938116e2dcb9cda1c9d49f10bd4d87a4b13809765398ce942",
     "pyproject.toml": "1bab1fc12a0d113137c1333c87aafac96f256d51d21ebacfe638b0992917e8b2",
-    "scripts/reproduce_paper.py": "0e6933f0d200d2eb7dc2d89cab07bdb3b50a159e69398e8143afb57007506dbc",
-    "artifact/manuscript.json": "5e45ff6fb583c684e0268d234efb7e23f5c945b650813ca74c0df40c51a190e4"
+    "scripts/reproduce_paper.py": "b3234a38084cf1c4e48ba4fc30f8feee1bfb1909525b265b44cde08fe9c47234",
+    "artifact/manuscript.json": "1e21c3b1af5864b5bdb4ee8f08aae9426a39b11b7ffcd5b8c11175b10479dbde",
+    "scripts/run_rebuttal_diagnostics.py": "f6453f87cc3907c7f24c74a92adc85d27608b2489ec8bf5702de0ecdbd7fd3d8",
+    "scripts/run_llama_cpp_ffn_breakdown.py": "d80455cca61cd6e8021c649dd30e12acf24ddd5d688aca492309dd33728afde9",
+    "scripts/run_llama_cpp_qpu_ffn_island_agentic_eval.py": "6418c1a77f192386ecf8f25a71482548270e43ff84939129226d43a1f37998c6",
+    "scripts/trace_artifact_v3d.py": "b9b53592225997639fa6195555230405b395c72d11ba6e22c57e95b4a38a5ddd",
+    "src/qpu_xla/kernels/ggml_q4_0.py": "39f3854b60218e62d961c0ee97c0324f1295723c9f3a38d990e360a16677eb64",
+    "integrations/llama_cpp/src/qpu_llama_runtime.c": "7031b311a9b1108f8f1bb6bc8fe4aa45fdc38d3e8930ece5e4bd09d91c90a8e9",
+    "tests/test_qpu_xla_ggml_q4_0.py": "b6cdeeb5a75a215076dacfcf30be69316bd70eb6fad08f039a77e47e0c043be2"
   },
   "clean_build_follow_through": {
     "kind": "artifact-clean-build-follow-through-v1",
@@ -88,13 +95,34 @@
       "all_argmax_equal": true
     }
   },
-  "scope": "Author-run preparation only. Prompt campaign latency rejected for a new kernel MMU event. Separate cached-request stage retained. No new performance confirmation, independent evaluation or sustained-reliability claim. Licensing and publication deferred.",
+  "scope": "Author preparation and corrected full reproduction only; earlier failures preserved. No independent review, automatic policy promotion or sustained reliability. License and deposit deferred.",
   "manuscript_follow_through": {
     "printed_value_checks": 111,
     "mismatches": 0,
     "summary": "artifact/evidence/manuscript-validation/summary.json",
     "numerical_execution_kernel_gates_pass": true,
     "historical_positive_gains_freshly_confirmed": false,
-    "mmu_cause_resolved": false
+    "mmu_cause_resolved": false,
+    "qualification": "Initial unoptimized integration and unverified repeated logging; preserved historical attempt. See corrected_validation for current outcome."
+  },
+  "corrected_validation": {
+    "summary": "artifact/evidence/kernel-bounds-fix/summary.json",
+    "portable_tests": 24,
+    "hardware_boundary_cases": 6,
+    "default_printed_value_checks": 117,
+    "with_optional_coco_ap": 123,
+    "mismatches": 0,
+    "full_protocol_passed": true,
+    "verified_repeated_mmu_logging": true,
+    "kernel_errors": 0,
+    "cached_benefit_supported": true,
+    "m129_prompt_interval_spans_parity": true,
+    "manuscript_revision": "artifact/manuscript-revision.json",
+    "appendix_pages": 2
+  },
+  "format_check_scope": {
+    "changed_python_files": "pass",
+    "repository_wide_ruff_lint": "pass",
+    "repository_wide_ruff_format": "27 unchanged files require formatting; no unrelated reformat performed"
   }
 }
