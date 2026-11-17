@@ -31,6 +31,14 @@ The current public host-side entry points are:
 - `tiledconv2d_fp32`
 - `tiledconv2d_int32`
 - `tiledconv2d_int16`
+- `Conv2dFP32Plan`
+- `Conv2dW8A8Plan`
+
+The prepared FP32 and W8A8 plans are used by the ResNet-18 and YOLOv8n model
+adapters. They retain transformed weights and workspaces, support explicit CPU,
+QPU, and aligned row-hybrid placement, and report model-level dispatch
+coverage. The 1x1 case avoids window expansion. General dense 3x3 remains a
+vectorized im2col plus GEMM path; do not describe it as direct convolution.
 
 The current QPU kernels are:
 
