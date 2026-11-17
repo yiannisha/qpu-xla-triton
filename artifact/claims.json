@@ -1,11 +1,11 @@
 {
   "format": "artifact-claims-v1",
   "paper_title": "Practical: Building and Evaluating a Native CPU-QPU Runtime for Edge AI Inference on Raspberry Pi 5",
-  "manuscript_alignment": "pending: exact accepted manuscript is not available locally",
+  "manuscript_alignment": "Mapped to author-supplied QPUs_CGO2027.pdf, SHA256 3bcc96f58f3b8b500fc8e89ff7c2b8e25bb5226dbf2a946159c7b75f587b6ad2; see manuscript.json and PAPER.md.",
   "claims": [
     {
       "id": "headline-ffn",
-      "manuscript_location": null,
+      "manuscript_location": "\u00a74.2\u20134.4, \u00a75.2; Tables 4/30/31, pp.9/20; Appendix H.3",
       "statement": "Corrected opt-in FFN has a small M=129 gain; M=257 is inconclusive.",
       "evidence": [
         "BUG_FIX_RESULTS.md",
@@ -17,7 +17,7 @@
     },
     {
       "id": "rebuttal-todo1",
-      "manuscript_location": null,
+      "manuscript_location": "October addition, absent as numerical table in supplied PDF; relates to \u00a75.2, Figure 3C and Tables 4/30. Figure 5 is an earlier projection-only boundary.",
       "statement": "Measured complete FFN critical path is CPU dominated.",
       "evidence": [
         "coa.md",
@@ -29,7 +29,7 @@
     },
     {
       "id": "rebuttal-todo2",
-      "manuscript_location": null,
+      "manuscript_location": "October addition, absent from supplied PDF; qualifies \u00a73.4.3 calibration wording. Not the historical prepared sweep in Tables 26/27.",
       "statement": "Six-cell split screen contains no promoted policy. Consists of 4 inconclusive cases and 2 losses under its stated CI classification.",
       "evidence": [
         "coa.md",
@@ -42,7 +42,7 @@
     },
     {
       "id": "rebuttal-todo3",
-      "manuscript_location": null,
+      "manuscript_location": "October addition, absent from supplied PDF; relates to \u00a73.4.3/\u00a75.2 complete FFN overlap.",
       "statement": "Serialization is slower; copy/materialization effects span parity.",
       "evidence": [
         "coa.md",
@@ -54,7 +54,7 @@
     },
     {
       "id": "rebuttal-todo4",
-      "manuscript_location": null,
+      "manuscript_location": "October addition with CPU_REPACK baseline; Appendix D and Table 34 use a different OpenBLAS target screen.",
       "statement": "Production MTP QPU hook is slower than CPU_REPACK.",
       "evidence": [
         "coa.md",
@@ -67,7 +67,7 @@
     },
     {
       "id": "rebuttal-todo5",
-      "manuscript_location": null,
+      "manuscript_location": "October addition; relates to \u00a75.1 and Table 18. Prepared stage timing differs from historical complete operator boundary.",
       "statement": "Host preparation dominates current pointwise and dense 3x3 W8A8 convolution.",
       "evidence": [
         "coa.md",
@@ -82,7 +82,7 @@
     },
     {
       "id": "rebuttal-todo6",
-      "manuscript_location": null,
+      "manuscript_location": "October addition; qualifies Table 13 NumPy two-pass baseline. Optimized CPU W8A8 comparison remains unavailable.",
       "statement": "Matched fused Torch bias+ReLU is faster than QPU. Optimized same-contract CPU W8A8 control unavailable.",
       "evidence": [
         "coa.md",
@@ -94,7 +94,7 @@
     },
     {
       "id": "rebuttal-todo7",
-      "manuscript_location": null,
+      "manuscript_location": "October addition; extends \u00a75.3/Table 6 numerical quality to single-input model latency, not new accuracy.",
       "statement": "One-input complete ResNet-18 QPU execution is slower; FP32 logit checks pass.",
       "evidence": [
         "coa.md",
@@ -106,7 +106,7 @@
     },
     {
       "id": "rebuttal-todo8-9",
-      "manuscript_location": null,
+      "manuscript_location": "\u00a75.1, Table 1, Figure 4; Appendix B, Tables 8\u201313. October inventory and selector explanation supplement these.",
       "statement": "Projection campaign has 112 configurations, ten median-rule wins. Six-worker min/max selector is an implementation cutoff.",
       "evidence": [
         "REBUTTAL_NOTES.md",
@@ -120,7 +120,7 @@
     },
     {
       "id": "model-quality",
-      "manuscript_location": null,
+      "manuscript_location": "\u00a74.5/\u00a75.3, Tables 5/6/35/36/38/39; Appendices E/F/H.4/H.5, pp.9\u201311/22\u201325.",
       "statement": "MMLU/ResNet FP32/YOLO FP32 qualifications; ResNet W8A8 regression and SmolVLA gate/stability failures.",
       "evidence": [
         "MODEL-QUALITY.md",
@@ -138,8 +138,8 @@
     },
     {
       "id": "rebuttal-todo10",
-      "manuscript_location": null,
-      "statement": "Attribution and scope corrections prepared; manuscript and publication unverified.",
+      "manuscript_location": "Abstract/\u00a71/\u00a73.4.3 and Related Work require author review; blank Appendix A p.12 needs replacement. See PAPER.md.",
+      "statement": "Manuscript mapped; attribution, scope and appendix corrections recorded for author integration.",
       "evidence": [
         "REBUTTAL_NOTES.md",
         "experiment_logs/20261028-rebuttal/REPORT.md",
@@ -147,11 +147,11 @@
         "artifact/CLARIFICATIONS.md"
       ],
       "fresh_run": "manual manuscript alignment",
-      "scope": "No submitted PDFs, final figure/table mapping, DOI, badge award or package upload is claimed."
+      "scope": "Supplied PDF is authoritative for mapping. No edited paper, DOI, badge award or upload is claimed."
     },
     {
       "id": "artifact-clean-build-validation",
-      "manuscript_location": null,
+      "manuscript_location": "New author validation after supplied paper; relates to Appendix G/H, not a paper performance result.",
       "statement": "Clean native preparation and numerical/dispatch checks pass; one prompt campaign has an MMU-based latency rejection, and a separate two-pair cached-request stage has clean retention.",
       "evidence": [
         "artifact/evidence/clean-build/summary.json",
@@ -162,11 +162,20 @@
       ],
       "fresh_run": "profiles-functional.json:paper and separately --only agentic after the first campaign stops",
       "scope": "Bounded author-run exercisability only, with unchanged gates. No retry-until-success, independent confirmation or new performance/stability claim. Kernel event cause unisolated."
+    },
+    {
+      "id": "artifact-full-paper-validation",
+      "manuscript_location": "New author follow-through of \u00a74/Appendix H.3 and Tables 4/30, separate from paper measurements.",
+      "statement": "Full numerical/execution/kernel gates pass; M129 prompt and cached-request positive gains are not freshly confirmed.",
+      "evidence": [
+        "artifact/evidence/manuscript-validation/summary.json",
+        "artifact/evidence/manuscript-validation/prompt.json.gz",
+        "artifact/evidence/manuscript-validation/agentic.json.gz",
+        "artifact/evidence/manuscript-validation/agreement.json",
+        "artifact/MMU-INVESTIGATION.md"
+      ],
+      "fresh_run": "paper:prompt,agentic at full sample counts",
+      "scope": "20 prompt processes and 15 request pairs. Fresh M129 and cached intervals include parity; cached interval does not overlap the historical interval. Printed-value agreement from retained data is separate from empirical agreement. No independent badge, policy promotion or resolved stability issue."
     }
-  ],
-  "manuscript_search": {
-    "local": "No accepted manuscript/source found in this repository or the adjacent prior checkout.",
-    "connected_drive": "Exact-title terms returned no files; QPU search found older progress/idea notes, not the manuscript. No unrelated document contents were read.",
-    "mapping_rule": "Stable evidence IDs are authoritative; manuscript figure/table numbers remain unverified and are not fabricated."
-  }
+  ]
 }

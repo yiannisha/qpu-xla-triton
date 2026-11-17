@@ -140,6 +140,7 @@ def prepare(llama: Path, rebuttal: bool, jobs: int, build_root: Path) -> None:
                 "qpu_ffn_island_graph_smoke",
                 "qpu_ffn_island_model_smoke",
                 "qpu_llama_cpu_repack_bench",
+                *(["ggml-qpu", "qpu_ggml_geglu_bench"] if name == "llama-qpu-runtime" else []),
             ]
         )
     if rebuttal:

@@ -1,0 +1,238 @@
+{
+  "format": "artifact-manuscript-validation-v1",
+  "recorded_utc": "2026-11-17T02:12:39.122541+00:00",
+  "scope": "Author-run full paper protocol and archived-data agreement. Both clean and rejected attempts remain distributed; no independent badge or sustained stability claim.",
+  "completed": true,
+  "manuscript_sha256": "3bcc96f58f3b8b500fc8e89ff7c2b8e25bb5226dbf2a946159c7b75f587b6ad2",
+  "prompt": {
+    "processes": 20,
+    "independent_processes_per_placement_and_shape": 5,
+    "rows": [
+      129,
+      257
+    ],
+    "elapsed_seconds": 296.87083725199955,
+    "retained_for_latency": true,
+    "kernel_error_lines": [],
+    "comparisons": [
+      {
+        "rows": 129,
+        "speedup": {
+          "baseline_median_ns": 2133057901,
+          "bootstrap_95_high": 1.056652177454032,
+          "bootstrap_95_low": 0.9843479168542159,
+          "candidate_median_ns": 2098112683,
+          "median_speedup": 1.0166555487143967,
+          "resamples": 10000,
+          "resampling_scheme": "independent-two-sample-bootstrap",
+          "seed": 20275189
+        },
+        "execution_valid": true,
+        "dispatches": 1400,
+        "fallbacks": 0
+      },
+      {
+        "rows": 257,
+        "speedup": {
+          "baseline_median_ns": 4363546950,
+          "bootstrap_95_high": 1.0255063247733067,
+          "bootstrap_95_low": 0.9667140383350956,
+          "candidate_median_ns": 4349757638,
+          "median_speedup": 1.0031701334068672,
+          "resamples": 10000,
+          "resampling_scheme": "independent-two-sample-bootstrap",
+          "seed": 20288117
+        },
+        "execution_valid": true,
+        "dispatches": 1400,
+        "fallbacks": 0
+      }
+    ]
+  },
+  "cached_request": {
+    "process_samples": 30,
+    "pairs": 15,
+    "elapsed_seconds": 647.5749347479996,
+    "retained_for_latency": true,
+    "kernel_error_lines": [],
+    "all_greedy_outputs_identical": true,
+    "all_qpu_executions_valid": true,
+    "all_context_populations_valid": true,
+    "prompt_speedup": {
+      "baseline_median_ns": 3101604000,
+      "bootstrap_95_high": 1.017070986754164,
+      "bootstrap_95_low": 0.9726388338224513,
+      "candidate_median_ns": 3126919000,
+      "median_speedup": 0.9919041714863737,
+      "pair_count": 15,
+      "pair_speedups": [
+        0.9780429391073194,
+        0.9583180760358679,
+        1.0112776893275124,
+        1.0178307644150246,
+        1.0346024052770633,
+        0.9676249303152432,
+        1.00041484102551,
+        1.0046042417126881,
+        0.9726388338224513,
+        0.9942337998327434,
+        0.9687023846195374,
+        1.016507124818835,
+        1.0622020743410439,
+        0.9585481970127956,
+        1.0100286268471064
+      ],
+      "resamples": 10000,
+      "resampling_scheme": "paired-bootstrap",
+      "seed": 20263086
+    },
+    "request_wall_speedup": {
+      "baseline_median_ns": 3103060281,
+      "bootstrap_95_high": 1.0169913016388086,
+      "bootstrap_95_low": 0.9725598022256746,
+      "candidate_median_ns": 3128485652,
+      "median_speedup": 0.9918729462659527,
+      "pair_count": 15,
+      "pair_speedups": [
+        0.9780367934019494,
+        0.958344690212439,
+        1.0112795371991108,
+        1.0177945380566122,
+        1.03456529587973,
+        0.9676339396022231,
+        1.0003676896322207,
+        1.0045846040189157,
+        0.9725598022256746,
+        0.994247992376379,
+        0.9686476669045256,
+        1.016027860949038,
+        1.062118437743704,
+        0.9585700259755696,
+        1.0100932529827908
+      ],
+      "resamples": 10000,
+      "resampling_scheme": "paired-bootstrap",
+      "seed": 20263342
+    },
+    "maximum_peak_rss_bytes": 4405198848
+  },
+  "producer": {
+    "retained_for_latency": true,
+    "kernel_error_lines": [],
+    "cases": [
+      {
+        "rows": 65,
+        "producer_speedup": 0.9314473619782464,
+        "producer_plus_down_speedup": 0.22492874495548823,
+        "down_correctness": {
+          "atol": 0.0002,
+          "elements": 99840,
+          "inf_count": 0,
+          "max_absolute": 7.62939453125e-06,
+          "max_relative": 0.06012122124760005,
+          "mean_absolute": 7.125343373468823e-07,
+          "nan_count": 0,
+          "p99_absolute": 2.86102294921875e-06,
+          "passed": true,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -16.045663833618164,
+          "worst_index": [
+            5,
+            1260
+          ],
+          "worst_reference": -16.045656204223633
+        },
+        "q8_scale_bytes_exact": true,
+        "q8_value_bytes_exact": true
+      },
+      {
+        "rows": 129,
+        "producer_speedup": 1.0512331937433022,
+        "producer_plus_down_speedup": 0.349623136769443,
+        "down_correctness": {
+          "atol": 0.0002,
+          "elements": 198144,
+          "inf_count": 0,
+          "max_absolute": 7.62939453125e-06,
+          "max_relative": 0.01768185152238713,
+          "mean_absolute": 7.105142904026325e-07,
+          "nan_count": 0,
+          "p99_absolute": 2.86102294921875e-06,
+          "passed": true,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": -16.01945686340332,
+          "worst_index": [
+            114,
+            638
+          ],
+          "worst_reference": -16.01944923400879
+        },
+        "q8_scale_bytes_exact": true,
+        "q8_value_bytes_exact": true
+      },
+      {
+        "rows": 257,
+        "producer_speedup": 1.1259651365301209,
+        "producer_plus_down_speedup": 0.2890686761549977,
+        "down_correctness": {
+          "atol": 0.0002,
+          "elements": 394752,
+          "inf_count": 0,
+          "max_absolute": 9.5367431640625e-06,
+          "max_relative": 0.046511627906976744,
+          "mean_absolute": 7.113090606901152e-07,
+          "nan_count": 0,
+          "p99_absolute": 2.86102294921875e-06,
+          "passed": true,
+          "rtol": 2e-05,
+          "tolerance_violation_count": 0,
+          "worst_actual": 19.165525436401367,
+          "worst_index": [
+            32,
+            684
+          ],
+          "worst_reference": 19.165515899658203
+        },
+        "q8_scale_bytes_exact": true,
+        "q8_value_bytes_exact": true
+      }
+    ]
+  },
+  "interpretation": "All full-protocol numerical/execution/environment checks pass. M129 prompt and cached-request intervals include parity, so this fresh attempt does not confirm the historical statistically positive gains. M257 remains inconclusive. Historical archived values reproduce at printed precision; that is separate from fresh empirical agreement. The earlier reduced-prompt MMU event remains unresolved and its rejected latency is not reinstated.",
+  "sources": {
+    "prompt.json.gz": {
+      "source_path": "build/artifact-manuscript-full/prompt.json",
+      "sha256_uncompressed": "f34206a938667ead0dc994254181dfa3f760853cd99d8184c2fde2955f02f32c"
+    },
+    "agentic.json.gz": {
+      "source_path": "build/artifact-manuscript-full/agentic.json",
+      "sha256_uncompressed": "6e93c60f82c77b30bccc17d0ba99f3c36470a307bcb888308fdab7765197bdf6"
+    },
+    "campaign.json.gz": {
+      "source_path": "build/artifact-manuscript-full/campaign.json",
+      "sha256_uncompressed": "cf9ff8e5675fbc6a2102655641d4f56071ea50b39a0d1ff636e94ad65e4b1ce5"
+    },
+    "prompt-control.json.gz": {
+      "source_path": "build/artifact-manuscript-full/prompt-control/process.json",
+      "sha256_uncompressed": "8d7be79d543168d946501e46cab7d12ce5fbe36ec815ac9f367e314c8e32aa80"
+    },
+    "agentic-control.json.gz": {
+      "source_path": "build/artifact-manuscript-full/agentic-control/process.json",
+      "sha256_uncompressed": "31228d0199fb0c46dd6cfe2fe0f6d66309452f499e40e422f5415e1f07ab2caf"
+    },
+    "producer.json.gz": {
+      "source_path": "build/artifact-manuscript-producer.json",
+      "sha256_uncompressed": "2b37121282bce93be237ace7ddae3e876359f2be0da4627d5fa4be2e6c51eb1e"
+    },
+    "producer-control.json.gz": {
+      "source_path": "build/artifact-manuscript-producer-control/process.json",
+      "sha256_uncompressed": "b49d78428ce69dc409e71af18ab5241d14e7eefdf5f366422cb507818c67831f"
+    },
+    "native-targets.json.gz": {
+      "source_path": "build/artifact-native-clean/artifact-native-build.json",
+      "sha256_uncompressed": "cc69c13cc56228b7899c03dfb21b4494cf1976eba0fe1b3d8083f1df5731e5fa"
+    }
+  }
+}

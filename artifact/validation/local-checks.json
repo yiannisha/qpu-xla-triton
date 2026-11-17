@@ -1,5 +1,5 @@
 {
-  "format": "artifact-local-validation-v2",
+  "format": "artifact-local-validation-v3",
   "date": "2026-11-16",
   "focused_portable_tests": {
     "passed": 20,
@@ -14,20 +14,22 @@
       "tests/test_llama_cpp_process_guards.py"
     ],
     "returncode": 0,
-    "observed_stdout_excerpt": "20 passed in 1.29s",
-    "evidence_source": "Captured output of the actual follow-through focused validation run; original 18-test log is retained separately."
+    "observed_stdout_excerpt": "20 passed in 1.37s",
+    "evidence_source": "artifact/validation/manuscript-tests.log"
   },
   "source_sha256": {
-    "scripts/artifact.py": "5562811afa042b09b78165df3b865971e7618792599076e4ce475b58a4848276",
+    "scripts/artifact.py": "70980fcd7af99533c244c1cf716e00d84f47b43db03c41b68694145e6d90f269",
     "scripts/artifact_common.py": "983fbbc933473d99a612913d2f697c7268d0be8f4142954a53c3edd2eb81cd14",
-    "scripts/prepare_artifact_native.py": "383476ffb585add2f2ec1d86b5c08e8781587124e11fbb580e997dfb4bf6e16e",
+    "scripts/prepare_artifact_native.py": "4ae6af3bd1400dc5aec360577bcb13a91d1e16686cb3b9c1837879d5712a6bb7",
     "scripts/prepare_imagenet_samples.py": "bdb051a5e83e2750e7106036938f81bd601c8a8b681e66dd61a0821084af5106",
     "scripts/run_llama_cpp_ffn_ablation.py": "424ccd2a52cec4029065a15db9feee9410dbcc557737cc7912e88394c574a7ff",
     "scripts/summarize_rebuttal_remaining.py": "559d66530ae69ab96770a672ed3c108a194f0e28ea6ea2cb746f0cefa257bba2",
     "scripts/summarize_llama_cpp_ffn_split_screen.py": "2a644bff6e0a9eb8815ee6c8d28114214fcc38fd412005b339e011cfafcdf316",
     "tests/conftest.py": "df53954c615e25ea480c39ec081d9380171a9ddc7ceb40d52c7520d9c8e48e2e",
     "tests/test_artifact.py": "18d73a006ebedcade15db8379f98bdcff4c81cf832695c256f27c5d2b830d68b",
-    "pyproject.toml": "1bab1fc12a0d113137c1333c87aafac96f256d51d21ebacfe638b0992917e8b2"
+    "pyproject.toml": "1bab1fc12a0d113137c1333c87aafac96f256d51d21ebacfe638b0992917e8b2",
+    "scripts/reproduce_paper.py": "0e6933f0d200d2eb7dc2d89cab07bdb3b50a159e69398e8143afb57007506dbc",
+    "artifact/manuscript.json": "5e45ff6fb583c684e0268d234efb7e23f5c945b650813ca74c0df40c51a190e4"
   },
   "clean_build_follow_through": {
     "kind": "artifact-clean-build-follow-through-v1",
@@ -86,5 +88,13 @@
       "all_argmax_equal": true
     }
   },
-  "scope": "Author-run preparation only. Prompt campaign latency rejected for a new kernel MMU event. Separate cached-request stage retained. No new performance confirmation, independent evaluation or sustained-reliability claim. Licensing and publication deferred."
+  "scope": "Author-run preparation only. Prompt campaign latency rejected for a new kernel MMU event. Separate cached-request stage retained. No new performance confirmation, independent evaluation or sustained-reliability claim. Licensing and publication deferred.",
+  "manuscript_follow_through": {
+    "printed_value_checks": 111,
+    "mismatches": 0,
+    "summary": "artifact/evidence/manuscript-validation/summary.json",
+    "numerical_execution_kernel_gates_pass": true,
+    "historical_positive_gains_freshly_confirmed": false,
+    "mmu_cause_resolved": false
+  }
 }

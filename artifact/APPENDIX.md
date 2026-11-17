@@ -1,35 +1,23 @@
-# Artifact appendix source notes
+# Artifact appendix integration
 
-The insertable draft is [APPENDIX.tex](APPENDIX.tex). Its content is based on
-verified repository evidence and explicitly records deferred publication and
-licensing. Insert it into the conference template before References, verify
-the two-page limit in the actual manuscript, and add final figure/table
-locations once that manuscript is available. CGO permits author identification.
+[APPENDIX.tex](APPENDIX.tex) replaces the blank Appendix A on page 12 of the
+supplied official `QPUs_CGO2027.pdf`. It fills Abstract, checklist, access,
+dependencies, installation, workflow, expected results, customization, notes
+and methodology. It follows the fields in the manuscript's existing template
+and the [current linked template](https://www.asplos-conference.org/asplos2027/ae-artifact-appendix/).
 
-Template: https://www.asplos-conference.org/asplos2027/ae-artifact-appendix/
+The exact title, nine paper authors, PDF hash, all 39 table locations and five
+figure locations are recorded in [manuscript.json](manuscript.json).
+[PAPER.md](PAPER.md) records the manuscript qualifications and author edits.
+[claims.json](claims.json) maps the stable original/rebuttal claim IDs.
 
-| Field | Content / action |
-|---|---|
-| Paper title | Practical: Building and Evaluating a Native CPU-QPU Runtime for Edge AI Inference on Raspberry Pi 5 |
-| Authors and final figure/table IDs | Pending authoritative manuscript metadata |
-| Requested badge categories | Available; Evaluated Functional/Reusable if independent audit passes; Results Validated if independent results agree |
-| Access | Local content-identified release; public archival link/DOI intentionally deferred |
-| Programs | VideoCore VII Python assembler/driver, QPU-XLA runtime, pinned native llama.cpp integration and experiment scripts |
-| Inventory | `artifact/release-files.json`, `artifact/claims.json`, original and October rebuttal raw records and model-output evidence |
-| Hardware | Raspberry Pi 5, 64-bit Linux, historical model machine 8 GiB RAM, active cooling/reliable power; CPU-only smoke/analysis on ordinary Linux hosts |
-| Software | Python >=3.12; exact locked Python dependencies; C/C++ compiler, CMake, Unix Makefiles; llama.cpp base `91d2fc387529940230555abd297a8b5e99737d3f` plus patches 0001–0005 |
-| Models/datasets | See assets.json for exact identities; external acquisition instructions in ASSETS.md |
-| Installation and basic test | `uv sync --locked --group dev`; `uv run --locked python scripts/artifact.py smoke --output build/smoke` |
-| Hardware basic test | Native preparation then `artifact.py smoke --hardware --native-build build/llama-qpu-runtime --output build/pi-smoke` |
-| Workflow | `artifact.py analyze` for archived data; explicit `paper`, `rebuttal`, `quality` profiles for new experiments |
-| Expected outputs | Checksummed JSON records, max numerical errors, regenerated summaries; claim boundaries and failures in LIMITATIONS.md |
-| Resource/time estimates | Clean native setup 7.4 min; bounded main stages about 2.1 min each; roughly 290 MB checkout/build outputs excluding shared Git objects; peak model RSS 4.41 GB. Cold downloads and full statistical/quality campaigns remain additional |
-| Allowable variation | Fixed numerical gates and experiment-specific uncertainty; independent results must preserve the main claims. No blanket timing tolerance is asserted |
-| Licenses | Existing mixed per-file notices retained; missing newer-code license declaration requires author decision |
-| Paper tables/figures | Populate null manuscript locations in claims.json from the final accepted paper |
+Insert the source before References and check the two-page limit in the actual
+acmart manuscript. Resolve duplicate Appendix A numbering in the supplement.
+The manuscript LaTeX source and a TeX toolchain were not supplied, so the PDF
+itself has not been edited and page fit remains unverified. Add the final
+artifact access/archival link if and when publication is authorized.
 
-Before submission, verify the artifact corresponds to the final manuscript,
-including all rebuttal corrections. Distinguish historical headline confirmation,
-instrumented diagnostics, exploratory screens and rejected attempts. Do not
-claim an anonymous upload, manuscript replacement, independently validated
-badge, optimized W8A8 CPU control, or robot-success study that has not occurred.
+The appendix explicitly preserves deferred licensing and deposit, the numerical
+and stability limitations, and the distinction between author validation and
+independently awarded badges. It does not claim results outside the retained
+evidence or silently incorporate October results into earlier paper tables.

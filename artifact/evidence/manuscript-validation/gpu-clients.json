@@ -1,0 +1,17 @@
+{
+  "captured_utc": "2026-11-17T02:03:54.757972+00:00",
+  "purpose": "Read-only GPU client inventory during full cached-request campaign; this does not attribute the earlier MMU event.",
+  "clients": {
+    "/sys/kernel/debug/dri/128/clients": {
+      "returncode": 0,
+      "stdout": "             command  tgid dev master a   uid      magic\n               labwc  1084 128   n    n  1000          0\n               labwc  1084 128   n    n  1000          0\n               labwc  1084 128   n    n  1000          0\n               labwc  1084 128   n    n  1000          0\n     xdg-desktop-por  1663 128   n    n  1000          0\n        llama-server 39844 128   n    n  1000          0\n",
+      "stderr": ""
+    },
+    "/sys/kernel/debug/dri/0/clients": {
+      "returncode": 0,
+      "stdout": "             command  tgid dev master a   uid      magic\n               labwc  1084 128   n    n  1000          0\n               labwc  1084 128   n    n  1000          0\n               labwc  1084 128   n    n  1000          0\n               labwc  1084 128   n    n  1000          0\n     xdg-desktop-por  1663 128   n    n  1000          0\n        llama-server 39844 128   n    n  1000          0\n",
+      "stderr": ""
+    }
+  },
+  "conclusion": "labwc and xdg-desktop-portal also have V3D clients. A global kernel message cannot be attributed to this runtime from timestamp alone. Keep all MMU rejection gates unchanged. No desktop service stopped."
+}

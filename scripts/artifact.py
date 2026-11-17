@@ -120,6 +120,16 @@ def verify() -> dict:
             if not contained(ROOT, relative).is_file():
                 raise ValueError(f"missing evidence for {claim['id']}: {relative}")
     counts["claim_groups"] = len(claims["claims"])
+    manuscript = json.loads((ROOT / "artifact/manuscript.json").read_text())
+    for kind, expected in (("tables", 39), ("figures", 5)):
+        items = manuscript[kind]
+        if sorted(item["number"] for item in items) != list(range(1, expected + 1)):
+            raise ValueError(f"incomplete manuscript {kind} map")
+        for item in items:
+            for relative in item["evidence"]:
+                if not contained(ROOT, relative).exists():
+                    raise ValueError(f"missing manuscript evidence: {relative}")
+        counts["manuscript_" + kind] = len(items)
     if (ROOT / "SHA256SUMS").exists():
         counts["release_checksum_files"] = verify_sums(ROOT, ROOT / "SHA256SUMS")
     return {"kind": "artifact-verification-v1", "ok": True, **counts}

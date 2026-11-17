@@ -2,8 +2,9 @@
 
 This is the local artifact for the VideoCore VII runtime and its native
 `llama.cpp` integration, including the October 2026 rebuttal. Publication to an
-archival service is intentionally deferred. No DOI, badge, independent result
-validation, or final-manuscript alignment is claimed.
+archival service is intentionally deferred. No DOI, independent result
+validation, or badge award is claimed. The supplied official manuscript is mapped in
+[PAPER.md](PAPER.md) and [manuscript.json](manuscript.json).
 
 Associated paper title supplied by the author: **Practical: Building and
 Evaluating a Native CPU-QPU Runtime for Edge AI Inference on Raspberry Pi 5**.
@@ -39,7 +40,8 @@ Allow several GB for the locked Torch environment on ordinary disk, not a
 small RAM-backed `/tmp`; model builds and datasets
 need additional space. [ASSETS.md](ASSETS.md) distinguishes these costs. See
 [VALIDATION.md](VALIDATION.md) for actual preparation/check durations measured
-during this release; complete campaign durations remain unmeasured here.
+during this release; the full FFN protocol costs about 15.7 minutes here, including preflights.
+Cold downloads and long fresh quality campaigns remain additional.
 
 ## Inventory and evidence
 
@@ -50,7 +52,7 @@ during this release; complete campaign durations remain unmeasured here.
 | `experiment_logs/` | Historical raw results and reports, including excluded campaigns |
 | `experiment_logs/20261028-rebuttal/` | TODOs 1–9, raw compressed records, provenance, checksums and rejection qualifications |
 | `artifact/evidence/` | Selected completed model-quality outputs, reports, sample manifests, small MTP activation, source provenance |
-| [claims.json](claims.json) | Stable claim IDs, retained evidence, fresh-run profile, scope and pending manuscript locations |
+| [claims.json](claims.json) | Stable claim IDs, retained evidence, fresh-run profile, scope and exact manuscript locations |
 | [assets.json](assets.json), [profiles.json](profiles.json) | External input identities and configurable argument-array workflows |
 | [LIMITATIONS.md](LIMITATIONS.md) | Numerical contracts, rejected evidence and unsupported claims |
 | [LICENSES.md](LICENSES.md) | Existing component notices and external-asset boundaries |
@@ -135,7 +137,10 @@ uv run --locked python scripts/artifact.py run paper \
 This preserves the numerical/dispatch/environment gates but has fewer
 processes than the full paper campaign. It verifies exercisability; it does
 not independently confirm small performance gains or promote a placement.
-The clean-build follow-through passed all numerical/dispatch checks, but a
+The full manuscript protocol subsequently completed with clean retention but
+did not confirm the historical statistically positive prompt/cached gains.
+Those fresh results and archived printed-value agreement are distinct.
+The earlier clean-build follow-through passed all numerical/dispatch checks, but a
 new MMU event rejected its prompt latency; the separately exercised cached
 request passed with clean kernel retention. Both records are retained in
 `artifact/evidence/clean-build/`; see `VALIDATION.md` before interpreting them.
@@ -189,9 +194,11 @@ to a new output directory. Treat changed models/representations as new
 experiments. An example is in [EXTENDING.md](EXTENDING.md); runtime contracts
 and kernel extension guidance remain in `QPU-XLA.md` and `LESSONS_LEARNED.md`.
 
-Before submission, fill in [APPENDIX.md](APPENDIX.md) from the accepted
-manuscript and complete the claim/figure map. [APPENDIX.tex](APPENDIX.tex) is an
-insertable draft; check its two-page fit in the actual manuscript. Coordinate
+The official manuscript is now mapped to all 39 tables and five figures.
+Use [HOWTO.md](../HOWTO.md) to regenerate the main numerical results and empirical
+figures. [APPENDIX.md](APPENDIX.md) documents the replacement for its blank p.12
+template; [APPENDIX.tex](APPENDIX.tex) still needs integration and a two-page
+fit check in the manuscript source. Coordinate
 hardware using the concrete [reviewer-access plan](REVIEWER_ACCESS.md).
 CGO's appendix limit is two pages
 before References, using the linked ASPLOS template. The current CGO process is

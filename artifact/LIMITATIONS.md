@@ -34,6 +34,11 @@ does not mean a predefined task-quality gate passed.
   two-pair cached-request stage passed numerical/execution/environment gates
   without new kernel errors; neither outcome establishes sustained stability
   or independently confirms the historical small performance gain.
+- A full fresh manuscript-protocol run passes numerical/execution/kernel gates,
+  but M=129 prompt and 15-pair cached-request intervals span parity. The cached
+  interval does not overlap its historical positive interval. These gains are
+  not freshly confirmed; see `VALIDATION.md` before making a Results Validated
+  claim. The earlier rejected MMU attempt remains unchanged.
 - MTP inline QPU, matched fused bias+ReLU, and complete one-input ResNet QPU
   execution are slower than their measured CPU controls. A same-contract
   optimized CPU W8A8 performance control remains unavailable. Numerical INT32
@@ -58,9 +63,10 @@ does not mean a predefined task-quality gate passed.
 - External models, datasets and upstream runtimes retain their own terms.
   The software container does not replace Raspberry Pi hardware or its host
   kernel driver. Not every external asset is needed for smoke or offline analysis.
-- The accepted manuscript, exact figure/table numbering, final paper metadata,
-  independent evaluator reports, archival DOI and publisher badge award are
-  not present. Their completion must be recorded separately.
+- The supplied official manuscript and exact table/figure map are recorded in
+  `manuscript.json` and `PAPER.md`. Its blank artifact appendix and identified
+  qualifications still need author integration in the paper source. Independent
+  evaluator reports, archival DOI and publisher badge award are not present.
 
 See `REBUTTAL_NOTES.md`, `BUG_FIX_RESULTS.md`, `CORRECTNESS_REPORT.md`, and the
 October reports for full experimental boundaries and exclusions. Attribution

@@ -2,10 +2,11 @@
 
 Local checks on Raspberry Pi 5, 2026-11-16. Structured results, source-file
 fingerprints and the focused test log are in [validation/](validation/).
-No independent reviewer, full fresh performance/quality campaign, container
-build, or publisher badge is implied. The license decision and public deposit
-remain deferred by the author; exact manuscript figure/table alignment remains
-pending.
+No independent reviewer, fresh long quality campaign, container build, or
+publisher badge is implied. Licensing and public deposit remain deferred.
+The supplied manuscript is now mapped; its paper source still needs appendix
+and qualification edits. The full fresh FFN protocol completed, with numerical
+passes but **without confirming the historical statistically positive gains**.
 
 | Check | Observed outcome |
 |---|---|
@@ -46,8 +47,8 @@ The extracted-tree install took about 2.4 s with cached dependencies and
 hardlinks on ordinary disk. Its verification took about 0.7 s, portable smoke
 1.7 s and full offline analysis 4.6 s. These are preparation checks, not cold
 download costs, inference latency, or portable timing guarantees. Each native
-basic binary completed in under a second. Full fresh paper/quality campaign
-costs were not measured here.
+basic binary completed in under a second. The full fresh FFN costs are recorded below; long fresh task-quality campaign
+costs remain additional.
 
 The first extracted install failed while copying Torch into a 4 GiB RAM-backed
 `/tmp`; its log was retained under `build/artifact-preparation/`. Only that
@@ -63,6 +64,54 @@ files. Do not place a package's own hash into its input documentation and then
 silently rebuild it under the same identity.
 
 The optional Docker recipe is supplied but unbuilt: Docker is not installed
-on this preparation host. Native setup is the exercised path. Full statistical
-paper confirmation and long quality campaigns were not repeated. The new
-bounded runs do not validate a badge or establish sustained driver reliability.
+on this preparation host. Native setup is the exercised path. Long quality
+campaigns were not repeated. Neither bounded nor full author runs award a badge
+or establish sustained driver reliability.
+
+## Official-manuscript follow-through
+
+The 26-page author-supplied PDF is identified by SHA256 in `manuscript.json`.
+All **39 tables and five figures** are mapped. The offline paper checker passes
+**111 printed-value checks**, including main timing, classification quality,
+selected operator values and both empirical figures. The complete FP32 operator
+grid is exported with slower cases included; static estimates, preserved quality
+intervals and COCO AP remain labeled report views. This is archived-data
+agreement, not a new experiment or independent validation.
+
+The focused tests still pass: **20 passed in 1.37 s**, recorded in
+`validation/manuscript-tests.log`. The preparer now also builds `ggml-qpu` and
+`qpu_ggml_geglu_bench`, required by Table 2's standalone command. Incremental
+preparation from the existing clean build took 11.9 s. Its three prepared
+producer/down cases passed exact Q8 bytes and numerical checks, with maximum
+down-projection error 9.54e-6 and clean kernel retention. Complete producer+down
+ratios were 0.225/0.350/0.289 at M=65/129/257, preserving the conclusion that
+the sequence is slower than CPU. These are prepared, not full-FFN timings.
+
+The full declared paper profile ran once after manuscript alignment: **20 prompt
+processes** (five independent CPU/candidate processes at each M=129/257) and
+**15 cached-request pairs**. Both outer kernel monitors were clean, all inner
+retention gates passed, and all candidate dispatch/context contracts and greedy
+outputs passed. Prompt and cached-request stages took **296.9 s and 647.6 s**
+including preflights and process setup, about 15.7 minutes total. Peak observed
+cached-request RSS was 4,405,198,848 bytes. Host governors and zram were restored.
+
+| Boundary | Historical ratio [95% interval] | Fresh ratio [95% interval] | Interpretation |
+|---|---|---|---|
+| Prompt M=129 | 1.0342 [1.0090, 1.1104] | 1.0167 [0.9843, 1.0567] | Fresh interval spans parity; historical positive gain not confirmed |
+| Prompt M=257 | 1.0069 [0.9651, 1.0168] | 1.0032 [0.9667, 1.0255] | Still inconclusive |
+| Cached request wall | 1.0379 [1.0241, 1.0520] | 0.9919 [0.9726, 1.0170] | Fresh interval spans parity and does not overlap the historical interval |
+
+The small historical performance gains have therefore **not** been freshly
+confirmed. Do not mark Results Validated ready or claim independent reproduction
+on this evidence. Investigating the discrepancy or revising the claim needs an
+explicitly recorded follow-up, preserving this attempt and its sample design.
+The successful functional run also does not erase the earlier reduced attempt's
+MMU event. Its cause remains unresolved; a client inventory found desktop V3D
+clients as well as this runtime. See `MMU-INVESTIGATION.md`.
+
+All full-run raw records, controls, exact fresh intervals, printed-value checks,
+CSV outputs and figure PDFs are retained in
+[evidence/manuscript-validation/](evidence/manuscript-validation/). The supplied
+PDF remains unchanged. `APPENDIX.tex` replaces its blank p.12 template, and
+`MANUSCRIPT-EDITS.md` gives concrete qualification/rebuttal text. Integration into
+the actual paper source and the two-page fit check remain author actions.

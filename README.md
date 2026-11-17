@@ -17,7 +17,9 @@ known limitations, read [QPU-XLA.md](QPU-XLA.md).
 For the local CGO artifact release, installation checks, archived result
 regeneration, original and rebuttal experiment profiles, and limitations, start
 with [artifact/README.md](artifact/README.md). No archival DOI or badge is
-claimed yet.
+claimed yet. [INSTALL.md](INSTALL.md) and [HOWTO.md](HOWTO.md) provide the
+installation and paper-result entry points promised by the supplied manuscript;
+[artifact/PAPER.md](artifact/PAPER.md) maps its tables, figures and qualifications.
 
 For the project-wide technical retrospective and practical guidance on kernel
 design, efficient QPU use, workload fit, heterogeneous placement, correctness,
@@ -67,7 +69,8 @@ cd qpu-xla-triton
 uv sync --locked --group dev
 ```
 
-Hardware execution requires access to `/dev/dri/renderD128` and membership in
+Hardware execution requires access to `/dev/dri/renderD128` and
+`/dev/dri/by-path/platform-1002000000.v3d-card`, plus membership in
 the appropriate `render`/`video` device group for the host image. Check the
 local device permissions before running QPU tests.
 

@@ -1,0 +1,535 @@
+{
+  "format": "artifact-manuscript-map-v1",
+  "manuscript": {
+    "file_name": "QPUs_CGO2027.pdf",
+    "sha256": "3bcc96f58f3b8b500fc8e89ff7c2b8e25bb5226dbf2a946159c7b75f587b6ad2",
+    "pages": 26,
+    "title": "Practical: Building and Evaluating a Native CPU–QPU Runtime for Edge AI Inference on Raspberry Pi 5",
+    "status": "Accepted (shepherding), supplied by author 2026-11-16",
+    "authors": [
+      "Yiannis Hadjiyianni",
+      "Kun Ouyang",
+      "Linyuan Han",
+      "Panagiotis Michelakis",
+      "Yijing Wang",
+      "Hao Wu",
+      "Rongqiang Zhao",
+      "Dimitrios Stamoulis",
+      "Jie Liu"
+    ],
+    "redistribution": "PDF is an author-supplied input and is not automatically bundled."
+  },
+  "tables": [
+    {
+      "number": 1,
+      "page": 8,
+      "title": "Selected FP32 projections",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h512-t16-fp32-linear.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h1024-t64-fp32-linear.json"
+      ],
+      "workflow": "paper-results:projections",
+      "scope": "Main complete-operator steady-state subset; all ten selected wins are in Table 8."
+    },
+    {
+      "number": 2,
+      "page": 8,
+      "title": "Prepared GEGLU producer and down projection",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/fused-ffn-retained.json"
+      ],
+      "workflow": "paper-results:producer",
+      "scope": "Prepared inputs; not complete FFN latency."
+    },
+    {
+      "number": 3,
+      "page": 9,
+      "title": "Column-W8 complete requests",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/agentic-column-w8-retained.json",
+        "experiment_logs/20260825-qpu-next/agentic-column-w8-m513-ubatch-screen.json"
+      ],
+      "workflow": "paper-results:column-w8",
+      "scope": "M=129/257 held-out five pairs; M=513 one-pair screen, no interval."
+    },
+    {
+      "number": 4,
+      "page": 9,
+      "title": "Corrected integrated FFN",
+      "evidence": [
+        "experiment_logs/20260910-ffn-island-stride-fix/corrected-independent-processes-v7.json",
+        "experiment_logs/20260910-ffn-island-stride-fix/corrected-agentic-15-v2.json"
+      ],
+      "workflow": "paper-results:headline; paper:prompt,agentic",
+      "scope": "Main evidence. Five independent processes per placement/shape; 15 request pairs. Original shortened-stride results invalid."
+    },
+    {
+      "number": 5,
+      "page": 9,
+      "title": "Static SmolVLA memory",
+      "evidence": [
+        "SMOLVLA-QPU.md",
+        "src/qpu_xla/models/smolvla/placement.py"
+      ],
+      "workflow": "retained static estimate; examples/benchmark_qpu_xla_smolvla.py",
+      "scope": "Planner estimate, not observed RSS. Requires separately acquired model for new plan."
+    },
+    {
+      "number": 6,
+      "page": 10,
+      "title": "Task quality",
+      "evidence": [
+        "artifact/evidence/model-quality/gemma-mmlu-1000/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-qpu-fp32/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-hybrid-fp32/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-qpu-w8a8/report.json",
+        "artifact/evidence/model-quality/yolov8n-coco1000-random-seed20260911-qpu-fp32/report.json"
+      ],
+      "workflow": "paper-results:quality; quality profile",
+      "scope": "Raw classification metrics recomputed; preserved confidence intervals and COCO AP labeled report views."
+    },
+    {
+      "number": 7,
+      "page": 15,
+      "title": "Source entry points",
+      "evidence": [
+        "INSTALL.md",
+        "HOWTO.md",
+        "integrations/llama_cpp/README.md"
+      ],
+      "workflow": "manual source inventory",
+      "scope": "Documentation table, no measurement."
+    },
+    {
+      "number": 8,
+      "page": 15,
+      "title": "All ten selected FP32 projections",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h512-t16-fp32-linear.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h1024-t64-fp32-linear.json"
+      ],
+      "workflow": "paper-results:projections",
+      "scope": "Selection rule and all 112 cases retained; CPU reference varies by case."
+    },
+    {
+      "number": 9,
+      "page": 15,
+      "title": "Stage sweep counts",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/decode-h2048-c2048-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/decode-h2048-c512-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/decode-h3072-c4096-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h512-t16-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h1024-t64-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h2048-t128-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h2048-t256-stages.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/prefill-h4096-t16-stages.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "240 stage configurations; not independent process samples."
+    },
+    {
+      "number": 10,
+      "page": 16,
+      "title": "Selected FP32 stages",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/FP32_EVALUATION_MATRIX.md"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "Selected stage wins and slower RoPE case; preceding table indexes source records."
+    },
+    {
+      "number": 11,
+      "page": 16,
+      "title": "Vectors and min/max",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-copy-n4194048.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-residual-n4194048.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-minmax-n4194048.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-minmax-n4194240.json"
+      ],
+      "workflow": "paper-results:operator-grid,figure4",
+      "scope": "Exact stripe cutoff, not hardware worker minimum."
+    },
+    {
+      "number": 12,
+      "page": 16,
+      "title": "FP32 pooling",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-pool2d-n1-c32-h144-w144.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-pool2d-n1-c48-h128-w128.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-pool2d-n1-c64-h112-w112.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "Prepared whole-operation boundaries."
+    },
+    {
+      "number": 13,
+      "page": 16,
+      "title": "FP32 epilogues",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-epilogues-r128-c5632.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-epilogues-r256-c8192.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-epilogues-r64-c32000.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-epilogues-r16-c262128.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "NumPy two-pass bias+ReLU reference; rebuttal fused Torch control is separate."
+    },
+    {
+      "number": 14,
+      "page": 16,
+      "title": "Square matmul",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-matmul-attention-s64.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-matmul-attention-s512.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "Also contains staged SDPA; whole-operation, not raw kernel speed."
+    },
+    {
+      "number": 15,
+      "page": 16,
+      "title": "Historical W8A8 projection ranges",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-w8a8/KERNEL_SCOREBOARD.md"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "FP32 CPU reference changes representation; not optimized same-contract W8A8 comparison."
+    },
+    {
+      "number": 16,
+      "page": 17,
+      "title": "W8A8 M16 H4096 projections",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h4096-t16-down-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h4096-t16-hidden-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h4096-t16-kv-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h4096-t16-lm-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h4096-t16-up-final.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "Historical isolated operator evidence."
+    },
+    {
+      "number": 17,
+      "page": 17,
+      "title": "One-layer runtime",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h512-t16-runtime-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h1024-t64-runtime-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h2048-t128-runtime-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/prefill-h2048-t256-runtime-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/decode-h2048-c512-runtime-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/decode-h2048-c2048-runtime-final.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/decode-h3072-c4096-runtime-final.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "Layer boundary; holdout/decode losses demote isolated wins."
+    },
+    {
+      "number": 18,
+      "page": 18,
+      "title": "Historical W8A8 convolution",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-w8a8/yolo-p3-1x1.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/yolo-p3-3x3-s1.json",
+        "experiment_logs/20260819-qpu-xla-w8a8/yolo-depthwise-p3.json"
+      ],
+      "workflow": "paper-results:operator-grid",
+      "scope": "Torch FP32 baseline; distinct from runtime-summary and October prepared timing campaigns."
+    },
+    {
+      "number": 19,
+      "page": 18,
+      "title": "Early native quantized nodes",
+      "evidence": [
+        "experiment_logs/20260824-qpu-agentic-prefill/operator-eval.json",
+        "experiment_logs/20260824-qpu-agentic-prefill/hybrid-operator-eval.json"
+      ],
+      "workflow": "raw JSON; examples/benchmark_llama_cpp_qpu_ops.py",
+      "scope": "Ondemand/zram diagnostic; hybrid CPU generic block dot, not CPU_REPACK."
+    },
+    {
+      "number": 20,
+      "page": 18,
+      "title": "Early native attention",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/attention-wgs24.json"
+      ],
+      "workflow": "raw JSON; examples/benchmark_llama_cpp_qpu_attention.py",
+      "scope": "M=1 early screen, not complete-model attention claim."
+    },
+    {
+      "number": 21,
+      "page": 18,
+      "title": "Batched native attention",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/attention-batched-retained.json"
+      ],
+      "workflow": "raw JSON; examples/benchmark_llama_cpp_qpu_attention.py",
+      "scope": "Three CPU threads, eleven post-warmup samples."
+    },
+    {
+      "number": 22,
+      "page": 18,
+      "title": "Isolated GEGLU",
+      "evidence": [
+        "experiment_logs/20260824-qpu-agentic-prefill/operator-eval.json",
+        "integrations/llama_cpp/eval/IMPLEMENTATION_RESULTS.md"
+      ],
+      "workflow": "source report; integrations/llama_cpp/eval/IMPLEMENTATION_RESULTS.md",
+      "scope": "One CPU thread; calibration and held-out statuses differ. Original report says ondemand governor and competing server rejected the campaign for a publication performance claim; paper should retain that qualification."
+    },
+    {
+      "number": 23,
+      "page": 18,
+      "title": "Row-partitioned GEGLU",
+      "evidence": [
+        "experiment_logs/20260824-qpu-agentic-prefill/hybrid-operator-eval.json",
+        "integrations/llama_cpp/eval/IMPLEMENTATION_RESULTS.md"
+      ],
+      "workflow": "source report; integrations/llama_cpp/eval/IMPLEMENTATION_RESULTS.md",
+      "scope": "Five processes per configuration; no confirmed end-to-end gain."
+    },
+    {
+      "number": 24,
+      "page": 18,
+      "title": "Native ffn_up request screens",
+      "evidence": [
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-quick-retained.json",
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-m129-screen.json",
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-m257-screen.json"
+      ],
+      "workflow": "raw JSON; scripts/run_llama_cpp_qpu_agentic_eval.py",
+      "scope": "Two-pair held-out screens, no policy promotion."
+    },
+    {
+      "number": 25,
+      "page": 18,
+      "title": "Projection overlap",
+      "evidence": [
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-quick-retained.json",
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-m129-screen.json",
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-m257-screen.json"
+      ],
+      "workflow": "paper-results:figure5",
+      "scope": "Median per-layer observable timings; overlapping durations are not additive."
+    },
+    {
+      "number": 26,
+      "page": 19,
+      "title": "Prepared FFN larger M",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/ffn-island-large-m-screen.json"
+      ],
+      "workflow": "raw JSON; integrations/llama_cpp/README.md",
+      "scope": "Input quantization outside boundary; numerical failures retained."
+    },
+    {
+      "number": 27,
+      "page": 19,
+      "title": "Prepared FFN split sweep",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/ffn-island-large-m-screen.json"
+      ],
+      "workflow": "raw JSON; integrations/llama_cpp/README.md",
+      "scope": "Do not accept faster rows that fail numerical gates."
+    },
+    {
+      "number": 28,
+      "page": 19,
+      "title": "Two projections per QPU submission",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/ffn-island-m257-screen.json"
+      ],
+      "workflow": "raw JSON; integrations/llama_cpp/README.md",
+      "scope": "Prepared operator change, not complete-request result."
+    },
+    {
+      "number": 29,
+      "page": 20,
+      "title": "Column-W8 complete requests",
+      "evidence": [
+        "experiment_logs/20260825-qpu-next/agentic-column-w8-retained.json",
+        "experiment_logs/20260825-qpu-next/agentic-column-w8-m513-ubatch-screen.json"
+      ],
+      "workflow": "paper-results:column-w8",
+      "scope": "Expanded Table 3, includes single-pair calibration."
+    },
+    {
+      "number": 30,
+      "page": 20,
+      "title": "Corrected complete FFN",
+      "evidence": [
+        "experiment_logs/20260910-ffn-island-stride-fix/corrected-independent-processes-v7.json",
+        "experiment_logs/20260910-ffn-island-stride-fix/corrected-agentic-15-v2.json"
+      ],
+      "workflow": "paper-results:headline; paper:prompt,agentic",
+      "scope": "Expanded Table 4 including cached prompt boundary."
+    },
+    {
+      "number": 31,
+      "page": 20,
+      "title": "Full-vocabulary preflight",
+      "evidence": [
+        "experiment_logs/20260910-ffn-island-stride-fix/real-model-validation.json"
+      ],
+      "workflow": "raw JSON; native qpu_ffn_island_model_smoke",
+      "scope": "Probability, TV, KL and argmax gates; raw logits have no absolute-error gate."
+    },
+    {
+      "number": 32,
+      "page": 21,
+      "title": "OpenBLAS vs CPU_REPACK prompt",
+      "evidence": [
+        "experiment_logs/20260909-openblas/llama-bench-openblas.json",
+        "experiment_logs/20260909-openblas/llama-bench-cpu-repack.json"
+      ],
+      "workflow": "raw JSON; experiment_logs/20260909-openblas/RESULTS.md",
+      "scope": "Three post-warmup samples per prompt, CPU_REPACK is production baseline."
+    },
+    {
+      "number": 33,
+      "page": 21,
+      "title": "OpenBLAS FFN splits",
+      "evidence": [
+        "experiment_logs/20260909-openblas/ffn-island-openblas-screen.json"
+      ],
+      "workflow": "raw JSON; experiment_logs/20260909-openblas/RESULTS.md",
+      "scope": "All 24 partitions fail the F32-activation numerical contract; no valid acceleration."
+    },
+    {
+      "number": 34,
+      "page": 22,
+      "title": "OpenBLAS target MTP",
+      "evidence": [
+        "experiment_logs/20260909-openblas/mtp-openblas-screen.json"
+      ],
+      "workflow": "raw JSON; experiment_logs/20260909-openblas/RESULTS.md",
+      "scope": "One request per configuration; exact greedy output, QPU slower."
+    },
+    {
+      "number": 35,
+      "page": 22,
+      "title": "Quality sample selection",
+      "evidence": [
+        "artifact/assets.json",
+        "artifact/evidence/manifests/imagenet-samples-5000.json",
+        "artifact/evidence/manifests/smolvla-replay-inputs.json"
+      ],
+      "workflow": "assets; quality profile",
+      "scope": "Fixed identities and pairing required."
+    },
+    {
+      "number": 36,
+      "page": 22,
+      "title": "Detailed task quality",
+      "evidence": [
+        "artifact/evidence/model-quality/gemma-mmlu-1000/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-qpu-fp32/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-hybrid-fp32/report.json",
+        "artifact/evidence/model-quality/resnet18-imagenet5000-qpu-w8a8/report.json",
+        "artifact/evidence/model-quality/yolov8n-coco1000-random-seed20260911-qpu-fp32/report.json"
+      ],
+      "workflow": "paper-results:quality; quality profile",
+      "scope": "Expanded Table 6; no COCO bootstrap in reported campaign."
+    },
+    {
+      "number": 37,
+      "page": 23,
+      "title": "SmolVLA operators",
+      "evidence": [
+        "src/qpu_xla/models/smolvla/accelerated.py",
+        "SMOLVLA-QPU.md"
+      ],
+      "workflow": "manual implementation inventory",
+      "scope": "Supported partition axes, not measured end-to-end speedups."
+    },
+    {
+      "number": 38,
+      "page": 23,
+      "title": "SmolVLA action agreement",
+      "evidence": [
+        "artifact/evidence/model-quality/smolvla-replay100-qpu-fp32/report.json",
+        "artifact/evidence/model-quality/smolvla-replay100-qpu-fp32/actions.npz"
+      ],
+      "workflow": "paper-results:quality; quality:smolvla (explicit diagnostic)",
+      "scope": "Completed 100-observation outputs only; FP32 gates fail; hangs/resumes retained."
+    },
+    {
+      "number": 39,
+      "page": 23,
+      "title": "Static SmolVLA memory",
+      "evidence": [
+        "SMOLVLA-QPU.md",
+        "src/qpu_xla/models/smolvla/placement.py"
+      ],
+      "workflow": "retained static estimate",
+      "scope": "Same as Table 5; not measured peak RSS."
+    }
+  ],
+  "figures": [
+    {
+      "number": 1,
+      "page": 2,
+      "title": "Native runtime architecture",
+      "kind": "design",
+      "evidence": [
+        "src/qpu_xla",
+        "integrations/llama_cpp"
+      ]
+    },
+    {
+      "number": 2,
+      "page": 4,
+      "title": "FP32 and W8A8 matrix dataflows",
+      "kind": "design",
+      "evidence": [
+        "src/qpu_xla/kernels",
+        "src/qpu_xla/ops"
+      ]
+    },
+    {
+      "number": 3,
+      "page": 6,
+      "title": "Native language-model execution scopes",
+      "kind": "design",
+      "evidence": [
+        "integrations/llama_cpp/backend"
+      ]
+    },
+    {
+      "number": 4,
+      "page": 8,
+      "title": "Exact stripe selector",
+      "kind": "empirical",
+      "evidence": [
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-minmax-n4194048.json",
+        "experiment_logs/20260819-qpu-xla-kernel-suite/fp32-minmax-n4194240.json"
+      ],
+      "workflow": "paper-results:figure4"
+    },
+    {
+      "number": 5,
+      "page": 9,
+      "title": "M257 quarter-output projection overlap",
+      "kind": "empirical",
+      "evidence": [
+        "experiment_logs/20260824-qpu-agentic-prefill/agentic-up-m257-screen.json"
+      ],
+      "workflow": "paper-results:figure5"
+    }
+  ],
+  "procedure_sections": {
+    "H.1": "HOWTO.md operator workflows",
+    "H.2": "INSTALL.md native preparation",
+    "H.3": "paper profile prompt and agentic",
+    "H.4": "quality profile MMLU/ResNet/YOLO",
+    "H.5": "quality smolvla diagnostic and ASSETS.md"
+  },
+  "appendix": {
+    "page": 12,
+    "status": "Blank obligatory template in supplied PDF; replacement source is artifact/APPENDIX.tex. Actual manuscript edit/typesetting remains an author action."
+  }
+}
